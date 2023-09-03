@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @font-face {
+  font-family: 'NoirProRegular'; 
+  src: url('../../public/font/NoirPro-Regular.woff') format('truetype'); 
+}
+
+    body {
+      font-family: NoirProRegular, sans-serif;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 20px;
+      background-color: #fff9f1;
+    }
+    h1{
+     
+        font-size: 1.3rem;
+    }
+    p{
+
+        margin: 5px 0 5px 0;
+        font-size: 0.9rem;
+    }
+
+    a{
+     text-decoration: none;
+     color: white;
+    }
+
+    .mesaj p {
+      font-size: 0.75rem;
+    }
+    .mesaj {
+      margin: 20px 0 10px 0;
+    }
+
+    .text{
+      font-size: 0.75rem;
+    }
+
+    .img-wrapper{
+      margin: auto 60px 0 auto;
+    }
+    img{
+      height: 60vh;
+    }
+
+    .button{
+  
+        width: fit-content;
+        margin: 10px 0 15px 0;
+        background-color: #d8c5b8;
+        padding: 8px 12px 8px 12px;
+    }
+    .button:active{
+        background-color: rgba(234, 201, 177, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Salut <%=name%>! Bine ai venit la True Fine Coffee, ne băucuram că ne ești alaturi!</h1>
+    <div class="mesaj">
+      <p>Prin acest mesaj vrem să-ți confirmi adresa de email.</p>
+      <p>*Dacă nu ți-ai creat cont la noi ignora acest email.</p>
+    </div>
+    <p>Te rugam să-ti finalizezi inregistrarea accesand linkul de mai jos.</p>
+    <div class="button">
+        <a href="<%=link%>">CLICK AICI</a>
+    </div>
+    <p class="text">Îți mulțumim și te așteptăm să ne vizitezi!</p>
+    <div class="img-wrapper">
+      <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1693141028/layout_qcd3qn.png" alt="logo">
+    </div>
+  </div>
+
+</body>
+</html>
