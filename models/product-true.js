@@ -24,10 +24,12 @@ const productTrueSchema = new Schema({
     price: Number,
     description: String,
     longDescription: String,
-    paring: {
-        type: Schema.Types.ObjectId,
-        ref: "ProductTrue"
-    },
+    paring: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "ProductTrue"
+        }
+    ],
     allergens: [
         {
             name: String

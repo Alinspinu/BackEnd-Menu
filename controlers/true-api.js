@@ -26,7 +26,12 @@ module.exports.sendCats = async (req, res, next) => {
                         path: 'product',
 
                     }
-                }]
+                },
+                {
+                    path: 'paring',
+                    select: 'name'
+                }
+            ]
         }).maxTimeMS(20000);
         res.status(200).json(cats);
     } catch (err) {
@@ -173,6 +178,27 @@ module.exports.changeStatus = async (req, res, next) => {
         console.log(err)
         res.status(500).json(err.message)
     }
+}
+
+
+module.exports.addParrinProducts = async (req, res, next) => {
+    try {
+        const { productToEditId, productToPushId } = req.body
+        const updatedProduct = await Product.findOneAndUpdate(
+            { _id: productToEditId },
+            { $push: { paring: productToPushId } },
+            { new: true, useFindAndModify: false }
+        ).populate({
+            path: 'paring',
+            select: 'name'
+        })
+        const paringProduct = updatedProduct.paring.filter(obj => obj._id.toString() === productToPushId)
+        res.status(200).json({ message: `Produsul ${updatedProduct.name} i-a fost asociat produsul ${paringProduct[0].name}`, updatedProduct })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: err.error.error.message })
+    }
+
 }
 
 

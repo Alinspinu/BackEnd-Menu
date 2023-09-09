@@ -18,6 +18,7 @@ router.route('/sub-prod-add').post(apiRoutes.saveSubProd);
 router.route('/save-order').post(apiRoutes.saveOrder);
 router.route('/change-status').post(apiRoutes.changeStatus);
 router.route('/check-product').post(apiRoutes.checkProduct);
+router.route('/add-paring-product').post(apiRoutes.addParrinProducts)
 
 router.route('/cat')
     // .put(upload.single('image'), apiRoutes.editCategory)
