@@ -27,10 +27,7 @@ module.exports.sendCats = async (req, res, next) => {
 
                     }
                 },
-                {
-                    path: 'paring',
-                    select: 'name'
-                }
+                { path: 'paring', populate: { path: 'category', select: 'name' } }
             ]
         }).maxTimeMS(20000);
         res.status(200).json(cats);
@@ -181,7 +178,7 @@ module.exports.changeStatus = async (req, res, next) => {
 }
 
 
-module.exports.addParrinProducts = async (req, res, next) => {
+module.exports.addParingProduct = async (req, res, next) => {
     try {
         const { productToEditId, productToPushId } = req.body
         const updatedProduct = await Product.findOneAndUpdate(
@@ -189,8 +186,7 @@ module.exports.addParrinProducts = async (req, res, next) => {
             { $push: { paring: productToPushId } },
             { new: true, useFindAndModify: false }
         ).populate({
-            path: 'paring',
-            select: 'name'
+            path: 'paring'
         })
         const paringProduct = updatedProduct.paring.filter(obj => obj._id.toString() === productToPushId)
         res.status(200).json({ message: `Produsul ${updatedProduct.name} i-a fost asociat produsul ${paringProduct[0].name}`, updatedProduct })
@@ -198,7 +194,23 @@ module.exports.addParrinProducts = async (req, res, next) => {
         console.log(err)
         res.status(500).json({ message: err.error.error.message })
     }
+}
 
+module.exports.removeParingProduct = async (req, res, next) => {
+    try {
+        const { productToBeRemovedId, productToRemoveFromId } = req.body;
+        const updatedProduct = await Product.findOneAndUpdate(
+            { _id: productToRemoveFromId },
+            { $pull: { paring: productToBeRemovedId } },
+            { new: true, useFindAndModify: false }
+        ).populate({
+            path: 'paring'
+        })
+        res.status(200).json({ message: `Produsul a fost scos cu succes!`, updatedProduct })
+    } catch (err) {
+        console.log("Error", err)
+        res.status(500).json({ messaje: err.error.error.message })
+    }
 }
 
 
