@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const nutritionRoutes = require('../controlers/nutrition')
+
+
+router.route('/get-fat-token').get(nutritionRoutes.getToken)
+router.route('/ing-add').post(nutritionRoutes.saveIngredient)
+router.route('/ing-send').get(nutritionRoutes.sendIngredients)
+router.route('/add-ing-to-product').post(nutritionRoutes.saveIngredientsToProduct)
+
+module.exports = router;

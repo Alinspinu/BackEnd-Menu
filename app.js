@@ -19,6 +19,7 @@ const trueApiRoutes = require('./routes/true-api');
 const ordersTrueRoutes = require('./routes/true-orders');
 const payRoutes = require('./routes/payment');
 const authRoutes = require('./routes/auth');
+const nutritionRoutes = require('./routes/nutrition')
 
 const dbUrl = process.env.DB_URL
 
@@ -56,6 +57,7 @@ app.use("/api-true", trueApiRoutes)
 app.use("/orders", ordersTrueRoutes)
 app.use('/pay', payRoutes)
 app.use('/auth', authRoutes)
+app.use('/nutrition', nutritionRoutes)
 
 const ctrl = require('./controlers/true-api')
 const multer = require('multer');

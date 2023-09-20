@@ -30,7 +30,24 @@ const productTrueSchema = new Schema({
             ref: "ProductTrue"
         }
     ],
+    ingredients: [       
+        {
+            quantity: {
+                type: Number,
+                required: true
+            },
+            ingredient: {
+                type: Schema.Types.ObjectId,
+                ref: 'Ingredient'
+            }
+        }
+    ],
     allergens: [
+        {
+            name: String
+        }
+    ],
+    additives: [
         {
             name: String
         }
@@ -49,7 +66,7 @@ const productTrueSchema = new Schema({
             sugar: Number,
         },
         salts: Number,
-        additives: String,
+        protein: Number,
     },
     qty: {
         type: String,
