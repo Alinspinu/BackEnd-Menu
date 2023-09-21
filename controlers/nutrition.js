@@ -3,49 +3,27 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const Ingredient = require('../models/ingredient')
 const Product = require('../models/product-true')
-const axios = require('axios');
-const qs = require('qs');
+const ProdIngredient = require('../models/prod-ingredient')
 
 
-module.exports.getToken = async (req, res, next) => {
-    const clientID = process.env.FAT_ID
-    const clientSecret = process.env.FAT_SECRET
-    const data = qs.stringify({
-        'grant_type': 'client_credentials',
-        'scope': 'basic'
-    });
 
-    const config = {
-        method: 'post',
-        url: 'https://oauth.fatsecret.com/connect/token',
-        headers: {
-            'Authorization': 'Basic ' + Buffer.from(clientID + ':' + clientSecret).toString('base64'),
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        data: data
-    };
-    try {
-        const accessResponse = await axios(config)
-        const accessToken = accessResponse.data.access_token
-        const headers = {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-        };
-        const data = {
-            method: 'foods.search.v2',
-            search_expression: 'bread',
-            format: 'json',
-            include_sub_categories: true
-        };
-        const dataResponse = await axios.post('https://platform.fatsecret.com/rest/server.api', null, { headers: headers, params: data })
-        console.log(dataResponse.data)
-    } catch (err) {
+// ##################### SEND DATA ###############################
+
+
+module.exports.sendIngredients = async(req, res, next) => {
+    console.log('hit')
+    try{
+        let ing = []
+        const ingredients = await Ingredient.find()
+        res.status(200).json(ingredients)
+    }catch (err) {  
         console.log(err)
+        res.status(500).json({ message: err });
     }
-
-    res.status(200).json({ messgage: "ss" })
 }
 
+
+// ##################### SAVE DATA ###############################
 
 module.exports.saveIngredient = async(req, res, next) => {
     try {
@@ -58,27 +36,97 @@ module.exports.saveIngredient = async(req, res, next) => {
     }
 }
 
-module.exports.sendIngredients = async(req, res, next) => {
-    console.log('hit')
+
+module.exports.saveIngredientsToProduct = async (req, res, next) => {
+    const {id} = req.query
     try{
-        const ingredients = await Ingredient.find()
-        res.status(200).json(ingredients)
+        const product = await Product.findById(id)
+        product.ingredients = req.body
+        await product.save()
     }catch (err) {  
         console.log(err)
         res.status(500).json({ message: err });
     }
 }
 
-module.exports.saveIngredientsToProduct = async (req, res, next) => {
-    const {id} = req.query
-    console.log(id)
-    try{
-        const product = await Product.findById(id)
-        product.ingredients = req.body
-        await product.save()
-        console.log(product)
-    }catch (err) {  
-        console.log(err)
+module.exports.saveProductIngredient = async (req, res, next) => {
+    try {
+        const {name} = req.query;
+        const prodIng = new ProdIngredient({
+            name,
+            ingredients: req.body
+        })
+        await prodIng.save()
+        const updatedProdIng = await ProdIngredient.findOne({name: name}).populate({path: 'ingredients.ingredient'})
+        const result = calcNutrition(updatedProdIng.ingredients)
+        const ing = new Ingredient(result)
+        ing.name = name,
+        await ing.save()
+        res.status(200).json({ message: `Product-Ingredient ${name} was created!`});
+    } catch (err) {
+        console.log(err);
         res.status(500).json({ message: err });
     }
 }
+
+// ##################### EDIT DATA ###############################
+
+module.exports.editIngredient = async(req, res, next) => {
+    try{
+        const {id} = req.query;
+        const ing = await Ingredient.findOneAndUpdate({_id: id}, req.body, {new: true}); 
+        res.status(200).json({message: `Ingredientul ${ing.name} was updated!`})
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err})
+    }
+}
+
+
+// ##################### Delete Data ###############################
+module.exports.deleteIngredient = async (req, res, next) => {
+    try{
+        const {id} = req.query;
+        await Ingredient.findByIdAndDelete(id);
+        res.status(200).json({message: "Ingredientul a fost șters!"})
+    } catch (err){
+        console.log(err)
+        res.status(500).json({message: err})
+    }
+}
+
+
+// ##################### Functions ###############################
+
+function calcNutrition(ingredients){
+    const prefixes = ['energy', 'carbs', 'fat', 'salts', 'protein']
+    const result = ingredients.reduce((acc, obj) => {
+      Object.keys(obj.ingredient._doc).forEach(key => {
+        if (prefixes.some(prefix => key.startsWith(prefix))) {
+          if (typeof obj.ingredient._doc[key] === 'object') {
+            Object.keys(obj.ingredient._doc[key]).forEach(subKey => {
+              acc[key] = acc[key] || {};
+              acc[key][subKey] = round((acc[key][subKey] || 0) + (obj.ingredient._doc[key][subKey] * (obj.quantity / 100)));
+            });
+          } else {
+            acc[key] = round((acc[key] || 0) + (obj.ingredient._doc[key] * (obj.quantity / 100)));
+          }
+        } else if((Array.isArray(obj.ingredient._doc[key]))) {
+          acc[key] = acc[key] || [];
+          obj.ingredient._doc[key].forEach(item => {
+              const index = acc[key].findIndex(obj => obj.name === item.name)
+              if (index === -1) {
+                  acc[key].push(item);
+              }
+          });
+        }
+      });
+      return acc;
+    },{});
+   return result
+}
+
+
+function round(num) {
+    return Math.round((num + Number.EPSILON) * 100) / 100;
+} 

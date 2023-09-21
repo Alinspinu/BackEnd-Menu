@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');   
 const Schema = mongoose.Schema;
+const Product = require('./product-true');
+const ProdIng = require('./prod-ingredient')
 
 
 const ingredientSchema = new Schema({
@@ -9,7 +11,6 @@ const ingredientSchema = new Schema({
     },
     labelInfo: {
         type: String,
-        required: true
     },
     energy: {
         kcal: 
@@ -75,5 +76,15 @@ ingredientSchema.pre('save', function(next) {
     this.allergens = this.allergens.filter(allergen => allergen.name !== "0");
     next();
   });
+
+ingredientSchema.pre('deleteOne', {document: true}, async function(next) {
+    try{
+        await Product.updateMany({}, { $pull: { ingredients: { ingredient: this._id } } }).exec()
+        await ProdIng.updateMany({}, { $pull: { ingredients: { ingredient: this._id } } }).exec()
+        next()
+    } catch(err){
+        console.log(err)
+    }
+})
 
 module.exports = mongoose.model('Ingredient', ingredientSchema)
