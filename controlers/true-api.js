@@ -11,7 +11,7 @@ const { cloudinary } = require('../cloudinary');
 
 
 
-// ************SEND ALL DATA TO THE APP***************
+// ************SEND DATA TO THE APP***************
 
 module.exports.sendCats = async (req, res, next) => {
     try {
@@ -38,6 +38,15 @@ module.exports.sendCats = async (req, res, next) => {
     }
 }
 
+module.exports.sendOrderTime = async (req, res, next) => {
+    const orderId = req.query.orderId;
+    const order = await Order.findById(orderId);
+    if (order) {
+        res.status(200).json(order);
+    } else {
+        res.status(404).json({ message: 'Order not found' });
+    }
+}
 
 // **********************SAVE DATA*************************
 
@@ -124,11 +133,12 @@ module.exports.saveOrder = async (req, res, next) => {
                 }
                 await user.save()
             }
-            await newOrder.save()
-            res.status(200).json({ user: user, orderId: newOrder._id });
+           const order = await newOrder.save()
+           console.log(order)
+            res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index });
         } else {
-            await newOrder.save();
-            res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id });
+            const order = await newOrder.save();
+            res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
         }
     } catch (err) {
         res.status(404).json({ message: `Cant save order ${err.error.message}` });
@@ -136,15 +146,7 @@ module.exports.saveOrder = async (req, res, next) => {
     }
 }
 
-module.exports.sendOrderTime = async (req, res, next) => {
-    const orderId = req.query.orderId;
-    const order = await Order.findById(orderId);
-    if (order) {
-        res.status(200).json(order);
-    } else {
-        res.status(404).json({ message: 'Order not found' });
-    }
-}
+
 
 // ********************* EDIT DATA****************************
 
@@ -186,9 +188,11 @@ module.exports.addParingProduct = async (req, res, next) => {
             { _id: productToEditId },
             { $push: { paring: productToPushId } },
             { new: true, useFindAndModify: false }
-        ).populate({
-            path: 'paring'
-        })
+        ).populate([
+            {path: 'paring', populate: { path: 'category', select: 'name' }},
+            {path: 'subProducts'},
+            {path: 'category', select: 'name'}
+        ])
         const paringProduct = updatedProduct.paring.filter(obj => obj._id.toString() === productToPushId)
         res.status(200).json({ message: `Produsul ${updatedProduct.name} i-a fost asociat produsul ${paringProduct[0].name}`, updatedProduct })
     } catch (err) {
@@ -204,9 +208,11 @@ module.exports.removeParingProduct = async (req, res, next) => {
             { _id: productToRemoveFromId },
             { $pull: { paring: productToBeRemovedId } },
             { new: true, useFindAndModify: false }
-        ).populate({
-            path: 'paring'
-        })
+        ).populate([
+            {path: 'paring', populate: { path: 'category', select: 'name' }},
+            {path: 'subProducts'},
+            {path: 'category', select: 'name'}
+        ])
         res.status(200).json({ message: `Produsul a fost scos cu succes!`, updatedProduct })
     } catch (err) {
         console.log("Error", err)

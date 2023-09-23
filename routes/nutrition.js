@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const nutritionRoutes = require('../controlers/nutrition')
 
-
-router.route('/get-fat-token').get(nutritionRoutes.getToken);
 router.route('/ing-add')
     .post(nutritionRoutes.saveIngredient)
     .put(nutritionRoutes.editIngredient);

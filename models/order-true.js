@@ -32,6 +32,14 @@ const orderTrueSchema = new Schema({
         type: String,
         default: "open",
     },
+    toGo: {
+        type: Boolean,
+        default: false
+    },
+    pickUp: {
+        type: Boolean,
+        default: false
+    },
     completetime: {
         type: Number,
         default: 0
