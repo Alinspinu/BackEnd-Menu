@@ -100,16 +100,17 @@ module.exports.deleteIngredient = async (req, res, next) => {
 
 function calcNutrition(ingredients){
     const prefixes = ['energy', 'carbs', 'fat', 'salts', 'protein']
+    const qty = ingredients.reduce((acc, obj) => acc + obj.quantity, 0)
     const result = ingredients.reduce((acc, obj) => {
       Object.keys(obj.ingredient._doc).forEach(key => {
         if (prefixes.some(prefix => key.startsWith(prefix))) {
           if (typeof obj.ingredient._doc[key] === 'object') {
             Object.keys(obj.ingredient._doc[key]).forEach(subKey => {
               acc[key] = acc[key] || {};
-              acc[key][subKey] = round((acc[key][subKey] || 0) + (obj.ingredient._doc[key][subKey] * (obj.quantity / 100)));
+              acc[key][subKey] = round(((acc[key][subKey] || 0) + (obj.ingredient._doc[key][subKey] * (obj.quantity / 100)))/(qty/100));
             });
           } else {
-            acc[key] = round((acc[key] || 0) + (obj.ingredient._doc[key] * (obj.quantity / 100)));
+            acc[key] = round(((acc[key] || 0) + (obj.ingredient._doc[key] * (obj.quantity / 100)))/(qty/100));
           }
         } else if((Array.isArray(obj.ingredient._doc[key]))) {
           acc[key] = acc[key] || [];
