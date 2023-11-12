@@ -8,7 +8,7 @@ const upload = multer({ storage });
 
 
 router.route('/get-cats').get(apiRoutes.sendCats);
-// router.route('/get-cat').get(apiRoutes.sendCat);
+router.route('/get-tables').get(apiRoutes.sendTables);
 
 // router.route('/cat-add')
 //     .post(upload.single('image'), apiRoutes.addCat);
@@ -18,8 +18,12 @@ router.route('/sub-prod-add').post(apiRoutes.saveSubProd);
 router.route('/save-order').post(apiRoutes.saveOrder);
 router.route('/change-status').post(apiRoutes.changeStatus);
 router.route('/check-product').post(apiRoutes.checkProduct);
-router.route('/add-paring-product').post(apiRoutes.addParingProduct)
-router.route('/remove-paring-product').post(apiRoutes.removeParingProduct)
+// router.route('/check-topping').post(apiRoutes.checkTopping);
+router.route('/add-paring-product').post(apiRoutes.addParingProduct);
+router.route('/remove-paring-product').post(apiRoutes.removeParingProduct);
+router.route('/add-topping').post(apiRoutes.addTopping);
+router.route('/update-blackList').put(apiRoutes.addToBlackList);
+router.route('/get-blackList').get(apiRoutes.sendBlackList);
 
 router.route('/cat')
     // .put(upload.single('image'), apiRoutes.editCategory)

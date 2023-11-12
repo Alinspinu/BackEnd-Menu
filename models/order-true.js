@@ -8,9 +8,12 @@ const orderTrueSchema = new Schema({
         type: Number,
         index: true
     },
+    masaRest: {
+        type: Schema.Types.ObjectId,
+        ref: 'Table'
+    },
     masa: {
-        type: Number,
-        required: true
+        type: Number
     },
     productCount: {
         type: Number,
@@ -25,8 +28,12 @@ const orderTrueSchema = new Schema({
         required: true
     },
     total: {
-        type: String,
+        type: Number,
         required: true
+    },
+    discount: {
+        type: Number,
+        default: 0
     },
     status: {
         type: String,
@@ -48,6 +55,17 @@ const orderTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+    payOnSite: {
+        type: Boolean,
+        default: false
+    },
+    payOnline: {
+        type: Boolean,
+        default: false
+    },
+    paymentMethod: String,
+    userName: String, 
+    userTel: String,
     user: {
         type: Schema.Types.ObjectId,
         ref: 'UserTrue'
@@ -70,7 +88,8 @@ const orderTrueSchema = new Schema({
                 total: {
                     type: String,
                     required: true
-                }
+                },
+                toppings: [String],
             }
         ]
 

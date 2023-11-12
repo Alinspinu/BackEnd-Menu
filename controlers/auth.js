@@ -56,6 +56,8 @@ module.exports.resetPassword = async (req, res, next) => {
                     email: user.email,
                     status: user.status,
                 };
+                const data = {name: user.name, action: 'și-a resetat parola'}
+                await sendInfoAdminEmail(data)
                 res.status(200).json(userData);
             } else {
                 res.status(404).json({ message: 'User not found' });
@@ -71,10 +73,10 @@ module.exports.resetPassword = async (req, res, next) => {
 
 
 module.exports.login = async (req, res, next) => {
-    const { name, password } = req.body;
-    const user = await User.findOne({ name: name });
+    const { email, password } = req.body;
+    const user = await User.findOne({ email: email });
     if (!user || !comparePasswords(password, user.password)) {
-        return res.status(401).json({ message: 'Invalid name or password' });
+        return res.status(401).json({ message: 'Invalid email or password' });
     };
     if (user.status === 'inactive') {
         return await sendVerificationEmail(user).then(response => {
@@ -102,7 +104,10 @@ module.exports.login = async (req, res, next) => {
             cashBack: user.cashBack,
             email: user.email,
             status: user.status,
+            telephone: user.telephone,
         };
+        const data = {name: user.name, action: 's-a conectat'}
+        await sendInfoAdminEmail(data)
         res.status(200).json(sendData);
     };
 };
@@ -123,8 +128,11 @@ module.exports.verifyToken = async (req, res, next) => {
                     admin: user.admin,
                     cashBack: user.cashBack,
                     email: user.email,
-                    status: user.status
+                    status: user.status,
+                    telephone: user.telephone
                 };
+                const data = {name: user.name, action: 's-a inregistrat'}
+                await sendInfoAdminEmail(data)
                 res.status(200).json(userData);
             } else {
                 res.status(404).json({ message: 'User not found' });
@@ -139,7 +147,8 @@ module.exports.verifyToken = async (req, res, next) => {
 }
 
 module.exports.register = async (req, res, next) => {
-    const { email, password, confirmPassword, name, firstCart } = req.body;
+    const { email, password, tel, confirmPassword, name, firstCart, survey } = req.body;
+    console.log(req.body)
     const check = await User.find({ email: email });
     if (check.length) {
         return res.status(256).json({ message: 'This email allrady exist' });
@@ -150,8 +159,11 @@ module.exports.register = async (req, res, next) => {
             email: email,
             password: hashedPassword,
             name: name,
+            telephone: tel,
             firstCart: firstCart,
+            survey: survey
         });
+        console.log(newUser)
         await newUser.save();
         await sendVerificationEmail(newUser).then(response => {
             if (response.message === 'Email sent') {
@@ -253,4 +265,40 @@ async function sendResetEmail(newUser) {
         return { message: 'Error sending email' };
     };
 };
+
+async function sendInfoAdminEmail(data) {
+    const templateSource = fs.readFileSync('views/layouts/info-admin.ejs', 'utf-8');
+    const templateData = {
+        name: data.name,
+        action: data.action
+
+    };
+    const renderedTemplate = ejs.render(templateSource, templateData);
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'truefinecoffee@gmail.com',
+            pass: process.env.GMAIL_PASS
+        }
+    });
+
+    const mailOptions = {
+        from: 'truefinecoffee@gmail.com',
+        to: "alinz.spinu@gmail.com",
+        subject: 'Info',
+        html: renderedTemplate
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+        return { message: 'Email sent' };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { message: 'Error sending email' };
+    };
+};
+
+
 

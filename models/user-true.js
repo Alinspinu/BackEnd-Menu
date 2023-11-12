@@ -17,6 +17,9 @@ const UserTrueSchema = new Schema({
         type: String,
         required: true
     },
+    telephone: {
+        type: String
+    },
     admin: {
         type: Number,
         default: 0
@@ -30,6 +33,7 @@ const UserTrueSchema = new Schema({
         enum: ['active', 'inactive'],
         default: 'inactive'
     },
+    survey: String,
     firstCart: String,
     orders:
         [

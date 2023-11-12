@@ -7,11 +7,27 @@ const Category = require('../models/cat-true')
 const Cat = require('../models/cat-true')
 const User = require('../models/user-true')
 const Order = require('../models/order-true')
+const Table = require('../models/table')
+const BlackList = require('../models/blacList')
 const { cloudinary } = require('../cloudinary');
+const blacList = require('../models/blacList');
+const nodemailer = require('nodemailer');
+const fs = require('fs');
+const ejs = require('ejs');
 
 
 
 // ************SEND DATA TO THE APP***************
+
+module.exports.sendTables = async (req, res, next) => {
+    try{
+        const tables = await Table.find({}).populate({path: 'bills', model: "OrderTrue", match: {status: 'open'}})
+        res.status(200).json(tables)
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err})
+    }
+}
 
 module.exports.sendCats = async (req, res, next) => {
     try {
@@ -48,7 +64,50 @@ module.exports.sendOrderTime = async (req, res, next) => {
     }
 }
 
+module.exports.sendBlackList = async (req, res, next) => {
+    const blackList = await BlackList.findOne({name: 'True'});
+    if(blackList){
+        res.status(200).json(blackList.list)
+    } else {
+        console.log('Something went wrong!')
+        res.status(404).json({message: 'Black list not found'})
+    }
+}
+
 // **********************SAVE DATA*************************
+
+module.exports.addToBlackList = async (req, res, next) => {
+    try{
+        if(req.body.length){
+            const blackList = await BlackList.findOneAndUpdate(
+                {name: 'True'}, 
+                {$set: {list: req.body}},  
+                { new: true, useFindAndModify: false })
+                res.status(200).json({message: "Black list updated", list: blackList.list})
+        } else {
+            const blackList = await BlackList.findOneAndUpdate(
+                {name: 'True'}, 
+                {$set: {list: []}},  
+                { new: true, useFindAndModify: false })
+                res.status(200).json({message: "Black list cleared", list: blackList.list})
+        }
+    }catch (err) {
+        console.log('Error', err);
+        res.status(500).json({message: err})
+    }   
+}
+
+module.exports.addTopping = async (req, res, next) => {
+    try{
+        const {id} = req.query;
+        const newProduct = await Product.findOneAndUpdate({_id: id}, {$push: {toppings: req.body}}, {new: true, useFindAndModify: false}).populate({path: 'category', select: 'name'})
+        res.status(200).json(newProduct)
+    } catch (err){
+        console.log("Error", err)
+        res.status(500).json({message: err})
+    }
+    
+}
 
 module.exports.saveSubProd = async (req, res, next) => {
     try {
@@ -91,15 +150,11 @@ module.exports.addCat = async (req, res, next) => {
 
 module.exports.addProd = async (req, res, next) => {
     try {
-        const nutrition = JSON.parse(req.body.strNutrition);
-        const allergens = JSON.parse(req.body.strAllergens);
         const { category } = req.body;
         const cat = await Cat.findById(category);
         const product = new Product(req.body);
         product.order = parseFloat(req.body.order);
         product.price = parseFloat(req.body.price);
-        product.nutrition = nutrition;
-        product.allergens = allergens;
         if (req.file) {
             const { path, filename } = req.file;
             product.image.filename = filename;
@@ -133,22 +188,38 @@ module.exports.saveOrder = async (req, res, next) => {
                 }
                 await user.save()
             }
-           const order = await newOrder.save()
-           console.log(order)
+            console.log("before saveOrder 1")
+            const order = await newOrder.save()
+            let action 
+            
+            if(order.payOnSite){
+                action = `a dat o comanda pe care o plătește în locație cu cashBack ${order.cashBack}`
+            } 
+            if(order.payOnline){
+                action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
+            }
+            const data = {name: user.name + ' ' + user.telephone, action: action}
+            await sendInfoAdminEmail(data)
             res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index });
         } else {
+            console.log("before saveOrder 2")
             const order = await newOrder.save();
+            const data = {name: 'No user', action: 'a dat o comanda ce a fost platita Online'}
+            await sendInfoAdminEmail(data)
             res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
         }
     } catch (err) {
-        res.status(404).json({ message: `Cant save order ${err.error.message}` });
         console.log('Error', err.message);
+        res.status(404).json({ message: `Cant save order` });
     }
 }
 
 
 
 // ********************* EDIT DATA****************************
+
+
+
 
 module.exports.changeStatus = async (req, res, next) => {
     const { stat, id } = req.body
@@ -261,7 +332,7 @@ module.exports.editCategory = async (req, res, next) => {
 
 
 module.exports.editProduct = async (req, res, next) => {
-    const { id, category, name, price, qty, description, order, strAllergens, strNutrition, longDescription } = req.body
+    const { id, category, name, price, qty, description, order, longDescription } = req.body
     if (id) {
         const oldProduct = await Product.findById(id).populate({ path: 'category', select: 'name' }).populate({ path: 'subProducts' })
         if (oldProduct) {
@@ -271,8 +342,6 @@ module.exports.editProduct = async (req, res, next) => {
                 oldProduct.description = description;
             oldProduct.longDescription = longDescription;
             oldProduct.order = parseFloat(order);
-            oldProduct.nutrition = JSON.parse(strNutrition);
-            oldProduct.allergens = JSON.parse(strAllergens);
             if (oldProduct.category._id.toString() !== category) {
                 try {
                     await Cat.updateOne({ _id: oldProduct.category._id }, { $pull: { product: oldProduct._id } })
@@ -389,11 +458,9 @@ module.exports.delProduct = async (req, res, next) => {
 
 
 
-// ********************VERIFY DATA******************************
-
 module.exports.checkProduct = async (req, res, next) => {
-    const { subProdId, prodId } = req.body
-    if (subProdId.length) {
+    const { subProdId, prodId, toppings } = req.body
+    if (subProdId.length || subProdId.length && toppings.length) {
         const subProducts = await SubProduct.find({ _id: { $in: subProdId }, available: false }).populate({ path: 'product' })
         if (subProducts.length) {
             let productsName = []
@@ -406,9 +473,9 @@ module.exports.checkProduct = async (req, res, next) => {
                 res.status(226).json({ message: `Ne pare rău! Produsul ${productsName} nu mai este pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
             }
         } else {
-            res.status(200).json({ message: `All good` })
+            await checkTopping(toppings, res)
         }
-    } else if (prodId.length) {
+    } else if (prodId.length || prodId.length && toppings.length) {
         const products = await Product.find({ _id: { $in: prodId }, available: false })
         if (products.length) {
             productName = []
@@ -421,17 +488,63 @@ module.exports.checkProduct = async (req, res, next) => {
                 res.status(226).json({ message: `Ne pare rău! Produsul ${productName} nu mai este pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
             }
         } else {
-            res.status(200).json({ message: `All good` })
+            await checkTopping(toppings, res)
         }
-    }
+    } 
 }
 
 function round(num) {
     return Math.round(num * 1000) / 1000;
 }
 
+async function checkTopping(toppings, res) {
+    const blackList = await BlackList.findOne({name: 'True'})
+    if(blackList.list.length){
+        const matchBlackList = blackList.list.filter(item => toppings.includes(item))
+        if(matchBlackList.length) {
+           return res.status(226).json({message: `Ne pare rau! Produsele ${matchBlackList} nu mai sunt pe stoc!`})
+        } else {
+           return res.status(200).json({message: "All good"})
+        }
+    } else {
+        return res.status(200).json({message: "All good"})
+    }
+}
 
 
+async function sendInfoAdminEmail(data) {
+    const templateSource = fs.readFileSync('views/layouts/info-admin.ejs', 'utf-8');
+    const templateData = {
+        name: data.name,
+        action: data.action
+
+    };
+    const renderedTemplate = ejs.render(templateSource, templateData);
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'truefinecoffee@gmail.com',
+            pass: process.env.GMAIL_PASS
+        }
+    });
+
+    const mailOptions = {
+        from: 'truefinecoffee@gmail.com',
+        to: "alinz.spinu@gmail.com",
+        subject: 'Info',
+        html: renderedTemplate
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+        return { message: 'Email sent' };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { message: 'Error sending email' };
+    };
+};
 
 
 // module.exports.register = async (req, res, next) => {

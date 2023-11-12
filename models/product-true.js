@@ -21,6 +21,14 @@ const productTrueSchema = new Schema({
         type: Number,
         required: true
     },
+    toppings:[
+            {
+                name: String,
+                price: Number,
+                qty: Number,
+                um: String,
+            }
+    ],
     price: Number,
     description: String,
     longDescription: String,
@@ -54,19 +62,43 @@ const productTrueSchema = new Schema({
     ],
     nutrition: {
         energy: {
-            kJ: Number,
-            kcal: Number,
+            kJ: {
+                type: Number,
+                default: 0
+            },
+            kcal:  {
+                type: Number,
+                default: 0
+            },
         },
         fat: {
-            all: Number,
-            satAcids: Number,
+            all:  {
+                type: Number,
+                default: 0
+            },
+            satAcids: {
+                type: Number,
+                default: 0
+            },
         },
         carbs: {
-            all: Number,
-            sugar: Number,
+            all: {
+                type: Number,
+                default: 0
+            },
+            sugar: {
+                type: Number,
+                default: 0
+            },
         },
-        salts: Number,
-        protein: Number,
+        salts:  {
+            type: Number,
+            default: 0
+        },
+        protein:  {
+            type: Number,
+            default: 0
+        },
     },
     qty: {
         type: String,

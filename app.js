@@ -20,6 +20,8 @@ const ordersTrueRoutes = require('./routes/true-orders');
 const payRoutes = require('./routes/payment');
 const authRoutes = require('./routes/auth');
 const nutritionRoutes = require('./routes/nutrition')
+const registerRoutes = require('./routes/register')
+const messRoutes = require('./routes/messages')
 
 const dbUrl = process.env.DB_URL
 
@@ -58,6 +60,8 @@ app.use("/orders", ordersTrueRoutes)
 app.use('/pay', payRoutes)
 app.use('/auth', authRoutes)
 app.use('/nutrition', nutritionRoutes)
+app.use('/register', registerRoutes)
+app.use('/message', messRoutes)
 
 const ctrl = require('./controlers/true-api')
 const multer = require('multer');
@@ -68,6 +72,17 @@ app.post('/api-true/cat-add', upload.single('image'), ctrl.addCat)
 app.put('/api-true/cat', upload.single('image'), ctrl.editCategory)
 
 
+
+// const Table = require('./models/table')
+
+// app.get('/create-tables', async (req, res) => {
+//     for(let i=0; i< 60; i++){
+//         const table = new Table()
+//         await table.save()
+//         console.log(table.index)
+//     }
+//     res.send('mesele au fost create')
+// }) 
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {

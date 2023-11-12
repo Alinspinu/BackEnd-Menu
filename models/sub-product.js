@@ -19,7 +19,6 @@ const subProductSchema = new Schema({
     },
     order: {
         type: Number,
-        required: true
     },
     image: {
         filename: String,

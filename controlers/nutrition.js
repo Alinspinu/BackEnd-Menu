@@ -50,15 +50,19 @@ module.exports.saveIngredientsToProduct = async (req, res, next) => {
 }
 
 module.exports.saveProductIngredient = async (req, res, next) => {
+    console.log(req.query, req.body)
     try {
         const {name} = req.query;
         const prodIng = new ProdIngredient({
             name,
             ingredients: req.body
         })
+        console.log(prodIng)
         await prodIng.save()
         const updatedProdIng = await ProdIngredient.findOne({name: name}).populate({path: 'ingredients.ingredient'})
         const result = calcNutrition(updatedProdIng.ingredients)
+        console.log(updatedProdIng.ingredients)
+        console.log(result)
         const ing = new Ingredient(result)
         ing.name = name,
         await ing.save()
@@ -101,6 +105,7 @@ module.exports.deleteIngredient = async (req, res, next) => {
 function calcNutrition(ingredients){
     const prefixes = ['energy', 'carbs', 'fat', 'salts', 'protein']
     const qty = ingredients.reduce((acc, obj) => acc + obj.quantity, 0)
+    console.log(qty)
     const result = ingredients.reduce((acc, obj) => {
       Object.keys(obj.ingredient._doc).forEach(key => {
         if (prefixes.some(prefix => key.startsWith(prefix))) {

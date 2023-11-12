@@ -6,7 +6,7 @@ const productIngredientSchema = new Schema({
     name: String,
     ingredients: [
         {   quantity: {
-                type: String,
+                type: Number,
                 required: true
             },
             ingredient: {
