@@ -1,16 +1,17 @@
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
-const Product = require('../models/product-true')
-const SubProduct = require('../models/sub-product')
-const Category = require('../models/cat-true')
-const Cat = require('../models/cat-true')
+const Product = require('../models/product/product-true')
+const SubProduct = require('../models/product/sub-product')
+const Category = require('../models/product/cat-true')
+const Cat = require('../models/product/cat-true')
 const User = require('../models/user-true')
-const Order = require('../models/order-true')
-const Table = require('../models/table')
-const BlackList = require('../models/blacList')
+const Order = require('../models/product/order-true')
+const Table = require('../models/utils/table')
+const BlackList = require('../models/product/blacList')
+const Bill = require('../models/product/order-true')
 const { cloudinary } = require('../cloudinary');
-const blacList = require('../models/blacList');
+const blacList = require('../models/product/blacList');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const ejs = require('ejs');
@@ -29,6 +30,7 @@ module.exports.sendTables = async (req, res, next) => {
     }
 }
 
+
 module.exports.sendCats = async (req, res, next) => {
     try {
         const { mainCat } = req.query;
@@ -40,7 +42,6 @@ module.exports.sendCats = async (req, res, next) => {
                     path: 'subProducts',
                     populate: {
                         path: 'product',
-
                     }
                 },
                 { path: 'paring', populate: { path: 'category', select: 'name' } },
@@ -75,6 +76,37 @@ module.exports.sendBlackList = async (req, res, next) => {
 }
 
 // **********************SAVE DATA*************************
+
+
+
+module.exports.saveOrEditBill = async (req, res, next) => {
+    try{
+        const {bill} = req.body;
+        const parsedBill = JSON.parse(bill)
+        const {index, billId} = req.query;
+        if(billId === "new"){
+            delete parsedBill._id
+            delete parsedBill.index
+            const table = await Table.findOne({index: index})
+            const bill = new Bill(parsedBill);
+            table.bills.push(bill);
+            const savedBill = await bill.save();
+            await table.save();
+            console.log(savedBill)
+            console.log(table)
+            res.status(200).json({billId: savedBill._id, index: savedBill.index})
+        } else {
+            const bill = await Bill.findByIdAndUpdate(billId, parsedBill, {new: true});
+            res.status(200).json({billId: bill._id, index: bill.index})
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: 'Something went wrong', err})
+    }
+    
+}
+
+
 
 module.exports.addToBlackList = async (req, res, next) => {
     try{
@@ -111,19 +143,22 @@ module.exports.addTopping = async (req, res, next) => {
 
 module.exports.saveSubProd = async (req, res, next) => {
     try {
-        const { id, name, price, order } = req.body;
-        const product = await Product.findById(id);
+        const {product, name, price, order, qty, ings, toppings} = req.body;
+        const productSub = await Product.findById(product);
         const newSubProduct = new SubProduct({
             name: name,
             price: price,
-            product: id,
+            product: product,
             order: parseFloat(order),
+            qty: qty,
+            ings: ings,
+            toppings: toppings
         });
-        product.subProducts.push(newSubProduct);
+        productSub.subProducts.push(newSubProduct);
         await newSubProduct.save();
-        await product.save();
+        await productSub.save();
         const subToSend = await SubProduct.findById(newSubProduct._id).populate({ path: 'product', select: 'category' });
-        res.status(200).json({ message: `${name}, was saved in ${product.name}`, subProduct: subToSend })
+        res.status(200).json({ message: `${name}, was saved in ${productSub.name}`, subProduct: subToSend })
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.error.message });
@@ -155,6 +190,10 @@ module.exports.addProd = async (req, res, next) => {
         const product = new Product(req.body);
         product.order = parseFloat(req.body.order);
         product.price = parseFloat(req.body.price);
+        if(req.query){
+            product.ings = JSON.parse(req.query.ings)
+            product.toppings = JSON.parse(req.query.toppings)
+        }
         if (req.file) {
             const { path, filename } = req.file;
             product.image.filename = filename;
@@ -188,8 +227,8 @@ module.exports.saveOrder = async (req, res, next) => {
                 }
                 await user.save()
             }
-            console.log("before saveOrder 1")
             const order = await newOrder.save()
+            console.log(`Order ${order._id} saved with the user ${user.name}!`)
             let action 
             
             if(order.payOnSite){
@@ -202,8 +241,8 @@ module.exports.saveOrder = async (req, res, next) => {
             await sendInfoAdminEmail(data)
             res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index });
         } else {
-            console.log("before saveOrder 2")
             const order = await newOrder.save();
+            console.log(`Order ${order._id} saved without a user!`)
             const data = {name: 'No user', action: 'a dat o comanda ce a fost platita Online'}
             await sendInfoAdminEmail(data)
             res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
@@ -217,8 +256,6 @@ module.exports.saveOrder = async (req, res, next) => {
 
 
 // ********************* EDIT DATA****************************
-
-
 
 
 module.exports.changeStatus = async (req, res, next) => {
@@ -333,40 +370,57 @@ module.exports.editCategory = async (req, res, next) => {
 
 module.exports.editProduct = async (req, res, next) => {
     const { id, category, name, price, qty, description, order, longDescription } = req.body
-    if (id) {
-        const oldProduct = await Product.findById(id).populate({ path: 'category', select: 'name' }).populate({ path: 'subProducts' })
-        if (oldProduct) {
-            oldProduct.name = name,
-                oldProduct.price = price
-            oldProduct.qty = qty,
-                oldProduct.description = description;
-            oldProduct.longDescription = longDescription;
-            oldProduct.order = parseFloat(order);
-            if (oldProduct.category._id.toString() !== category) {
-                try {
-                    await Cat.updateOne({ _id: oldProduct.category._id }, { $pull: { product: oldProduct._id } })
-                    await Cat.updateOne({ _id: category }, { $push: { product: oldProduct._id } })
-                    oldProduct.category = category
-                } catch (error) {
-                    console.log(error)
-                    res.status(404).json({ messsage: "Ceva nu a mers bine la salvarea categoriilor", error: error.messsage })
+    try{
+        if(req.query.sub){
+            const subs = JSON.parse(req.query.sub)
+            for(let el of subs){
+                if(el._id){
+                   await SubProduct.findOneAndUpdate({_id: el._id}, el)   
                 }
             }
-            if (req.file) {
-                const { filename, path } = req.file
-                await cloudinary.uploader.destroy(oldProduct.image.filename)
-                oldProduct.image.filename = filename;
-                oldProduct.image.path = path;
-                // await oldProduct.save()
-            }
-            console.log(oldProduct)
-            await oldProduct.save()
-            res.status(200).json({ message: 'Produst a fost modificat cu success!', product: oldProduct })
-        } else {
-            res.status(404).json({ message: 'Produsul nu a fost găsit in baza de date!' })
         }
-    } else {
-        res.status(404).json({ message: 'Lipsă ID produs!!' })
+        if (id) {
+            const oldProduct = await Product.findById(id).populate({ path: 'category', select: 'name' }).populate({ path: 'subProducts' })
+            if (oldProduct) {
+                if(req.query){
+                    oldProduct.ings = JSON.parse(req.query.ings)
+                    oldProduct.toppings = JSON.parse(req.query.toppings)
+                }
+                oldProduct.name = name,
+                    oldProduct.price = price
+                oldProduct.qty = qty,
+                    oldProduct.description = description;
+                oldProduct.longDescription = longDescription;
+                oldProduct.order = parseFloat(order);
+                if (oldProduct.category._id.toString() !== category) {
+                    try {
+                        await Cat.updateOne({ _id: oldProduct.category._id }, { $pull: { product: oldProduct._id } })
+                        await Cat.updateOne({ _id: category }, { $push: { product: oldProduct._id } })
+                        oldProduct.category = category
+                    } catch (error) {
+                        console.log(error)
+                        res.status(404).json({ messsage: "Ceva nu a mers bine la salvarea categoriilor", error: error.messsage })
+                    }
+                }
+                if (req.file) {
+                    const { filename, path } = req.file
+                    await cloudinary.uploader.destroy(oldProduct.image.filename)
+                    oldProduct.image.filename = filename;
+                    oldProduct.image.path = path;
+                    // await oldProduct.save()
+                }
+                console.log(oldProduct)
+                await oldProduct.save()
+                res.status(200).json({ message: 'Produst a fost modificat cu success!', product: oldProduct })
+            } else {
+                res.status(404).json({ message: 'Produsul nu a fost găsit in baza de date!' })
+            }
+        } else {
+            res.status(404).json({ message: 'Lipsă ID produs!!' })
+        }
+    } catch( error){
+        console.log(error)
+        res.status(500).json({message: error})
     }
 }
 

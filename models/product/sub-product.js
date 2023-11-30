@@ -1,7 +1,8 @@
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Product = require('./product-true')
+const Product = require('./product-true');
+
 
 
 const subProductSchema = new Schema({
@@ -11,23 +12,33 @@ const subProductSchema = new Schema({
         type: Number,
         default: 0
     },
-    total: {
-        type: Number,
-    },
+    qty: String,
     description: {
         type: String
     },
     order: {
         type: Number,
     },
-    image: {
-        filename: String,
-        path: String
-    },
     available: {
         type: Boolean,
         default: true
     },
+    tva: {
+        type: Number
+    },
+    ings: [
+        {
+          name: {
+            type: String,
+          },
+          qty: {
+            type: Number,
+          },
+          price: {
+            type: Number,
+          },
+        },
+      ],
     product: {
         type: Schema.Types.ObjectId,
         ref: 'ProductTrue'

@@ -20,14 +20,18 @@ const tableSchema = new Schema({
 tableSchema.pre("save", async function (next) {
     try {
         const doc = this;
-        const counter = await Counter.findOneAndUpdate(
-            { model: "Table" },
-            { $inc: { value: 1 } },
-            { upsert: true, new: true }
-        ).exec();
-
-        doc.index = counter.value;
-        next();
+        if(doc.index > 1){
+            next()
+        } else {
+            const counter = await Counter.findOneAndUpdate(
+                { model: "Table" },
+                { $inc: { value: 1 } },
+                { upsert: true, new: true }
+            ).exec();
+    
+            doc.index = counter.value;
+            next();
+        }
     } catch (error) {
         next(error);
     }

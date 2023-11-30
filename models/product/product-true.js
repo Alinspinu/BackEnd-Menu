@@ -27,17 +27,33 @@ const productTrueSchema = new Schema({
                 price: Number,
                 qty: Number,
                 um: String,
+                ingPrice: Number,
             }
     ],
     price: Number,
     description: String,
     longDescription: String,
+    tva: Number,
+    dep: String,
     paring: [
         {
             type: Schema.Types.ObjectId,
             ref: "ProductTrue"
         }
     ],
+    ings: [
+        {
+          name: {
+            type: String,
+          },
+          qty: {
+            type: Number,
+          },
+          price: {
+            type: Number,
+          },
+        },
+      ],
     ingredients: [       
         {
             quantity: {
@@ -115,6 +131,7 @@ const productTrueSchema = new Schema({
         type: Number,
 
     },
+    mainCat: String,
     category:
     {
         type: Schema.Types.ObjectId,
@@ -132,7 +149,7 @@ const productTrueSchema = new Schema({
 
 productTrueSchema.pre('deleteOne', { document: true }, async function (next) {
     await Category.updateMany({ product: this._id }, { $pull: { product: this._id } }).exec()
-    await this.updateMany({ paring: this._id }, { $pull: { paring: this._id } }).exec()
+    // await this.updateMany({ paring: this._id }, { $pull: { paring: this._id } }).exec()
     next()
 })
 

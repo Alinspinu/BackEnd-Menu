@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
-const Counter = require('./counter')
+const Counter = require('../utils/counter')
 
 const orderTrueSchema = new Schema({
     index: {
@@ -12,6 +12,7 @@ const orderTrueSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Table'
     },
+    production: Boolean,
     masa: {
         type: Number
     },
@@ -22,6 +23,10 @@ const orderTrueSchema = new Schema({
     tips: {
         type: Number,
         default: 0
+    },
+    pending: {
+        type: Boolean,
+        default: true
     },
     totalProducts: {
         type: Number,
@@ -51,6 +56,9 @@ const orderTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+    endTime: {
+        type: String
+    },
     cashBack: {
         type: Number,
         default: 0
@@ -77,6 +85,11 @@ const orderTrueSchema = new Schema({
                     type: String,
                     required: true
                 },
+                category: String,
+                mainCat: String,
+                imgPath: String,
+                payToGo: Boolean,
+                sub: Boolean,
                 quantity: {
                     type: Number,
                     required: true
@@ -100,14 +113,14 @@ const orderTrueSchema = new Schema({
 orderTrueSchema.pre("save", async function (next) {
     try {
         const doc = this;
-        const counter = await Counter.findOneAndUpdate(
-            { model: "Order" },
-            { $inc: { value: 1 } },
-            { upsert: true, new: true }
-        ).exec();
-
-        doc.index = counter.value;
-        next();
+            const counter = await Counter.findOneAndUpdate(
+                { model: "Order" },
+                { $inc: { value: 1 } },
+                { upsert: true, new: true }
+            ).exec();
+    
+            doc.index = counter.value;
+            next();
     } catch (error) {
         next(error);
     }

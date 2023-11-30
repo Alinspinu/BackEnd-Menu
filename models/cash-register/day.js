@@ -44,8 +44,6 @@ daySchema.pre('save', async function (next) {
             cashOutDifference = this.cashOut - originalDocument.cashOut;
         }
         const nextDocument = await this.constructor.findOne({ date: { $gt: this.date } });
-        console.log(this)
-        console.log(nextDocument)
 
         if (nextDocument) {
             nextDocument.cashIn += cashOutDifference;

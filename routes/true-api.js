@@ -9,16 +9,16 @@ const upload = multer({ storage });
 
 router.route('/get-cats').get(apiRoutes.sendCats);
 router.route('/get-tables').get(apiRoutes.sendTables);
+router.route('/add-bill').post(apiRoutes.saveOrEditBill);
 
-// router.route('/cat-add')
-//     .post(upload.single('image'), apiRoutes.addCat);
+router.route('/cat-add')
+    .post(upload.single('image'), apiRoutes.addCat);
 router.route('/prod-add')
     .post(upload.single('image'), apiRoutes.addProd);
 router.route('/sub-prod-add').post(apiRoutes.saveSubProd);
 router.route('/save-order').post(apiRoutes.saveOrder);
 router.route('/change-status').post(apiRoutes.changeStatus);
 router.route('/check-product').post(apiRoutes.checkProduct);
-// router.route('/check-topping').post(apiRoutes.checkTopping);
 router.route('/add-paring-product').post(apiRoutes.addParingProduct);
 router.route('/remove-paring-product').post(apiRoutes.removeParingProduct);
 router.route('/add-topping').post(apiRoutes.addTopping);

@@ -1,9 +1,9 @@
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
-const Ingredient = require('../models/ingredient')
-const Product = require('../models/product-true')
-const ProdIngredient = require('../models/prod-ingredient')
+const Ingredient = require('../models/nutrition/ingredient')
+const Product = require('../models/product/product-true')
+const ProdIngredient = require('../models/nutrition/prod-ingredient')
 
 
 

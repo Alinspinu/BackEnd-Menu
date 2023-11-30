@@ -1,8 +1,13 @@
-const Day = require('../models/day');
-const Entry = require('../models/entry');
+const Day = require('../models/cash-register/day');
+const Entry = require('../models/cash-register/entry');
 const exceljs = require('exceljs');
+const createCashRegisterDay = require('../utils/createDay')
+
+
+
 
 module.exports.sendEntry = async (req, res, next) => {
+    createCashRegisterDay()
     const data = req.query.date
     const page = req.query.page || 1;
     const limit = 3
@@ -19,9 +24,63 @@ module.exports.sendEntry = async (req, res, next) => {
   
 }
 
+
+module.exports.addEntry = async (req, res, next) => {
+    const { tip, date, description, amount } = req.body
+    if(tip && date && description && amount){
+        const entryDate = new Date(date)
+        const newEntry = new Entry({
+            tip: tip,
+            date: entryDate,
+            description: description,
+            amount: tip === 'expense' ? -amount : amount,
+        })
+        newEntry.save()
+        entryDate.setUTCHours(0,0,0,0)
+        const nextDay = new Date(entryDate);
+        nextDay.setDate(entryDate.getDate() + 1);
+        const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay} }).populate({ path: 'entry' })
+        if (day) {
+            const daySum = day.entry.reduce((total, doc) => total + doc.amount, 0)
+            day.entry.push(newEntry)
+            const dayTotal = daySum + newEntry.amount + day.cashIn
+            day.cashOut = dayTotal
+            await day.save()
+            res.status(200).json(day)
+        } 
+    } else {
+        res.status(226).json({message: 'Nu ai completat toate campurile mai incearca.. :)'})
+    }
+}
+
+
+
+module.exports.deleteEntry = async (req, res, next) => {
+    const { id } = req.query;
+    try {
+        const entry = await Entry.findById(id)
+        const day = await Day.findOne({ date: entry.date })
+        await entry.deleteOne();
+        await Day.findOneAndUpdate({ _id: day._id }, { $pull: { entry: entry._id } }).exec()
+        day.cashOut = day.cashOut - entry.amount
+        if(!day.entry.length){
+            console.log("ceva")
+            day.cashOut = day.cashIn
+        }
+        day.save()
+        res.status(200).json({ message: `Entry ${entry.description}, with the amount ${entry.amount} was deleted` })
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: err.message })
+    }
+}
+
+
+
+
+
 module.exports.createXcel = async (req, res, next) => {
     const {startDate, endDate} = req.query
-
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(0,0,0,0)
     try{
@@ -60,7 +119,6 @@ module.exports.createXcel = async (req, res, next) => {
                 size: 14
             }
         })
-
         worksheet.getColumn(1).width = 7;
         worksheet.getColumn(2).width = 12; 
         worksheet.getColumn(3).width = 30; 
@@ -69,7 +127,6 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.mergeCells('A1:D1')
         const lastRowNumber = worksheet.lastRow.number;
         worksheet.mergeCells(`A${lastRowNumber}:D${lastRowNumber}`)
-
         workbook.xlsx.writeFile('example.xlsx')
           .then(() => {
             console.log('Workbook created successfully');
@@ -82,16 +139,6 @@ module.exports.createXcel = async (req, res, next) => {
         console.log(err)
         res.status(500).json({message: "Error", err})
     }
-
-
-
-// worksheet.addRow(['Name', 'Age', 'City']);
-// worksheet.addRow(['John Doe', 30, 'New York']);
-// worksheet.addRow(['Jane Smith', 25, 'Los Angeles']);
-
-// // Save the workbook to a file
-
-//   res.status(200)
 }
 
 

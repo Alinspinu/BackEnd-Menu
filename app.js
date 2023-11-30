@@ -22,6 +22,7 @@ const authRoutes = require('./routes/auth');
 const nutritionRoutes = require('./routes/nutrition')
 const registerRoutes = require('./routes/register')
 const messRoutes = require('./routes/messages')
+const officeRoutes = require('./routes/back-office')
 
 const dbUrl = process.env.DB_URL
 
@@ -62,6 +63,7 @@ app.use('/auth', authRoutes)
 app.use('/nutrition', nutritionRoutes)
 app.use('/register', registerRoutes)
 app.use('/message', messRoutes)
+app.use('/office', officeRoutes)
 
 const ctrl = require('./controlers/true-api')
 const multer = require('multer');
