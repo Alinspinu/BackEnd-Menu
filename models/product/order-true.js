@@ -8,6 +8,10 @@ const orderTrueSchema = new Schema({
         type: Number,
         index: true
     },
+    name: {
+        type: String,
+        default: 'COMANDA'
+    },
     masaRest: {
         type: Schema.Types.ObjectId,
         ref: 'Table'
@@ -77,6 +81,10 @@ const orderTrueSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
         ref: 'UserTrue'
+    },
+    employee:{
+        type: Schema.Types.ObjectId,
+        ref: 'Employee'
     },
     products:
         [

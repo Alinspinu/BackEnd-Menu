@@ -28,6 +28,14 @@ const UserTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    },
+    employee: {
+        type: Schema.Types.ObjectId,
+        ref: 'Employee'
+    },
     status: {
         type: String,
         enum: ['active', 'inactive'],

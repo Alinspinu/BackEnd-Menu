@@ -19,10 +19,12 @@ const trueApiRoutes = require('./routes/true-api');
 const ordersTrueRoutes = require('./routes/true-orders');
 const payRoutes = require('./routes/payment');
 const authRoutes = require('./routes/auth');
-const nutritionRoutes = require('./routes/nutrition')
-const registerRoutes = require('./routes/register')
-const messRoutes = require('./routes/messages')
-const officeRoutes = require('./routes/back-office')
+const nutritionRoutes = require('./routes/nutrition');
+const registerRoutes = require('./routes/register');
+const messRoutes = require('./routes/messages');
+const officeRoutes = require('./routes/back-office');
+const tableRoutes = require('./routes/table');
+const usersRoutes = require('./routes/users');
 
 const dbUrl = process.env.DB_URL
 
@@ -64,6 +66,8 @@ app.use('/nutrition', nutritionRoutes)
 app.use('/register', registerRoutes)
 app.use('/message', messRoutes)
 app.use('/office', officeRoutes)
+app.use('/table', tableRoutes)
+app.use('/users', usersRoutes)
 
 const ctrl = require('./controlers/true-api')
 const multer = require('multer');
@@ -75,15 +79,17 @@ app.put('/api-true/cat', upload.single('image'), ctrl.editCategory)
 
 
 
-// const Table = require('./models/table')
+// const Table = require('./models/utils/table')
 
 // app.get('/create-tables', async (req, res) => {
-//     for(let i=0; i< 60; i++){
-//         const table = new Table()
-//         await table.save()
-//         console.log(table.index)
+
+//     const tables = await Table.find({})
+
+//     for(let i=0; i< tables.length; i++){
+//        tables[i].index = i+1
+//        await tables[i].save()
 //     }
-//     res.send('mesele au fost create')
+//     res.send('mesele au fost modificate')
 // }) 
 
 const port = process.env.PORT || 8080;

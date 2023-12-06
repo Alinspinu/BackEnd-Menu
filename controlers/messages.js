@@ -62,7 +62,8 @@ module.exports.send = async (req, res, next) => {
      if (
         change.fullDocument &&
         change.operationType === "insert" &&
-        change.fullDocument.status === 'open'
+        change.fullDocument.status === 'open' &&
+        change.fillDocument.production === false
     ) {
       const userName = change.fullDocument.userName
       const docToSend = JSON.stringify(change.fullDocument)

@@ -22,7 +22,11 @@ const ejs = require('ejs');
 
 module.exports.sendTables = async (req, res, next) => {
     try{
-        const tables = await Table.find({}).populate({path: 'bills', model: "OrderTrue", match: {status: 'open'}})
+        const tables = await Table.find({}).populate({
+            path: 'bills', 
+            model: "OrderTrue", 
+            match: {status: 'open'}, 
+            populate: {path: 'masaRest', select: 'index'}})
         res.status(200).json(tables)
     } catch(err){
         console.log(err)
@@ -216,6 +220,7 @@ module.exports.saveOrder = async (req, res, next) => {
     try {
         const newOrder = new Order(req.body)
         const userId = req.body.user;
+        const nrMasa = req.body.masa
         if (userId) {
             const user = await User.findById(userId);
             if (user) {
@@ -229,6 +234,13 @@ module.exports.saveOrder = async (req, res, next) => {
             }
             const order = await newOrder.save()
             console.log(`Order ${order._id} saved with the user ${user.name}!`)
+
+            if(nrMasa > 0){
+                const table = await Table.findOne({index: nrMasa});
+                if(table){
+                    table.bills.push(order._id)
+                }
+            }
             let action 
             
             if(order.payOnSite){

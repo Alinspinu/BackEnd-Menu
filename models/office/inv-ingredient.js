@@ -33,10 +33,10 @@ const invIngSchema = new Schema({
   dep: {
     type: String,
   },
-  // locatie: {
-  //   type: Schema.Types.ObjectId,
-  //   ref: 'Locatie'
-  // }
+  locatie: {
+    type: Schema.Types.ObjectId,
+    ref: 'Locatie'
+  }
 });
 
 module.exports = mongoose.model("IngredientInv", invIngSchema);
