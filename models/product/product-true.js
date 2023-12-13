@@ -35,6 +35,8 @@ const productTrueSchema = new Schema({
     longDescription: String,
     tva: Number,
     dep: String,
+    preOrder: Boolean,
+    preOrderPrice: Number,
     paring: [
         {
             type: Schema.Types.ObjectId,

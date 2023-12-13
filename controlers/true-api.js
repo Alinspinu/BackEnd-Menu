@@ -194,7 +194,7 @@ module.exports.addProd = async (req, res, next) => {
         const product = new Product(req.body);
         product.order = parseFloat(req.body.order);
         product.price = parseFloat(req.body.price);
-        if(req.query){
+        if(req.query.length){
             product.ings = JSON.parse(req.query.ings)
             product.toppings = JSON.parse(req.query.toppings)
         }
@@ -210,7 +210,7 @@ module.exports.addProd = async (req, res, next) => {
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: err.error.message });
+        res.status(500).json({ err });
     }
 }
 
@@ -249,9 +249,50 @@ module.exports.saveOrder = async (req, res, next) => {
             if(order.payOnline){
                 action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
             }
+            if(order.preOrder) {
+                action = `a dat o pre comanda  la cozonaci sau tarte`
+                let cakeProducts = order.products.filter(product => product.name.startsWith('Cozonac'));
+                let tartProducts = order.products.filter(product => product.name.startsWith('Orange')) ;
+                let tartTotal = 0
+                let cakeTotal = 0
+                tartProducts.forEach(el => {
+                    tartTotal += el.total
+                })
+                cakeProducts.forEach(el => {
+                    cakeTotal += el.total
+                })
+                const startDate = formatedDateToShow(order.createdAt)
+                const endDate = formatedDateToShow(order.preOrderPickUpDate)
+                const cakeOrder = {
+                    clientName: order.userName,
+                    clientEmail: user.email,
+                    clientTelephone: order.userTel,
+                    products: cakeProducts,
+                    createdAt: startDate,
+                    deliveryTime: endDate,
+                    avans: cakeTotal,
+                }
+                const tartOrder = {
+                    clientName: order.userName,
+                    clientEmail: user.email,
+                    clientTelephone: order.userTel,
+                    products: tartProducts,
+                    createdAt: startDate,
+                    deliveryTime: endDate,
+                    avans: tartTotal,
+                }
+                if(cakeProducts.length){
+                    sendMailToCake(cakeOrder, ['office@truefinecoffee.ro', 'buraga.stefan@l-artisan.ro'])
+                }
+    
+                if(tartProducts.length){
+                    sendMailToCake(tartOrder, ['office@truefinecoffee.ro', 'serbanlucianvornicu@gmail.com'])
+                }
+            }
+
             const data = {name: user.name + ' ' + user.telephone, action: action}
             await sendInfoAdminEmail(data)
-            res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index });
+            res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index, preOrderPickUpDate: order.preOrderPickUpDate });
         } else {
             const order = await newOrder.save();
             console.log(`Order ${order._id} saved without a user!`)
@@ -265,9 +306,77 @@ module.exports.saveOrder = async (req, res, next) => {
     }
 }
 
+function formatedDateToShow(date){
+    console.log(date)
+    if(date){
+      const inputDate = new Date(date);
+      const hours = inputDate.getHours();
+      const minutes = inputDate.getMinutes();
+      const hour = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
+      const monthNames = [
+        "Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",
+        "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"
+      ];
+      return `${inputDate.getDate().toString().padStart(2, '0')}-${monthNames[inputDate.getMonth()]}-${inputDate.getFullYear()} ora ${hour} `
+    } else {
+      return 'xx'
+    }
+    }
+
+    // module.exports.renderMailTemplate = async (req, res, next) => {
+    //     const order = await Order.findOne({}, {}, { sort: { 'createdAt': -1 }})
+    //     let cakeProducts = order.products.filter(product => product.name.startsWith('Cozonac'));
+    //     let cakeTotal = 0
+    //     cakeProducts.forEach(el => {
+    //         cakeTotal += el.total
+    //     })
+    //     const startDate = formatedDateToShow(order.createdAt)
+    //     const endDate = formatedDateToShow(order.preOrderPickUpDate)
+    //     const cakeOrder = {
+    //         clientName: order.userName,
+    //         clientEmail: "eeeeee@eee.com",
+    //         clientTelephone: order.userTel,
+    //         products: cakeProducts,
+    //         createdAt: startDate,
+    //         deliveryTime: endDate,
+    //         avans: cakeTotal,
+    //     }
+    //     res.render('layouts/info-order', {data: cakeOrder})
+    // }
+
+    async function sendMailToCake(data, emails) {
+        const templateSource = fs.readFileSync('views/layouts/info-order.ejs', 'utf-8');
+        const renderedTemplate = ejs.render(templateSource,{data: data});
+    
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: 'truefinecoffee@gmail.com',
+                pass: process.env.GMAIL_PASS
+            }
+        });
+    
+        const mailOptions = {
+            from: 'truefinecoffee@gmail.com',
+            to: emails,
+            // to: "buraga.stefan@l-artisan.ro",
+            subject: 'Comanda Nouă!',
+            html: renderedTemplate
+        };
+    
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent:', info.response);
+            return { message: 'Email sent' };
+        } catch (error) {
+            console.error('Error sending email:', error);
+            return { message: 'Error sending email' };
+        };
+    };
 
 
 // ********************* EDIT DATA****************************
+
 
 
 module.exports.changeStatus = async (req, res, next) => {
@@ -381,6 +490,7 @@ module.exports.editCategory = async (req, res, next) => {
 
 
 module.exports.editProduct = async (req, res, next) => {
+    console.log('hit the route')
     const { id, category, name, price, qty, description, order, longDescription } = req.body
     try{
         if(req.query.sub){
@@ -394,7 +504,7 @@ module.exports.editProduct = async (req, res, next) => {
         if (id) {
             const oldProduct = await Product.findById(id).populate({ path: 'category', select: 'name' }).populate({ path: 'subProducts' })
             if (oldProduct) {
-                if(req.query){
+                if(req.query.length){
                     oldProduct.ings = JSON.parse(req.query.ings)
                     oldProduct.toppings = JSON.parse(req.query.toppings)
                 }
@@ -611,6 +721,8 @@ async function sendInfoAdminEmail(data) {
         return { message: 'Error sending email' };
     };
 };
+
+
 
 
 // module.exports.register = async (req, res, next) => {

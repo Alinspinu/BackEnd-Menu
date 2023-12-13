@@ -71,11 +71,25 @@ const orderTrueSchema = new Schema({
         type: Boolean,
         default: false
     },
+    preOrder: {
+        type: Boolean,
+        default: false
+    },
+    preOrderPickUpDate: {
+        type: String,
+    },
     payOnline: {
         type: Boolean,
         default: false
     },
     paymentMethod: String,
+    payment: {
+        cash: Number,
+        card: Number,
+        viva: Number,
+        voucher: Number,
+    },
+    cif: String,
     userName: String, 
     userTel: String,
     user: {
@@ -110,7 +124,28 @@ const orderTrueSchema = new Schema({
                     type: String,
                     required: true
                 },
-                toppings: [String],
+                toppings: [
+                    {
+                        name: String,
+                        price: Number,
+                        qty: Number,
+                        um: String,
+                        ingPrice: Number,
+                    }
+                ],
+                ings: [
+                    {
+                        name: {
+                          type: String,
+                        },
+                        qty: {
+                          type: Number,
+                        },
+                        price: {
+                          type: Number,
+                        },
+                      },
+                ]
             }
         ]
 

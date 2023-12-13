@@ -7,5 +7,8 @@ router.route('/send-reset-email').post(authRoutes.sendEmailResetPassword);
 router.route('/reset-password').post(authRoutes.resetPassword);
 router.route('/register').post(authRoutes.register);
 router.route('/login').post(authRoutes.login);
+router.route('/customer')
+    .get(authRoutes.sendCustomer)
+    .post(authRoutes.newCustomer)
 
 module.exports = router;

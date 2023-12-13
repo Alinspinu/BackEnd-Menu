@@ -6,67 +6,8 @@ const querystring = require('querystring');
 const { json } = require('body-parser');
 
 const User = require('../models/user-true');
+const Voucher = require('../models/utils/voucher')
 
-// module.exports.getPosToken = async (req, res, next) => {
-//     try{
-//         const clientId = process.env.VIVA_POS_CLIENT_ID;
-//         const clientSecret = process.env.VIVA_POS_SECRET;
-//         const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-//         const url = 'https://accounts.vivapayments.com/connect/token';
-//         const headers = {
-//             'Content-Type': 'application/x-www-form-urlencoded',
-//             Authorization: `Basic ${credentials}`
-//         };
-//         const response = await axios.post(url, 'grant_type=client_credentials', { headers });
-      
-//         const searchPosUrl = 'https://api.vivapayments.com/ecr/v1/devices:search'
-//         const requestBody = {
-            
-//                 "merchantId": process.env.VIVA_POS_CLIENT_ID,
-//                 "statusId": 1,
-               
-              
-//         }
-
-//         const response2 = await axios.post(searchPosUrl, requestBody, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 Authorization: `Bearer ${response.data.access_token}`,
-//             }
-//         });
-//         console.log(response2.data)
-
-
-//         const transactionUrl = "https://api.vivapayments.com/ecr/v1/transactions:sale"
-
-//         const transBody = {
-//             sessionId: "4bdebe62-c211-4ca0-a9-b615",
-//             terminalId: "16085744",
-//             cashRegisterId: "XDE384678UY",
-//             amount: 12,
-//             currencyCode: "946",
-//             merchantReference: "some-reference",
-//             customerTrns: "some-reference",
-//             preauth: false,
-//             maxInstalments: 0,
-//             tipAmount: 0
-//         }
-
-//         const response3 = await axios.post(transactionUrl, transBody, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 Authorization: `Bearer ${response.data.access_token}`,
-//             }
-//         });
-//         console.log(response3.data)
-
-//         res.status(200).json({message: "done"})
-//     }catch (err){
-//         console.log(err)
-//         res.status(500).json({message: err})
-//     }
-
-// }
 
 
 module.exports.getToken = async (req, res, next) => {
@@ -184,5 +125,48 @@ module.exports.checkUser = async (req, res, next) => {
     } catch (err) {
         console.log('Error', err.message);
         res.status(500).json({ message: err.message });
+    }
+}
+
+
+
+module.exports.addVoucher = async (req, res, next) => {
+ try{
+        const {code, value} = req.body
+        const voucher = new Voucher({
+            code: code,
+            value: value
+        })
+       const newVoucher =  await voucher.save()
+        res.status(200).json({message: `Voucherul cu valoarea de ${newVoucher.value} lei a fost inregistrat cu succes!`})
+ }catch(err){
+    console.log(err)
+    res.status(500).json(err)
+ }
+}
+
+module.exports.checkVoucher = async (req, res, next) => {
+    try{
+        const {code} = req.body
+        const voucher = await Voucher.findOne({code: code})
+        if(voucher){
+         res.status(200).json({message: `Voucherul a fost găsit cu suma de ${voucher.value} lei!`, voucher: voucher})
+        } else {
+            res.status(226).json({message: 'Voucherul nu a fost gasit, codul voucherului este invalid sau nu a fost înregistrat!'})
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
+}  
+
+module.exports.useVoucher = async (req, res, next) => {
+    try{
+        const {id} = req.body;
+        const voucher = await Voucher.findByIdAndUpdate(id, {status: "invalid", value: 0}, {new: true})
+        res.status(200).json({message: `Voucherul a vost folosit!`})
+    } catch(err){
+        console.log(err)
+        res.status(500).json(err)
     }
 }

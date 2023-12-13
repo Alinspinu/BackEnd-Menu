@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @font-face {
+  font-family: 'NoirProRegular'; 
+  src: url('../../public/font/NoirPro-Regular.woff') format('truetype'); 
+}
+    @font-face {
+  font-family: 'NoirProLight'; 
+  src: url('../../public/font/NoirPro-Light.woff2') format('truetype'); 
+}
+
+    body {
+        padding: 0;
+      font-family: NoirProLight !important;
+    }
+    .container {
+      height: 100%;
+      width: 100%;
+      padding: 20px;
+      background-color: #fff9f1;
+    }
+    p{
+        margin: 5px 0 5px 0;
+        font-size: 0.9rem;
+    }
+    .mesaj p {
+      font-size: 0.75rem;
+    }
+    .mesaj {
+      margin: 20px 0 10px 0;
+    }
+
+    .text{
+      font-size: 0.75rem;
+    }
+    
+    img{
+        position: relative;
+        top:5%;
+      height: 60vh;
+      margin-left: 70%;
+    }
+    .line{
+        height:40px;
+        margin: 20px 0 20px 0;
+    }
+
+    .lg-white{
+        color: white;
+        background-color: #dd9f75;
+        font-size: 13px;
+        border-radius: 4px;
+        margin:0 8px 0 8px ;
+        padding: 10px;
+    }
+
+    .lg-black{
+        color: rgb(82, 75, 75);
+        background-color: #f2ddce;
+        font-size: 13px;
+        border-radius: 4px;
+        margin:0 8px 0 8px ;
+        padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p>Primită:  <%=data.createdAt%></p>
+    <p>Trebuie predată până la:  <%=data.deliveryTime%></p>
+    <p>Produsele din comandă:</p>
+    <% for(let product of data.products) {%>
+        <h4><%=product.name%> X <%=product.quantity%> buc</h4>
+        <% } %>
+    <p>Informații Client:</p>
+    <p>Nume: <%=data.clientName%></p>
+    <p>Telefon: <%=data.clientTelephone%></p>
+    <p>E-mail: <%=data.clientEmail%></p>
+      <!-- <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1693141028/layout_qcd3qn.png" alt="logo"> -->
+  </div>
+
+</body>
+</html>

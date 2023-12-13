@@ -7,6 +7,47 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const ejs = require('ejs');
 const User = require('../models/user-true');
+const { findOneAndUpdate, findByIdAndUpdate } = require('../models/user-true');
+
+
+module.exports.sendCustomer =async (req, res, next) => {
+    try{
+        const {id} = req.query;
+        const customer = await User.findById(id).select('name email telphone cashBack');
+        if(customer){
+            res.status(200).json({message: 'All good', customer})
+        } else {
+            res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
+        }
+    } catch (err){
+        console.log(err)
+        res.status(500).json({message: 'Ceva nu a mers bine Eroare la cautare 500'})
+    }
+}
+
+
+module.exports.newCustomer = async (req, res, next) => {
+    try{
+        const {name, email} = req.body;
+        const check = await User.findOne({ email: email }).select('name telephone email cashBack');
+        if (check) {
+            return res.status(256).json({ message: 'This email allrady exist', customer: check });
+        } else {
+            const user = new User({
+                name: name,
+                email: email
+            });
+            const savedUser = await user.save();
+            const customer = await User.findById(savedUser._id).select('name telephone email cashBack');
+            sendCompleteRegistrationEmail(customer);
+            res.status(200).json({message: 'All good', customer});
+        }
+    }catch(err){
+        console.log(err);
+        res.status(500).json(err);
+    }
+}
+
 
 
 module.exports.sendEmailResetPassword = async (req, res, next) => {
@@ -75,6 +116,10 @@ module.exports.resetPassword = async (req, res, next) => {
 module.exports.login = async (req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email: email });
+    if(!user.password){
+        sendCompleteRegistrationEmail(user)
+        return res.status(401).json({message: `Nu ți-ai terminat procesul de înregistrare. Ți-am mai trimis un mail la ${user.email}. Urmează pașii.`})
+    }
     if (!user || !comparePasswords(password, user.password)) {
         return res.status(401).json({ message: 'Invalid email or password' });
     };
@@ -113,6 +158,8 @@ module.exports.login = async (req, res, next) => {
 };
 
 
+
+
 module.exports.verifyToken = async (req, res, next) => {
     const { token } = req.body;
     try {
@@ -129,7 +176,8 @@ module.exports.verifyToken = async (req, res, next) => {
                     cashBack: user.cashBack,
                     email: user.email,
                     status: user.status,
-                    telephone: user.telephone
+                    telephone: user.telephone ? user.telephone : '-',
+                    _id: user._id
                 };
                 const data = {name: user.name, action: 's-a inregistrat'}
                 await sendInfoAdminEmail(data)
@@ -146,35 +194,57 @@ module.exports.verifyToken = async (req, res, next) => {
     }
 }
 
+
+
 module.exports.register = async (req, res, next) => {
-    const { email, password, tel, confirmPassword, name, firstCart, survey } = req.body;
-    console.log(req.body)
-    const check = await User.find({ email: email });
-    if (check.length) {
-        return res.status(256).json({ message: 'This email allrady exist' });
+    try{
+        const { email, password, tel, confirmPassword, name, firstCart, survey, id } = req.body;
+       if(id.length){
+        if (password === confirmPassword) {
+            const hashedPassword = hashPassword(password);
+            const update = {
+                password: hashedPassword,
+                telephone: tel,
+                survey: survey
+            }
+            const user = await User.findByIdAndUpdate(id, update, {new: true})
+            
+            res.status(200).json({ message: "Datele au fost actualizate.", user: user});
+        } else {
+            return res.status(401).json({ message: "Passwords don't match!" });
+        };
+       } else {
+           const check = await User.find({ email: email });
+           if (check.length) {
+               return res.status(256).json({ message: 'This email allrady exist' });
+           }
+           if (password === confirmPassword) {
+               const hashedPassword = hashPassword(password);
+               const newUser = new User({
+                   email: email,
+                   password: hashedPassword,
+                   name: name,
+                   telephone: tel,
+                   firstCart: firstCart,
+                   survey: survey
+               });
+               console.log(newUser)
+               await newUser.save();
+               await sendVerificationEmail(newUser).then(response => {
+                   if (response.message === 'Email sent') {
+                       res.status(200).json({ message: response.message, id: newUser._id });
+                   } else {
+                       res.status(256).json({ message: response.message, id: newUser._id });
+                   };
+               });
+           } else {
+               return res.status(401).json({ message: "Passwords don't match!" });
+           };
+       }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
     }
-    if (password === confirmPassword) {
-        const hashedPassword = hashPassword(password);
-        const newUser = new User({
-            email: email,
-            password: hashedPassword,
-            name: name,
-            telephone: tel,
-            firstCart: firstCart,
-            survey: survey
-        });
-        console.log(newUser)
-        await newUser.save();
-        await sendVerificationEmail(newUser).then(response => {
-            if (response.message === 'Email sent') {
-                res.status(200).json({ message: response.message, id: newUser._id });
-            } else {
-                res.status(256).json({ message: response.message, id: newUser._id });
-            };
-        });
-    } else {
-        return res.status(401).json({ message: "Passwords don't match!" });
-    };
 };
 
 
@@ -200,7 +270,8 @@ async function sendVerificationEmail(newUser) {
     const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
     const templateData = {
         link: `https://true-meniu.web.app/verify-email?token=${token}`,
-        name: newUser.name
+        name: newUser.name,
+        message: 'Prin acest mesaj vrem să-ți confirmi adresa de email.'
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
 
@@ -290,6 +361,43 @@ async function sendInfoAdminEmail(data) {
         html: renderedTemplate
     };
 
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+        return { message: 'Email sent' };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { message: 'Error sending email' };
+    };
+};
+
+
+
+async function sendCompleteRegistrationEmail(newUser) {
+    const token = jwt.sign({ userId: newUser._id }, process.env.AUTH_SECRET, { expiresIn: '24h' });
+
+    const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
+    const templateData = {
+        link: `http://localhost:8101/register?token=${token}`,
+        name: newUser.name,
+        message: 'Prin acest email vrem sa-ți fimalizezi înregistrarea.'
+    };
+    const renderedTemplate = ejs.render(templateSource, templateData);
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'truefinecoffee@gmail.com',
+            pass: process.env.GMAIL_PASS
+        }
+    });
+
+    const mailOptions = {
+        from: 'truefinecoffee@gmail.com',
+        to: newUser.email,
+        subject: 'Verificare Email',
+        html: renderedTemplate
+    };
     try {
         const info = await transporter.sendMail(mailOptions);
         console.log('Email sent:', info.response);
