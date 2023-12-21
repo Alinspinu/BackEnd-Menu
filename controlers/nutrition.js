@@ -2,7 +2,7 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
 const Ingredient = require('../models/nutrition/ingredient')
-const Product = require('../models/product/product-true')
+const Product = require('../models/office/product/product')
 const ProdIngredient = require('../models/nutrition/prod-ingredient')
 
 
@@ -11,10 +11,10 @@ const ProdIngredient = require('../models/nutrition/prod-ingredient')
 
 
 module.exports.sendIngredients = async(req, res, next) => {
-    console.log('hit')
+    const loc = '655e2e7c5a3d53943c6b7c53'
     try{
         let ing = []
-        const ingredients = await Ingredient.find()
+        const ingredients = await Ingredient.find({locatie: loc})
         res.status(200).json(ingredients)
     }catch (err) {  
         console.log(err)
@@ -26,8 +26,10 @@ module.exports.sendIngredients = async(req, res, next) => {
 // ##################### SAVE DATA ###############################
 
 module.exports.saveIngredient = async(req, res, next) => {
+    const loc = '655e2e7c5a3d53943c6b7c53'
     try {
         const ing = new Ingredient(req.body);
+        ing.locatie = loc
         await ing.save()
         res.status(200).json({ message: `Ingredientul ${ing.name} was created!`});
     } catch (err) {
@@ -50,20 +52,19 @@ module.exports.saveIngredientsToProduct = async (req, res, next) => {
 }
 
 module.exports.saveProductIngredient = async (req, res, next) => {
-    console.log(req.query, req.body)
+    const loc = '655e2e7c5a3d53943c6b7c53'
     try {
         const {name} = req.query;
         const prodIng = new ProdIngredient({
             name,
-            ingredients: req.body
+            ingredients: req.body,
+            locatie: loc,
         })
-        console.log(prodIng)
         await prodIng.save()
-        const updatedProdIng = await ProdIngredient.findOne({name: name}).populate({path: 'ingredients.ingredient'})
+        const updatedProdIng = await ProdIngredient.findOne({name: name, locatie: loc}).populate({path: 'ingredients.ingredient'})
         const result = calcNutrition(updatedProdIng.ingredients)
-        console.log(updatedProdIng.ingredients)
-        console.log(result)
         const ing = new Ingredient(result)
+        ing.locatie = loc
         ing.name = name,
         await ing.save()
         res.status(200).json({ message: `Product-Ingredient ${name} was created!`});

@@ -1,26 +1,42 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Counter = require('./counter')
+const Counter = require('../../utils/counter')
 
-const tableSchema = new Schema({
+
+const entrySchema = new Schema({
+    amount: {
+        type: Number,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    locatie: {
+      type: Schema.Types.ObjectId,
+      ref: 'Locatie'
+    },
+    tip: {
+        type: String,
+        enum: ['income', 'expense'],
+        required: true
+    },
     index: {
         type: Number,
         index: true
-    },
-    locatie: {
-        type: Schema.Types.ObjectId,
-        ref: 'Locatie'
-    },
-    name: String,
-    bills: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "OrderTrue"
-        }
-    ]    
+    }
 })
 
-tableSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
+
+entrySchema.pre('deleteOne', { document: true, query: false }, async function (next) {
     // Get the index of the document being deleted
     const deletedIndex = this.index;
     console.log('hit something')
@@ -42,7 +58,7 @@ tableSchema.pre('deleteOne', { document: true, query: false }, async function (n
     next();
   });
   
-  tableSchema.pre('save', async function (next) {
+  entrySchema.pre('save', async function (next) {
     // If the document is new (not being updated)
     if (!this.isNew) {
       return next();
@@ -64,4 +80,4 @@ tableSchema.pre('deleteOne', { document: true, query: false }, async function (n
 
 
 
-module.exports = mongoose.model('Table', tableSchema)
+module.exports = mongoose.model('Entry', entrySchema)

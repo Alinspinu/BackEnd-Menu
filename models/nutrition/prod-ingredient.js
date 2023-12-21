@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 
 const productIngredientSchema = new Schema({
     name: String,
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    },
     ingredients: [
         {   quantity: {
                 type: Number,

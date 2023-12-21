@@ -16,7 +16,11 @@ const voucherSchema = new Schema({
         type: String,
         enum: ['valid', 'invalid'],
         default: 'valid',
-    }
+    },
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    },
 })
 
 

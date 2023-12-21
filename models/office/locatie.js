@@ -6,7 +6,10 @@ const locatieSchema = new Schema({
         type: String,
         required: true,
       },
-      name: String,
+      name: {
+        type: String, 
+        default: "No1"
+      },
       vatNumber: {
         type: String,
         required: true,

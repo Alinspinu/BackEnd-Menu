@@ -15,16 +15,22 @@ const helmet = require('helmet');
 const helmetConfig = require('./config/helmet');
 const sessionConfig = require('./config/session');
 
-const trueApiRoutes = require('./routes/true-api');
-const ordersTrueRoutes = require('./routes/true-orders');
-const payRoutes = require('./routes/payment');
-const authRoutes = require('./routes/auth');
+const toppingRoutes = require('./routes/back-office/topping');
+const ordersTrueRoutes = require('./routes/back-office/orders');
+const payRoutes = require('./routes/payment/payment');
+const authRoutes = require('./routes/users/auth');
 const nutritionRoutes = require('./routes/nutrition');
-const registerRoutes = require('./routes/register');
-const messRoutes = require('./routes/messages');
-const officeRoutes = require('./routes/back-office');
-const tableRoutes = require('./routes/table');
-const usersRoutes = require('./routes/users');
+const registerRoutes = require('./routes/back-office/cash-register');
+// const messRoutes = require('./routes/messages');
+const tableRoutes = require('./routes/back-office/table');
+const usersRoutes = require('./routes/users/users');
+
+const suplierRoutes = require('./routes/back-office/suplier')
+const nirRoutes = require('./routes/back-office/nir')
+const productRoutes = require('./routes/back-office/product')
+const ingRoutes = require('./routes/back-office/ing')
+const subRoutes = require('./routes/back-office/subProduct')
+const catRoutes = require('./routes/back-office/cats')
 
 const dbUrl = process.env.DB_URL
 
@@ -47,54 +53,44 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
 
-
-
-
-
-// app.set('trust proxy', true);
-// app.use((req, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', 'https://true-meniu.web.app');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//     next()
-// });
-
 app.use(cors())
 app.use(bodyParser.json());
 
-app.use("/api-true", trueApiRoutes)
-app.use("/orders", ordersTrueRoutes)
-app.use('/pay', payRoutes)
-app.use('/auth', authRoutes)
-app.use('/nutrition', nutritionRoutes)
-app.use('/register', registerRoutes)
-app.use('/message', messRoutes)
-app.use('/office', officeRoutes)
-app.use('/table', tableRoutes)
-app.use('/users', usersRoutes)
+app.use("/orders", ordersTrueRoutes);
+app.use('/pay', payRoutes);
+app.use('/auth', authRoutes);
+app.use('/nutrition', nutritionRoutes);
+app.use('/register', registerRoutes);
+// app.use('/message', messRoutes);
+app.use('/table', tableRoutes);
+app.use('/users', usersRoutes);
 
-const ctrl = require('./controlers/true-api')
-const multer = require('multer');
-const { storage } = require('./cloudinary/index.js');
-const upload = multer({ storage });
-
-app.post('/api-true/cat-add', upload.single('image'), ctrl.addCat)
-app.put('/api-true/cat', upload.single('image'), ctrl.editCategory)
+app.use("/top", toppingRoutes);
+app.use('/suplier', suplierRoutes);
+app.use('/nir', nirRoutes);
+app.use('/product', productRoutes);
+app.use('/ing', ingRoutes);
+app.use('/sub', subRoutes);
+app.use('/cat', catRoutes);
 
 
 
-// const Table = require('./models/utils/table')
+// const Order = require('./models/office/product/order');
+// const {formatedDateToShow} = require('./utils/functions')
 
-// app.get('/create-tables', async (req, res) => {
+    // app.get('/mail', async (req, res, next) => {
+    //     const order = await Order.findOne({}, {}, { sort: { 'createdAt': -1 }}).populate({path: 'user', select: 'email'})
+    //     const startDate = formatedDateToShow(order.createdAt)
+    //     order.name = startDate
 
-//     const tables = await Table.find({})
+    //     if(order.preOrder) {
+    //         const endDate = formatedDateToShow(order.preOrderPickUpDate)
+    //             order.preOrderPickUpDate = endDate
+    //     }
+    //     console.log(order)
+    //     res.render('layouts/info-customer', {data: order})
+    // } )  
 
-//     for(let i=0; i< tables.length; i++){
-//        tables[i].index = i+1
-//        await tables[i].save()
-//     }
-//     res.send('mesele au fost modificate')
-// }) 
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {

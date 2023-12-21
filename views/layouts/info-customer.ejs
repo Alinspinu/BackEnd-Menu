@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+
+    body{
+        background-color: #f6e7d3 !important;
+        padding: 8px !important;
+    }
+    
+    img{
+      height: 40vh;
+      margin-left: auto;
+    }
+
+    .custom{
+        font-family: Courier, monospace;
+        font-weight: 500;
+        background-color: #dec5a3 !important;
+        color: rgb(42, 41, 41)
+    }
+    .cont{
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+
+  .bold{
+       font-weight: 600;
+    }
+    li{
+        display: flex;
+    }
+
+    .margin-end{
+        margin-left: auto;
+    }
+
+  </style>
+</head>
+<body>
+
+
+</body>
+</html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Email Template</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container-fluid vh-100 cont">
+        <div class="col-lg-8 offset-lg-2 mt-4 jumbotron custom">
+            <h1 class="text-center">Salut <%=data.clientInfo.name%>!</h1>
+            <hr class="mt-2">
+            <h2 class="text-center"> Mulțumim frumos pentru comandă!</h2>
+        </div>
+        <div class="card col-md-6 offset-md-3 col-lg-4 offset-lg-4 p-0 custom">
+            
+            <ul class="list-group list-group-flush">
+                <div class="card-header bold d-flex">
+                    Nr. <%= data.index %>
+                    <span class="margin-end"><%=data.clientInfo.name %> </span>
+                </div>
+                <% for (let i=0 ;i < data.products.length; i++) { %>
+                    <li class="list-group-item d-flex custom">
+                       <span class="bold"><%= data.products[i].quantity %>  </span> x <%= data.products[i].name %> <span class="bold margin-end"> <%= data.products[i].total %> Lei</span>
+                    </li>
+                <% } %>
+                <% if (data.payOnSite) { %>
+                    <li class="list-group-item d-flex custom"><span>Total de plată:</span>  <span class="bold margin-end"><%= data.totalProducts %> Lei</span> </li>
+                <% } else { %>
+                    <li class="list-group-item d-flex custom"> <span>Total Produse:</span>  <span class="bold margin-end"><%= data.totalProducts %> Lei</span></li>
+                <% } %>
+            
+                <% if (data.cashBack > 0) { %>
+                    <li class="list-group-item d-flex custom">Plătit cu CashBack: 
+                       <span class="bold margin-end"><%= data.cashBack %> Lei</span></li>
+                    <% if (!data.payOnLine) { %>
+                        <li class="list-group-item d-flex custom">Rest de plată:
+                            <span class="bold margin-end"><%= data.total %> Lei</span></li>
+                    <% } %>
+                <% } %>
+            
+                <% if (data.payOnLine) { %>
+                    <li class="list-group-item bold custom">Plătit Online: <%= data.total %> Lei</li>
+                <% } %>
+            
+                <% if (data.preOrder) { %>
+                    <li class="list-group-item custom">
+                        Comanda ta va fi gata în <%= data.preOrderPickUpDate %>.
+                    </li>
+                <% } else { %>
+                    <% if (data.completetime === 0 ) { %>
+                        <li class="list-group-item custom">
+                            Comanda ta va fi gata în cel mai scurt timp!
+                        </li>
+                        <% } else { %>
+                    <li class="list-group-item custom">
+                        Comanda ta va fi gata în <%= data.completetime / 1000 / 60 %> minute!
+                    </li>
+                     <% } %>
+                <% } %>
+                <li class="list-group-item custom bold">Cu drag, echipa TRUE!</li>
+            </ul>
+
+            
+        
+        </div>
+   
+          <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1693141028/layout_qcd3qn.png" alt="logo">
+      </div>
+</body>
+</html>

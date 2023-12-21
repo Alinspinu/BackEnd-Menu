@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');   
 const Schema = mongoose.Schema;
-const Product = require('../product/product-true');
+const Product = require('../office/product/product');
 const ProdIng = require('./prod-ingredient')
 
 

@@ -12,7 +12,7 @@ const suplierSchema = new Schema({
   },
   register: {
     type: String, 
-    rewuired: true
+    required: true
   },
   account: {
     type: String,

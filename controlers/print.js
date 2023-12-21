@@ -4,7 +4,8 @@ const PDFDocument = require("pdfkit");
 
 
 module.exports.printNir = async (req, res, next) => {
-    const nir = await Nir.findOne({}, {}, { sort: { _id: -1 } })
+  const loc = '655e2e7c5a3d53943c6b7c53'
+    const nir = await Nir.findOne({locatie: loc}, {}, { sort: { _id: -1 } })
       .populate({
         path: "suplier",
         select: "name vatNumber",
