@@ -43,7 +43,23 @@ const subProductSchema = new Schema({
           },
           um: {
             type: String,
+          },
+          ings: [ 
+            {
+            name: {
+                type: String,
+              },
+              qty: {
+                type: Number,
+              },
+              price: {
+                type: Number,
+              },
+              um: {
+                type: String,
+              }, 
           }
+        ]
         },
       ],
     product: {

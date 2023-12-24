@@ -67,11 +67,12 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             table.bills.push(newBill);
             const savedBill = await newBill.save();
             savedBill.products.forEach(el => {
-                if(el.sentToPrint && el.ings.length){
+                if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
                     if(el.toppings.length){
                         unloadIngs(el.toppings, loc, el.quantity);
+                    }  else if(el.ings.length){
+                        unloadIngs(el.ings, loc, el.quantity);
                     }
-                    unloadIngs(el.ings, loc, el.quantity);
                     el.sentToPrint = false;
                 } else if(el.sentToPrint){
                     el.sentToPrint = false
@@ -82,11 +83,12 @@ module.exports.saveOrEditBill = async (req, res, next) => {
         } else {
             print(parsedBill)
             parsedBill.products.forEach(el => {
-                if(el.sentToPrint && el.ings.length) {
+                if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length) {
                     if(el.toppings.length){
                         unloadIngs(el.toppings, loc, el.quantity);
+                    } else if(el.ings.length){
+                        unloadIngs(el.ings, loc, el.quantity);
                     }
-                    unloadIngs(el.ings, loc, el.quantity);
                     el.sentToPrint = false;
                 } else if(el.sentToPrint){
                     el.sentToPrint = false
@@ -104,7 +106,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 
 module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     const {product} = req.body
-    console.log('fron register delete product', product.name)
     const { ['_id']:_, ...newProduct } = product;
     const delProd = new DelProd(newProduct)
     await delProd.save()

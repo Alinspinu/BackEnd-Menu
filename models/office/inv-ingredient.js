@@ -33,6 +33,15 @@ const invIngSchema = new Schema({
   dep: {
     type: String,
   },
+  ings: [
+    {
+      qty: Number,
+      ing: {
+        type: Schema.Types.ObjectId,
+        ref: 'IngredientInv'
+      }
+    }
+  ],
   locatie: {
     type: Schema.Types.ObjectId,
     ref: 'Locatie'

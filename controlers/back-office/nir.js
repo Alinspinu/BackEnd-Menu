@@ -1,4 +1,5 @@
 
+const Ingredient = require('../../models/office/inv-ingredient')
 const Nirr = require('../../models/office/nir')
 const {round} = require('../../utils/functions')
 
@@ -13,7 +14,6 @@ module.exports.saveNir = async( req, res, next) => {
             {
               $setOnInsert: {
                 um: el.um,
-                tva: el.tva,
                 gestiune: el.gestiune,
                 locatie: '655e2e7c5a3d53943c6b7c53',
               },

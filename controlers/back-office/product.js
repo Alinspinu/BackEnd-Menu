@@ -58,8 +58,9 @@ const {checkTopping} = require('../../utils/functions')
         product.order = parseFloat(req.body.order);
         product.price = parseFloat(req.body.price);
         product.locatie = loc
-        if(req.query.length){
+        if(req.query.ings){
             product.ings = JSON.parse(req.query.ings)
+        } else if(req.query.toppings){
             product.toppings = JSON.parse(req.query.toppings)
         }
         if (req.file) {
@@ -72,6 +73,7 @@ const {checkTopping} = require('../../utils/functions')
         await cat.save();
         const productToSend = await Product.findById(product._id);
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
+        res.status(200)
     } catch (err) {
         console.log(err);
         res.status(500).json({ err });
@@ -87,7 +89,6 @@ module.exports.editProduct = async (req, res, next) => {
             const subs = JSON.parse(req.query.sub)
             for(let el of subs){
                 if(el._id){
-                    console.log(el)
                    await SubProduct.findOneAndUpdate({_id: el._id}, el)   
                 }
             }

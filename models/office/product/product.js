@@ -23,7 +23,7 @@ const productTrueSchema = new Schema({
     },
     printer: {
         type: String,
-        required: true
+        default: 'main'
     },
     toppings:[
             {
@@ -32,6 +32,16 @@ const productTrueSchema = new Schema({
                 qty: Number,
                 um: String,
                 ingPrice: Number,
+                ings: [ 
+                    {
+                        qty: Number,
+                        
+                        ing: {
+                            type: Schema.Types.ObjectId,
+                            ref: "IngredientInv"
+                          }
+                    }
+                ]
             }
     ],
     price: Number,
@@ -50,15 +60,15 @@ const productTrueSchema = new Schema({
     ],
     ings: [
         {
-          name: {
-            type: String,
-          },
+       
           qty: {
             type: Number,
           },
-          price: {
-            type: Number,
-          },
+          ing: {
+            type: Schema.Types.ObjectId,
+            ref: "IngredientInv"
+          }
+    
         },
       ],
     ingredients: [       
@@ -138,7 +148,6 @@ const productTrueSchema = new Schema({
     },
     total: {
         type: Number,
-
     },
     mainCat: String,
     category:

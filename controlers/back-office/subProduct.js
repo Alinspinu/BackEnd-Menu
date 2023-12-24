@@ -15,7 +15,6 @@ module.exports.saveSubProd = async (req, res, next) => {
             order: parseFloat(order),
             qty: qty,
             ings: ings,
-            toppings: toppings,
             locatie: loc,
             tva: tva,
             description: description,
