@@ -72,7 +72,7 @@ module.exports.login = async (req, res, next) => {
                                 '-employee.ciNumber',
                                 '-employee.address',
                             ]);
-    if(!user.password){
+    if(!user && !user.password){
         await sendCompleteRegistrationEmail(user)
         return res.status(401).json({message: `Nu ți-ai terminat procesul de înregistrare. Ți-am mai trimis un mail la ${user.email}. Urmează pașii.`})
     }

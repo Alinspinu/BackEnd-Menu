@@ -7,8 +7,9 @@ const { json } = require('body-parser');
 
 const User = require('../../models/users/user');
 const Voucher = require('../../models/utils/voucher')
+const Order = require('../../models/office/product/order')
 
-
+const {reports, inAndOut, printBill} = require('../../utils/print/printFiscal')
 
 module.exports.getToken = async (req, res, next) => {
     try {
@@ -169,5 +170,65 @@ module.exports.useVoucher = async (req, res, next) => {
     } catch(err){
         console.log(err)
         res.status(500).json(err)
+    }
+}
+
+
+module.exports.reports = async (req, res, next) => {
+    try{
+        const {value} = req.query;
+        const response = await reports(value)
+        res.status(200).json({message: response.message})
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.cashInandOut = async (req, res, next) =>{
+    try{
+        const {data} = req.body;
+        const response = await inAndOut(data.mode, data.sum)
+        res.status(200).json({message: response.message})
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    } 
+}
+
+module.exports.printBill = async (req, res, next) => {
+    try{
+        const {bill} = req.body
+        bill.status = 'done'
+        printBill(bill)
+        await Order.findByIdAndUpdate(bill._id, bill)
+        res.status(200).json({message: "Bonul a fos tipărit!"})
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.changePaymentMethod = async (req, res, next) => {
+    try{
+        const {bill} = req.body
+        await Order.findByIdAndUpdate(bill._id, bill)
+        res.status(200).json({message: "Metoda de plata a fost schimbata"})
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.posPaymentCheck = async (req, res, next) => {
+    try{
+        const {sum} = req.body;
+        if(sum){
+           const result = await posPayment(sum)
+        }
+        res.status(200).json({message: 'fuck-off'})
+    }catch(err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
     }
 }

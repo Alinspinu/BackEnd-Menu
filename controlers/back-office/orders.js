@@ -8,7 +8,8 @@ const {formatedDateToShow, round} = require('../../utils/functions')
 
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 
-const {print} = require('../../utils/printOrders')
+const {print} = require('../../utils/print/printOrders')
+const {printBill, posPayment} = require('../../utils/print/printFiscal')
 
 //************************SEND ORDERS********************** */
 
@@ -18,7 +19,21 @@ module.exports.getOrder = async (req, res, next) => {
        res.json(orders)
     } catch (err){
         console.log(err)
-        
+    }
+}
+
+module.exports.getOrderByUser = async (req, res, nex) => {
+    const loc = '655e2e7c5a3d53943c6b7c53'
+    try{
+    const date = new Date()
+    const start = new Date(date).setHours(0,0,0,0)
+    const end = new Date(date).setHours(23, 59, 59, 999)
+     const {userId} = req.query;
+     const orders = await Order.find({locatie: loc, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
+     res.status(200).json(orders)
+    } catch (err){
+        console.log(err)
+        res.status(500).json({message: err.message})
     }
 }
 
@@ -63,15 +78,17 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             } 
-            print(newBill)
+        
             table.bills.push(newBill);
             const savedBill = await newBill.save();
+            print(savedBill)
             savedBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
                     if(el.toppings.length){
-                        unloadIngs(el.toppings, loc, el.quantity);
-                    }  else if(el.ings.length){
-                        unloadIngs(el.ings, loc, el.quantity);
+                        unloadIngs(el.toppings, el.quantity);
+                    } 
+                    if(el.ings.length){
+                        unloadIngs(el.ings, el.quantity);
                     }
                     el.sentToPrint = false;
                 } else if(el.sentToPrint){
@@ -85,9 +102,10 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length) {
                     if(el.toppings.length){
-                        unloadIngs(el.toppings, loc, el.quantity);
-                    } else if(el.ings.length){
-                        unloadIngs(el.ings, loc, el.quantity);
+                        unloadIngs(el.toppings, el.quantity);
+                    } 
+                    if(el.ings.length){
+                        unloadIngs(el.ings, el.quantity);
                     }
                     el.sentToPrint = false;
                 } else if(el.sentToPrint){
@@ -101,7 +119,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
         console.log(err)
         res.status(500).json({message: 'Something went wrong', err: err.message})
     }
-    
 }
 
 module.exports.registerDeletedOrderProducts = async (req, res, next) => {
@@ -114,11 +131,10 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
 
 
 module.exports.uploadIngs = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
     try{
         const {ings, quantity} = req.body;
         if(ings && quantity){
-            uploadIngs(ings, loc, quantity)
+            uploadIngs(ings, quantity)
         res.status(200).json({message: 'Success, stocul a fost actualizat!'})
         }
     } catch (err) {
@@ -230,6 +246,10 @@ module.exports.saveOrder = async (req, res, next) => {
  
 
 //************************UPDATE ORDERS********************** */
+
+
+
+
 
 module.exports.setOrderTime = async (req, res, next) => {   
     try {

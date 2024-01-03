@@ -2,6 +2,7 @@
 const Product = require('../../models/office/product/product')
 const Cat = require('../../models/office/product/cat')
 const SubProduct = require('../../models/office/product/sub-product')
+const Ingredient = require('../../models/office/inv-ingredient')
 const mongoose = require('mongoose')
 const cloudinary = require('cloudinary').v2;
 
@@ -19,7 +20,10 @@ const {checkTopping} = require('../../utils/functions')
         filterTo.category = new mongoose.Types.ObjectId(filter.cat);
       } 
       filterTo.locatie = loc
-      const products = await Product.find(filterTo).populate([{path: 'category', select: 'name'}, {path: 'subProducts'}])
+      const products = await Product.find(filterTo).populate([
+        {path: 'category', select: 'name'}, 
+        {path: 'subProducts'},
+    ])
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       let filterProducts = []
       if(req.query.search.length){
@@ -39,7 +43,12 @@ const {checkTopping} = require('../../utils/functions')
 
   module.exports.getProduct = async (req, res, next) => {
     try{
-      const product = await Product.findById(req.query.id).populate([{path: 'subProducts'}, {path: "category", select: 'name'}])
+      const product = await Product.findById(req.query.id).populate([
+        {path: 'subProducts', populate:{path: 'ings.ing'} }, 
+        {path: "category", select: 'name'},
+        {path: 'toppings.ing'},
+        {path: 'ings.ing'},
+    ])
       res.status(200).json(product)
     }catch(error) {
       console.log(error)
@@ -57,12 +66,9 @@ const {checkTopping} = require('../../utils/functions')
         const product = new Product(req.body);
         product.order = parseFloat(req.body.order);
         product.price = parseFloat(req.body.price);
-        product.locatie = loc
-        if(req.query.ings){
-            product.ings = JSON.parse(req.query.ings)
-        } else if(req.query.toppings){
-            product.toppings = JSON.parse(req.query.toppings)
-        }
+        product.locatie = loc;
+        product.ings = JSON.parse(req.body.ings);
+        product.toppings = JSON.parse(req.body.toppings);
         if (req.file) {
             const { path, filename } = req.file;
             product.image.filename = filename;
@@ -85,23 +91,26 @@ module.exports.editProduct = async (req, res, next) => {
     const { category, name, price, qty, description, order, longDescription, printer, tva, dep } = req.body
     const { id } = req.query
     try{
-        if(req.query.sub){
-            const subs = JSON.parse(req.query.sub)
-            for(let el of subs){
-                if(el._id){
-                   await SubProduct.findOneAndUpdate({_id: el._id}, el)   
+        if(req.body.sub){
+            const subs = JSON.parse(req.body.sub);
+            if(subs){
+                for(let el of subs){
+                    if(el._id){
+                       await SubProduct.findOneAndUpdate({_id: el._id}, el)   
+                    }
                 }
             }
         }
-
         if (id) {
             const oldProduct = await Product.findById(id).populate({ path: 'category', select: 'name' }).populate({ path: 'subProducts' })
             if (oldProduct) {
-                if(req.query.ings){
-                    oldProduct.ings = JSON.parse(req.query.ings)
+                if(req.body.ings){
+                    const ings = JSON.parse(req.body.ings)
+                    oldProduct.ings = ings;
                 }
-                if(req.query.toppings){
-                    oldProduct.toppings = JSON.parse(req.query.toppings)
+                if(req.body.toppings){
+                    const toppings = JSON.parse(req.body.toppings)
+                    oldProduct.toppings = toppings;
                 }
                 oldProduct.name = name;
                 oldProduct.price = price;

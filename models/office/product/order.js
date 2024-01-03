@@ -89,6 +89,7 @@ const orderTrueSchema = new Schema({
         card: Number,
         viva: Number,
         voucher: Number,
+        online: Number,
     },
     cif: String,
     clientInfo: {
@@ -107,8 +108,12 @@ const orderTrueSchema = new Schema({
         ref: 'Locatie'
     },
     employee:{
+      fullName: String,
+      position: String,
+      user: {
         type: Schema.Types.ObjectId,
-        ref: 'Employee'
+        ref: 'UserTrue'
+    },
     },
     products:
         [
@@ -153,24 +158,25 @@ const orderTrueSchema = new Schema({
                         qty: Number,
                         um: String,
                         ingPrice: Number,
+                        ing: {
+                            type: Schema.Types.ObjectId,
+                            ref: 'IngredientInv'
+                        }
                     }
                 ],
                 ings: [
                     {
-                        name: {
-                          type: String,
-                        },
                         qty: {
                           type: Number,
                         },
-                        price: {
-                          type: Number,
-                        },
-                        um:{
-                            type: String
+                        ing: {
+                            type: Schema.Types.ObjectId,
+                            ref: 'IngredientInv'
                         }
                       },
-                ]
+                ],
+                comment: String,
+                tva: Number,
             }
         ]
 

@@ -1,75 +1,71 @@
 const IngInv = require('../models/office/inv-ingredient')
-const Locatie = require('../models/office/locatie')
-const ProdIng = require('../models/office/inv-prod-ing')
 const {round} = require('./functions')
 
 
-async function unloadIngs (ings, loc, qtyProdus) {
+async function unloadIngs (ings, qtyProdus) {
+  try{
     for (const ing of ings) {
-        const ingredientInv = await IngInv.findOne({
-          name: ing.name,
-          locatie: loc
-        }).exec();
-
+        const ingredientInv = await IngInv.findById(ing.ing).exec();
         if (!ingredientInv) {
-          const prodIng = await ProdIng.findOne({
-            name: ing.name,
-            locatie: loc
-          }).exec()
-          if(!prodIng){
-            console.log(`Ingredientul ${ing.name} nu a fost găsit în baza de date. Posibil ca în rețeta produsului, ingredientul să fie trecut greșit. Verifică ingredientul ${ing.name} în nomenclator și verifică-l si în rețeta produsului. Trebuie să corespundă!`);
-          }
-          else {
-            prodIng.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
-            unloadIngs(prodIng.ings, loc, qtyProdus)
-          }
+            console.log(`Eorare! Ingredientul nu a fost găsit în baza de date. la descarcare de stoc`);
         } else {
+          if(ingredientInv.ings.length){
+            ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
+            unloadIngs(ingredientInv.ings, qtyProdus)
+          } else {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
             ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
-
-            if(ingredientInv.name === "Lapte Vegetal"){
-                uploadIngs([{name: "Lapte", qty: ing.qty}], loc, qtyProdus)
-            }
             await ingredientInv.save();
             console.log(`Success!! unload-ingredient: Nume - ${ingredientInv.name} - ${cantFinal} / stoc: ${ingredientInv.qty}`)
+          }
+            if(ingredientInv.name === "Lapte Vegetal"){
+              const lapte = await IngInv.findOne({name: "Lapte"})
+              const ingTo = {
+                qty: ing.qty,
+                ing: lapte._id
+              }
+                uploadIngs([ingTo],  qtyProdus)
+            }
         }
 
       }
+  } catch(err){
+    console.log("Eroare la descarcarea prooduselor din inventar",err)
+  }
 }
 
 
-async function uploadIngs (ings, loc, qtyProdus) {
+async function uploadIngs (ings, qtyProdus) {
+  try{
     for (const ing of ings) {
-        const ingredientInv = await IngInv.findOne({
-          name: ing.name,
-          locatie: loc
-        }).exec();
-
-        if (!ingredientInv) {
-          const prodIng = await ProdIng.findOne({
-            name: ing.name,
-            locatie: loc
-          }).exec()
-          if(!prodIng){
-            console.log(`Ingredientul ${ing.name} nu a fost găsit în baza de date. Posibil ca în rețeta produsului, ingredientul să fie trecut greșit. Verifică ingredientul ${ing.name} în nomenclator și verifică-l si în rețeta produsului. Trebuie să corespundă!`);
-          }
-          else {
-            prodIng.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
-            uploadIngs(prodIng.ings, loc, qtyProdus)
-          }
+      const ingredientInv = await IngInv.findById(ing.ing).exec();
+      if (!ingredientInv) {
+          console.log(`Eorare! Ingredientul nu a fost găsit în baza de date. la incarcare de stoc`);
         } else {
+          if(ingredientInv.ings.length){
+            ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
+            uploadIngs(ingredientInv.ings, qtyProdus)
+          }else {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
             ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
-            if(ingredientInv.name === "Lapte Vegetal"){
-                unloadIngs([{name: "Lapte", qty: ing.qty}], loc, qtyProdus)
-            }
             await ingredientInv.save();
             console.log(`Success!! upload-ingredient: Nume - ${ingredientInv.name} + ${cantFinal} / stoc: ${ingredientInv.qty}`)
-        }
-
+          }
+          if(ingredientInv.name === "Lapte Vegetal"){
+            const lapte = await IngInv.findOne({name: "Lapte"})
+            const ingTo = {
+              qty: ing.qty,
+              ing: lapte._id
+            }
+              unloadIngs([ingTo],  qtyProdus)
+          }
       }
-}
 
+    }
+  } catch(err){
+    console.log('Eroare la incarcarea produselor in inventar', err)
+  }
+}
 
 
 

@@ -1,13 +1,14 @@
 const Ingredient = require('../../models/office/inv-ingredient')
 const ProductIngredient = require('../../models/office/inv-prod-ing')
-
+const Product = require('../../models/office/product/product')
+const SubProduct = require('../../models/office/product/sub-product')
 const locatie = '655e2e7c5a3d53943c6b7c53'
 
 
 
 module.exports.saveIng = async(req, res, next) => {
     const {ing} = req.body;
-    const checkIng = await Ingredient.findOne({name: ing.name})
+    const checkIng = await Ingredient.findOne({name: ing.name, gestiune: ing.gestiune})
     if(checkIng){
       return res.status(226).json({message: "Ingredientul deja exista în baza de date!"})
     } else {
@@ -23,10 +24,8 @@ module.exports.saveIng = async(req, res, next) => {
       try{  
         let data = []
         const userData = req.body.search;
-        const ings = await Ingredient.find({locatie: locatie});
-        const prodIngs = await ProductIngredient.find({locatie: locatie})
-        data = [...ings, ...prodIngs]
-        let filterData = data.filter((object) =>
+        const ings = await Ingredient.find({locatie: locatie}).populate({path: 'ings.ing'});
+        let filterData = ings.filter((object) =>
         object.name.toLocaleLowerCase().includes(userData.toLocaleLowerCase()))
         res.status(200).json(filterData)
       }catch (err) {

@@ -60,7 +60,7 @@ module.exports.deleteEntry = async (req, res, next) => {
     const { id } = req.query;
     try {
         const entry = await Entry.findById(id)
-        const day = await Day.findOne({ date: entry.date })
+        const day = await Day.findOne({locatie: '655e2e7c5a3d53943c6b7c53', date: entry.date })
         await entry.deleteOne();
         await Day.findOneAndUpdate({ _id: day._id }, { $pull: { entry: entry._id } }).exec()
         day.cashOut = day.cashOut - entry.amount
@@ -80,7 +80,6 @@ module.exports.deleteEntry = async (req, res, next) => {
 
 
 module.exports.createXcel = async (req, res, next) => {
-    console.log('hit the route')
     const {startDate, endDate} = req.query
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(0,0,0,0)

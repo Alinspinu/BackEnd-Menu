@@ -32,17 +32,12 @@ const productTrueSchema = new Schema({
                 qty: Number,
                 um: String,
                 ingPrice: Number,
-                ings: [ 
-                    {
-                        qty: Number,
-                        
-                        ing: {
-                            type: Schema.Types.ObjectId,
-                            ref: "IngredientInv"
-                          }
+                ing: {
+                    type: Schema.Types.ObjectId,
+                    ref: "IngredientInv"
                     }
-                ]
             }
+            
     ],
     price: Number,
     description: String,

@@ -9,6 +9,11 @@ router.route('/check-user').get(payRoutes.checkUser);
 router.route('/add-voucher').post(payRoutes.addVoucher);
 router.route('/verify-voucher').post(payRoutes.checkVoucher);
 router.route('/use-voucher').post(payRoutes.useVoucher);
+router.route('/print-bill').post(payRoutes.printBill)
+router.route('/pos').post(payRoutes.posPaymentCheck)
+router.route('/reports').get(payRoutes.reports)
+router.route('/in-and-out').post(payRoutes.cashInandOut)
+router.route('/change-payment-method').post(payRoutes.changePaymentMethod)
 
 
 

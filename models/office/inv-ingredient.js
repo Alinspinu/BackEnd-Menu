@@ -33,6 +33,10 @@ const invIngSchema = new Schema({
   dep: {
     type: String,
   },
+  productIngredient: {
+    type: Boolean, 
+    default: false
+  },
   ings: [
     {
       qty: Number,
@@ -47,5 +51,12 @@ const invIngSchema = new Schema({
     ref: 'Locatie'
   }
 });
+
+invIngSchema.pre('deleteOne', { document: true }, async function (next) {
+  await this.constructor.updateMany({ 'ings.ing': this._id }, { $pull: { ings: {ing: this._id} } }).exec()
+  // await this.updateMany({ paring: this._id }, { $pull: { paring: this._id } }).exec()
+  next()
+})
+
 
 module.exports = mongoose.model("IngredientInv", invIngSchema);

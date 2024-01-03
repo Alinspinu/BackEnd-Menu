@@ -2,9 +2,9 @@ const User = require('../../models/users/user')
 const Employee = require('../../models/users/employee')
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
+const loc = '655e2e7c5a3d53943c6b7c53'
 
 module.exports.sendUsers = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
     try{
         let filterTo = {}
         const {filter} = req.body;

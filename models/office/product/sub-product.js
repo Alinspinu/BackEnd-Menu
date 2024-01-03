@@ -32,34 +32,15 @@ const subProductSchema = new Schema({
     },
     ings: [
         {
-          name: {
-            type: String,
-          },
+       
           qty: {
             type: Number,
           },
-          price: {
-            type: Number,
-          },
-          um: {
-            type: String,
-          },
-          ings: [ 
-            {
-            name: {
-                type: String,
-              },
-              qty: {
-                type: Number,
-              },
-              price: {
-                type: Number,
-              },
-              um: {
-                type: String,
-              }, 
+          ing: {
+            type: Schema.Types.ObjectId,
+            ref: "IngredientInv"
           }
-        ]
+    
         },
       ],
     product: {
