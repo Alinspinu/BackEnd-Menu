@@ -35,9 +35,12 @@ async function print(order) {
         masa: order.masa,
         time: timeString
     }
+    console.log(order.products)
     printKitchen(foodProd, dataToPrint);
     printBarista(baristaProd, dataToPrint);
-    printMain(mainProd, dataToPrint);
+    setTimeout(()=>{
+        printMain(mainProd, dataToPrint);
+    }, 500)
 } 
 
 
@@ -61,59 +64,71 @@ function printKitchen(products, dataPrint) {
             masa: dataPrint.masa,
             products: productsToPrint
         }
-        // createXml(dataToPrint)
+        createXml(dataToPrint)
        
     } else {
         return
     }
 }
 
+
 async function printBarista(products, dataPrint) {   
     const url = 'http://192.168.1.90:65400/api/Receipt';
     let data = [
-        `TL^         COMANDA  BARISTA  ORA: ${dataPrint.time}   `,
-        "TL^************************************************************************", 
-        `TL^  NUME: ${dataPrint.employee.fullName}              ${dataPrint.employee.position}`,
-        "TL^************************************************************************",  
-        `TL^               MASA: ** ${dataPrint.masa} **` , 
-        "TL^*************************************************************************",
-        "TL^*************************************************************************",
+        `TL^                        ORA: ${dataPrint.time}   `,
+        "TL^ ", 
+        `TL^  NUME: ${dataPrint.employee.fullName}             MASA: *${dataPrint.masa}*`,
+        "TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~~ ~ ~ ~ ~ ~ ~ ~ ~", 
     ];
     if(products.length){
-        let productss = []
         for(let pro of products){
             let entry = `TL^  ${pro.quantity} X ${pro.name}`
-            productss.push(entry)
+            data.push(entry)
             if(pro.toppings.length){
                 for(let top of pro.toppings){
                     let topp =`TL^          +++ ${top.name}`
-                    productss.push(topp)
+                    data.push(topp)
                 }
             }
             if(pro.comment.length){
                 let comment = `TL^       -- ${pro.comment}`
-                productss.push(comment)
+                data.push(comment)
             }
         }
-        const newArray = [
-            ...data.slice(0, 6),
-            ...productss,
-            ...data.slice(6)
-          ];
-        // axios.post(url, newArray, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     })
-        //         .then(response => {
-        //             console.log('Response:', response.data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error.message);
-        //         });
+        axios.post(url, data, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
     } else {
         return
     }
+}
+
+function addProducts(products){
+    let productss = []
+    for(let pro of products){
+        let entry = `TL^  ${pro.quantity} X ${pro.name}`
+        productss.push(entry)
+        if(pro.toppings.length){
+            for(let top of pro.toppings){
+                let topp =`TL^          +++ ${top.name}`
+                productss.push(topp)
+            }
+        }
+        if(pro.comment.length){
+            let comment = `TL^       -- ${pro.comment}`
+            productss.push(comment)
+        }
+    }
+    console.log(productss)
+    return productss
 }
 
 

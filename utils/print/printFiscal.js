@@ -11,11 +11,25 @@ async function printBill(bill) {
             billToPrint.push(cifLine)
         }
         bill.products.forEach(el => {
-            let productLine = `S^${el.name}^${el.price*100}^${el.quantity*1000}^buc^${el.tva}^1`
+            let tva 
+            if(el.tva === 19){
+                tva = 1
+            }
+            if(el.tva === 9){
+                tva = 2
+            }
+            if(el.tva === 5){
+                tva = 4
+            }
+            if(el.tva === 0){
+                tva = 3
+            }
+            let productLine = `S^${el.name}^${el.price*100}^${el.quantity*1000}^buc^${tva}^1`
             billToPrint.push(productLine)
         })
-        billToPrint.push("TL^----------------------------------------------")
-        billToPrint.push("TL^ ")
+        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~")
+        
+        billToPrint.push("ST^")
         if(bill.discount > 0){
             let discountLine = `DV^${bill.discount * 100}`
             billToPrint.push(discountLine)
@@ -33,7 +47,7 @@ async function printBill(bill) {
             billToPrint.push(cashLine)
         }
         if(bill.payment.viva) {
-            let cardLine = `P^2^${bill.payment.viva * 100}`
+            let cardLine = `P^7^${bill.payment.viva * 100}`
             billToPrint.push(cardLine)
         }
         if(bill.payment.voucher) {
@@ -41,24 +55,22 @@ async function printBill(bill) {
             billToPrint.push(voucherLine)
         }
         billToPrint.push("DS^")
-        billToPrint.push("TL^----------------------------------------------")
-        billToPrint.push("TL^---------MULȚUMIM ȘI VĂ MAI AȘTEPTAM!---------")
-        billToPrint.push("TL^----------------------------------------------")
+        billToPrint.push("TL^          MULTUMIM SI VA MAI ASTEPTAM!")
+        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~")
+        
 
         console.log(billToPrint)
-
-
-        // axios.post(url, billToPrint, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     })
-        //         .then(response => {
-        //             console.log('Response:', response.data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error.message);
-        //         });
+        axios.post(url, billToPrint, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
 
     } else {
         return
@@ -73,7 +85,7 @@ async function posPayment(sum){
                 'Content-Type': 'application/json',
             },
             })
-            console.log(response)
+           return response
 }
 
 
@@ -89,8 +101,8 @@ async function reports(report){
     }
     console.log(reportLine)
     let message = report === 'x' ? `Raportul X a fost printat!` : `Raportul Z a fost printat!`
+    sendToPrint(reportLine)
     return {message: message}
-    // sendToPrint(reportLine)
 }
 
 
@@ -106,8 +118,8 @@ async function inAndOut(mode, sum){
     }
     console.log(inAndOutLine)
     let message = mode === 'in' ? `${sum} de lei au fost adăugați în casă!` : `${sum} de lei au fost scoși din casă!`
+    sendToPrint(inAndOutLine)
     return {message: message}
-    // sendToPrint(inAndOutLine)
 }
 
 function sendToPrint(print){

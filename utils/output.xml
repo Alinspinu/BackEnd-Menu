@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <align mode="left">
+    <text-line size="1:0">Alin Spinu   Masa 19</text-line>
+  </align>
+
+  <line-feed/>
+  <line-feed/>
+
+  <!-- Start of loop -->
+  
+    <align mode="right">
+      <text-line size="1:0">Gourmet X 2</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="right">
+      <text-line size="1:0">Paradiso X 2</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="right">
+      <text-line size="1:0">Gustoso X 2</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="right">
+      <text-line size="1:0">Fresco X 1</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="right">
+      <text-line size="1:0">Italiano X 1</text-line>
+    </align>
+    <line-feed/>
+    
+  <!-- End of loop -->
+
+  <paper-cut></paper-cut>
+</document>

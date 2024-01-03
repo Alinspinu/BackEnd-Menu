@@ -9,7 +9,7 @@ const User = require('../../models/users/user');
 const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
 
-const {reports, inAndOut, printBill} = require('../../utils/print/printFiscal')
+const {reports, inAndOut, printBill, posPayment} = require('../../utils/print/printFiscal')
 
 module.exports.getToken = async (req, res, next) => {
     try {
@@ -225,8 +225,13 @@ module.exports.posPaymentCheck = async (req, res, next) => {
         const {sum} = req.body;
         if(sum){
            const result = await posPayment(sum)
+           console.log(result.data)
+           if(result.data.ReceiptStatus){
+               res.status(200).json({message: 'Plata efectuata cu success!', payment: true})
+           } else {
+               res.status(200).json({message: result.data.ErrorInfo, payment: false})
+           }
         }
-        res.status(200).json({message: 'fuck-off'})
     }catch(err) {
         console.log(err)
         res.status(500).json({message: err.message})
