@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const orderRoutes = require('../../controlers/back-office/orders')
 
-router.route('/get-order').get(orderRoutes.getOrder);
+router.route('/get-orders').post(orderRoutes.getOrder);
 router.route('/get-user-orders').get(orderRoutes.getOrderByUser)
 
 router.route('/order-done').get(orderRoutes.orderDone);

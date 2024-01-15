@@ -9,7 +9,7 @@ const cloudinary = require('cloudinary').v2;
 const {checkTopping} = require('../../utils/functions')
 
  module.exports.getProducts = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
+    const {loc} = req.body
     try{
       let filterTo = {}
       const {filter} = req.body;
@@ -22,7 +22,8 @@ const {checkTopping} = require('../../utils/functions')
       filterTo.locatie = loc
       const products = await Product.find(filterTo).populate([
         {path: 'category', select: 'name'}, 
-        {path: 'subProducts'},
+        {path: 'subProducts', populate: {path: 'ings.ing', select: 'price'}},
+        {path: 'ings.ing', select: 'price'}
     ])
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       let filterProducts = []
@@ -59,16 +60,23 @@ const {checkTopping} = require('../../utils/functions')
 
 
   module.exports.addProd = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
+      console.log(req.body)
     try {
+        const {loc} = req.query
         const { category } = req.body;
         const cat = await Cat.findById(category);
         const product = new Product(req.body);
         product.order = parseFloat(req.body.order);
         product.price = parseFloat(req.body.price);
         product.locatie = loc;
-        product.ings = JSON.parse(req.body.ings);
-        product.toppings = JSON.parse(req.body.toppings);
+        if(product.ings.length){
+            const ings = JSON.parse(req.body.ings)
+            product.ings = ings;
+        }
+        if(product.toppings.length){
+            const top = JSON.parse(req.body.toppings)
+            product.toppings = top;
+        }
         if (req.file) {
             const { path, filename } = req.file;
             product.image.filename = filename;
@@ -77,6 +85,7 @@ const {checkTopping} = require('../../utils/functions')
         cat.product.push(product);
         await product.save();
         await cat.save();
+        console.log(product)
         const productToSend = await Product.findById(product._id);
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
         res.status(200)
@@ -151,10 +160,33 @@ module.exports.editProduct = async (req, res, next) => {
     }
 }
 
+module.exports.setProductDiscount = async (req, res, next) => {
+    try{
+        const catId = []
+        const {data} = req.body
+        for(let obj of data){
+            catId.push(obj.cat)
+        }
+        const cats = await Cat.find({_id: { $in: catId }}).populate({path:'product', select:'name'})
+        for(let cat of cats){
+            for(let obj of data){
+                if(obj.name === cat.name)
+                for(let product of cat.product){
+                  const updatedProducts =  await Product.findByIdAndUpdate(product._id, {discount: obj.precent}, {new: true})
+                }
+            }
+        }
+        res.status(200).json({message: `Discount a fost actualizat!`})
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
 
 
 module.exports.checkProduct = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
+    const loc = req.query.loc
     const { subProdId, prodId, toppings } = req.body
     if (subProdId.length || subProdId.length && toppings.length) {
         const subProducts = await SubProduct.find({ _id: { $in: subProdId }, available: false }).populate({ path: 'product' })

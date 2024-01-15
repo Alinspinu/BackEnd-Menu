@@ -15,7 +15,7 @@ const tableSchema = new Schema({
     bills: [
         {
             type: Schema.Types.ObjectId,
-            ref: "OrderTrue"
+            ref: "Order"
         }
     ]    
 })

@@ -7,12 +7,13 @@ const createCashRegisterDay = require('../../utils/createDay')
 
 
 module.exports.sendEntry = async (req, res, next) => {
-    createCashRegisterDay()
+    const{loc} = req.query
+    createCashRegisterDay(loc)
     const data = req.query.date
     const page = req.query.page || 1;
     const limit = 3
         try{
-            const documents = await Day.find({locatie: '655e2e7c5a3d53943c6b7c53' }).populate({path: "entry"})
+            const documents = await Day.find({locatie: loc }).populate({path: "entry"})
             .skip((page - 1) * limit)
             .limit(limit)
             .sort({ date: -1 });
@@ -26,7 +27,7 @@ module.exports.sendEntry = async (req, res, next) => {
 
 
 module.exports.addEntry = async (req, res, next) => {
-    const { tip, date, description, amount } = req.body
+    const { tip, date, description, amount, locatie } = req.body
     if(tip && date && description && amount){
         const entryDate = new Date(date)
         const newEntry = new Entry({
@@ -34,7 +35,7 @@ module.exports.addEntry = async (req, res, next) => {
             date: entryDate,
             description: description,
             amount: tip === 'expense' ? -amount : amount,
-            locatie: '655e2e7c5a3d53943c6b7c53',
+            locatie: locatie,
         })
         newEntry.save()
         entryDate.setUTCHours(0,0,0,0)
@@ -78,21 +79,44 @@ module.exports.deleteEntry = async (req, res, next) => {
 
 
 
-
 module.exports.createXcel = async (req, res, next) => {
-    const {startDate, endDate} = req.query
+    const {startDate, endDate, loc} = req.body
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(0,0,0,0)
+    const startDateToShow = new Date(startDate).toISOString().split('T')[0]
+    const endDateToShow = new Date(endDate).toISOString().split('T')[0]
     try{
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Sheet 1');
-
-        const days = await Day.find({ date:{ $gte: start, $lte: end} }).populate({ path: 'entry' })
+        const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end} }).populate({ path: 'entry' }).populate({path: 'locatie'})
         const day1 = days[0]
         const lastDay = days.at(-1)
+        let totalIn = 0
+        let totalOut = 0
+        days.forEach(day=> {
+            let dayIn = 0
+            let dayOut = 0
+           day.entry.forEach(entry => {
+               if(entry.tip === "income"){
+                   dayIn += entry.amount
+               } 
+               if(entry.tip === "expense"){
+                   dayOut += entry.amount
+               }
+               
+           })
+           totalIn += dayIn
+           totalOut += dayOut
+        })
+        const docTitle =  [
+            `${days[0].locatie.bussinessName}`,'',`Registru de casă perioadă ${startDateToShow} -- ${endDateToShow}`,'','']
         const header = ['Nr',`Data`,'Descriere','Tip', `Lei`]
         const cashIn = ['Sold Ințial',``,'','', `${round(day1.cashIn)}`]
         const footer = ['Sold Final','','',' ', `${round(lastDay.cashOut)}`] 
+        const inAndOut = [`Total Intrat ${round(totalIn)}`,'',`Total cheltuit ${round(totalOut)}`, ""]
+        worksheet.addRow(docTitle)
+        worksheet.addRow([])
+        worksheet.addRow([])
         worksheet.addRow(cashIn)
         worksheet.addRow(header)
         days.forEach(el => {
@@ -101,13 +125,20 @@ module.exports.createXcel = async (req, res, next) => {
             })
         })
         worksheet.addRow(footer)
+        worksheet.addRow(inAndOut)
         worksheet.getRow(1).eachCell((cell)=>{
+            cell.font = {
+                bold: true,
+                size: 13
+            }
+        })
+        worksheet.getRow(4).eachCell((cell)=>{
             cell.font = {
                 bold: true,
                 size: 14
             }
         })
-        worksheet.getRow(2).eachCell((cell)=>{
+        worksheet.getRow(5).eachCell((cell)=>{
             cell.font = {
                 bold: true,
                 size: 13
@@ -124,23 +155,32 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.getColumn(3).width = 30; 
         worksheet.getColumn(4).width = 10; 
         worksheet.getColumn(5).width = 10; 
-        worksheet.mergeCells('A1:D1')
-        const lastRowNumber = worksheet.lastRow.number;
+        worksheet.mergeCells('A1:B2')
+        worksheet.mergeCells('C1:E2')
+        worksheet.mergeCells('A3:E3')
+        worksheet.mergeCells('A4:D4')
+        const lastRowNumber = worksheet.lastRow.number -1;
+        const inOutRow = worksheet.lastRow.number
         worksheet.mergeCells(`A${lastRowNumber}:D${lastRowNumber}`)
-        workbook.xlsx.writeFile('example.xlsx')
+        worksheet.mergeCells(`A${inOutRow}:B${inOutRow}`)
+        worksheet.mergeCells(`C${inOutRow}:D${inOutRow}`)
+
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+
+          workbook.xlsx.write(res)
           .then(() => {
-            console.log('Workbook created successfully');
+            res.end();
           })
           .catch((error) => {
-            console.error('Error creating workbook:', error);
+            console.error('Error writing Excel file:', error);
+            res.status(500).send('Internal Server Error');
           });
-        res.status(200)
     }catch(err){
         console.log(err)
         res.status(500).json({message: "Error", err})
     }
 }
-
 
 function round(num) {
     return Math.round(num * 100) / 100;

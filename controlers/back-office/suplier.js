@@ -2,14 +2,19 @@ const Suplier = require('../../models/office/suplier')
 
 
 module.exports.addSuplier = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
+    const loc = req.body.loc
     const {suplier} = req.body;
-    const {personal} = req.query
+    const {mode} = req.query
     try{
-       if(personal === 'true') {
-           const newLocation = new Locatie(suplier) 
-           await newLocation.save()
-           res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`})
+       if(mode === 'enrol') {
+        const check = Locatie.findOne({vatNumber: suplier.vatNumber})
+        if(check){
+            return res.status(401).json({message: "Codul fiscal este deja inregistrat in baza de date contactati echipa de suport alin@flowmanager.ro"})
+        } else {
+            const newLocation = new Locatie(suplier) 
+             const loc = await newLocation.save()
+            res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`, id: loc._id})
+        }
        } else {
            const newSuplier = new Suplier(suplier);
            newSuplier.name = suplier.bussinessName
@@ -24,7 +29,7 @@ module.exports.addSuplier = async (req, res, next) => {
    }
    
    module.exports.sendSuplier = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
+    const loc = req.body.loc
        try{
          const userData = req.body.search;
          const suplier = await Suplier.find({locatie: loc});

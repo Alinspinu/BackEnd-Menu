@@ -28,15 +28,15 @@ const categoryTrueSchema = new Schema({
     },
     category: {
         type: Schema.Types.ObjectId,
-        ref: 'CategoryTrue'
+        ref: 'Category'
     },
     product:
         [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'ProductTrue'
+                ref: 'Product'
             },
         ],
 })
 
-module.exports = mongoose.model('CategoryTrue', categoryTrueSchema)
+module.exports = mongoose.model('Category', categoryTrueSchema)

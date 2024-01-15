@@ -8,10 +8,7 @@ router.route('/ingredient')
     .post(ingRoutes.saveIng)
     .put(ingRoutes.editIng)
     .delete(ingRoutes.deleteIng)
-router.route('/product-ing')
-    .post(ingRoutes.addProdIng)
-    .put(ingRoutes.editProdIng)
-    .delete(ingRoutes.deleteIng)
+
 
 
 

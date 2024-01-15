@@ -8,7 +8,7 @@ const { json } = require('body-parser');
 const User = require('../../models/users/user');
 const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
-
+const { round } = require('../../utils/functions')
 const {reports, inAndOut, printBill, posPayment} = require('../../utils/print/printFiscal')
 
 module.exports.getToken = async (req, res, next) => {
@@ -174,6 +174,7 @@ module.exports.useVoucher = async (req, res, next) => {
 }
 
 
+
 module.exports.reports = async (req, res, next) => {
     try{
         const {value} = req.query;
@@ -200,6 +201,15 @@ module.exports.printBill = async (req, res, next) => {
     try{
         const {bill} = req.body
         bill.status = 'done'
+        const id = bill.clientInfo._id
+        if(id && id.length){
+            const client = await User.findById(id)
+            if(client){
+                client.orders.push(bill)
+                client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
+            }
+            await client.save()
+        }
         printBill(bill)
         await Order.findByIdAndUpdate(bill._id, bill)
         res.status(200).json({message: "Bonul a fos tipărit!"})
@@ -208,6 +218,7 @@ module.exports.printBill = async (req, res, next) => {
         res.status(500).json({message: err.message})
     }
 }
+
 
 module.exports.changePaymentMethod = async (req, res, next) => {
     try{

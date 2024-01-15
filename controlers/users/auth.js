@@ -62,6 +62,38 @@ module.exports.register = async (req, res, next) => {
 };
 
 
+module.exports.registerEmployee = async (req, res, next) => {
+    try{
+         const {user, second} = req.body
+         if(second && user){
+            if(second.password === second.confirmPassword){
+                const hashedPassword = hashPassword(second.password)
+                const newUser = new User(user);
+                newUser.password = hashedPassword
+                console.log(newUser)
+                await newUser.save()
+                // await sendVerificationEmail(newUser).then(response => {
+                //     if (response.message === 'Email sent') {
+                //         res.status(200).json({ message: response.message, id: newUser._id });
+                //     } else {
+                //         res.status(256).json({ message: response.message, id: newUser._id });
+                //     };
+                // });
+                res.status(200).json({message: "Userul a fost Salvat cu success"})
+            } else{
+                return res.status(401).json({ message: "Passwords don't match!" });
+            }
+         } else {
+            return res.status(401).json({ message: "No USER!!" });
+         }
+    } catch (err){
+        console.log(err)
+        res.status(500).json(err.message)
+    }
+}
+
+
+
 module.exports.login = async (req, res, next) => {
     const loc = '655e2e7c5a3d53943c6b7c53'
     const { email, password } = req.body;
@@ -85,6 +117,7 @@ module.exports.login = async (req, res, next) => {
                 name: user.name,
                 email: user.email,
                 id: user.id,
+                locatie: user.locatie
             };
             if (response.message === 'Email sent') {
                 res.status(200).json({ message: response.message, user: userData })
@@ -118,10 +151,12 @@ module.exports.login = async (req, res, next) => {
 
 
 
+
 module.exports.verifyToken = async (req, res, next) => {
     const { token } = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
+        console.log(userId)
         if (userId) {
             const user = await User.findById(userId.userId);
             if (user) {
@@ -134,6 +169,7 @@ module.exports.verifyToken = async (req, res, next) => {
                     cashBack: user.cashBack,
                     email: user.email,
                     status: user.status,
+                    cardIndex: user.cardIndex,
                     telephone: user.telephone ? user.telephone : '-',
                     _id: user._id,
                     employee: user.employee,

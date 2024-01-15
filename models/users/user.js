@@ -27,9 +27,34 @@ const UserTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+    cashBackProcent: {
+        type: Number,
+        default: 5
+    },
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
+    },
+    cardIndex: Number,
+    discount: {
+        general: {
+            type: Number,
+            default: 0
+        },
+        category: [
+            {
+                precent: {
+                    type: Number,
+                    default: 0
+                },
+                name: String,
+                cat:{
+                        type: Schema.Types.ObjectId,
+                        ref: 'Category'
+                    }
+                    
+            }
+        ]
     },
     employee: {
         fullName: {
@@ -46,7 +71,6 @@ const UserTrueSchema = new Schema({
         },
         address: {
             type: String,
-           
         },
         position: {
             type: String, 
@@ -66,11 +90,11 @@ const UserTrueSchema = new Schema({
         [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'OrderTrue'
+                ref: 'Order'
             }
         ]
 });
 
 
 
-module.exports = mongoose.model('UserTrue', UserTrueSchema);
+module.exports = mongoose.model('User', UserTrueSchema);

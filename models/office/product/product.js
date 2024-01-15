@@ -23,15 +23,15 @@ const productTrueSchema = new Schema({
     },
     printer: {
         type: String,
-        default: 'main'
+        default: 'barista'
     },
     toppings:[
             {
                 name: String,
                 price: Number,
-                qty: Number,
                 um: String,
                 ingPrice: Number,
+                qty: Number,
                 ing: {
                     type: Schema.Types.ObjectId,
                     ref: "IngredientInv"
@@ -50,7 +50,7 @@ const productTrueSchema = new Schema({
     paring: [
         {
             type: Schema.Types.ObjectId,
-            ref: "ProductTrue"
+            ref: "Product"
         }
     ],
     ings: [
@@ -145,10 +145,14 @@ const productTrueSchema = new Schema({
         type: Number,
     },
     mainCat: String,
+    discount: {
+        type: Number,
+        default: 0
+    },
     category:
     {
         type: Schema.Types.ObjectId,
-        ref: 'CategoryTrue'
+        ref: 'Category'
     },
     locatie: {
         type: Schema.Types.ObjectId,
@@ -171,4 +175,4 @@ productTrueSchema.pre('deleteOne', { document: true }, async function (next) {
 })
 
 
-module.exports = mongoose.model('ProductTrue', productTrueSchema)
+module.exports = mongoose.model('Product', productTrueSchema)

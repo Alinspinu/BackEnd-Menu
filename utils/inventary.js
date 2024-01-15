@@ -38,27 +38,27 @@ async function unloadIngs (ings, qtyProdus) {
 async function uploadIngs (ings, qtyProdus) {
   try{
     for (const ing of ings) {
-      const ingredientInv = await IngInv.findById(ing.ing).exec();
-      if (!ingredientInv) {
-          console.log(`Eorare! Ingredientul nu a fost găsit în baza de date. la incarcare de stoc`);
-        } else {
-          if(ingredientInv.ings.length){
-            ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
-            uploadIngs(ingredientInv.ings, qtyProdus)
-          }else {
-            let cantFinal = parseFloat(ing.qty * qtyProdus);
-            ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
-            await ingredientInv.save();
-            console.log(`Success!! upload-ingredient: Nume - ${ingredientInv.name} + ${cantFinal} / stoc: ${ingredientInv.qty}`)
-          }
-          if(ingredientInv.name === "Lapte Vegetal"){
-            const lapte = await IngInv.findOne({name: "Lapte"})
-            const ingTo = {
-              qty: ing.qty,
-              ing: lapte._id
+        const ingredientInv = await IngInv.findById(ing.ing).exec();
+        if (!ingredientInv) {
+            console.log(`Eorare! Ingredientul nu a fost găsit în baza de date. la incarcare de stoc`);
+          } else {
+            if(ingredientInv.ings.length){
+              ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
+              uploadIngs(ingredientInv.ings, qtyProdus)
+            }else {
+              let cantFinal = parseFloat(ing.qty * qtyProdus);
+              ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
+              await ingredientInv.save();
+              console.log(`Success!! upload-ingredient: Nume - ${ingredientInv.name} + ${cantFinal} / stoc: ${ingredientInv.qty}`)
             }
-              unloadIngs([ingTo],  qtyProdus)
-          }
+            if(ingredientInv.name === "Lapte Vegetal"){
+              const lapte = await IngInv.findOne({name: "Lapte"})
+              const ingTo = {
+                qty: ing.qty,
+                ing: lapte._id
+              }
+                unloadIngs([ingTo],  qtyProdus)
+            }
       }
 
     }

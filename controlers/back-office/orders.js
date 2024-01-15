@@ -14,9 +14,22 @@ const {printBill, posPayment} = require('../../utils/print/printFiscal')
 //************************SEND ORDERS********************** */
 
 module.exports.getOrder = async (req, res, next) => {
+    const {start, end, loc} = req.body
+    if(start && end){
+        const utcOffset = 0;
+        const localStartTime = new Date(start)
+        const localEndTime = new Date(end)
+        const startTimestamp = new Date(localStartTime.getTime() - utcOffset * 60 * 60 * 1000);
+        const endTimestamp = new Date(localEndTime.getTime() - utcOffset * 60 * 60 * 1000);
+        const orders = await Order.find({locatie: loc, status: 'done', createdAt: {$gte: startTimestamp, $lt: endTimestamp}})
+        res.status(200).json(orders)
+    } else {
+        const today = new Date(Date.now()).setHours(0,0,0,0)
+        const orders = await Order.find({ status: 'done', createdAt: {$gte: today}})
+        res.status(200).json(orders)
+
+    }
     try{
-        const orders = await Order.find({})
-       res.json(orders)
     } catch (err){
         console.log(err)
     }
@@ -63,7 +76,6 @@ module.exports.sendOrderTime = async (req, res, next) => {
 //************************SAVE ORDERS********************** */
 
 module.exports.saveOrEditBill = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
     try{
         const {bill} = req.body;
         const parsedBill = JSON.parse(bill)
@@ -73,7 +85,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             delete parsedBill.index
             const table = await Table.findOne({index: index})
             const newBill = new Order(parsedBill);
-            newBill.locatie = loc
             newBill.clientInfo = parsedBill.clientInfo
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
@@ -91,8 +102,10 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                         unloadIngs(el.ings, el.quantity);
                     }
                     el.sentToPrint = false;
+                    console.log("new", el.sentToPrint)
                 } else if(el.sentToPrint){
                     el.sentToPrint = false
+                    console.log("new",el.sentToPrint)
                 }
             })
             await table.save();
@@ -108,8 +121,10 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                         unloadIngs(el.ings, el.quantity);
                     }
                     el.sentToPrint = false;
+                    console.log("old",el.sentToPrint)
                 } else if(el.sentToPrint){
                     el.sentToPrint = false
+                    console.log("old",el.sentToPrint)
                 }
             })
             const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
@@ -132,6 +147,7 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
 
 module.exports.uploadIngs = async (req, res, next) => {
     try{
+        const {loc} = req.query
         const {ings, quantity} = req.body;
         if(ings && quantity){
             uploadIngs(ings, quantity)
@@ -158,13 +174,14 @@ module.exports.saveOrder = async (req, res, next) => {
             if (user) {
                 user.orders.push(newOrder);
                 if (newOrder.cashBack > 0 && newOrder.cashBack <= user.cashBack) {
-                    user.cashBack = round((user.cashBack - newOrder.cashBack) + (newOrder.total * 0.05))
+                    user.cashBack = round((user.cashBack - newOrder.cashBack) + (newOrder.total * user.cashBackProcent / 100))
                 } else {
-                    user.cashBack = round(user.cashBack + (newOrder.total * 0.05))
+                    user.cashBack = round(user.cashBack + (newOrder.total * user.cashBackProcent / 100 ))
                 }
                 await user.save()
             }
             const order = await newOrder.save()
+            console.log(order)
             console.log(`Order ${order._id} saved with the user ${user.name}!`)
 
             if(nrMasa > 0){

@@ -45,7 +45,7 @@ const subProductSchema = new Schema({
       ],
     product: {
         type: Schema.Types.ObjectId,
-        ref: 'ProductTrue'
+        ref: 'Product'
     }
 })
 

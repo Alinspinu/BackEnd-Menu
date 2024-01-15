@@ -21,4 +21,6 @@ router.route('/change-status').post(productRoutes.changeStatus);
 router.route('/add-paring-product').post(productRoutes.addParingProduct);
 router.route('/remove-paring-product').post(productRoutes.removeParingProduct);
 
+router.route('/discount').post(productRoutes.setProductDiscount)
+
 module.exports = router

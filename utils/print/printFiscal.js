@@ -116,7 +116,6 @@ async function inAndOut(mode, sum){
         let outLine = `O^${sum * 100}`;
         inAndOutLine.push(outLine)
     }
-    console.log(inAndOutLine)
     let message = mode === 'in' ? `${sum} de lei au fost adăugați în casă!` : `${sum} de lei au fost scoși din casă!`
     sendToPrint(inAndOutLine)
     return {message: message}

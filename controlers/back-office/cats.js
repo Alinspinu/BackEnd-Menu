@@ -2,12 +2,10 @@
 const Cat = require('../../models/office/product/cat')
 const cloudinary = require('cloudinary').v2;
 
-
-
 module.exports.sendCats = async (req, res, next) => {
     try {
-        const { mainCat } = req.query;
-        const cats = await Cat.find().populate({
+        const { loc } = req.query;
+        const cats = await Cat.find({locatie: loc}).populate({
             path: 'product',
             populate: [
                 { path: 'category' },
@@ -28,10 +26,28 @@ module.exports.sendCats = async (req, res, next) => {
     }
 }
 
+module.exports.searchCats = async (req, res, next) => {
+    try{
+        const {loc, search} = req.query
+        const cats = await Cat.find({locatie: loc})
+        const sortedCats = cats.sort((a, b) => a.name.localeCompare(b.name))
+        let filterCats = []
+        console.log(search)
+        filterCats = sortedCats.filter((object) =>
+        object.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        res.status(200).json(filterCats)
+    } catch(err){
+        console.log(err)
+        res.statust(200).json({message: err.message})
+    }
+}
+
 
 module.exports.addCat = async (req, res, next) => {
+    const {loc} = req.query
     try {
         const cat = new Cat(req.body)
+        cat.locatie = loc
         if (req.file) {
             const { path, filename } = req.file
             cat.image.filename = filename

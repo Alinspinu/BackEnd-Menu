@@ -98,10 +98,20 @@ const orderTrueSchema = new Schema({
         telephone: String,
         userId: String,
         cashBack: Number,
+        discount: {
+            general: Number,
+            category: [
+                {
+                    precent: Number,
+                    cat: String,
+                    name: String,
+                }
+            ]
+        }
     },
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'UserTrue'
+        ref: 'User'
     },
     locatie: {
         type: Schema.Types.ObjectId,
@@ -112,7 +122,7 @@ const orderTrueSchema = new Schema({
       position: String,
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'UserTrue'
+        ref: 'User'
     },
     },
     products:
@@ -131,9 +141,11 @@ const orderTrueSchema = new Schema({
                     type: Boolean,
                     default: true
                 },
+                discount: Number,
                 mainCat: String,
                 imgPath: String,
                 payToGo: Boolean,
+                dep: String,
                 sub: Boolean,
                 quantity: {
                     type: Number,
@@ -206,4 +218,4 @@ orderTrueSchema.pre('deleteOne', async function (next){
     next()
 })
 
-module.exports = mongoose.model('OrderTrue', orderTrueSchema)
+module.exports = mongoose.model('Order', orderTrueSchema)

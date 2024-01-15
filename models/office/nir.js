@@ -15,14 +15,21 @@ const nirSchema = new Schema({
     type: String,
     required: true,
   },
-  date: {
-    type: Date,
-    default: Date.now(),
-  },
   index: {
     type: Number,
     index: true,
   },
+  documentDate: {
+    type: Date,
+    required: true
+  },
+  discount: [
+    {
+      tva: Number,
+      value: Number,
+      procent: Number,
+    }
+  ],
   ingredients: [
     {
       name: {
@@ -71,7 +78,7 @@ const nirSchema = new Schema({
       },
     },
   ],
-});
+}, { timestamps: true, });
 
 nirSchema.pre("save", async function (next) {
   try {

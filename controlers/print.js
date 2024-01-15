@@ -1,19 +1,51 @@
 const Nir = require('../models/office/nir');
+const exceljs = require('exceljs');
 const Locatie = require('../models/office/locatie')
 const PDFDocument = require("pdfkit");
 
 
 module.exports.printNir = async (req, res, next) => {
-  const loc = '655e2e7c5a3d53943c6b7c53'
-    const nir = await Nir.findOne({locatie: loc}, {}, { sort: { _id: -1 } })
-      .populate({
-        path: "suplier",
-        select: "name vatNumber",
+  // const firma = await Locatie.findById(loc)
+  const {id} = req.query
+  
+  const nir = await Nir.findById(id)
+  .populate({
+    path: "suplier",
+    select: "name vatNumber",
+  })
+  .populate({
+    path: 'locatie'
+  })
+  const firma = nir.locatie
+      if(nir.discount.length){
+      nir.discount.forEach(discount => {
+        nir.ingredients.forEach(ing => {
+          if(ing.tva === discount.tva){
+            ing.price = round(ing.price + (ing.price * discount.procent / 100))
+            ing.value = round(ing.price * ing.qty)
+            ing.tvaValue = round(ing.value * ing.tva / 100)
+            ing.total = round(ing.value + ing.tvaValue)
+          }
+        })
+        const ingredient = {
+          name: `Discount ${discount.tva}%`,
+          um: "buc",
+          qty: 1,
+          dep: '-',
+          price: -discount.value,
+          value: -discount.value,
+          gestiune: '-',
+          tva: discount.tva,
+          tvaValue: round(-discount.value * discount.tva / 100),
+          total: round(-discount.value + (-discount.value * discount.tva / 100)),
+          sellPrice: 0,
+        }
+        nir.ingredients.push(ingredient)
       })
-    const firma = await Locatie.findOne({name: 'True'});
-      console.log(nir, firma)
+        console.log(nir.discount)
+      }
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-    const date = nir.date
+    const date = nir.documentDate
       .toLocaleDateString("en-GB", options)
       .replace(/\//g, "-");
   
@@ -80,21 +112,21 @@ module.exports.printNir = async (req, res, next) => {
     // Table headers
     doc.font("public/font/RobotoSlab-Bold.ttf");
     doc.fontSize(10);
-    doc.text("Denumire Articol", 10, y, { width: 110 });
-    doc.text("UM", 115, y, { width: 40, align: "center" });
-    doc.text("Qty", 160, y, { width: 40, align: "center" });
-    doc.text("Tip", 225, y, { width: 70, align: "center" });
-    doc.text("Gestiune", 300, y, { width: 70, align: "center" });
+    doc.text("Denumire Articol", 10, y, { width: 210 });
+    doc.text("UM", 215, y, { width: 30, align: "center" });
+    doc.text("Qty", 250, y, { width: 30, align: "center" });
+    doc.text("Tip", 290, y, { width: 50, align: "center" });
+    doc.text("Gestiune", 340, y, { width: 50, align: "center" });
   
     if (firma.VAT) {
-      doc.text("Pret/F/Tva", 375, y, { width: 70, align: "center" });
+      doc.text("Pret/F/Tva", 390, y, { width: 70, align: "center" });
     } else if (!firma.VAT) {
-      doc.text("Pret", 375, y, { width: 50, align: "center" });
+      doc.text("Pret", 390, y, { width: 50, align: "center" });
     }
-    doc.text("Valoare", 450, y, { width: 40, align: "center" });
-    doc.text("Tva%", 505, y, { width: 30, align: "center" });
+    doc.text("Valoare", 460, y, { width: 50, align: "center" });
+    doc.text("Tva%", 510, y, { width: 30, align: "center" });
     doc.text("Val Tva", 540, y, { width: 40, align: "center" });
-    doc.text("Total", 585, y, { width: 50, align: "center" });
+    doc.text("Total", 595, y, { width: 50, align: "center" });
     doc.text("Pret Vanzare", 640, y, { width: 65, align: "center" });
     doc.text("Val Vanzare", 705, y, { width: 60, align: "center" });
     doc.text("Total Tva", 770, y, { width: 60, align: "center" });
@@ -115,38 +147,38 @@ module.exports.printNir = async (req, res, next) => {
     let valTvaVanzare = 0;
     let valTotal = 0;
     nir.ingredients.forEach((produs, i) => {
-      doc.text(produs.name, 10, y + i * 18 + 18, { width: 110 });
-      doc.text(produs.um, 115, y + i * 18 + 18, { width: 40, align: "center" });
-      doc.text(produs.qty.toString(), 160, y + i * 18 + 18, {
-        width: 40,
-        align: "center",
-      });
-      doc.text(produs.dep, 225, y + i * 18 + 18, {
-        width: 70,
-        align: "center",
-      });
-      doc.text(cap(produs.gestiune), 300, y + i * 18 + 18, {
-        width: 70,
-        align: "center",
-      });
-      doc.text(produs.price, 375, y + i * 18 + 18, {
-        width: 50,
-        align: "center",
-      });
-      doc.text(produs.value, 435, y + i * 18 + 18, {
-        width: 50,
-        align: "center",
-      });
-      doc.text(produs.tva, 495, y + i * 18 + 18, {
+      doc.text(produs.name, 10, y + i * 18 + 18, { width: 210 });
+      doc.text(produs.um, 215, y + i * 18 + 18, { width: 30, align: "center" });
+      doc.text(produs.qty.toString(), 250, y + i * 18 + 18, {
         width: 30,
         align: "center",
       });
-      doc.text(produs.tvaValue, 530, y + i * 18 + 18, {
+      doc.text(produs.dep, 290, y + i * 18 + 18, {
         width: 50,
         align: "center",
       });
-      doc.text(produs.total, 585, y + i * 18 + 18, {
+      doc.text(cap(produs.gestiune), 340, y + i * 18 + 18, {
         width: 50,
+        align: "center",
+      });
+      doc.text(round(produs.price), 390, y + i * 18 + 18, {
+        width: 70,
+        align: "center",
+      });
+      doc.text(round(produs.value), 460, y + i * 18 + 18, {
+        width: 50,
+        align: "center",
+      });
+      doc.text(produs.tva + "%", 510, y + i * 18 + 18, {
+        width: 25,
+        align: "center",
+      });
+      doc.text(round(produs.tvaValue), 535, y + i * 18 + 18, {
+        width: 40,
+        align: "center",
+      });
+      doc.text(round(produs.total), 590, y + i * 18 + 18, {
+        width: 45,
         align: "center",
       });
       doc.text(
@@ -172,7 +204,7 @@ module.exports.printNir = async (req, res, next) => {
         y + i * 18 + 18,
         { width: 60, align: "center" }
       );
-      valTotal += parseFloat(produs.total)
+      valTotal +=  parseFloat(produs.total);
       valoareIntTotal += parseFloat(produs.value);
       valTvaTotal += parseFloat(produs.tvaValue);
       valVanzare +=
@@ -192,7 +224,7 @@ module.exports.printNir = async (req, res, next) => {
     doc.font("public/font/RobotoSlab-Bold.ttf");
     doc.fontSize(12);
     doc.text("Total:", 370, y + height + 26);
-    doc.text(`${valoareIntTotal}`, 430, y + height + 26, {
+    doc.text(`${round(valoareIntTotal)}`, 460, y + height + 26, {
       width: 50,
       align: "center",
     });
@@ -201,21 +233,21 @@ module.exports.printNir = async (req, res, next) => {
       align: "center",
     });
     if (firma.VAT) {
-      doc.text(`${valTvaTotal + valoareIntTotal}`, 585, y + height + 26, {
+      doc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 26, {
         width: 50,
         align: "center",
       });
     } else if (!firma.VAT) {
-      doc.text(`${valTotal}`, 585, y + height + 26, {
+      doc.text(`${round(valTotal)}`, 585, y + height + 26, {
         width: 50,
         align: "center",
       });
     }
-    doc.text(`${valVanzare}`, 705, y + height + 26, {
+    doc.text(`${round(valVanzare)}`, 705, y + height + 26, {
       width: 60,
       align: "center",
     });
-    doc.text(`${valTvaVanzare}`, 770, y + height + 26, {
+    doc.text(`${round(valTvaVanzare)}`, 770, y + height + 26, {
       width: 60,
       align: "center",
     });
@@ -248,13 +280,207 @@ module.exports.printNir = async (req, res, next) => {
       });
       doc.on("end", () => {
         const buffer = Buffer.concat(chunks);
-        const pdfUrl = `data:application/pdf;base64,${buffer.toString("base64")}`;
-        res.send(
-          `<iframe src="${pdfUrl}" style="width:100%;height:100%;" frameborder="0"></iframe>`
-        );
+        const base64String = buffer.toString("base64");
+        res.status(200).send(base64String)
       });
     });
   };
+
+
+
+
+
+  module.exports.createNirsXcel = async (req, res, next) => {
+    const {startDate, endDate, loc} = req.body
+    const start = new Date(startDate).setUTCHours(0,0,0,0)
+    const end = new Date(endDate).setUTCHours(0,0,0,0)
+    const startDateToShow = new Date(startDate).toISOString().split('T')[0]
+    const endDateToShow = new Date(endDate).toISOString().split('T')[0]
+    try{
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet('Rapoarte NIR');
+        const nirs = await Nir.find({locatie: loc, documentDate:{ $gte: start, $lte: end} }).populate({path: "suplier"}).populate({path: 'locatie'})
+        const docTitle =  [
+          `${nirs[0].locatie.bussinessName}`,
+           '',
+           '',
+           `Rapoarte NIR de la ${startDateToShow}, pană la ${endDateToShow}`,
+           '',
+           '',
+           '',
+           '',
+           '']
+        const header = [
+          'Nr',
+          `Data`,
+          'Nr Document',
+          `Valoare fară Tva`, 
+          "Disc Fara TVA", 
+          "Valoare TVA",
+          "Valoare cu TVA",
+          "Valoare Vanzare",
+          "Furnizor"
+        ]
+        let totals = {
+          valFTva: 0,
+          valDiscount: 0,
+          tvaVal: 0,
+          sellPrice: 0,
+        }
+
+
+        worksheet.addRow(docTitle)
+        worksheet.addRow([])
+        worksheet.addRow(header)
+
+        nirs.forEach(el => {
+          let valFTva = 0
+          let valDiscount = 0
+          let tvaVal = 0
+          let sellPrice = 0
+          el.ingredients.forEach(ing=> {
+            valFTva += ing.value
+            tvaVal += ing.tvaValue
+            sellPrice += ing.sellPrice
+          })
+          if(el.discount.length){
+            el.discount.forEach(obj => {
+              valDiscount += obj.value
+            })
+          }
+          worksheet.addRow(
+            [
+              `${el.index}`,
+              `${el.documentDate.toISOString().split('T')[0]}`,
+              `${el.nrDoc}`,
+              `${round(valFTva + valDiscount)}`,
+              `${round(valDiscount)}`,
+              `${round(tvaVal)}`,
+              `${round(valFTva + tvaVal)}`,
+              `${round(sellPrice)}`,
+              `${el.suplier.name}`
+            ]
+            )
+            totals.valFTva += valFTva;
+            totals.valDiscount += valDiscount;
+            totals.tvaVal += tvaVal;
+            totals.sellPrice += sellPrice;
+        })
+
+        const totalsRow = [
+          'TOTALURI',
+          '',
+          '',
+          `${round(totals.valFTva)}`,
+          `${round(totals.valDiscount)}`,
+          `${round(totals.tvaVal)}`,
+          `${round(totals.tvaVal + totals.valFTva)}`,
+          `${round(totals.sellPrice)}`
+        ]
+
+        const totalsDetailsRow = [
+          '',
+          '',
+          '',
+          `T Valoare fară Tva`, 
+          "T Disc Fara TVA", 
+          "T Valoare TVA",
+          "T Valoare cu TVA",
+          "T Valoare Vanzare",
+        ]
+        worksheet.addRow(totalsRow)
+        worksheet.addRow(totalsDetailsRow)
+
+        worksheet.getColumn(1).eachCell((cell) => {
+          cell.alignment = { vertical: "middle", horizontal: 'center'}
+        })
+        worksheet.getColumn(2).eachCell((cell)=> {
+          cell.alignment = { vertical: "middle", horizontal: 'center'}
+        })
+
+        worksheet.getColumn(3).eachCell((cell) => {
+          cell.alignment = { vertical: "middle", horizontal: 'center'}
+        })
+        worksheet.getColumn(4).eachCell((cell) => {
+          cell.alignment = {vertical: "middle", horizontal: 'right' };
+        });
+        worksheet.getColumn(5).eachCell((cell) => {
+          cell.alignment = {vertical: "middle", horizontal: 'right' };
+        });
+        worksheet.getColumn(6).eachCell((cell) => {
+          cell.alignment = {vertical: "middle", horizontal: 'right' };
+        });
+        worksheet.getColumn(7).eachCell((cell) => {
+          cell.alignment = {vertical: "middle", horizontal: 'right' };
+        });
+        worksheet.getColumn(8).eachCell((cell) => {
+          cell.alignment = {vertical: "middle", horizontal: 'right' };
+        });
+        worksheet.getColumn(9).eachCell((cell) => {
+          cell.alignment = { vertical: "middle", horizontal: 'center'}
+        });
+
+      worksheet.getRow(1).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+        cell.alignment = {horizontal: 'center'}
+    })
+    worksheet.getRow(3).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 12
+        }
+        cell.alignment = {horizontal: 'center'}
+    })
+    const totalsRowNumber = worksheet.lastRow.number -1;
+        worksheet.getRow(totalsRowNumber).eachCell((cell)=>{
+            cell.font = {
+                bold: true,
+                size: 14
+            }
+        })
+        worksheet.getColumn(1).width = 5;
+        worksheet.getColumn(2).width = 12; 
+        worksheet.getColumn(3).width = 14; 
+        worksheet.getColumn(4).width = 14; 
+        worksheet.getColumn(5).width = 14; 
+        worksheet.getColumn(6).width = 14; 
+        worksheet.getColumn(7).width = 15; 
+        worksheet.getColumn(8).width = 15; 
+        worksheet.getColumn(9).width = 30; 
+        worksheet.mergeCells(`A${totalsRowNumber}:C${totalsRowNumber}`)
+        worksheet.mergeCells(`A1:C1`)
+        worksheet.mergeCells(`D1:I1`)
+        worksheet.mergeCells(`A2:I2`)
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+          workbook.xlsx.write(res)
+          .then(() => {
+            res.end();
+          })
+          .catch((error) => {
+            console.error('Error writing Excel file:', error);
+            res.status(500).send('Internal Server Error');
+          });
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message: "Error", err})
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
  function round(num){
     return Math.round((num + Number.EPSILON) * 100) / 100;

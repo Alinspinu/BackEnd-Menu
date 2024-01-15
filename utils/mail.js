@@ -9,9 +9,9 @@ async function sendCompleteRegistrationEmail(newUser) {
 
     const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
     const templateData = {
-        link: `http://localhost:8101/register?token=${token}`,
+        link: `https://true-meniu.web.app/register?token=${token}`,
         name: newUser.name,
-        message: 'Prin acest email vrem sa-ți fimalizezi înregistrarea.'
+        message: 'Prin acest email vrem sa-ți finalizezi înregistrarea cardului de fidelitate'
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
 
@@ -38,6 +38,44 @@ async function sendCompleteRegistrationEmail(newUser) {
         return { message: 'Error sending email' };
     };
 };
+
+
+
+async function sendCompleteRegistrationCustomer(newUser) {
+    const token = jwt.sign({ userId: newUser._id }, process.env.AUTH_SECRET, { expiresIn: '24h' });
+
+    const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
+    const templateData = {
+        link: `http://localhost:8101/register?token=${token}`,
+        name: newUser.name,
+        message: 'Prin acest email vrem sa-ți finalizezi înregistrarea cardului de fidelitate'
+    };
+    const renderedTemplate = ejs.render(templateSource, templateData);
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'truefinecoffee@gmail.com',
+            pass: process.env.GMAIL_PASS
+        }
+    });
+
+    const mailOptions = {
+        from: 'truefinecoffee@gmail.com',
+        to: newUser.email,
+        subject: 'Verificare Email',
+        html: renderedTemplate
+    };
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+        return { message: 'Email sent' };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { message: 'Error sending email' };
+    };
+};
+
 
 
 async  function sendInfoAdminEmail(data) {
@@ -214,4 +252,5 @@ module.exports = {
     sendInfoAdminEmail,
     sendMailToCake,
     sendMailToCustomer,
+    sendCompleteRegistrationCustomer
   };

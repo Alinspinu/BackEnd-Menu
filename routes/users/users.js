@@ -17,6 +17,9 @@ router.route('/customer')
     .get(users.sendCustomer)
     .post(users.newCustomer)
 
+router.route('/generateQr')
+    .get(users.generateUserQrCode)
+
 
 
 

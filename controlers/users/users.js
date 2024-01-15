@@ -1,11 +1,14 @@
 const User = require('../../models/users/user')
 const Employee = require('../../models/users/employee')
+const QRCode = require('qrcode');
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
-const loc = '655e2e7c5a3d53943c6b7c53'
+
+// const loc = '655e2e7c5a3d53943c6b7c53'
 
 module.exports.sendUsers = async (req, res, next) => {
     try{
+        const {loc} = req.query
         let filterTo = {}
         const {filter} = req.body;
         if(filter === 'employees'){
@@ -74,11 +77,11 @@ module.exports.sendUser = async (req, res, next) => {
 
 
 module.exports.editUser = async (req, res, next) => {
-    const {employee} = req.body;
+    const {update} = req.body;
     const {id} = req.query;
-    console.log(employee)
     try{
-        const user = await User.findByIdAndUpdate(id, {employee: employee}, {new: true})
+        console.log(update)
+        const user = await User.findByIdAndUpdate(id, update, {new: true})
         console.log(user)
         res.status(200).json({message: 'Utilizatorul a fost actualizat!'})
     } catch (err) {
@@ -99,16 +102,23 @@ module.exports.deleteUser = async (req, res, next) => {
 }
 
 
-
-
 module.exports.sendCustomer = async (req, res, next) => {
   try{
       const {id} = req.query;
-      const customer = await User.findById(id).select('name email telphone cashBack');
-      if(customer){
-          res.status(200).json({message: 'All good', customer})
+      if(id.length < 16){
+        const customer = await User.findOne({cardIndex: id}).select('name email telphone cashBack, discount');
+        if(customer){
+            res.status(200).json({message: 'All good', customer})
+        } else {
+            res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
+        }
       } else {
-          res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
+          const customer = await User.findById(id).select('name email telphone cashBack, discount');
+          if(customer){
+              res.status(200).json({message: 'All good', customer})
+          } else {
+              res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
+          }
       }
   } catch (err){
       console.log(err)
@@ -117,16 +127,34 @@ module.exports.sendCustomer = async (req, res, next) => {
 }
 
 
+module.exports.generateUserQrCode = async (req, res, next) => {
+    try{
+        const {id} = req.query
+        console.log(id)
+        const qrCode = await QRCode.toDataURL(id);
+        res.send(qrCode);
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+
 module.exports.newCustomer = async (req, res, next) => {
   try{
-      const {name, email} = req.body;
-      const check = await User.findOne({ email: email, locatie: loc }).select('name telephone email cashBack');
-      if (check) {
-          return res.status(256).json({ message: 'This email allrady exist', customer: check });
+      const {name, email, cardIndex, loc} = req.body;
+      const check = await User.findOne({ email: email, locatie: loc }).select('name telephone email cashBack discount');
+      if (check && cardIndex === 0) {
+        return res.status(256).json({ message: 'Acest email există deja în baza de date!', customer: check });
+      } else if(check && cardIndex !== 0){
+        const updatedUser =  await User.findByIdAndUpdate(check._id, {cardIndex: cardIndex}, {new: true})
+        return res.status(200).json({ message: 'Utilizatorului i s-a adaugat cadrul la cont', customer: updatedUser });
       } else {
           const user = new User({
               name: name,
-              email: email
+              email: email,
+              locatie: loc,
+              cardIndex: cardIndex
           });
           const savedUser = await user.save();
           const customer = await User.findById(savedUser._id).select('name telephone email cashBack');

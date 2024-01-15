@@ -4,7 +4,7 @@ const Cat = require('../../models/office/product/cat')
 const SubProduct = require('../../models/office/product/sub-product')
 
 module.exports.saveSubProd = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
+    const {loc} = req.query
     try {
         const {product, name, price, order, qty, ings, toppings, tva, description} = req.body;
         const productSub = await Product.findById(product);
