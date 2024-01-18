@@ -9,17 +9,16 @@ const cloudinary = require('cloudinary').v2;
 const {checkTopping} = require('../../utils/functions')
 
  module.exports.getProducts = async (req, res, next) => {
-    const {loc} = req.body
     try{
       let filterTo = {}
       const {filter} = req.body;
-      if(filter.mainCat.length){
+      if(filter && filter.mainCat.length){
         filterTo.mainCat = filter.mainCat
       }
-      if(filter.cat.length){
+      if(filter && filter.cat.length){
         filterTo.category = new mongoose.Types.ObjectId(filter.cat);
       } 
-      filterTo.locatie = loc
+      filterTo.locatie = filter.locatie
       const products = await Product.find(filterTo).populate([
         {path: 'category', select: 'name'}, 
         {path: 'subProducts', populate: {path: 'ings.ing', select: 'price'}},
@@ -39,7 +38,6 @@ const {checkTopping} = require('../../utils/functions')
       console.log(error);
       res.status(500).json({message: error})
     }
-
   }
 
   module.exports.getProduct = async (req, res, next) => {
@@ -63,20 +61,29 @@ const {checkTopping} = require('../../utils/functions')
       console.log(req.body)
     try {
         const {loc} = req.query
+        console.log(loc)
         const { category } = req.body;
         const cat = await Cat.findById(category);
         const product = new Product(req.body);
+        if(req.body.ings === '[]'){
+            product.ings = []
+        } else {
+            if(req.body.ings){
+                const ings = JSON.parse(req.body.ings)
+                product.ings = ings;
+            }
+        }
+        if(req.body.toppings && req.body.toppings === '[]'){
+            product.toppings = []
+        } else {
+            if(req.body.toppings){
+                const toppings = JSON.parse(req.body.toppings)
+                product.toppings = toppings;
+            }
+        }
         product.order = parseFloat(req.body.order);
         product.price = parseFloat(req.body.price);
         product.locatie = loc;
-        if(product.ings.length){
-            const ings = JSON.parse(req.body.ings)
-            product.ings = ings;
-        }
-        if(product.toppings.length){
-            const top = JSON.parse(req.body.toppings)
-            product.toppings = top;
-        }
         if (req.file) {
             const { path, filename } = req.file;
             product.image.filename = filename;
@@ -94,7 +101,6 @@ const {checkTopping} = require('../../utils/functions')
         res.status(500).json({ err });
     }
 }
-
 
 module.exports.editProduct = async (req, res, next) => {
     const { category, name, price, qty, description, order, longDescription, printer, tva, dep } = req.body
@@ -183,6 +189,19 @@ module.exports.setProductDiscount = async (req, res, next) => {
     }
 }
 
+
+module.exports.setDiscountProd = async (req, res, next) => {
+    try{
+        const {data} = req.body;
+        for(let obj of data) {
+            await Product.findByIdAndUpdate(obj.productId, {discount: obj.precent})
+        }
+        res.status(200).json({message: `Discountul a fost actualizat!`})
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
 
 
 module.exports.checkProduct = async (req, res, next) => {

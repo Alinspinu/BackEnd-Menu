@@ -14,25 +14,44 @@ const {printBill, posPayment} = require('../../utils/print/printFiscal')
 //************************SEND ORDERS********************** */
 
 module.exports.getOrder = async (req, res, next) => {
-    const {start, end, loc} = req.body
+    const {start, end, day, loc} = req.body
     if(start && end){
-        const utcOffset = 0;
-        const localStartTime = new Date(start)
-        const localEndTime = new Date(end)
-        const startTimestamp = new Date(localStartTime.getTime() - utcOffset * 60 * 60 * 1000);
-        const endTimestamp = new Date(localEndTime.getTime() - utcOffset * 60 * 60 * 1000);
-        const orders = await Order.find({locatie: loc, status: 'done', createdAt: {$gte: startTimestamp, $lt: endTimestamp}})
-        res.status(200).json(orders)
-    } else {
-        const today = new Date(Date.now()).setHours(0,0,0,0)
-        const orders = await Order.find({ status: 'done', createdAt: {$gte: today}})
-        res.status(200).json(orders)
+        const startTime = new Date(start).setHours(0,0,0,0)
+        const endTime = new Date(end).setHours(23, 59, 59, 9999)
+        const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
+        res.status(200).json({orders: orders, delProducts: delProds})
+    }
 
+    if(day && !end && !start) {
+        const start = new Date(day).setHours(0,0,0,0)
+        const end = new Date(day).setHours(23,59,59,9999)
+        const orders = await Order.find({ locatie: loc , createdAt: {$gte: start, $lt: end}})
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}})
+        res.status(200).json({orders: orders, delProducts: delProds})
+    }
+    if(!day && !end && !start) {
+        const today = new Date(Date.now()).setHours(0,0,0,0)
+        const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}})
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}})
+        res.status(200).json({orders: orders, delProducts: delProds})
     }
     try{
     } catch (err){
         console.log(err)
     }
+}
+
+module.exports.sendDeletedproduct = async (req, res, next) => {
+    try{
+        
+        const delProds = DelProd.find({})
+        re.status(200).json(delProds)
+    } catch (err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+
 }
 
 module.exports.getOrderByUser = async (req, res, nex) => {
@@ -89,11 +108,8 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             } 
-        
-            table.bills.push(newBill);
-            const savedBill = await newBill.save();
-            print(savedBill)
-            savedBill.products.forEach(el => {
+            print(newBill)
+            newBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
                     if(el.toppings.length){
                         unloadIngs(el.toppings, el.quantity);
@@ -108,6 +124,9 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                     console.log("new",el.sentToPrint)
                 }
             })
+            
+            const savedBill = await newBill.save();
+            table.bills.push(savedBill);
             await table.save();
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, masa: {_id: table._id, index: table.index}})
         } else {
@@ -143,6 +162,7 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     await delProd.save()
     res.status(200).json({message: 'The product was registred as deleted!'})
 }
+
 
 
 module.exports.uploadIngs = async (req, res, next) => {
@@ -181,7 +201,6 @@ module.exports.saveOrder = async (req, res, next) => {
                 await user.save()
             }
             const order = await newOrder.save()
-            console.log(order)
             console.log(`Order ${order._id} saved with the user ${user.name}!`)
 
             if(nrMasa > 0){
@@ -197,53 +216,7 @@ module.exports.saveOrder = async (req, res, next) => {
             if(order.payOnline){
                 action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
             }
-            if(order.preOrder) {
-                action = `a dat o pre comanda  la cozonaci sau tarte`
-                let cakeProducts = order.products.filter(product => product.name.startsWith('Cozonac'));
-                let tartProducts = order.products.filter(product => product.name.startsWith('Orange')) ;
-                let tartTotal = 0
-                let cakeTotal = 0
-                tartProducts.forEach(el => {
-                    tartTotal += el.total
-                })
-                cakeProducts.forEach(el => {
-                    cakeTotal += el.total
-                })
-                const startDate = formatedDateToShow(order.createdAt)
-                const endDate = formatedDateToShow(order.preOrderPickUpDate)
-                const cakeOrder = {
-                    clientName: order.clientInfo.name,
-                    clientEmail: user.email,
-                    clientTelephone: order.clientInfo.telephone,
-                    products: cakeProducts,
-                    createdAt: startDate,
-                    deliveryTime: endDate,
-                    avans: cakeTotal,
-                }
-                const tartOrder = {
-                    clientName: order.clientInfo.name,
-                    clientEmail: user.email,
-                    clientTelephone: order.clientInfo.telephone,
-                    products: tartProducts,
-                    createdAt: startDate,
-                    deliveryTime: endDate,
-                    avans: tartTotal,
-                }
-                if(cakeProducts.length){
-                    sendMailToCake(cakeOrder, ['office@truefinecoffee.ro', 'buraga.stefan@l-artisan.ro'])
-                }
-    
-                if(tartProducts.length){
-                    sendMailToCake(tartOrder, ['office@truefinecoffee.ro', 'serbanlucianvornicu@gmail.com'])
-                }
-            }
 
-            const startDate = formatedDateToShow(order.createdAt)
-            order.name = startDate
-            if(order.preOrder) {
-                const endDate = formatedDateToShow(order.preOrderPickUpDate)
-                    order.preOrderPickUpDate = endDate
-            }
             console.log(order)
             await sendMailToCustomer(order,['alinz.spinu@gmail.com', `${user.email}`])
             res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index, preOrderPickUpDate: order.preOrderPickUpDate });

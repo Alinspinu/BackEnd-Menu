@@ -3,7 +3,6 @@ const Table = require('../../models/utils/table')
 
 module.exports.sendTables = async (req, res, next) => {
     const {loc} = req.query
-    console.log(loc)
     try{
         const tables = await Table.find({locatie: loc}).populate({
             path: 'bills', 
@@ -17,11 +16,8 @@ module.exports.sendTables = async (req, res, next) => {
     }
 }
 
-
-
 module.exports.addTable = async (req, res, next) => {
     const {loc} = req.query
-    console.log(loc)
     try{
         const { name } = req.body;
         const table = new Table()
@@ -30,7 +26,6 @@ module.exports.addTable = async (req, res, next) => {
             table.name = name
         }
         const newTable =  await table.save()
-        console.log(newTable)
         res.status(200).json({message: 'Masa a fost creată!', table: newTable})
     } catch(error) {
         console.log(error)

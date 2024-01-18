@@ -57,84 +57,98 @@ module.exports.printNir = async (req, res, next) => {
     // Add header
     doc.font("public/font/RobotoSlab-Regular.ttf")
     doc
-      .fontSize(9)
+      .fontSize(6)
       .text(
         `${firma.bussinessName} ${firma.vatNumber} ${firma.register} `,
         10,
-        20,
+        10,
         {
           width: 280,
         }
       );
-    doc.fontSize(9).text(`${firma.address}`, 10, 30, {
+    doc.fontSize(6).text(`${firma.address}`, 10, 15, {
       width: 280,
     });
   
     doc.moveDown();
   
     doc.lineWidth(0.4);
-    doc.moveTo(5, 57).lineTo(280, 57).stroke();
+    doc.moveTo(5, 22).lineTo(280, 22).stroke();
   
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Bold.ttf");
     doc
-      .fontSize(16)
-      .text("Nota de receptie si constatare de diferente", 275, 75, {
+      .fontSize(12)
+      .text("Nota de receptie si constatare de diferente", 275, 25, {
         underline: true,
       });
   
     doc.moveDown();
     // doc.font("Helvetica-Bold");
-    doc.fontSize(12);
-    doc.text("Nr. NIR", 20, 150, { width: 80, align: "center" });
-    doc.text("Data", 110, 150, { width: 120, align: "center" });
-    doc.text("Moneda", 240, 150, { width: 120, align: "center" });
-    doc.text("Furnizor", 370, 150, { width: 220, align: "center" });
-    doc.text("CIF", 590, 150, { width: 120, align: "center" });
-    doc.text("Nr.Doc", 710, 150, { width: 80, align: "center" });
+    doc.fontSize(9);
+    doc.text("Nr. NIR", 20, 50, { width: 80, align: "center" });
+    doc.text("Data", 110, 50, { width: 120, align: "center" });
+
+    doc.text("Furnizor", 370, 50, { width: 220, align: "center" });
+    doc.text("CIF", 590, 50, { width: 120, align: "center" });
+    doc.text("Nr.Doc", 710, 50, { width: 80, align: "center" });
   
     doc.moveDown();
     doc.lineWidth(0.3);
-    doc.moveTo(10, 169).lineTo(800, 169).stroke();
+    doc.moveTo(10, 62).lineTo(800, 62).stroke();
   
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Regular.ttf");
-    doc.fontSize(10);
-    doc.text(nir.index, 20, 170, { width: 80, align: "center" });
-    doc.text(date, 110, 170, { width: 120, align: "center" });
-    doc.text("RON", 240, 170, { width: 120, align: "center" });
-    doc.text(nir.suplier.name, 370, 170, { width: 220, align: "center" });
-    doc.text(nir.suplier.vatNumber, 590, 170, { width: 120, align: "center" });
-    doc.text(nir.nrDoc, 710, 170, { width: 80, align: "center" });
+    doc.fontSize(9);
+    doc.text(nir.index, 20, 63, { width: 80, align: "center" });
+    doc.text(date, 110, 63, { width: 120, align: "center" });
+
+    doc.text(nir.suplier.name, 370, 63, { width: 220, align: "center" });
+    doc.text(nir.suplier.vatNumber, 590, 63, { width: 120, align: "center" });
+    doc.text(nir.nrDoc, 710, 63, { width: 80, align: "center" });
   
     doc.moveDown();
-    let y = 220;
+      let headerHeigth = 97
+    let y = 100;
+    const availableSpace = doc.page.height - y; // Calculate available space on the page
+    // let startY = 10
+    // let currentY = y;
+  
+    function addNewPageIfRequired(height) {
+      console.log(y)
+      if (y + height > 500) {
+        console.log('hit the function')
+        doc.addPage();
+        y = 10;
+      }
+    }
+
     // Table headers
     doc.font("public/font/RobotoSlab-Bold.ttf");
-    doc.fontSize(10);
+    doc.fontSize(7);
     doc.text("Denumire Articol", 10, y, { width: 210 });
-    doc.text("UM", 215, y, { width: 30, align: "center" });
-    doc.text("Qty", 250, y, { width: 30, align: "center" });
-    doc.text("Tip", 290, y, { width: 50, align: "center" });
-    doc.text("Gestiune", 340, y, { width: 50, align: "center" });
+    doc.text("UM", 215, headerHeigth, { width: 30, align: "center" });
+    doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
+    doc.text("Tip", 290, headerHeigth, { width: 50, align: "center" });
+    doc.text("Gestiune", 340, headerHeigth, { width: 50, align: "center" });
   
     if (firma.VAT) {
-      doc.text("Pret/F/Tva", 390, y, { width: 70, align: "center" });
+      doc.text("Pret/F/Tva", 390, headerHeigth, { width: 70, align: "center" });
     } else if (!firma.VAT) {
-      doc.text("Pret", 390, y, { width: 50, align: "center" });
+      doc.text("Pret", 390, headerHeigth, { width: 50, align: "center" });
     }
-    doc.text("Valoare", 460, y, { width: 50, align: "center" });
-    doc.text("Tva%", 510, y, { width: 30, align: "center" });
-    doc.text("Val Tva", 540, y, { width: 40, align: "center" });
-    doc.text("Total", 595, y, { width: 50, align: "center" });
-    doc.text("Pret Vanzare", 640, y, { width: 65, align: "center" });
-    doc.text("Val Vanzare", 705, y, { width: 60, align: "center" });
-    doc.text("Total Tva", 770, y, { width: 60, align: "center" });
+    doc.text("Valoare", 460, headerHeigth, { width: 50, align: "center" });
+    doc.text("Tva%", 510, headerHeigth, { width: 30, align: "center" });
+    doc.text("Val Tva", 540, headerHeigth, { width: 40, align: "center" });
+    doc.text("Total", 590, headerHeigth, { width: 50, align: "center" });
+    doc.text("Pret Vanzare", 640, headerHeigth, { width: 65, align: "center" });
+    doc.text("Val Vanzare", 705, headerHeigth, { width: 60, align: "center" });
+    doc.text("Total Tva", 770, headerHeigth, { width: 60, align: "center" });
   
     // doc.moveDown();
   
-    doc.lineWidth(0.2);
-    doc.moveTo(5, 237).lineTo(825, 237).stroke();
+    doc.lineWidth(0.1);
+    doc.moveTo(5, 96).lineTo(825, 96).stroke();
   
     doc.moveDown();
     // Add table rows
@@ -147,50 +161,52 @@ module.exports.printNir = async (req, res, next) => {
     let valTvaVanzare = 0;
     let valTotal = 0;
     nir.ingredients.forEach((produs, i) => {
-      doc.text(produs.name, 10, y + i * 18 + 18, { width: 210 });
-      doc.text(produs.um, 215, y + i * 18 + 18, { width: 30, align: "center" });
-      doc.text(produs.qty.toString(), 250, y + i * 18 + 18, {
+      const lineHeigth = 8
+      doc.fontSize(5);
+      doc.text(produs.name, 10, y + i * lineHeigth + lineHeigth , { width: 210 });
+      doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 30, align: "center" });
+      doc.text(produs.qty.toString(), 250, y + i * lineHeigth + lineHeigth, {
         width: 30,
         align: "center",
       });
-      doc.text(produs.dep, 290, y + i * 18 + 18, {
+      doc.text(produs.dep, 290, y + i * lineHeigth + lineHeigth, {
         width: 50,
         align: "center",
       });
-      doc.text(cap(produs.gestiune), 340, y + i * 18 + 18, {
+      doc.text(cap(produs.gestiune), 340, y + i * lineHeigth + lineHeigth, {
         width: 50,
         align: "center",
       });
-      doc.text(round(produs.price), 390, y + i * 18 + 18, {
+      doc.text(round(produs.price), 390, y + i * lineHeigth + lineHeigth, {
         width: 70,
         align: "center",
       });
-      doc.text(round(produs.value), 460, y + i * 18 + 18, {
+      doc.text(round(produs.value), 460, y + i * lineHeigth + lineHeigth, {
         width: 50,
         align: "center",
       });
-      doc.text(produs.tva + "%", 510, y + i * 18 + 18, {
+      doc.text(produs.tva + "%", 510, y + i * lineHeigth + lineHeigth, {
         width: 25,
         align: "center",
       });
-      doc.text(round(produs.tvaValue), 535, y + i * 18 + 18, {
+      doc.text(round(produs.tvaValue), 535, y + i * lineHeigth + lineHeigth, {
         width: 40,
         align: "center",
       });
-      doc.text(round(produs.total), 590, y + i * 18 + 18, {
+      doc.text(round(produs.total), 590, y + i * lineHeigth + lineHeigth, {
         width: 45,
         align: "center",
       });
       doc.text(
         `${produs.sellPrice? produs.sellPrice : 0}`,
         640,
-        y + i * 18 + 18,
+        y + i * lineHeigth + lineHeigth,
         { width: 60, align: "center" }
       );
       doc.text(
         `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
         705,
-        y + i * 18 + 18,
+        y + i * lineHeigth + lineHeigth,
         { width: 60, align: "center" }
       );
       doc.text(
@@ -201,7 +217,7 @@ module.exports.printNir = async (req, res, next) => {
           : "0"
         }`,
         770,
-        y + i * 18 + 18,
+        y + i * lineHeigth + lineHeigth,
         { width: 60, align: "center" }
       );
       valTotal +=  parseFloat(produs.total);
@@ -214,59 +230,61 @@ module.exports.printNir = async (req, res, next) => {
         parseFloat(produs.qty) *
         (parseFloat(produs.tva) / 100)
       );
+
+      // y += 5
     });
-    const height = nir.ingredients.length * 18;
+    const height = nir.ingredients.length * 8;
     doc.lineWidth(0.4);
     doc
-      .moveTo(10, y + height + 18)
-      .lineTo(830, y + height + 18)
+      .moveTo(10, y + height + 10)
+      .lineTo(830, y + height + 10)
       .stroke();
     doc.font("public/font/RobotoSlab-Bold.ttf");
-    doc.fontSize(12);
-    doc.text("Total:", 370, y + height + 26);
-    doc.text(`${round(valoareIntTotal)}`, 460, y + height + 26, {
+    doc.fontSize(9);
+    doc.text("Total:", 370, y + height + 18);
+    doc.text(`${round(valoareIntTotal)}`, 460, y + height + 18, {
       width: 50,
       align: "center",
     });
-    doc.text(`${round(valTvaTotal)}`, 530, y + height + 26, {
+    doc.text(`${round(valTvaTotal)}`, 530, y + height + 18, {
       width: 50,
       align: "center",
     });
     if (firma.VAT) {
-      doc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 26, {
+      doc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 18, {
         width: 50,
         align: "center",
       });
     } else if (!firma.VAT) {
-      doc.text(`${round(valTotal)}`, 585, y + height + 26, {
+      doc.text(`${round(valTotal)}`, 585, y + height + 18, {
         width: 50,
         align: "center",
       });
     }
-    doc.text(`${round(valVanzare)}`, 705, y + height + 26, {
+    doc.text(`${round(valVanzare)}`, 705, y + height + 18, {
       width: 60,
       align: "center",
     });
-    doc.text(`${round(valTvaVanzare)}`, 770, y + height + 26, {
+    doc.text(`${round(valTvaVanzare)}`, 770, y + height + 18, {
       width: 60,
       align: "center",
     });
   
-    doc.lineWidth(0.6);
+    doc.lineWidth(0.5);
     doc
-      .moveTo(365, y + height + 42)
-      .lineTo(830, y + height + 42)
+      .moveTo(365, y + height + 30)
+      .lineTo(830, y + height + 30)
       .stroke();
   
     // doc.font("Helvetica-Bold");
-    doc.fontSize(14);
-    doc.text("Responsabil", 80, y + height + 100);
-    doc.text(`Data`, 400, y + height + 100);
-    doc.text("Semnatura", 680, y + height + 100);
+    doc.fontSize(9);
+    doc.text("Responsabil", 80, y + height + 40);
+    doc.text(`Data`, 400, y + height + 40);
+    doc.text("Semnatura", 680, y + height + 40);
     doc.font("public/font/RobotoSlab-Regular.ttf");
-    doc.fontSize(12);
+    doc.fontSize(9);
     // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
-    doc.text(`${date}`, 400, y + height + 120);
+    doc.text(`${date}`, 400, y + height + 50);
   
     doc.end();
   

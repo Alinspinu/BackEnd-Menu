@@ -139,7 +139,6 @@ const orderTrueSchema = new Schema({
                 },
                 sentToPrint: {
                     type: Boolean,
-                    default: true
                 },
                 discount: Number,
                 mainCat: String,

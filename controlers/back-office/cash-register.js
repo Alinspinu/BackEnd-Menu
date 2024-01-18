@@ -8,15 +8,16 @@ const createCashRegisterDay = require('../../utils/createDay')
 
 module.exports.sendEntry = async (req, res, next) => {
     const{loc} = req.query
-    createCashRegisterDay(loc)
+    // createCashRegisterDay(loc)
     const data = req.query.date
     const page = req.query.page || 1;
     const limit = 3
         try{
-            const documents = await Day.find({locatie: loc }).populate({path: "entry"})
+            const documents = await Day.find({}).populate({path: "entry"})
             .skip((page - 1) * limit)
             .limit(limit)
             .sort({ date: -1 });
+            console.log(documents)
             res.status(200).json({message: 'all good', documents})
         } catch(err){
             console.log(err.message)

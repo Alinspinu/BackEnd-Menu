@@ -210,7 +210,9 @@ module.exports.printBill = async (req, res, next) => {
             }
             await client.save()
         }
-        printBill(bill)
+        if(bill.total > 0) {
+            printBill(bill)
+        }
         await Order.findByIdAndUpdate(bill._id, bill)
         res.status(200).json({message: "Bonul a fos tipărit!"})
     } catch(err) {

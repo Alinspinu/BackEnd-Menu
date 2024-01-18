@@ -35,7 +35,6 @@ async function print(order) {
         masa: order.masa,
         time: timeString
     }
-    console.log(order.products)
     printKitchen(foodProd, dataToPrint);
     printBarista(baristaProd, dataToPrint);
     setTimeout(()=>{
@@ -45,7 +44,7 @@ async function print(order) {
 
 
 
-function printKitchen(products, dataPrint) {
+async function printKitchen(products, dataPrint) {
     if(products.length){
         let productsToPrint = []
         for(let pro of products){
@@ -77,7 +76,7 @@ async function printBarista(products, dataPrint) {
     let data = [
         `TL^                        ORA: ${dataPrint.time}   `,
         "TL^ ", 
-        `TL^  NUME: ${dataPrint.employee.fullName}             MASA: *${dataPrint.masa}*`,
+        `TL^ NUME: ${dataPrint.employee.fullName}    MASA: *${dataPrint.masa}*`,
         "TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~~ ~ ~ ~ ~ ~ ~ ~ ~", 
     ];
     if(products.length){
@@ -86,7 +85,7 @@ async function printBarista(products, dataPrint) {
             data.push(entry)
             if(pro.toppings.length){
                 for(let top of pro.toppings){
-                    let topp =`TL^          +++ ${top.name}`
+                    let topp =`TL^          +++ ${top.name.split('/')[0]}`
                     data.push(topp)
                 }
             }
@@ -95,17 +94,18 @@ async function printBarista(products, dataPrint) {
                 data.push(comment)
             }
         }
-        axios.post(url, data, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            })
-                .then(response => {
-                    console.log('Response:', response.data);
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                });
+        console.log(data)
+        // axios.post(url, data, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     })
+        //         .then(response => {
+        //             console.log('Response:', response.data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error.message);
+        //         });
     } else {
         return
     }
@@ -133,7 +133,7 @@ function addProducts(products){
 
 
 
-function printMain(products, dataPrint){
+async function printMain(products, dataPrint){
     printBarista(products, dataPrint)
 }
 

@@ -24,8 +24,18 @@ async function printBill(bill) {
             if(el.tva === 0){
                 tva = 3
             }
+         
             let productLine = `S^${el.name}^${el.price*100}^${el.quantity*1000}^buc^${tva}^1`
             billToPrint.push(productLine)
+
+            if(el.toppings.length){
+                el.toppings.forEach(top => {
+                    if(!top.name.startsWith('To Go')){
+                        let topLine = `TL^    +${top.name}`
+                        billToPrint.push(topLine)
+                    }
+                })
+            }   
         })
         billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~")
         
@@ -60,17 +70,17 @@ async function printBill(bill) {
         
 
         console.log(billToPrint)
-        axios.post(url, billToPrint, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            })
-                .then(response => {
-                    console.log('Response:', response.data);
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                });
+        // axios.post(url, billToPrint, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     })
+        //         .then(response => {
+        //             console.log('Response:', response.data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error.message);
+        //         });
 
     } else {
         return

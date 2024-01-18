@@ -22,5 +22,6 @@ router.route('/add-paring-product').post(productRoutes.addParingProduct);
 router.route('/remove-paring-product').post(productRoutes.removeParingProduct);
 
 router.route('/discount').post(productRoutes.setProductDiscount)
+router.route('/disc-prod').post(productRoutes.setDiscountProd)
 
 module.exports = router

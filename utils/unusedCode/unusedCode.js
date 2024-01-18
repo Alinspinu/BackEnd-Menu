@@ -49,6 +49,10 @@
 
 
 
+
+
+
+
     // app.set('trust proxy', true);
 // app.use((req, res, next) => {
 //     res.setHeader('Access-Control-Allow-Origin', 'https://true-meniu.web.app');
@@ -56,3 +60,57 @@
 //     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 //     next()
 // });
+
+
+
+//preorders
+
+
+
+// if(order.preOrder) {
+//     action = `a dat o pre comanda  la cozonaci sau tarte`
+//     let cakeProducts = order.products.filter(product => product.name.startsWith('Cozonac'));
+//     let tartProducts = order.products.filter(product => product.name.startsWith('Orange')) ;
+//     let tartTotal = 0
+//     let cakeTotal = 0
+//     tartProducts.forEach(el => {
+//         tartTotal += el.total
+//     })
+//     cakeProducts.forEach(el => {
+//         cakeTotal += el.total
+//     })
+//     const startDate = formatedDateToShow(order.createdAt)
+//     const endDate = formatedDateToShow(order.preOrderPickUpDate)
+//     const cakeOrder = {
+//         clientName: order.clientInfo.name,
+//         clientEmail: user.email,
+//         clientTelephone: order.clientInfo.telephone,
+//         products: cakeProducts,
+//         createdAt: startDate,
+//         deliveryTime: endDate,
+//         avans: cakeTotal,
+//     }
+//     const tartOrder = {
+//         clientName: order.clientInfo.name,
+//         clientEmail: user.email,
+//         clientTelephone: order.clientInfo.telephone,
+//         products: tartProducts,
+//         createdAt: startDate,
+//         deliveryTime: endDate,
+//         avans: tartTotal,
+//     }
+//     if(cakeProducts.length){
+//         sendMailToCake(cakeOrder, ['office@truefinecoffee.ro', 'buraga.stefan@l-artisan.ro'])
+//     }
+
+//     if(tartProducts.length){
+//         sendMailToCake(tartOrder, ['office@truefinecoffee.ro', 'serbanlucianvornicu@gmail.com'])
+//     }
+// }
+
+// const startDate = formatedDateToShow(order.createdAt)
+// order.name = startDate
+// if(order.preOrder) {
+//     const endDate = formatedDateToShow(order.preOrderPickUpDate)
+//         order.preOrderPickUpDate = endDate
+// }
