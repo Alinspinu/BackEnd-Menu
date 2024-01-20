@@ -94,6 +94,8 @@ module.exports.sendOrderTime = async (req, res, next) => {
 
 //************************SAVE ORDERS********************** */
 
+
+
 module.exports.saveOrEditBill = async (req, res, next) => {
     try{
         const {bill} = req.body;
@@ -124,7 +126,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                     console.log("new",el.sentToPrint)
                 }
             })
-            
             const savedBill = await newBill.save();
             table.bills.push(savedBill);
             await table.save();
@@ -155,10 +156,13 @@ module.exports.saveOrEditBill = async (req, res, next) => {
     }
 }
 
+
+
 module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     const {product} = req.body
     const { ['_id']:_, ...newProduct } = product;
     const delProd = new DelProd(newProduct)
+    delProd.employee.name = product.employee.fullName
     await delProd.save()
     res.status(200).json({message: 'The product was registred as deleted!'})
 }
@@ -192,35 +196,32 @@ module.exports.saveOrder = async (req, res, next) => {
         if (userId) {
             const user = await User.findById(userId);
             if (user) {
-                user.orders.push(newOrder);
-                if (newOrder.cashBack > 0 && newOrder.cashBack <= user.cashBack) {
-                    user.cashBack = round((user.cashBack - newOrder.cashBack) + (newOrder.total * user.cashBackProcent / 100))
-                } else {
-                    user.cashBack = round(user.cashBack + (newOrder.total * user.cashBackProcent / 100 ))
+                newOrder.clientInfo.email = user.email
+                newOrder.clientInfo.discount = user.discount
+                newOrder.clientInfo.cashBack = user.cashBack
+                newOrder.preOrder = true
+                const order = await newOrder.save()
+                console.log(order)
+                console.log(`Order ${order._id} saved with the user ${user.name}!`)
+                if(nrMasa > 0){
+                    const table = await Table.findOne({locatie: loc , index: nrMasa});
+                    if(table){
+                        table.bills.push(order._id)
+                        await table.save()
+                    }
                 }
-                await user.save()
-            }
-            const order = await newOrder.save()
-            console.log(`Order ${order._id} saved with the user ${user.name}!`)
-
-            if(nrMasa > 0){
-                const table = await Table.findOne({locatie:'655e2e7c5a3d53943c6b7c53', index: nrMasa});
-                if(table){
-                    table.bills.push(order._id)
+                let action 
+                if(order.payOnSite){
+                    action = `a dat o comanda pe care o plătește în locație cu cashBack ${order.cashBack}`
+                } 
+                if(order.payOnline){
+                    action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
+                await sendMailToCustomer(order,['alinz.spinu@gmail.com', `${user.email}`])
+                res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index, preOrderPickUpDate: order.preOrderPickUpDate });
             }
-            let action 
-            if(order.payOnSite){
-                action = `a dat o comanda pe care o plătește în locație cu cashBack ${order.cashBack}`
-            } 
-            if(order.payOnline){
-                action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
-            }
-
-            console.log(order)
-            await sendMailToCustomer(order,['alinz.spinu@gmail.com', `${user.email}`])
-            res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index, preOrderPickUpDate: order.preOrderPickUpDate });
         } else {
+            order.preOrder = true
             const order = await newOrder.save();
             console.log(`Order ${order._id} saved without a user!`)
             const data = {name: 'No user', action: 'a dat o comanda ce a fost platita Online'}
@@ -228,7 +229,7 @@ module.exports.saveOrder = async (req, res, next) => {
             res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
         }
     } catch (err) {
-        console.log('Error', err.message);
+        console.log('Error', err);
         res.status(404).json({ message: err.message });
     }
 }

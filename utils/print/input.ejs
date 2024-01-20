@@ -16,14 +16,14 @@
     <align mode="left">
       <text-line size="0:0"><%=product.qty%> X <%= product.name%></text-line>
     </align>
-    <% if(product.toppings.length) { %>
+    <% if(product.comment && product.toppings.length) { %>
       <% for(let topping of product.toppings)  {%>
     <align mode="left">
       <text-line size="0:0"><%= "  " + " +"+topping.name%></text-line>
     </align>
     <% } %>
       <% } %>
-    <% if(product.comment.length) { %>
+    <% if(product.comment && product.comment.length) { %>
       <align mode="left">
         <text-line size="0:0"><%="  " + " -" +product.comment%></text-line>
       </align>

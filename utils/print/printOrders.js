@@ -6,6 +6,7 @@ const fs = require('fs');
 const { EscPos } = require("@tillpos/xml-escpos-helper")
 
 const { connectToPrinter } = require("../connectToPrinter")
+const{ log } = require('../functions')
 
 const templatePath = './utils/print/input.ejs';
 const outputPath = './utils/print/output.xml';
@@ -63,6 +64,7 @@ async function printKitchen(products, dataPrint) {
             masa: dataPrint.masa,
             products: productsToPrint
         }
+        log(JSON.stringify(dataToPrint), 'buc-orders')
         createXml(dataToPrint)
        
     } else {
@@ -74,64 +76,42 @@ async function printKitchen(products, dataPrint) {
 async function printBarista(products, dataPrint) {   
     const url = 'http://192.168.1.90:65400/api/Receipt';
     let data = [
-        `TL^                        ORA: ${dataPrint.time}   `,
+        `TL^           ORA: ${dataPrint.time}   `,
         "TL^ ", 
-        `TL^ NUME: ${dataPrint.employee.fullName}    MASA: *${dataPrint.masa}*`,
+        `TL^ NUME:${dataPrint.employee.fullName.split(' ')[0]} MASA: *${dataPrint.masa}*`,
         "TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~~ ~ ~ ~ ~ ~ ~ ~ ~", 
     ];
     if(products.length){
         for(let pro of products){
             let entry = `TL^  ${pro.quantity} X ${pro.name}`
             data.push(entry)
-            if(pro.toppings.length){
+            if(pro.toppings && pro.toppings.length){
                 for(let top of pro.toppings){
                     let topp =`TL^          +++ ${top.name.split('/')[0]}`
                     data.push(topp)
                 }
             }
-            if(pro.comment.length){
+            if(pro.comment && pro.comment.length){
                 let comment = `TL^       -- ${pro.comment}`
                 data.push(comment)
             }
         }
-        console.log(data)
-        // axios.post(url, data, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     })
-        //         .then(response => {
-        //             console.log('Response:', response.data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error.message);
-        //         });
+        log(data, 'barista-orders')
+        axios.post(url, data, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
     } else {
         return
     }
 }
-
-function addProducts(products){
-    let productss = []
-    for(let pro of products){
-        let entry = `TL^  ${pro.quantity} X ${pro.name}`
-        productss.push(entry)
-        if(pro.toppings.length){
-            for(let top of pro.toppings){
-                let topp =`TL^          +++ ${top.name}`
-                productss.push(topp)
-            }
-        }
-        if(pro.comment.length){
-            let comment = `TL^       -- ${pro.comment}`
-            productss.push(comment)
-        }
-    }
-    console.log(productss)
-    return productss
-}
-
-
 
 async function printMain(products, dataPrint){
     printBarista(products, dataPrint)
@@ -148,6 +128,7 @@ function createXml(data) {
     
         fs.writeFile(outputPath, renderedXml, (writeErr) => {
           if (writeErr) {
+            log(`Error writing XML file: ${writeErr}`, 'errors')
             console.error('Error writing XML file:', writeErr);
           } else {
             testPrint()
@@ -170,6 +151,7 @@ const testPrint = async () => {
 try{
     await connectToPrinter(PRINTER.host, PRINTER.port, message)
 } catch (err){
+    log(`prin-buc-error ${err.message}`, 'printErrors')
     console.log("some error", err)
 }
 }

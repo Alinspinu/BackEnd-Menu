@@ -106,7 +106,6 @@ module.exports.deleteIngredient = async (req, res, next) => {
 function calcNutrition(ingredients){
     const prefixes = ['energy', 'carbs', 'fat', 'salts', 'protein']
     const qty = ingredients.reduce((acc, obj) => acc + obj.quantity, 0)
-    console.log(qty)
     const result = ingredients.reduce((acc, obj) => {
       Object.keys(obj.ingredient._doc).forEach(key => {
         if (prefixes.some(prefix => key.startsWith(prefix))) {

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
   <align mode="center">
-    <text-line size="0:0">Ora: 17:03 </text-line>
+    <text-line size="0:0">Ora: 00:25 </text-line>
   </align>
   <line-feed/>
   <align mode="left">
-    <text-line size="1:0">Alin Spinu   Masa 20</text-line>
+    <text-line size="1:0">Alin Spinu   Masa 54</text-line>
   </align>
 
   <line-feed/>
@@ -14,46 +14,16 @@
   <!-- Start of loop -->
   
     <align mode="left">
-      <text-line size="0:0">1 X Rosti Mushrooms</text-line>
+      <text-line size="0:0">1 X Paste Carbonara</text-line>
     </align>
     
     
     <line-feed/>
     
     <align mode="left">
-      <text-line size="0:0">1 X Eggscelent Morning</text-line>
+      <text-line size="0:0">1 X Paste cu Creveți</text-line>
     </align>
     
-      
-    <align mode="left">
-      <text-line size="0:0">   +Rosii</text-line>
-    </align>
-    
-    <align mode="left">
-      <text-line size="0:0">   +Toast prăjit</text-line>
-    </align>
-    
-    <align mode="left">
-      <text-line size="0:0">   +Ciuperci la tigaie</text-line>
-    </align>
-    
-    <align mode="left">
-      <text-line size="0:0">   +Branza Feta</text-line>
-    </align>
-    
-    <align mode="left">
-      <text-line size="0:0">   +Toast cu unt</text-line>
-    </align>
-    
-    <align mode="left">
-      <text-line size="0:0">   +Prosciutto Cotto</text-line>
-    </align>
-    
-    <align mode="left">
-      <text-line size="0:0">   +Masline</text-line>
-    </align>
-    
-      
     
     <line-feed/>
     

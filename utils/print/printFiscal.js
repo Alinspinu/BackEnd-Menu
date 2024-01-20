@@ -1,7 +1,7 @@
 const axios = require('axios');
 const url = 'http://192.168.1.90:65400/api/Receipt';
 
-
+const {log} = require('../functions')
 
 async function printBill(bill) {   
     let billToPrint = [];
@@ -12,6 +12,7 @@ async function printBill(bill) {
         }
         bill.products.forEach(el => {
             let tva 
+            let qty
             if(el.tva === 19){
                 tva = 1
             }
@@ -24,8 +25,14 @@ async function printBill(bill) {
             if(el.tva === 0){
                 tva = 3
             }
-         
-            let productLine = `S^${el.name}^${el.price*100}^${el.quantity*1000}^buc^${tva}^1`
+            if(el.quantity === 0){
+                qty = 1
+                log(`----${JSON.stringify(bill)}`, 'zero-quantity')
+                console.log(bill)
+            } else {
+                qty = el.quantity
+            }
+            let productLine = `S^${el.name}^${el.price*100}^${qty*1000}^buc^${tva}^1`
             billToPrint.push(productLine)
 
             if(el.toppings.length){
@@ -68,19 +75,19 @@ async function printBill(bill) {
         billToPrint.push("TL^          MULTUMIM SI VA MAI ASTEPTAM!")
         billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~")
         
-
         console.log(billToPrint)
-        // axios.post(url, billToPrint, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     })
-        //         .then(response => {
-        //             console.log('Response:', response.data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error.message);
-        //         });
+        log(billToPrint, "bils")
+        axios.post(url, billToPrint, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
 
     } else {
         return
@@ -95,6 +102,7 @@ async function posPayment(sum){
                 'Content-Type': 'application/json',
             },
             })
+            log(`Pos response ${JSON.stringify(response)}`, 'pos')
            return response
 }
 
@@ -138,6 +146,7 @@ function sendToPrint(print){
          console.log('Response:', response.data);
     })
       .catch(error => {
+        log(`Print-main Error ${error.message}`, "errors")
          console.error('Error:', error.message);
     });
 

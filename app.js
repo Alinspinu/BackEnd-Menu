@@ -31,6 +31,9 @@ const productRoutes = require('./routes/back-office/product')
 const ingRoutes = require('./routes/back-office/ing')
 const subRoutes = require('./routes/back-office/subProduct')
 const catRoutes = require('./routes/back-office/cats')
+const fs = require('fs');
+
+const {logMiddleware } = require('./utils/middleware')
 
 const dbUrl = process.env.DB_URL
 
@@ -56,14 +59,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors())
 app.use(bodyParser.json());
 
-app.use("/orders", ordersTrueRoutes);
+app.use("/orders", logMiddleware, ordersTrueRoutes);
 app.use('/pay', payRoutes);
 app.use('/auth', authRoutes);
 app.use('/nutrition', nutritionRoutes);
 app.use('/register', registerRoutes);
-// app.use('/message', messRoutes);
-app.use('/table', tableRoutes);
+app.use('/table', logMiddleware, tableRoutes);
 app.use('/users', usersRoutes);
+// app.use('/message', messRoutes);
 
 app.use("/top", toppingRoutes);
 app.use('/suplier', suplierRoutes);
@@ -74,25 +77,18 @@ app.use('/sub', subRoutes);
 app.use('/cat', catRoutes);
 
 
-
-// const Order = require('./models/office/product/order');
-// const {formatedDateToShow} = require('./utils/functions')
-
-    // app.get('/mail', async (req, res, next) => {
-    //     const order = await Order.findOne({}, {}, { sort: { 'createdAt': -1 }}).populate({path: 'user', select: 'email'})
-    //     const startDate = formatedDateToShow(order.createdAt)
-    //     order.name = startDate
-
-    //     if(order.preOrder) {
-    //         const endDate = formatedDateToShow(order.preOrderPickUpDate)
-    //             order.preOrderPickUpDate = endDate
-    //     }
-    //     console.log(order)
-    //     res.render('layouts/info-customer', {data: order})
-    // } )  
-
+app.use((err, req, res, next) => {
+    const logInfo = `${new Date().toLocaleTimeString()} - ERROR - ${err.message}\n`;
+    const logFilePath = path.join(__dirname, 'utils/logs', 'appError.log');
+    fs.appendFile(logFilePath, logInfo, (error) => {
+        if (error) {
+            console.error('Error writing to log file:', error);
+        }
+    });
+    next(err);
+    });
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
+app.listen(port,() => {
     console.log(`App running on port ${port}`);
 });

@@ -72,6 +72,9 @@ const orderTrueSchema = new Schema({
         type: Boolean,
         default: false
     },
+    onlineOrder: {
+        type: Boolean,
+    },
     preOrder: {
         type: Boolean,
         default: false

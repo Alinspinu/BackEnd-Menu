@@ -12,10 +12,10 @@ const {checkTopping} = require('../../utils/functions')
     try{
       let filterTo = {}
       const {filter} = req.body;
-      if(filter && filter.mainCat.length){
+      if(filter && filter.mainCat && filter.mainCat.length){
         filterTo.mainCat = filter.mainCat
       }
-      if(filter && filter.cat.length){
+      if(filter && filter.cat && filter.cat.length){
         filterTo.category = new mongoose.Types.ObjectId(filter.cat);
       } 
       filterTo.locatie = filter.locatie
@@ -58,7 +58,6 @@ const {checkTopping} = require('../../utils/functions')
 
 
   module.exports.addProd = async (req, res, next) => {
-      console.log(req.body)
     try {
         const {loc} = req.query
         console.log(loc)
@@ -205,39 +204,44 @@ module.exports.setDiscountProd = async (req, res, next) => {
 
 
 module.exports.checkProduct = async (req, res, next) => {
-    const loc = req.query.loc
-    const { subProdId, prodId, toppings } = req.body
-    if (subProdId.length || subProdId.length && toppings.length) {
-        const subProducts = await SubProduct.find({ _id: { $in: subProdId }, available: false }).populate({ path: 'product' })
-        if (subProducts.length) {
-            let productsName = []
-            for (let product of subProducts) {
-                productsName.push(` ${product.product.name}-${product.name}`)
-            }
-            if (productsName.length > 1) {
-                res.status(226).json({ message: `Ne pare rău! Produsele ${productsName} nu mai sunt pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
+    try{
+        const loc = req.query.loc
+        const { subProdId, prodId, toppings } = req.body
+        if (subProdId.length || subProdId.length && toppings.length) {
+            const subProducts = await SubProduct.find({ _id: { $in: subProdId }, available: false }).populate({ path: 'product' })
+            if (subProducts.length) {
+                let productsName = []
+                for (let product of subProducts) {
+                    productsName.push(` ${product.product.name}-${product.name}`)
+                }
+                if (productsName.length > 1) {
+                    res.status(226).json({ message: `Ne pare rău! Produsele ${productsName} nu mai sunt pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
+                } else {
+                    res.status(226).json({ message: `Ne pare rău! Produsul ${productsName} nu mai este pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
+                }
             } else {
-                res.status(226).json({ message: `Ne pare rău! Produsul ${productsName} nu mai este pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
+                await checkTopping(toppings, res, loc)
             }
-        } else {
-            await checkTopping(toppings, res, loc)
-        }
-    } else if (prodId.length || prodId.length && toppings.length) {
-        const products = await Product.find({ _id: { $in: prodId }, available: false })
-        if (products.length) {
-            productName = []
-            for (let product of products) {
-                productName.push(product.name)
-            }
-            if (productName.length > 1) {
-                res.status(226).json({ message: `Ne pare rău! Produsele ${productName} nu mai sunt pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
+        } else if (prodId.length || prodId.length && toppings.length) {
+            const products = await Product.find({ _id: { $in: prodId }, available: false })
+            if (products.length) {
+                productName = []
+                for (let product of products) {
+                    productName.push(product.name)
+                }
+                if (productName.length > 1) {
+                    res.status(226).json({ message: `Ne pare rău! Produsele ${productName} nu mai sunt pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
+                } else {
+                    res.status(226).json({ message: `Ne pare rău! Produsul ${productName} nu mai este pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
+                }
             } else {
-                res.status(226).json({ message: `Ne pare rău! Produsul ${productName} nu mai este pe stoc! Dati refresh la pagina pentru a vedea meniul actualizat.` })
+                await checkTopping(toppings, res, loc)
             }
-        } else {
-            await checkTopping(toppings, res, loc)
-        }
-    } 
+        } 
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
 }
 
 module.exports.delProduct = async (req, res, next) => {

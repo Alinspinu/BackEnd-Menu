@@ -140,7 +140,8 @@ module.exports.login = async (req, res, next) => {
             status: user.status,
             telephone: user.telephone,
             employee: user.employee,
-            locatie: user.locatie
+            locatie: user.locatie,
+            discount: user.discount
         };
         const data = {name: user.name, action: 's-a conectat'}
         await sendInfoAdminEmail(data)

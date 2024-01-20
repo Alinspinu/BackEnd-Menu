@@ -1,5 +1,6 @@
 const Nir = require('../models/office/nir');
 const exceljs = require('exceljs');
+const Ingredient = require('../models/office/inv-ingredient')
 const Locatie = require('../models/office/locatie')
 const PDFDocument = require("pdfkit");
 
@@ -472,6 +473,102 @@ module.exports.printNir = async (req, res, next) => {
         worksheet.mergeCells(`A1:C1`)
         worksheet.mergeCells(`D1:I1`)
         worksheet.mergeCells(`A2:I2`)
+          res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+          workbook.xlsx.write(res)
+          .then(() => {
+            res.end();
+          })
+          .catch((error) => {
+            console.error('Error writing Excel file:', error);
+            res.status(500).send('Internal Server Error');
+          });
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message: "Error", err})
+    }
+}
+
+
+
+  module.exports.createIngredientsInvXcel = async (req, res, next) => {
+          const {loc} = req.body
+          let filterTo = {}
+          const filter = req.body.filter
+          if(filter && filter.gestiune.length){
+            filterTo.gestiune = filter.gestiune
+          }
+          if(filter && filter.type.length){
+            if(filter.type === "compus"){
+              filterTo.ings = { $exists: true, $ne: [] }
+            } else {
+              filterTo.ings = { $eq: [] }
+            }
+          }
+          filterTo.locatie = loc
+    try{
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet('Lista ingrediente');
+        const ings = await Ingredient.find(filterTo)
+        const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
+
+        const docTitle =  [
+          'Lista ingrediente',
+           '',
+           '',
+           '']
+        const header = [
+          'Nr',
+          `Denumire Ingredient`,
+          'UM',
+          `Cantitate`, 
+        ]
+        worksheet.addRow(docTitle)
+        worksheet.addRow(header)
+
+        sortedIngs.forEach((el, i) => {
+    
+          worksheet.addRow(
+            [
+              `${i+1}`,
+              `${el.name}`,
+              `${el.um}`,
+            ]
+            )
+        })
+
+        worksheet.getColumn(1).eachCell((cell) => {
+          cell.alignment = { vertical: "middle", horizontal: 'center'}
+        })
+        worksheet.getColumn(2).eachCell((cell)=> {
+          cell.alignment = { vertical: "right", horizontal: 'left'}
+        })
+
+        worksheet.getColumn(3).eachCell((cell) => {
+          cell.alignment = { vertical: "middle", horizontal: 'center'}
+        })
+
+      worksheet.getRow(1).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+        cell.alignment = {horizontal: 'center'}
+    })
+
+      worksheet.getRow(2).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 13
+        }
+        cell.alignment = {horizontal: 'center'}
+    })
+
+        worksheet.getColumn(1).width = 5;
+        worksheet.getColumn(2).width = 25; 
+        worksheet.getColumn(3).width = 10; 
+        worksheet.getColumn(4).width = 16; 
+        worksheet.mergeCells(`A1:D1`)
           res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
           res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
           workbook.xlsx.write(res)

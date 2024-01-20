@@ -8,7 +8,7 @@ const createCashRegisterDay = require('../../utils/createDay')
 
 module.exports.sendEntry = async (req, res, next) => {
     const{loc} = req.query
-    // createCashRegisterDay(loc)
+    createCashRegisterDay(loc)
     const data = req.query.date
     const page = req.query.page || 1;
     const limit = 3

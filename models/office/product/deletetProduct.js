@@ -76,6 +76,9 @@ const deletetProductSchema = new Schema ({
                     price: {
                       type: Number,
                     },
+                    um: {
+                        type: String,
+                    }
                   },
             ]
         },

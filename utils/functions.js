@@ -1,5 +1,7 @@
 const crypto = require('crypto');
 const BlackList = require('../models/office/product/blacList')
+const path = require('path');
+const fs = require('fs');
 
 function comparePasswords(password, hashedPassword) {
     const [salt, originalHash] = hashedPassword.split("$");
@@ -22,10 +24,10 @@ function round(num){
 }
 
 
-async function checkTopping(toppings, res) {
+async function checkTopping(toppings, res, loc) {
     try{
-        const blackList = await BlackList.findOne({name: 'True'})
-        if(blackList.list.length){
+        const blackList = await BlackList.findOne({locatie: loc})
+        if(blackList && blackList.list.length){
             const matchBlackList = blackList.list.filter(item => toppings.includes(item))
             if(matchBlackList.length) {
                return res.status(226).json({message: `Ne pare rau! Produsele ${matchBlackList} nu mai sunt pe stoc!`})
@@ -57,5 +59,17 @@ function formatedDateToShow(date){
     }
     }
 
+    function log(message, logFile){
+        const logInfo = `${new Date().toLocaleTimeString()}  - ${message}\n`;
+        const logFilePath = path.join(__dirname, 'logs', `${logFile}.log`);
+      
+        fs.appendFile(logFilePath, logInfo, (error) => {
+          if (error) {
+            console.error('Error writing to log file:', error);
+          }
+        });
+    }
 
-module.exports = {comparePasswords, hashPassword, round, checkTopping, formatedDateToShow}
+
+
+module.exports = {comparePasswords, hashPassword, round, checkTopping, formatedDateToShow, log}

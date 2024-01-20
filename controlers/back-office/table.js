@@ -36,7 +36,7 @@ module.exports.addTable = async (req, res, next) => {
 module.exports.editTable = async (req, res, next) => {
     try{
         const {name, tableId} = req.body;
-        if(name && tableId){
+        if(tableId){
             const newTable =  await Table.findOneAndUpdate({_id: tableId}, {name: name}, {new: true})
             res.status(200).json({message: `Masa numarul ${newTable.index} a fost modificată cu success!`, table: newTable})
         }
