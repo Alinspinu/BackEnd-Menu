@@ -9,5 +9,6 @@ router.route('/')
     .delete(tableRoutes.deletTable)
 
 router.route('/get-tables').get(tableRoutes.sendTables);
+router.route('/get-order-message').get(tableRoutes.sendLiveOrders)
 
 module.exports = router

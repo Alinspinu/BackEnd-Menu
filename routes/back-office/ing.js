@@ -10,6 +10,7 @@ router.route('/ingredient')
     .delete(ingRoutes.deleteIng)
 
 router.route('/print-ing-list').post(printRoutes.createIngredientsInvXcel)
+router.route('/print-consum').post(printRoutes.printConsum)
 
 
 

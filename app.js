@@ -32,6 +32,7 @@ const ingRoutes = require('./routes/back-office/ing')
 const subRoutes = require('./routes/back-office/subProduct')
 const catRoutes = require('./routes/back-office/cats')
 const fs = require('fs');
+const https = require('https');
 
 const {logMiddleware } = require('./utils/middleware')
 
@@ -54,17 +55,16 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
-
-
 app.use(cors())
+
 app.use(bodyParser.json());
 
-app.use("/orders", logMiddleware, ordersTrueRoutes);
+app.use("/orders", ordersTrueRoutes);
 app.use('/pay', payRoutes);
 app.use('/auth', authRoutes);
 app.use('/nutrition', nutritionRoutes);
 app.use('/register', registerRoutes);
-app.use('/table', logMiddleware, tableRoutes);
+app.use('/table',tableRoutes);
 app.use('/users', usersRoutes);
 // app.use('/message', messRoutes);
 
@@ -77,17 +77,26 @@ app.use('/sub', subRoutes);
 app.use('/cat', catRoutes);
 
 
-app.use((err, req, res, next) => {
-    const logInfo = `${new Date().toLocaleTimeString()} - ERROR - ${err.message}\n`;
-    const logFilePath = path.join(__dirname, 'utils/logs', 'appError.log');
-    fs.appendFile(logFilePath, logInfo, (error) => {
-        if (error) {
-            console.error('Error writing to log file:', error);
-        }
-    });
-    next(err);
-    });
 
+const options = {
+    key: fs.readFileSync('cert/private-key.pem'),
+    cert: fs.readFileSync('cert/public-cert.pem')
+  };
+  
+
+
+  app.use((err, req, res, next) => {
+      const logInfo = `${new Date().toLocaleTimeString()} - ERROR - ${err.message}\n`;
+      const logFilePath = path.join(__dirname, 'utils/logs', 'appError.log');
+      fs.appendFile(logFilePath, logInfo, (error) => {
+          if (error) {
+              console.error('Error writing to log file:', error);
+            }
+        });
+        next(err);
+    });
+    
+const server = https.createServer(options, app);
 const port = process.env.PORT || 8080;
 app.listen(port,() => {
     console.log(`App running on port ${port}`);

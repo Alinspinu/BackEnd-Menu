@@ -4,6 +4,10 @@ const createCashRegisterDay = async (loc) => {
   const currentDate = new Date()
   let defaultValue = 0
   const latestDocument = await Day.findOne({ locatie: loc }, null, { sort: { date: -1 } });
+  if(!latestDocument){
+    const firtsDay = new Day({locatie: loc}) 
+    firtsDay.save()
+  }
   
   let startDate = latestDocument ? latestDocument.date : currentDate;
   let cashIn = latestDocument ? latestDocument.cashOut : defaultValue;

@@ -64,8 +64,9 @@ async function printKitchen(products, dataPrint) {
             masa: dataPrint.masa,
             products: productsToPrint
         }
+
         log(JSON.stringify(dataToPrint), 'buc-orders')
-        createXml(dataToPrint)
+        // createXml(dataToPrint)
        
     } else {
         return
@@ -97,17 +98,17 @@ async function printBarista(products, dataPrint) {
             }
         }
         log(data, 'barista-orders')
-        axios.post(url, data, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            })
-                .then(response => {
-                    console.log('Response:', response.data);
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                });
+        // axios.post(url, data, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     })
+        //         .then(response => {
+        //             console.log('Response:', response.data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error.message);
+        //         });
     } else {
         return
     }

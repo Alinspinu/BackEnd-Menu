@@ -44,17 +44,19 @@ async function printBill(bill) {
                 })
             }   
         })
-        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~")
+        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ")
         
-        billToPrint.push("ST^")
         if(bill.discount > 0){
+            billToPrint.push("ST^")
             let discountLine = `DV^${bill.discount * 100}`
             billToPrint.push(discountLine)
         }
         if(bill.cashBack > 0){
+            billToPrint.push("ST^")
             let discountLine = `DV^${bill.cashBack * 100}`
             billToPrint.push(discountLine)
         }
+        billToPrint.push("ST^")
         if(bill.payment.card){
             let cardLine = `P^2^${bill.payment.card * 100}`
             billToPrint.push(cardLine)
@@ -72,22 +74,21 @@ async function printBill(bill) {
             billToPrint.push(voucherLine)
         }
         billToPrint.push("DS^")
-        billToPrint.push("TL^          MULTUMIM SI VA MAI ASTEPTAM!")
-        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~")
+        billToPrint.push("TL^        MULTUMIM SI VA MAI ASTEPTAM!")
+        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ")
         
-        console.log(billToPrint)
         log(billToPrint, "bils")
-        axios.post(url, billToPrint, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            })
-                .then(response => {
-                    console.log('Response:', response.data);
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                });
+        // axios.post(url, billToPrint, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     })
+        //         .then(response => {
+        //             console.log('Response:', response.data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error.message);
+        //         });
 
     } else {
         return

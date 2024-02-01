@@ -86,6 +86,10 @@ const orderTrueSchema = new Schema({
         type: Boolean,
         default: false
     },
+    prepStatus: {
+        type: String,
+        default: 'open'
+    },
     paymentMethod: String,
     payment: {
         cash: Number,
@@ -143,12 +147,17 @@ const orderTrueSchema = new Schema({
                 sentToPrint: {
                     type: Boolean,
                 },
+                sentToPrintOnline: {
+                    type: Boolean,
+                    default: true
+                },
                 discount: Number,
                 mainCat: String,
                 imgPath: String,
                 payToGo: Boolean,
                 dep: String,
                 sub: Boolean,
+                qty: String,
                 quantity: {
                     type: Number,
                     required: true

@@ -2,7 +2,9 @@ const Nir = require('../models/office/nir');
 const exceljs = require('exceljs');
 const Ingredient = require('../models/office/inv-ingredient')
 const Locatie = require('../models/office/locatie')
+const Order = require('../models/office/product/order')
 const PDFDocument = require("pdfkit");
+const { getProducts } = require('./back-office/product');
 
 
 module.exports.printNir = async (req, res, next) => {
@@ -116,7 +118,6 @@ module.exports.printNir = async (req, res, next) => {
     // let currentY = y;
   
     function addNewPageIfRequired(height) {
-      console.log(y)
       if (y + height > 500) {
         console.log('hit the function')
         doc.addPage();
@@ -522,17 +523,20 @@ module.exports.printNir = async (req, res, next) => {
           `Denumire Ingredient`,
           'UM',
           `Cantitate`, 
+          `Pret`, 
         ]
         worksheet.addRow(docTitle)
         worksheet.addRow(header)
 
         sortedIngs.forEach((el, i) => {
-    
+          console.log(el.price)
           worksheet.addRow(
             [
               `${i+1}`,
               `${el.name}`,
               `${el.um}`,
+              `${round(el.qty)}`,
+              `${el.price} Lei`,
             ]
             )
         })
@@ -546,6 +550,9 @@ module.exports.printNir = async (req, res, next) => {
 
         worksheet.getColumn(3).eachCell((cell) => {
           cell.alignment = { vertical: "middle", horizontal: 'center'}
+        })
+        worksheet.getColumn(5).eachCell((cell) => {
+          cell.alignment = { vertical: "middle", horizontal: 'right'}
         })
 
       worksheet.getRow(1).eachCell((cell)=>{
@@ -568,6 +575,7 @@ module.exports.printNir = async (req, res, next) => {
         worksheet.getColumn(2).width = 25; 
         worksheet.getColumn(3).width = 10; 
         worksheet.getColumn(4).width = 16; 
+        worksheet.getColumn(5).width = 16; 
         worksheet.mergeCells(`A1:D1`)
           res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
           res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
@@ -587,6 +595,108 @@ module.exports.printNir = async (req, res, next) => {
 
 
 
+
+module.exports.printConsum = async (req, res) => {
+  try{
+    let ings = []
+    const {filter, loc, startDate, endDate} = req.body
+    const start = new Date(startDate).setUTCHours(0,0,0,0)
+    const end = new Date(endDate).setUTCHours(0,0,0,0)
+    const startDateToShow = new Date(startDate).toISOString().split('T')[0]
+    const endDateToShow = new Date(endDate).toISOString().split('T')[0]
+    console.log(filter)
+    const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lte: end}}).populate([
+      {
+        path: 'products.ings.ing', 
+        populate: {path: 'ings.ing'}
+      },
+      {
+        path: 'products.toppings.ing', 
+        populate: {path: 'ings.ing'}
+      }
+    ])
+      if(orders){
+        orders.forEach(order=> {
+          order.products.forEach(product => {
+            product.ings.forEach(ing => {
+              if(ing.ings && ing.ings.length){
+                ing.ings.forEach(ig => {
+                  const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
+                  if (existingIngredient) {
+                    existingIngredient.qty = round(ig.qty + existingIngredient.qty);
+                  } else {
+                    ings.push(ig);
+                  }
+                })
+              } else {
+                const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
+                if (existingIngredient) {
+                  existingIngredient.qty = round(ing.qty + existingIngredient.qty);
+                } else {
+                  ings.push(ing);
+                }
+              }
+            })
+            if(product.toppings.length){
+              product.toppings.forEach(topping=>{
+                if(topping.ing.ings.length){
+                  topping.ing.ings.forEach(ig => {
+                    const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
+                    if (existingIngredient) {
+                      existingIngredient.qty = round(ig.qty + existingIngredient.qty);
+                    } else {
+                      ings.push(ig);
+                    }
+                  })
+                }
+                else{
+                  const existingIngredient = ings.find(p =>p.ing.name === topping.ing.name);
+                  if (existingIngredient) {
+                    existingIngredient.qty = round(topping.ing.qty + existingIngredient.qty);
+                  } else {
+                    const ig = {
+                      qty: topping.qty,
+                      ing: topping.ing
+                    }
+                    ings.push(ig);
+                  }
+                }
+              })
+            }
+          })
+        })
+      } 
+      // console.log(ings)
+      let departament
+      filter.dep === 'Toate' ? departament = 'Materii prime, marfuri si consumabile' : departament = filter.dep
+      const workbook = new exceljs.Workbook();
+      const worksheet = workbook.addWorksheet(`Consum ${departament} de la ${startDateToShow} pana la ${endDateToShow}`);
+
+
+      const docTitle =  [
+        'Lista ingrediente',
+         '',
+         '',
+         '']
+      const header = [
+        'Nr',
+        `Denumire Ingredient`,
+        'UM',
+        `Cantitate`, 
+        `Pret`, 
+      ]
+      worksheet.addRow(docTitle)
+      worksheet.addRow(header)
+
+
+
+
+
+      res.status(200)
+  } catch(err){
+    console.log(err)
+  }
+}
 
 
 

@@ -42,6 +42,8 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
+
+
 module.exports.sendDeletedproduct = async (req, res, next) => {
     try{
         
@@ -110,7 +112,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             } 
-            print(newBill)
+            // print(newBill)
             newBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
                     if(el.toppings.length){
@@ -131,7 +133,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             await table.save();
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, masa: {_id: table._id, index: table.index}})
         } else {
-            print(parsedBill)
+            // print(parsedBill)
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length) {
                     if(el.toppings.length){
@@ -184,8 +186,6 @@ module.exports.uploadIngs = async (req, res, next) => {
 }
 
 
-
-
 module.exports.saveOrder = async (req, res, next) => {
     const loc = '655e2e7c5a3d53943c6b7c53'
     try {
@@ -201,7 +201,6 @@ module.exports.saveOrder = async (req, res, next) => {
                 newOrder.clientInfo.cashBack = user.cashBack
                 newOrder.preOrder = true
                 const order = await newOrder.save()
-                console.log(order)
                 console.log(`Order ${order._id} saved with the user ${user.name}!`)
                 if(nrMasa > 0){
                     const table = await Table.findOne({locatie: loc , index: nrMasa});
@@ -237,8 +236,6 @@ module.exports.saveOrder = async (req, res, next) => {
  
 
 //************************UPDATE ORDERS********************** */
-
-
 
 
 
@@ -296,3 +293,5 @@ module.exports.deleteOrder = async (req, res, next) => {
         res.status(500).json({message: err.message})
     }   
 }
+
+

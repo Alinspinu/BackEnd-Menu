@@ -8,27 +8,27 @@ const createCashRegisterDay = require('../../utils/createDay')
 
 module.exports.sendEntry = async (req, res, next) => {
     const{loc} = req.query
-    createCashRegisterDay(loc)
-    const data = req.query.date
-    const page = req.query.page || 1;
-    const limit = 3
-        try{
-            const documents = await Day.find({}).populate({path: "entry"})
-            .skip((page - 1) * limit)
-            .limit(limit)
-            .sort({ date: -1 });
-            console.log(documents)
-            res.status(200).json({message: 'all good', documents})
-        } catch(err){
-            console.log(err.message)
-            res.status(500).json({message: 'Error'+ err})
-        }
+        createCashRegisterDay(loc)
+        const data = req.query.date
+        const page = req.query.page || 1;
+        const limit = 3
+            try{
+                const documents = await Day.find({locatie: loc}).populate({path: "entry"})
+                .skip((page - 1) * limit)
+                .limit(limit)
+                .sort({ date: -1 });
+                res.status(200).json({message: 'all good', documents})
+            } catch(err){
+                console.log(err.message)
+                res.status(500).json({message: 'Error'+ err})
+            }
   
 }
 
 
 module.exports.addEntry = async (req, res, next) => {
     const { tip, date, description, amount, locatie } = req.body
+    console.log(req.body)
     if(tip && date && description && amount){
         const entryDate = new Date(date)
         const newEntry = new Entry({
@@ -42,7 +42,8 @@ module.exports.addEntry = async (req, res, next) => {
         entryDate.setUTCHours(0,0,0,0)
         const nextDay = new Date(entryDate);
         nextDay.setDate(entryDate.getDate() + 1);
-        const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay} }).populate({ path: 'entry' })
+        const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay}, locatie: locatie }).populate({ path: 'entry' })
+        console.log(day)
         if (day) {
             const daySum = day.entry.reduce((total, doc) => total + doc.amount, 0)
             day.entry.push(newEntry)

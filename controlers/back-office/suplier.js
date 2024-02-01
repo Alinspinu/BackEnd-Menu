@@ -1,21 +1,30 @@
 const Suplier = require('../../models/office/suplier')
+const Locatie = require('../../models/office/locatie')
+const Table = require('../../models/utils/table')
 
 
 module.exports.addSuplier = async (req, res, next) => {
-    const loc = req.body.loc
+ 
     const {suplier} = req.body;
     const {mode} = req.query
+    console.log(mode)
     try{
        if(mode === 'enrol') {
-        const check = Locatie.findOne({vatNumber: suplier.vatNumber})
+        const check = await Locatie.findOne({vatNumber: suplier.vatNumber})
         if(check){
             return res.status(401).json({message: "Codul fiscal este deja inregistrat in baza de date contactati echipa de suport alin@flowmanager.ro"})
         } else {
             const newLocation = new Locatie(suplier) 
              const loc = await newLocation.save()
+             const table = new Table({
+                index: 1,
+                locatie: loc._id
+             })
+            await table.save()
             res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`, id: loc._id})
         }
        } else {
+          const loc = req.body.loc
            const newSuplier = new Suplier(suplier);
            newSuplier.name = suplier.bussinessName
            newSuplier.locatie = loc

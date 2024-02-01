@@ -6,7 +6,7 @@ const Ingredient = require('../../models/office/inv-ingredient')
 const mongoose = require('mongoose')
 const cloudinary = require('cloudinary').v2;
 
-const {checkTopping} = require('../../utils/functions')
+const {checkTopping, round} = require('../../utils/functions')
 
  module.exports.getProducts = async (req, res, next) => {
     try{
@@ -55,12 +55,31 @@ const {checkTopping} = require('../../utils/functions')
     }
   }
 
+  module.exports.updateProductIngPeice = async (req, res, next) => {
+    try{
+        const { loc } = req.body;
+        const ingredients = await Ingredient.find({locatie: loc, productIngredient: true}).populate({path: 'ings.ing'})
+        if(ingredients) {
+            for(let ing of ingredients) {
+                let total = 0
+                    for(let igr of ing.ings){
+                        total += igr.qty * igr.ing.price
+                    }
+                    ing.price = round(total)
+                    await Ingredient.findByIdAndUpdate(ing._id, {price: round(ing.price)})
+                    // console.log(`Ingredientul ${ing.name} are totalul ${round(ing.price)}`)
+            }
+        }
+    } catch (err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+  }
 
 
   module.exports.addProd = async (req, res, next) => {
     try {
         const {loc} = req.query
-        console.log(loc)
         const { category } = req.body;
         const cat = await Cat.findById(category);
         const product = new Product(req.body);
@@ -91,7 +110,6 @@ const {checkTopping} = require('../../utils/functions')
         cat.product.push(product);
         await product.save();
         await cat.save();
-        console.log(product)
         const productToSend = await Product.findById(product._id);
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
         res.status(200)

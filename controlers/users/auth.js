@@ -70,7 +70,6 @@ module.exports.registerEmployee = async (req, res, next) => {
                 const hashedPassword = hashPassword(second.password)
                 const newUser = new User(user);
                 newUser.password = hashedPassword
-                console.log(newUser)
                 await newUser.save()
                 // await sendVerificationEmail(newUser).then(response => {
                 //     if (response.message === 'Email sent') {
@@ -95,19 +94,18 @@ module.exports.registerEmployee = async (req, res, next) => {
 
 
 module.exports.login = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
     const { email, password } = req.body;
-    const user = await User.findOne({ email: email, locatie: loc})
+    const user = await User.findOne({ email: email})
                             .select([
                                 '-employee.cnp',
                                 '-employee.ciSerial',
                                 '-employee.ciNumber',
                                 '-employee.address',
                             ]);
-    if(!user && !user.password){
-        await sendCompleteRegistrationEmail(user)
-        return res.status(401).json({message: `Nu ți-ai terminat procesul de înregistrare. Ți-am mai trimis un mail la ${user.email}. Urmează pașii.`})
-    }
+    // if(user ){
+    //     await sendCompleteRegistrationEmail(user)
+    //     return res.status(401).json({message: `Nu ți-ai terminat procesul de înregistrare. Ți-am mai trimis un mail la ${user.email}. Urmează pașii.`})
+    // }
     if (!user || !comparePasswords(password, user.password)) {
         return res.status(401).json({ message: 'Invalid email or password' });
     };
@@ -157,7 +155,6 @@ module.exports.verifyToken = async (req, res, next) => {
     const { token } = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
-        console.log(userId)
         if (userId) {
             const user = await User.findById(userId.userId);
             if (user) {

@@ -16,11 +16,11 @@ module.exports.saveIng = async(req, res, next) => {
       return res.status(200).json({message: `Ingredientul ${newIng.name} a fost salvat cu succes!`})
     }
   }
+
   
   
     module.exports.searchIng = async (req, res, next) => {
       const loc = req.body.loc
-      console.log(loc)
       try{  
         let filterTo = {}
         const filter = req.body.filter
@@ -33,6 +33,9 @@ module.exports.saveIng = async(req, res, next) => {
           } else {
             filterTo.ings = { $eq: [] }
           }
+        }
+        if(filter && filter.dep.length){
+          filterTo.dep = filter.dep
         }
         const userData = req.body.search;
         filterTo.locatie = loc
@@ -69,4 +72,9 @@ module.exports.saveIng = async(req, res, next) => {
         res.status(500).json({message: err.message})
       }
     }
+
+
+  
+
+
 

@@ -130,7 +130,6 @@ module.exports.sendCustomer = async (req, res, next) => {
 module.exports.generateUserQrCode = async (req, res, next) => {
     try{
         const {id} = req.query
-        console.log(id)
         const qrCode = await QRCode.toDataURL(id);
         res.send(qrCode);
     } catch (err) {
