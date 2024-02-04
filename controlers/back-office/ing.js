@@ -24,17 +24,17 @@ module.exports.saveIng = async(req, res, next) => {
       try{  
         let filterTo = {}
         const filter = req.body.filter
-        if(filter && filter.gestiune.length){
+        if(filter && filter.gestiune && filter.gestiune.length){
           filterTo.gestiune = filter.gestiune
         }
-        if(filter && filter.type.length){
+        if(filter &&  filter.type && filter.type.length){
           if(filter.type === "compus"){
             filterTo.ings = { $exists: true, $ne: [] }
           } else {
             filterTo.ings = { $eq: [] }
           }
         }
-        if(filter && filter.dep.length){
+        if(filter && filter.dep && filter.dep.length){
           filterTo.dep = filter.dep
         }
         const userData = req.body.search;

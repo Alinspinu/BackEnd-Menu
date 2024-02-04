@@ -5,6 +5,7 @@ const Locatie = require('../models/office/locatie')
 const Order = require('../models/office/product/order')
 const PDFDocument = require("pdfkit");
 const { getProducts } = require('./back-office/product');
+const { saveProductIngredient } = require('./nutrition');
 
 
 module.exports.printNir = async (req, res, next) => {
@@ -529,7 +530,6 @@ module.exports.printNir = async (req, res, next) => {
         worksheet.addRow(header)
 
         sortedIngs.forEach((el, i) => {
-          console.log(el.price)
           worksheet.addRow(
             [
               `${i+1}`,
@@ -604,7 +604,6 @@ module.exports.printConsum = async (req, res) => {
     const end = new Date(endDate).setUTCHours(0,0,0,0)
     const startDateToShow = new Date(startDate).toISOString().split('T')[0]
     const endDateToShow = new Date(endDate).toISOString().split('T')[0]
-    console.log(filter)
     const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lte: end}}).populate([
       {
         path: 'products.ings.ing', 
@@ -619,11 +618,20 @@ module.exports.printConsum = async (req, res) => {
         orders.forEach(order=> {
           order.products.forEach(product => {
             product.ings.forEach(ing => {
+             
               if(ing.ings && ing.ings.length){
                 ing.ings.forEach(ig => {
+                  // if(ig.ing.name === "Lapte Vegetal"){
+                  //   console.log(ig.ing.qty)
+                  // }
                   const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
-                    existingIngredient.qty = round(ig.qty + existingIngredient.qty);
+                    const updatedIng = {
+                      qty: existingIngredient.qty + ig.qty,
+                      ing: existingIngredient.ing
+                    }
+                    ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                    // existingIngredient.qty += ig.qty 
                   } else {
                     ings.push(ig);
                   }
@@ -631,7 +639,12 @@ module.exports.printConsum = async (req, res) => {
               } else {
                 const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
                 if (existingIngredient) {
-                  existingIngredient.qty = round(ing.qty + existingIngredient.qty);
+                  const updatedIng = {
+                    qty: existingIngredient.qty + ing.qty,
+                    ing: existingIngredient.ing
+                  }
+                  ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                  // existingIngredient.qty += ing.qty
                 } else {
                   ings.push(ing);
                 }
@@ -643,7 +656,11 @@ module.exports.printConsum = async (req, res) => {
                   topping.ing.ings.forEach(ig => {
                     const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
                     if (existingIngredient) {
-                      existingIngredient.qty = round(ig.qty + existingIngredient.qty);
+                      const updatedIng = {
+                        qty: existingIngredient.qty + ig.qty,
+                        ing: existingIngredient.ing
+                      }
+                        ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                     } else {
                       ings.push(ig);
                     }
@@ -652,7 +669,14 @@ module.exports.printConsum = async (req, res) => {
                 else{
                   const existingIngredient = ings.find(p =>p.ing.name === topping.ing.name);
                   if (existingIngredient) {
-                    existingIngredient.qty = round(topping.ing.qty + existingIngredient.qty);
+                    const updatedIng = {
+                      qty: existingIngredient.qty + topping.qty,
+                      ing: existingIngredient.ing
+                    }
+                    if(updatedIng.ing.name === "Lapte Vegetal"){
+                      console.log(updatedIng.qty)
+                    }
+                    ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
                   } else {
                     const ig = {
                       qty: topping.qty,
@@ -666,33 +690,130 @@ module.exports.printConsum = async (req, res) => {
           })
         })
       } 
-      // console.log(ings)
-      let departament
-      filter.dep === 'Toate' ? departament = 'Materii prime, marfuri si consumabile' : departament = filter.dep
+      ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
+
+      // const depFilter = ings.filter(obj => obj.ing['dep'] === filter.dep)
+      // const gestFilter = ings.filter(obj => obj.ing['gestiune'] === filter.gesiune)
+      // const prodIngFilter = ings.filter(obj => obj.ing['productIngredient'] === true)
+      // let filterIngredients = [...prodIngFilter, ...gestFilter, ...depFilter]
+      // if(filterIngredients.length) {
+      //   filterIngredients.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
+      // } else {
+      // }
+      filterIngredients = ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
+
+
+
       const workbook = new exceljs.Workbook();
-      const worksheet = workbook.addWorksheet(`Consum ${departament} de la ${startDateToShow} pana la ${endDateToShow}`);
+      const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
 
 
       const docTitle =  [
-        'Lista ingrediente',
+        `Consum ${startDateToShow} pana la ${endDateToShow}`,
          '',
          '',
-         '']
+         '',
+         '',
+         '',
+         '',
+         '',
+         '',
+        ]
       const header = [
         'Nr',
         `Denumire Ingredient`,
+        'Departament',
         'UM',
-        `Cantitate`, 
-        `Pret`, 
+        'Cota Tva',
+        `Pret/UM/F TVA`, 
+        'Valoare F TVA',
+        'Valoare TVA',
+        'Valoare cu Tva',
+        `Consum`, 
       ]
       worksheet.addRow(docTitle)
       worksheet.addRow(header)
 
+      let totals = {
+        priceNoVat: 0,
+        priceVat: 0,
+        priceWithVat: 0,
+      }
 
 
+      filterIngredients.forEach((ing, i) =>{
+        const priceNoVat = ing.ing.price * ing.qty
+        const priceVat = priceNoVat * (ing.ing.tva / 100)
+        const priceWithVat = priceNoVat + priceVat
+        worksheet.addRow(
+          [
+            `${i+1}`,
+            `${ing.ing.name}`,
+            `${ing.ing.dep}`,
+            `${ing.ing.um}`,
+            `${ing.ing.tva} %`,
+            `${ing.ing.price}`,
+            `${round(priceNoVat)}`,
+            `${round(priceVat)}`,
+            `${round(priceWithVat)}`,
+            `${round(ing.qty)}`,
+          ]
+          )
+         totals.priceNoVat += priceNoVat 
+         totals.priceVat += priceVat
+         totals.priceWithVat += priceWithVat
+      })
 
+      const totalsRow = [
+        'TOTALURI',
+        '',
+        '',
+        '',
+        '',
+        '',
+        `${round(totals.priceNoVat)}`,
+        `${round(totals.priceVat)}`,
+        `${round(totals.priceWithVat)}`,
+      ]
+      worksheet.addRow(totalsRow)
 
-      res.status(200)
+      const totalsRowNumber = worksheet.lastRow.number
+      worksheet.getRow(totalsRowNumber).eachCell((cell)=>{
+          cell.font = {
+              bold: true,
+              size: 14
+          }
+      })
+
+      worksheet.getColumn(1).width = 5;
+      worksheet.getColumn(2).width = 20; 
+      worksheet.getColumn(3).width = 10; 
+      worksheet.getColumn(4).width = 6; 
+      worksheet.getColumn(5).width = 9; 
+      worksheet.getColumn(6).width = 13; 
+      worksheet.getColumn(7).width = 13; 
+      worksheet.getColumn(8).width = 13; 
+      worksheet.getColumn(9).width = 13; 
+      worksheet.getColumn(10).eachCell((cell) => {
+        cell.font = {
+          bold: true,
+          size: 14
+      },
+        width = 15,
+        cell.alignment = { vertical: "middle", horizontal: 'right'}
+      }) 
+      worksheet.mergeCells(`A${totalsRowNumber}:F${totalsRowNumber}`)
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+      workbook.xlsx.write(res)
+      .then(() => {
+        res.end();
+      })
+      .catch((error) => {
+        console.error('Error writing Excel file:', error);
+        res.status(500).send('Internal Server Error');
+      });
   } catch(err){
     console.log(err)
   }
