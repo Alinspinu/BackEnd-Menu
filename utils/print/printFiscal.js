@@ -1,5 +1,5 @@
 const axios = require('axios');
-const url = 'http://192.168.1.90:65400/api/Receipt';
+const url = 'http://192.168.100.5:65400/api/Receipt';
 
 const {log} = require('../functions')
 
@@ -23,7 +23,7 @@ async function printBill(bill) {
                 tva = 4
             }
             if(el.tva === 0){
-                tva = 3
+                tva = 5
             }
             if(el.quantity === 0){
                 qty = 1
@@ -44,7 +44,7 @@ async function printBill(bill) {
                 })
             }   
         })
-        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ")
+        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ")
         
         if(bill.discount > 0){
             billToPrint.push("ST^")
@@ -65,30 +65,25 @@ async function printBill(bill) {
             let cashLine = `P^1^${bill.payment.cash * 100}`
             billToPrint.push(cashLine)
         }
-        if(bill.payment.viva) {
-            let cardLine = `P^7^${bill.payment.viva * 100}`
-            billToPrint.push(cardLine)
+        if(bill.payment.online) {
+            let onlineLine = `P^3^${bill.payment.online * 100}`
+            billToPrint.push(onlineLine)
         }
-        if(bill.payment.voucher) {
-            let voucherLine = `P^6^${bill.payment.voucher * 100}`
-            billToPrint.push(voucherLine)
-        }
-        billToPrint.push("DS^")
-        billToPrint.push("TL^        MULTUMIM SI VA MAI ASTEPTAM!")
-        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ")
+        billToPrint.push("TL^   MULTUMIM!")
+        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~  ")
         
         log(billToPrint, "bils")
-        // axios.post(url, billToPrint, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     })
-        //         .then(response => {
-        //             console.log('Response:', response.data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error.message);
-        //         });
+        axios.post(url, billToPrint, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
 
     } else {
         return
@@ -98,12 +93,13 @@ async function printBill(bill) {
 
 async function posPayment(sum){
     let posLine = [`POS^${sum * 100}`]
+    console.log(posLine)
        const response = await axios.post(url, posLine, {
             headers: {
                 'Content-Type': 'application/json',
             },
             })
-            log(`Pos response ${JSON.stringify(response)}`, 'pos')
+            console.log(response)
            return response
 }
 
@@ -118,7 +114,6 @@ async function reports(report){
         let zLine = `Z^`
         reportLine.push(zLine)
     }
-    console.log(reportLine)
     let message = report === 'x' ? `Raportul X a fost printat!` : `Raportul Z a fost printat!`
     sendToPrint(reportLine)
     return {message: message}

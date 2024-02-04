@@ -201,6 +201,7 @@ module.exports.printBill = async (req, res, next) => {
     try{
         const {bill} = req.body
         bill.status = 'done'
+        bill.pending = false
         const id = bill.clientInfo._id
         if(id && id.length){
             const client = await User.findById(id)
@@ -210,8 +211,11 @@ module.exports.printBill = async (req, res, next) => {
             }
             await client.save()
         }
+        console.log(bill.dont)
         if(bill.total > 0) {
-            printBill(bill)
+            if(!bill.dont){
+                printBill(bill)
+            }
         }
         await Order.findByIdAndUpdate(bill._id, bill)
         res.status(200).json({message: "Bonul a fos tipărit!"})

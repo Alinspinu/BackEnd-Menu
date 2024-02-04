@@ -57,13 +57,13 @@ module.exports.sendDeletedproduct = async (req, res, next) => {
 }
 
 module.exports.getOrderByUser = async (req, res, nex) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
     try{
     const date = new Date()
     const start = new Date(date).setHours(0,0,0,0)
     const end = new Date(date).setHours(23, 59, 59, 999)
      const {userId} = req.query;
-     const orders = await Order.find({locatie: loc, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
+     const user = await User.findById(userId)
+     const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
      res.status(200).json(orders)
     } catch (err){
         console.log(err)

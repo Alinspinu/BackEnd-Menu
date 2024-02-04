@@ -25,6 +25,10 @@ const orderTrueSchema = new Schema({
         type: Number,
         required: true
     },
+    dont: {
+        type: Boolean,
+        default: false
+    },
     tips: {
         type: Number,
         default: 0
