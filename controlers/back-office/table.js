@@ -5,6 +5,7 @@ const Order = require('../../models/office/product/order')
 module.exports.sendTables = async (req, res, next) => {
     const {loc} = req.query
     const {user} = req.query
+    console.log('hit function')
     try{
         const tables = await Table.find({locatie: loc, index: { $ne: 54 }}).populate({
             path: 'bills', 
@@ -23,6 +24,7 @@ module.exports.sendTables = async (req, res, next) => {
             res.status(200).json(sortedTables)
         } else {
             const sortedTables = tables.sort((a,b) => a.index - b.index)
+            console.log(sortedTables)
             res.status(200).json(sortedTables)
         }
     } catch(err){

@@ -91,6 +91,19 @@ module.exports.registerEmployee = async (req, res, next) => {
     }
 }
 
+module.exports.newUser = async (req, res, next) => {
+    const user = {
+        name: 'Andrei Stoleru',
+        status: 'active',
+        email: "andrei@stoleru.ro",
+        cardIndex: "andrei",
+        password: "123",
+        locatie: "65ba7dcf1694ff43f52d44ed"
+    }
+    const newUser = await new User(user)
+    newUser.save()
+    res.send(newUser)
+}
 
 
 module.exports.login = async (req, res, next) => {

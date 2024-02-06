@@ -103,9 +103,10 @@ module.exports.deleteUser = async (req, res, next) => {
 
 
 module.exports.sendCustomer = async (req, res, next) => {
+    console.log("ceva")
   try{
       const {id} = req.query;
-      if(id.length < 16){
+      if(id.length < 16 || id.length === 4 ){
         const customer = await User.findOne({cardIndex: id}).select('name email telphone cashBack, discount');
         if(customer){
             res.status(200).json({message: 'All good', customer})

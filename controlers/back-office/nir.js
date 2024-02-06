@@ -5,7 +5,11 @@ const {round} = require('../../utils/functions')
 
 module.exports.saveNir = async( req, res, next) => {
     const {nir, loc} = req.body;
-    try{
+   if( nir.documentDate === null ) {
+    nir.documentDate = new Date(Date.now())
+   }
+   console.log(nir.documentDate)
+   try{
       const newNir = new Nir(nir)
       newNir.locatie = loc
       const savedNir = await newNir.save()

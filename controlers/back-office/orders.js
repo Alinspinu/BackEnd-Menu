@@ -57,13 +57,13 @@ module.exports.sendDeletedproduct = async (req, res, next) => {
 }
 
 module.exports.getOrderByUser = async (req, res, nex) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
     try{
     const date = new Date()
     const start = new Date(date).setHours(0,0,0,0)
     const end = new Date(date).setHours(23, 59, 59, 999)
      const {userId} = req.query;
-     const orders = await Order.find({locatie: loc, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
+     const user = await User.findById(userId)
+     const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
      res.status(200).json(orders)
     } catch (err){
         console.log(err)
@@ -106,7 +106,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
         if(billId === "new"){
             delete parsedBill._id
             delete parsedBill.index
-            const table = await Table.findOne({index: index})
+            const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
             const newBill = new Order(parsedBill);
             newBill.clientInfo = parsedBill.clientInfo
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
@@ -129,7 +129,9 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 }
             })
             const savedBill = await newBill.save();
+
             table.bills.push(savedBill);
+            console.log(table)
             await table.save();
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, masa: {_id: table._id, index: table.index}})
         } else {
@@ -150,6 +152,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 }
             })
             const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
+            console.log(bill)
             res.status(200).json({billId: bill._id, index: bill.index, products: bill.products, masa: bill.masaRest})
         }
     } catch(err){
