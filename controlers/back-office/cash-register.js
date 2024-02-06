@@ -41,7 +41,7 @@ module.exports.addEntry = async (req, res, next) => {
         entryDate.setUTCHours(0,0,0,0)
         const nextDay = new Date(entryDate);
         nextDay.setDate(entryDate.getDate() + 1);
-        const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay}, locatie: locatie }).populate({ path: 'entry' })
+        const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay}, locatie: locatie }, null, {new: true}).populate({ path: 'entry' })
         if (day) {
             const daySum = day.entry.reduce((total, doc) => total + doc.amount, 0)
             day.entry.push(newEntry)
@@ -61,14 +61,14 @@ module.exports.deleteEntry = async (req, res, next) => {
     const { id } = req.query;
     try {
         const entry = await Entry.findById(id)
-        const day = await Day.findOne({locatie: '655e2e7c5a3d53943c6b7c53', date: entry.date })
+        const day = await Day.findOne({locatie: entry.locatie, date: entry.date })
         await entry.deleteOne();
-        await Day.findOneAndUpdate({ _id: day._id }, { $pull: { entry: entry._id } }).exec()
-        day.cashOut = day.cashOut - entry.amount
-        if(!day.entry.length){
+        const newDay = await Day.findOneAndUpdate({ _id: day._id }, { $pull: { entry: entry._id } }, {new: true}).exec()
+        if(!newDay.entry.length){
             day.cashOut = day.cashIn
         }
-        day.save()
+        newDay.cashOut -= entry.amount
+        await newDay.save()
         res.status(200).json({ message: `Entry ${entry.description}, with the amount ${entry.amount} was deleted` })
     } catch (err) {
         console.log(err)

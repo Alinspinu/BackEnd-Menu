@@ -214,7 +214,6 @@ module.exports.printBill = async (req, res, next) => {
         if(bill.total > 0) {
             printBill(bill)
         }
-        console.log(bill)
         await Order.findByIdAndUpdate(bill._id, bill)
         res.status(200).json({message: "Bonul a fos tipărit!"})
     } catch(err) {

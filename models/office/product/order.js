@@ -90,6 +90,7 @@ const orderTrueSchema = new Schema({
         type: String,
         default: 'open'
     },
+    dont: Boolean,
     paymentMethod: String,
     payment: {
         cash: Number,
@@ -97,6 +98,7 @@ const orderTrueSchema = new Schema({
         viva: Number,
         voucher: Number,
         online: Number,
+        
     },
     cif: String,
     clientInfo: {

@@ -129,9 +129,8 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 }
             })
             const savedBill = await newBill.save();
-
+          
             table.bills.push(savedBill);
-            console.log(table)
             await table.save();
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, masa: {_id: table._id, index: table.index}})
         } else {
@@ -152,7 +151,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 }
             })
             const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-            console.log(bill)
             res.status(200).json({billId: bill._id, index: bill.index, products: bill.products, masa: bill.masaRest})
         }
     } catch(err){

@@ -34,7 +34,9 @@ const daySchema = new Schema({
 
 
 daySchema.pre('save', async function (next) {
+    console.log("hit pre save")
     if (this.isModified('cashOut')) {
+        console.log('this cash out modified')
         let cashOutDifference;
 
         if (this.isNew) {
@@ -52,6 +54,7 @@ daySchema.pre('save', async function (next) {
     }
 
     if (this.isModified('cashIn')) {
+        console.log('this cash in modified')
         let cashInDifference;
 
         if (this.isNew) {
