@@ -144,6 +144,10 @@ const productTrueSchema = new Schema({
     total: {
         type: Number,
     },
+    sgrTax: {
+        type: Boolean,
+        default: false
+    },
     mainCat: String,
     discount: {
         type: Number,

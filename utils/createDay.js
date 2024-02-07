@@ -11,10 +11,10 @@ const createCashRegisterDay = async (loc) => {
   
   let startDate = latestDocument ? latestDocument.date : currentDate;
   let cashIn = latestDocument ? latestDocument.cashOut : defaultValue;
-
+  
   
   while (startDate < currentDate) {
-    const existingDocument = await Day.findOne({locatie: loc, date: startDate });
+    const existingDocument = await Day.findOne({locatie: loc, date: startDate });  
     if (!existingDocument) {
       startDate.setUTCHours(0,0,0,0)
       const newDocument = new Day({locatie: loc, date: startDate, cashIn: cashIn});

@@ -23,6 +23,18 @@ const nirSchema = new Schema({
     type: Date,
     required: true
   },
+  totalDoc: {
+    type: Number
+  },
+  payd: {
+    type: Boolean,
+    default: false
+  },
+  type: {
+    type: String,
+    default: 'unpayd',
+    enum: ['bank','cash', 'unpayd'],
+  },
   discount: [
     {
       tva: Number,
@@ -84,7 +96,7 @@ nirSchema.pre("save", async function (next) {
   try {
     const doc = this;
     const counter = await Counter.findOneAndUpdate(
-      { model: "Nir" },
+      { locatie: this.locatie, model: "Nir" },
       { $inc: { value: 1 } },
       { upsert: true, new: true }
     );

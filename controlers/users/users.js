@@ -103,7 +103,6 @@ module.exports.deleteUser = async (req, res, next) => {
 
 
 module.exports.sendCustomer = async (req, res, next) => {
-    console.log("ceva")
   try{
       const {id} = req.query;
       if(id.length < 16 || id.length === 4 ){

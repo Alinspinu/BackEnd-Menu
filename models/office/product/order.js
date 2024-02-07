@@ -153,6 +153,10 @@ const orderTrueSchema = new Schema({
                     type: Boolean,
                     default: true
                 },
+                sgrTax: {
+                    type: Boolean,
+                    default: false
+                },
                 discount: Number,
                 mainCat: String,
                 imgPath: String,
@@ -212,8 +216,8 @@ const orderTrueSchema = new Schema({
 orderTrueSchema.pre("save", async function (next) {
     try {
         const doc = this;
-            const counter = await Counter.findOneAndUpdate(
-                { model: "Order" },
+            const counter = await Counter.findOneAndUpdate( 
+                { locatie: this.locatie, model: "Order" },
                 { $inc: { value: 1 } },
                 { upsert: true, new: true }
             ).exec();

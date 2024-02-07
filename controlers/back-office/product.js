@@ -120,7 +120,7 @@ const {checkTopping, round} = require('../../utils/functions')
 }
 
 module.exports.editProduct = async (req, res, next) => {
-    const { category, name, price, qty, description, order, longDescription, printer, tva, dep } = req.body
+    const { category, name, price, qty, description, order, longDescription, printer, tva, dep, sgrTax } = req.body
     const { id } = req.query
     try{
         if(req.body.sub){
@@ -144,6 +144,7 @@ module.exports.editProduct = async (req, res, next) => {
                     const toppings = JSON.parse(req.body.toppings)
                     oldProduct.toppings = toppings;
                 }
+                oldProduct.sgrTax = sgrTax;
                 oldProduct.name = name;
                 oldProduct.price = price;
                 oldProduct.qty = qty;

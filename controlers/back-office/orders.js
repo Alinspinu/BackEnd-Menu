@@ -99,10 +99,10 @@ module.exports.sendOrderTime = async (req, res, next) => {
 
 
 module.exports.saveOrEditBill = async (req, res, next) => {
+    const {bill} = req.body;
+    const parsedBill = JSON.parse(bill)
+    const {index, billId} = req.query;
     try{
-        const {bill} = req.body;
-        const parsedBill = JSON.parse(bill)
-        const {index, billId} = req.query;
         if(billId === "new"){
             delete parsedBill._id
             delete parsedBill.index
@@ -112,7 +112,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             } 
-            // print(newBill)
+            print(newBill)
             newBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
                     if(el.toppings.length){
@@ -134,7 +134,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             await table.save();
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, masa: {_id: table._id, index: table.index}})
         } else {
-            // print(parsedBill)
+            print(parsedBill)
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length) {
                     if(el.toppings.length){

@@ -37,14 +37,17 @@ async function printBill(bill) {
 
             if(el.toppings.length){
                 el.toppings.forEach(top => {
-                    if(!top.name.startsWith('To Go')){
+                    if(!top.name.startsWith('To Go') && top.name !== 'Taxa SGR'){
                         let topLine = `TL^    +${top.name}`
                         billToPrint.push(topLine)
+                    }
+                    if(top.name === "Taxa SGR"){
+                        let sgrLine = `S^Taxa SGR^50^1000^buc^3^2`
+                        billToPrint.push(sgrLine)
                     }
                 })
             }   
         })
-        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ")
         console.log(bill.payment)
         if(bill.discount > 0){
             billToPrint.push("ST^")
@@ -73,22 +76,19 @@ async function printBill(bill) {
             let voucherLine = `P^6^${bill.payment.voucher * 100}`
             billToPrint.push(voucherLine)
         }
-        billToPrint.push("DS^")
-        billToPrint.push("TL^        MULTUMIM SI VA MAI ASTEPTAM!")
-        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ")
         
         log(billToPrint, "bils")
-        // axios.post(url, billToPrint, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     })
-        //         .then(response => {
-        //             console.log('Response:', response.data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error.message);
-        //         });
+        axios.post(url, billToPrint, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
 
     } else {
         return

@@ -23,7 +23,7 @@ async function print(order) {
             } else if( el.printer === 'barista'){
                 baristaProd.push(el)
             } else if(el.printer === 'main'){
-                mainProd.push(el)
+                mainProd.push(el) 
             }
         }
     })
@@ -66,7 +66,7 @@ async function printKitchen(products, dataPrint) {
         }
 
         log(JSON.stringify(dataToPrint), 'buc-orders')
-        // createXml(dataToPrint)
+        createXml(dataToPrint)
        
     } else {
         return
@@ -80,7 +80,7 @@ async function printBarista(products, dataPrint) {
         `TL^           ORA: ${dataPrint.time}   `,
         "TL^ ", 
         `TL^ NUME:${dataPrint.employee.fullName.split(' ')[0]} MASA: *${dataPrint.masa}*`,
-        "TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~~ ~ ~ ~ ~ ~ ~ ~ ~", 
+        "TL^", 
     ];
     if(products.length){
         for(let pro of products){
@@ -98,17 +98,17 @@ async function printBarista(products, dataPrint) {
             }
         }
         log(data, 'barista-orders')
-        // axios.post(url, data, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     })
-        //         .then(response => {
-        //             console.log('Response:', response.data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error.message);
-        //         });
+        axios.post(url, data, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
     } else {
         return
     }

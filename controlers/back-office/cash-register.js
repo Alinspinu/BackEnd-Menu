@@ -28,6 +28,7 @@ module.exports.sendEntry = async (req, res, next) => {
 
 module.exports.addEntry = async (req, res, next) => {
     const { tip, date, description, amount, locatie } = req.body
+    createCashRegisterDay(locatie)
     if(tip && date && description && amount){
         const entryDate = new Date(date)
         const newEntry = new Entry({
@@ -49,7 +50,9 @@ module.exports.addEntry = async (req, res, next) => {
             day.cashOut = dayTotal
             await day.save()
             res.status(200).json(day)
-        } 
+        } else {
+
+        }
     } else {
         res.status(226).json({message: 'Nu ai completat toate campurile mai incearca.. :)'})
     }
@@ -89,6 +92,7 @@ module.exports.createXcel = async (req, res, next) => {
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Sheet 1');
         const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end} }).populate({ path: 'entry' }).populate({path: 'locatie'})
+        console.log(days)
         const day1 = days[0]
         const lastDay = days.at(-1)
         let totalIn = 0

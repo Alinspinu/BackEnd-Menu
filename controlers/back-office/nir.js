@@ -8,12 +8,10 @@ module.exports.saveNir = async( req, res, next) => {
    if( nir.documentDate === null ) {
     nir.documentDate = new Date(Date.now())
    }
-   console.log(nir.documentDate)
    try{
       const newNir = new Nir(nir)
       newNir.locatie = loc
       const savedNir = await newNir.save()
-      console.log(savedNir)
       const promises = nir.ingredients.map((el) => {
         return Ingredient.updateOne(
           { name: el.name, gestiune: el.gestiune, locatie: loc },
@@ -51,6 +49,17 @@ module.exports.saveNir = async( req, res, next) => {
         
 }
 
+module.exports.payBill = async (req, res, next) => {
+  const {update, id, type} = req.body
+  try{
+    await Nir.findByIdAndUpdate(id , {payd: update, type: type})
+    res.status(200).json({message: 'Facura a fost marcată ca plătită' })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({message: err.message})
+  }
+}
+
 
 module.exports.getNirs = async(req, res, next) => {
   const loc = req.body.loc
@@ -81,7 +90,6 @@ module.exports.deleteNir = async (req, res, next) => {
     const {id} = req.query
     const nirToDelete = await Nir.findById(id)
     const promises = nirToDelete.ingredients.map((el) => {
-      console.log(el.qty)
       return Ingredient.updateOne(
         { name: el.name, gestiune: el.gestiune, locatie: '655e2e7c5a3d53943c6b7c53' },
         {$inc: {qty: -el.qty}},
