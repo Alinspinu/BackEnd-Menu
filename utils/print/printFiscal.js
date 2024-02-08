@@ -51,7 +51,6 @@ async function printBill(bill) {
                 })
             }   
         })
-        console.log(bill.payment)
         if(bill.discount > 0){
             billToPrint.push("ST^")
             let discountLine = `DV^${bill.discount * 100}`

@@ -832,7 +832,7 @@ module.exports.factura = async (req, res, next) => {
   const {orderId, locId, clientId, userId} = req.body
   const nota = await Order.findById(orderId)
   const locatie = await Locatie.findById(locId)
-  const client = await Suplier.findById(clientId)
+  const client = await Suplier.findById('65c4f88be5be13b2ef3615ab')
   const user = await User.findById(userId)
   const bill = new Bill({
       serie: 'SLR',
@@ -1061,19 +1061,21 @@ module.exports.factura = async (req, res, next) => {
 
   let valFaraTva = 0
   let valTva = 0
-
+  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.fontSize(8)
   savedBill.products.forEach((el, i) => {
+    const price = el.price - el.discount
       let newValue = y + heghtValue
       doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
       doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
       doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
       doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
-      doc.text(`${round(el.price - (el.price * (el.tva / 100)))}`, 364, newValue, { width: 58, align: "center" })
-      doc.text(`${round(el.quantity * (el.price - (el.price * (el.tva / 100))))}`, 424, newValue, { width: 58, align: "center" })
+      doc.text(`${round(price - (price * (el.tva / 100)))}`, 364, newValue, { width: 58, align: "center" })
+      doc.text(`${round(el.quantity * (price - (price * (el.tva / 100))))}`, 424, newValue, { width: 58, align: "center" })
       doc.text(`${el.tva}%`, 486, newValue, { width: 35, align: "left" })
-      doc.text(`${round((el.quantity * el.price) - (el.quantity * (el.price - (el.price * (el.tva / 100)))))}0`, 523, newValue, { width: 30, align: "right" })
-      const valTotProdFaraTva = round(el.quantity * (el.price - (el.price * (el.tva / 100))))
-      const valTotProdTva = round((el.quantity * el.price) - (el.quantity * (el.price - (el.price * (el.tva / 100)))))
+      doc.text(`${round((el.quantity * price) - (el.quantity * (price - (price * (el.tva / 100)))))}0`, 523, newValue, { width: 30, align: "right" })
+      const valTotProdFaraTva = round(el.quantity * (price - (price * (el.tva / 100))))
+      const valTotProdTva = round((el.quantity * price) - (el.quantity * (price - (price * (el.tva / 100)))))
       valFaraTva += valTotProdFaraTva
       valTva += valTotProdTva
       heghtValue += 12

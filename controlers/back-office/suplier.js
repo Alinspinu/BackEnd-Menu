@@ -7,7 +7,6 @@ module.exports.addSuplier = async (req, res, next) => {
  
     const {suplier} = req.body;
     const {mode} = req.query
-    console.log(mode)
     try{
        if(mode === 'enrol') {
         const check = await Locatie.findOne({vatNumber: suplier.vatNumber})
@@ -24,12 +23,17 @@ module.exports.addSuplier = async (req, res, next) => {
             res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`, id: loc._id})
         }
        } else {
-          const loc = req.body.loc
-           const newSuplier = new Suplier(suplier);
-           newSuplier.name = suplier.bussinessName
-           newSuplier.locatie = loc
-           await newSuplier.save();
-           res.status(200).json({message: `Furnizorul ${newSuplier.name} a fost salvat cu success!`, suplier: newSuplier})
+        const check = await Locatie.findOne({vatNumber: suplier.vatNumber})
+            if(check){
+                return res.status(200).json({message: `Furnizorul ${check.name} exista in baza de date!`, suplier: check})
+            } else {
+                const loc = req.body.loc
+                 const newSuplier = new Suplier(suplier);
+                 newSuplier.name = suplier.bussinessName
+                 newSuplier.locatie = loc
+                 await newSuplier.save();
+                 res.status(200).json({message: `Furnizorul ${newSuplier.name} a fost salvat cu success!`, suplier: newSuplier})
+            }
        }
     } catch(err){
        console.log(err)
