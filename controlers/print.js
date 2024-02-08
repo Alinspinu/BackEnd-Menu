@@ -4,6 +4,7 @@ const Ingredient = require('../models/office/inv-ingredient')
 const Locatie = require('../models/office/locatie')
 const Order = require('../models/office/product/order')
 const Suplier = require('../models/office/suplier')
+const Bill = require('../models/office/bills')
 const User = require('../models/users/user')
 const PDFDocument = require("pdfkit");
 const { getProducts } = require('./back-office/product');
@@ -710,7 +711,7 @@ module.exports.factura = async (req, res, next) => {
   const client = await Suplier.findById(clientId)
   const user = await User.findById(userId)
   const bill = new Bill({
-      serie: 'SLR',
+      serie: 'CFT',
       locatie: locatie._id,
       client: clientId,
       products: nota.products
@@ -1042,3 +1043,17 @@ module.exports.factura = async (req, res, next) => {
   function cap(value) {
     return String(value).charAt(0).toUpperCase() + String(value).slice(1);
   }
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
