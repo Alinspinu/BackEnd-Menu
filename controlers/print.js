@@ -3,6 +3,8 @@ const exceljs = require('exceljs');
 const Ingredient = require('../models/office/inv-ingredient')
 const Locatie = require('../models/office/locatie')
 const Order = require('../models/office/product/order')
+const Suplier = require('../models/office/suplier')
+const User = require('../models/users/user')
 const PDFDocument = require("pdfkit");
 const { getProducts } = require('./back-office/product');
 
@@ -698,6 +700,333 @@ module.exports.printConsum = async (req, res) => {
   }
 }
 
+
+
+
+module.exports.factura = async (req, res, next) => {
+  const {orderId, locId, clientId, userId} = req.body
+  const nota = await Order.findById(orderId)
+  const locatie = await Locatie.findById(locId)
+  const client = await Suplier.findById(clientId)
+  const user = await User.findById(userId)
+  const bill = new Bill({
+      serie: 'SLR',
+      locatie: locatie._id,
+      client: clientId,
+      products: nota.products
+  })
+ const savedBill = await bill.save()
+  const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+  const date = savedBill.createdAt
+      .toLocaleDateString("en-GB", options)
+      .replace(/\//g, "-");
+
+  const doc = new PDFDocument({
+      size: "A4",
+      layout: "portrait",
+  });
+
+  //HEADER FURNIZOR
+
+  //Nume furnizor
+  doc.fontSize(10)
+  doc.text('Furnizor', 25 + 10, 10)
+  doc.fontSize(18);
+  doc.font('Times-Bold')
+  doc.text(`${locatie.bussinessName}`, 25 + 10, 25);
+  doc.lineWidth(1.3);
+  doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
+
+  //header date firma
+  doc.fontSize(10);
+  doc.text(`C.I.F.:`, 25 + 10, 50, { width: 30, align: "left" });
+  doc.text(`Nr. Reg. Com.:`, 25 + 10, 62, { width: 70, align: "left" });
+  doc.text(`Capital social:`, 25 + 10, 74, { width: 70, align: "left" });
+  doc.text(`Adresa:`, 25 + 10, 86, { width: 38, align: "left" })
+  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.text(`Email:`, 25 + 10, 140, { width: 35, align: "left" })
+  doc.text(`Banca:`, 25 + 10, 152, { width: 35, align: "left" })
+  doc.text(`Cont:`, 25 + 10, 164, { width: 30, align: "left" })
+
+  //date firma
+
+  doc.fontSize(10);
+  doc.font('Times-Roman')
+  doc.text(`${locatie.vatNumber}`, 55 + 10, 50);
+  doc.text(`${locatie.register}`, 95 + 10, 62);
+  doc.text(`200 lei`, 95 + 10, 74);
+  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.text(`${locatie.address}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
+
+  doc.text(`office@truefinecoffee.ro`, 60 + 10, 140)
+  doc.text(`${locatie.bank}`, 60 + 10, 152)
+  doc.text(`${locatie.account}`, 55 + 10, 164)
+
+  //HEADER CLIENT
+  //Nume client
+  doc.fontSize(10)
+
+  doc.fontSize(12);
+  doc.font('Times-Bold')
+
+
+  // header date client
+  doc.fontSize(10);
+  doc.font('Times-Bold')
+  doc.text('Client:', 395 - 40, 50, { width: 35, align: "left" })
+  doc.text(`C.I.F.:`, 395 - 40, 70 - 7, { width: 30, align: "left" });
+  doc.text(`Nr. Reg. Com.:`, 395 - 40, 82 - 7, { width: 70, align: "left" });
+  doc.text(`Adresa:`, 395 - 40, 94 - 7, { width: 40, align: "left" })
+
+
+
+  //date client
+  doc.fontSize(10);
+  doc.font('Times-Roman')
+  doc.text(`${client.name}`, 430 - 40, 50, { width: 130, align: "left" });
+  doc.text(`${client.vatNumber}`, 415 + 10 - 40, 70 - 7, { width: 145, align: "left" });
+  doc.text(`${client.register}`, 455 + 10 - 40, 82 - 7, { width: 105, align: "left" });
+  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.text(`${client.address || ''}`, 395 - 40, 94 + 5, { width: 215, align: "left" })
+
+
+
+  //Titlu factura
+
+  doc.roundedRect(220, 220, 130, 50, 5)
+  doc.lineWidth(0.5);
+  doc.stroke()
+  doc.font('Times-Roman')
+  doc.fontSize(24)
+  doc.text('FACTURA', 228, 190)
+  doc.fontSize(11)
+  doc.text('Numar:', 225, 190 + 35, { width: 40, align: "left" })
+  doc.text('Serie:', 225, 205 + 35, { width: 40, align: "left" })
+  doc.text('Data:', 225, 220 + 35, { width: 40, align: "left" })
+
+  // Titlu Factura Date
+  doc.font('Times-Bold')
+  doc.text(`${bill.index}`, 265, 190 + 35)
+  doc.text(`${bill.serie}`, 265, 205 + 35)
+  doc.text(`${date}`, 265, 220 + 35)
+
+  //header produse
+  doc.rect(25, 280, 18, 30)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.font('Times-Roman')
+  doc.fontSize(9)
+  doc.text('Nr.', 26, 281)
+  doc.text('crt.', 26, 296)
+
+  doc.rect(43, 280, 230, 30)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('Denumirea produselor si serviciilor', 44, 293, { width: 228, align: "center" })
+
+  doc.rect(273, 280, 30, 30)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('U.M.', 275, 293, { width: 28, align: "center" })
+
+  doc.rect(303, 280, 60, 30)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('Cantitate', 305, 293, { width: 58, align: "center" })
+
+  doc.rect(363, 280, 60, 30)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('Pret unitar', 365, 287, { width: 58, align: "center" })
+  doc.text('fara T.V.A.', 365, 299, { width: 58, align: "center" })
+
+  doc.rect(423, 280, 60, 30)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('Valoare', 425, 287, { width: 58, align: "center" })
+  doc.text('fara T.V.A.', 425, 299, { width: 58, align: "center" })
+
+  doc.rect(483, 280, 77, 30)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('T.V.A.', 485, 285, { width: 75, align: "center" })
+  doc.text('Cota', 485, 299, { width: 35, align: "left" })
+  doc.text('Valoare', 521, 299, { width: 38, align: "right" })
+
+  //little header
+  doc.rect(25, 311, 18, 15)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('0', 26, 315, { width: 17, align: "center" })
+
+  doc.rect(43, 311, 230, 15)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('1', 44, 315, { width: 228, align: "center" })
+
+  doc.rect(273, 311, 30, 15)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('2', 274, 315, { width: 28, align: "center" })
+
+  doc.rect(303, 311, 60, 15)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('3', 304, 315, { width: 58, align: "center" })
+
+  doc.rect(363, 311, 60, 15)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('4', 364, 315, { width: 58, align: "center" })
+
+  doc.rect(423, 311, 60, 15)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('5 = 3 x 4', 424, 315, { width: 58, align: "center" })
+
+  doc.rect(483, 311, 77, 15)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.text('6', 484, 315, { width: 75, align: "center" })
+  y = 317
+  let heghtValue = 12
+  //Body produse
+  doc.rect(25, 327, 18, 330)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.rect(43, 327, 230, 330)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.rect(273, 327, 30, 330)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.rect(303, 327, 60, 330)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.rect(363, 327, 60, 330)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.rect(423, 327, 60, 330)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.rect(483, 327, 77, 330)
+  doc.lineWidth(0.5);
+  doc.stroke()
+  // radare produse
+
+  let valFaraTva = 0
+  let valTva = 0
+  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.fontSize(8)
+  savedBill.products.forEach((el, i) => {
+    const price = el.price - el.discount
+      let newValue = y + heghtValue
+      doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
+      doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
+      doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
+      doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
+      doc.text(`${round(price - (price * (el.tva / 100)))}`, 364, newValue, { width: 58, align: "center" })
+      doc.text(`${round(el.quantity * (price - (price * (el.tva / 100))))}`, 424, newValue, { width: 58, align: "center" })
+      doc.text(`${el.tva}%`, 486, newValue, { width: 35, align: "left" })
+      doc.text(`${round((el.quantity * price) - (el.quantity * (price - (price * (el.tva / 100)))))}0`, 523, newValue, { width: 30, align: "right" })
+      const valTotProdFaraTva = round(el.quantity * (price - (price * (el.tva / 100))))
+      const valTotProdTva = round((el.quantity * price) - (el.quantity * (price - (price * (el.tva / 100)))))
+      valFaraTva += valTotProdFaraTva
+      valTva += valTotProdTva
+      heghtValue += 12
+  })
+
+  doc.fontSize(10)
+  doc.font('Times-Roman')
+  doc.text(`Document intocmit de ${user.name}`, 27, 659)
+  //footer factura
+  doc.rect(25, 669, 100, 105)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.fontSize(10)
+  doc.font('Times-Roman')
+  doc.text('Semnatura si', 26, 675, { width: 98, align: 'center' })
+  doc.text('stampila', 26, 687, { width: 98, align: 'center' })
+  doc.text('furnizorului', 26, 699, { width: 98, align: 'center' })
+
+  doc.rect(125, 669, 238, 105)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.fontSize(9)
+  doc.text('Numele delegatului:', 126, 672, { width: 80, align: 'right' })
+  doc.text('Buletin/CI:', 126, 688, { width: 80, align: 'right' })
+  doc.text('Seria:', 216, 688, { width: 30, align: 'left' })
+  doc.text('Nr.:', 256, 688, { width: 50, align: 'left' })
+  doc.text('Eliberat:', 126, 704, { width: 80, align: 'right' })
+
+  doc.text('Semnatura Delegat', 126, 722)
+  doc.rect(363, 669, 60, 105)
+  doc.lineWidth(0.5);
+  doc.stroke()
+  doc.font('Times-Bold')
+  doc.fontSize(12)
+  doc.text('TOTAL', 365, 672)
+  doc.text('TOTAL', 425, 725)
+  doc.text(`${round(valFaraTva + valTva)} Lei`, 484, 725, { width: 73, align: 'right' })
+  doc.fontSize(9)
+  doc.font('Times-Roman')
+  doc.text('Semnatura', 364, 721, { width: 58, align: 'center' })
+  doc.text('de', 364, 734, { width: 58, align: 'center' })
+  doc.text('primire', 364, 746, { width: 58, align: 'center' })
+  doc.font('Times-Bold')
+  doc.text(`${round(valFaraTva)} Lei`, 424, 675, { width: 58, align: 'center' })
+  doc.text(`${round(valTva)} Lei`, 484, 675, { width: 73, align: 'right' })
+  doc.lineWidth(0.3);
+  doc.moveTo(125, 719).lineTo(560, 719).stroke();
+
+
+
+  doc.rect(423, 669, 60, 105)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.rect(483, 669, 77, 105)
+  doc.lineWidth(0.5);
+  doc.stroke()
+
+  doc.end()
+  res.type("application/pdf");
+  doc.pipe(res);
+
+  res.once("finish", () => {
+      const chunks = [];
+      doc.on("data", (chunk) => {
+          chunks.push(chunk);
+      });
+      doc.on("end", () => {
+        const buffer = Buffer.concat(chunks);
+        const base64String = buffer.toString("base64");
+        res.status(200).send(base64String)
+      });
+  })
+}
 
 
 
