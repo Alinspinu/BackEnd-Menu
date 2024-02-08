@@ -28,11 +28,14 @@ async function printBill(bill) {
             if(el.quantity === 0){
                 qty = 1
                 log(`----${JSON.stringify(bill)}`, 'zero-quantity')
-                console.log(bill)
             } else {
                 qty = el.quantity
             }
-            let productLine = `S^${el.name}^${el.price*100}^${qty*1000}^buc^${tva}^1`
+            let productPrice = el.price
+            if(el.sgrTax) {
+                productPrice -= 0.5
+            }
+            let productLine = `S^${el.name}^${productPrice*100}^${qty*1000}^buc^${tva}^1`
             billToPrint.push(productLine)
 
             if(el.toppings.length){
@@ -42,7 +45,7 @@ async function printBill(bill) {
                         billToPrint.push(topLine)
                     }
                     if(top.name === "Taxa SGR"){
-                        let sgrLine = `S^Taxa SGR^50^1000^buc^3^2`
+                        let sgrLine = `S^Taxa SGR^50^${qty*1000}^buc^3^2`
                         billToPrint.push(sgrLine)
                     }
                 })

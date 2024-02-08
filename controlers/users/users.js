@@ -1,8 +1,12 @@
 const User = require('../../models/users/user')
 const Employee = require('../../models/users/employee')
+const Locatie = require('../../models/office/locatie')
 const QRCode = require('qrcode');
+const jwt = require('jsonwebtoken');
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
+
+const {hashPassword} = require('../../utils/functions')
 
 // const loc = '655e2e7c5a3d53943c6b7c53'
 
@@ -80,9 +84,7 @@ module.exports.editUser = async (req, res, next) => {
     const {update} = req.body;
     const {id} = req.query;
     try{
-        console.log(update)
         const user = await User.findByIdAndUpdate(id, update, {new: true})
-        console.log(user)
         res.status(200).json({message: 'Utilizatorul a fost actualizat!'})
     } catch (err) {
         console.log(err)
@@ -104,9 +106,9 @@ module.exports.deleteUser = async (req, res, next) => {
 
 module.exports.sendCustomer = async (req, res, next) => {
   try{
-      const {id} = req.query;
-      if(id.length < 16 || id.length === 4 ){
-        const customer = await User.findOne({cardIndex: id}).select('name email telphone cashBack, discount');
+      const {id, loc } = req.query;
+      if(id.length < 22 || id.length === 4 ){
+        const customer = await User.findOne({cardIndex: +id, locatie: loc}).select('name email telphone cashBack discount cardIndex');
         if(customer){
             res.status(200).json({message: 'All good', customer})
         } else {
@@ -132,6 +134,32 @@ module.exports.generateUserQrCode = async (req, res, next) => {
         const {id} = req.query
         const qrCode = await QRCode.toDataURL(id);
         res.send(qrCode);
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.sendLocatie = async (req, res, next) => {
+    try{
+        const {id} = req.query
+        const locatie = await Locatie.findById(id).select('-gmail.app')
+        res.status(200).json(locatie)
+    } catch (err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.editLocatie = async (req, res, next) => {
+    try{
+        const {loc} = req.body;
+        if(loc.gmail && loc.gmail.app.length){
+            const appKey = jwt.sign({ key: loc.gmail.app }, process.env.AUTH_SECRET, { expiresIn: '24h' });
+            loc.gmail.app = appKey
+        }
+        const locToEdit = await Locatie.findByIdAndUpdate(loc._id, loc, {new: true})
+        console.log(locToEdit)
     } catch (err) {
         console.log(err)
         res.status(500).json({message: err.message})

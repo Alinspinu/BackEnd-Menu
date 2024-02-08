@@ -20,6 +20,11 @@ router.route('/customer')
 router.route('/generateQr')
     .get(users.generateUserQrCode)
 
+router.route('/loc')
+    .get(users.sendLocatie)
+    .put(users.editLocatie)
+
+
 
 
 

@@ -35,7 +35,7 @@ const UserTrueSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
     },
-    cardIndex: String,
+    cardIndex: Number,
     discount: {
         general: {
             type: Number,
