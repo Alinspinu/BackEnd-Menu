@@ -128,7 +128,7 @@ module.exports.login = async (req, res, next) => {
                 name: user.name,
                 email: user.email,
                 id: user.id,
-                locatie: user.locatie
+                locatie: user.locatie._id
             };
             if (response.message === 'Email sent') {
                 res.status(200).json({ message: response.message, user: userData })
@@ -151,7 +151,7 @@ module.exports.login = async (req, res, next) => {
             status: user.status,
             telephone: user.telephone,
             employee: user.employee,
-            locatie: user.locatie,
+            locatie: user.locatie._id,
             discount: user.discount
         };
         const data = {name: user.name, action: 's-a conectat'}
@@ -165,11 +165,11 @@ module.exports.login = async (req, res, next) => {
 
 
 module.exports.verifyToken = async (req, res, next) => {
-    const { token } = req.body;
+    const { token, adminEmail } = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
         if (userId) {
-            const user = await User.findById(userId.userId);
+            const user = await User.findById(userId.userId).populate({path: 'locatie'});
             if (user) {
                 user.status = 'active';
                 await user.save();
@@ -184,10 +184,11 @@ module.exports.verifyToken = async (req, res, next) => {
                     telephone: user.telephone ? user.telephone : '-',
                     _id: user._id,
                     employee: user.employee,
-                    locatie: user.locatie
+                    locatie: user.locatie._id
                 };
                 const data = {name: user.name, action: 's-a inregistrat'}
-                await sendInfoAdminEmail(data)
+                const gmail = {app: user.locatie.gmail.app, email: user.locatie.gmail.email} 
+                await sendInfoAdminEmail(data, adminEmail ,gmail)
                 res.status(200).json(userData);
             } else {
                 res.status(404).json({ message: 'User not found' });
@@ -196,7 +197,7 @@ module.exports.verifyToken = async (req, res, next) => {
             res.status(401).json({ message: 'Invalid token' });
         };
     } catch (err) {
-        console.log(err.message);
+        console.log(err);
         res.status(500).json({ message: 'Server Error' });
     }
 }

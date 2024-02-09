@@ -188,14 +188,11 @@ module.exports.uploadIngs = async (req, res, next) => {
 
 
 module.exports.saveOrder = async (req, res, next) => {
-    // const loc = '655e2e7c5a3d53943c6b7c53'
     try {
-        const {order, adminEmail} = req.body
+        const {order, adminEmail,nrMasa} = req.body
         const newOrder = new Order(order) 
-        const userId = req.body.user;
-        const nrMasa = req.body.masa
-        if (userId) {
-            const user = await User.findById(userId);
+        if (order.user !== 'john doe') {
+            const user = await User.findById(order.user);
             if (user) {
                 newOrder.clientInfo.email = user.email
                 newOrder.clientInfo.discount = user.discount
@@ -203,7 +200,7 @@ module.exports.saveOrder = async (req, res, next) => {
                 newOrder.preOrder = true
                 const savedOrder = await newOrder.save()
                 const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
-                console.log(`Order ${order._id} saved with the user ${user.name}!`)
+                console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
                 if(nrMasa > 0){
                     const table = await Table.findOne({locatie: loc , index: nrMasa});
                     if(table){
@@ -218,7 +215,7 @@ module.exports.saveOrder = async (req, res, next) => {
                 if(order.payOnline){
                     action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
-                await sendMailToCustomer(order,[`${adminEmail}`, `${user.email}`], dbOrder.locatie.gmail)
+                await sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
                 res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index, preOrderPickUpDate: order.preOrderPickUpDate });
             }
         } else {

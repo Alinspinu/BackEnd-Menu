@@ -78,6 +78,10 @@ async function printBill(bill) {
             let voucherLine = `P^6^${bill.payment.voucher * 100}`
             billToPrint.push(voucherLine)
         }
+        if(bill.payment.online) {
+            let onlineLine = `P^7^${bill.payment.online * 100}`
+            billToPrint.push(onlineLine)
+        }
         
         log(billToPrint, "bils")
         axios.post(url, billToPrint, {

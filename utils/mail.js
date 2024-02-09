@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 
 
 async  function sendInfoAdminEmail(data, adminEmail, gmail) {
+    console.log(gmail)
     const templateSource = fs.readFileSync('views/layouts/info-admin.ejs', 'utf-8');
     const templateData = {
         name: data.name,
@@ -17,7 +18,7 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
         if (err) {
         return  console.error('JWT verification failed:', err.message);
         } else {
-        appKey = decoded
+        appKey = decoded.key
         }
       });
 
@@ -56,7 +57,8 @@ async function sendVerificationEmail(newUser, baseUrlRedirect) {
     const templateData = {
         link: `${baseUrlRedirect}verify-email?token=${token}`,
         name: newUser.name,
-        message: 'Prin acest mesaj vrem să-ți confirmi adresa de email.'
+        message: 'Prin acest mesaj vrem să-ți confirmi adresa de email.',
+        locatie: newUser.locatie.name
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
     
@@ -65,7 +67,7 @@ async function sendVerificationEmail(newUser, baseUrlRedirect) {
         if (err) {
         return  console.error('JWT verification failed:', err.message);
         } else {
-        appKey = decoded
+        appKey = decoded.key
         }
       });
 
@@ -104,7 +106,8 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
     const templateSource = fs.readFileSync('views/layouts/resetPassword.ejs', 'utf-8');
     const templateData = {
         link: `${baseUrlRedirect}reset-password?token=${token}`,
-        name: newUser.name
+        name: newUser.name,
+        locatie: newUser.locatie.name,
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
 
@@ -113,11 +116,12 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
         if (err) {
         return  console.error('JWT verification failed:', err.message);
         } else {
-        appKey = decoded
+        appKey = decoded.key
         }
       });
 
       if(appKey !== "0") {
+        console.log(newUser.locatie.gmail.email)
               const transporter = nodemailer.createTransport({
                   service: 'Gmail',
                   auth: {
@@ -146,16 +150,16 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
 };
 
 
-async function sendMailToCustomer(data, emails, gmail) {
+async function sendMailToCustomer(data, emails) {
     const templateSource = fs.readFileSync('views/layouts/info-customer.ejs', 'utf-8');      
         const renderedTemplate = ejs.render(templateSource,{data: data});
     
         let appKey = '0'
-        jwt.verify(gmail.app, process.env.AUTH_SECRET, (err, decoded) => {
+        jwt.verify(data.locatie.gmail.app, process.env.AUTH_SECRET, (err, decoded) => {
             if (err) {
             return  console.error('JWT verification failed:', err.message);
             } else {
-            appKey = decoded
+            appKey = decoded.key
             }
           });
     
@@ -163,13 +167,13 @@ async function sendMailToCustomer(data, emails, gmail) {
                   const transporter = nodemailer.createTransport({
                       service: 'Gmail',
                       auth: {
-                          user: gmail.email,
+                          user: data.locatie.gmail.email,
                           pass: appKey
                       }
                   });
               
                   const mailOptions = {
-                      from: gmail.email,
+                      from: data.locatie.gmail.email,
                       to: emails,
                       subject: 'Multumim pentru comandă',
                       html: renderedTemplate
