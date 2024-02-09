@@ -153,13 +153,14 @@ module.exports.sendLocatie = async (req, res, next) => {
 
 module.exports.editLocatie = async (req, res, next) => {
     try{
-        const {loc} = req.body;
-        if(loc.gmail && loc.gmail.app.length){
-            const appKey = jwt.sign({ key: loc.gmail.app }, process.env.AUTH_SECRET, { expiresIn: '24h' });
-            loc.gmail.app = appKey
+        const {email, appKey, locId} = req.body;
+        if(email.length && appKey.length){
+            const appKeySingt = jwt.sign({ key: appKey }, process.env.AUTH_SECRET, { expiresIn: '24h' });
+            const gmail = {email: email, app: appKeySingt}
+            const locToEdit = await Locatie.findByIdAndUpdate(locId, {gmail: gmail}, {new: true})
+            console.log(locToEdit)
+            res.status(200).json({message: 'Datele au fost actualizate'})
         }
-        const locToEdit = await Locatie.findByIdAndUpdate(loc._id, loc, {new: true})
-        console.log(locToEdit)
     } catch (err) {
         console.log(err)
         res.status(500).json({message: err.message})

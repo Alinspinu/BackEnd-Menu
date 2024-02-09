@@ -31,7 +31,12 @@ const locatieSchema = new Schema({
       VAT: {
         type: Boolean,
         required: true
-      }
+      },
+      gmail: {
+       email: String,
+       app: String
+      },
+    
 })
 
 

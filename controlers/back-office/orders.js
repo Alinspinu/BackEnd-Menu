@@ -188,10 +188,10 @@ module.exports.uploadIngs = async (req, res, next) => {
 
 
 module.exports.saveOrder = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
+    // const loc = '655e2e7c5a3d53943c6b7c53'
     try {
-        const newOrder = new Order(req.body)
-        newOrder.locatie =  loc;  
+        const {order, adminEmail} = req.body
+        const newOrder = new Order(order) 
         const userId = req.body.user;
         const nrMasa = req.body.masa
         if (userId) {
@@ -201,7 +201,8 @@ module.exports.saveOrder = async (req, res, next) => {
                 newOrder.clientInfo.discount = user.discount
                 newOrder.clientInfo.cashBack = user.cashBack
                 newOrder.preOrder = true
-                const order = await newOrder.save()
+                const savedOrder = await newOrder.save()
+                const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
                 console.log(`Order ${order._id} saved with the user ${user.name}!`)
                 if(nrMasa > 0){
                     const table = await Table.findOne({locatie: loc , index: nrMasa});
@@ -217,15 +218,16 @@ module.exports.saveOrder = async (req, res, next) => {
                 if(order.payOnline){
                     action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
-                await sendMailToCustomer(order,['alinz.spinu@gmail.com', `${user.email}`])
+                await sendMailToCustomer(order,[`${adminEmail}`, `${user.email}`], dbOrder.locatie.gmail)
                 res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index, preOrderPickUpDate: order.preOrderPickUpDate });
             }
         } else {
             order.preOrder = true
-            const order = await newOrder.save();
-            console.log(`Order ${order._id} saved without a user!`)
+            const savedOrder = await newOrder.save();
+            const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
+            console.log(`Order ${dbOrder._id} saved without a user!`)
             const data = {name: 'No user', action: 'a dat o comanda ce a fost platita Online'}
-            await sendInfoAdminEmail(data)
+            await sendInfoAdminEmail(data, adminEmail, dbOrder.locatie.gmail)
             res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
         }
     } catch (err) {

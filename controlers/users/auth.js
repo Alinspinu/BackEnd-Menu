@@ -9,9 +9,9 @@ const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sen
 
 
 module.exports.register = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
+    // const loc = '655e2e7c5a3d53943c6b7c53'
     try{
-        const { email, password, tel, confirmPassword, name, firstCart, survey, id } = req.body;
+        const { email, password, tel, confirmPassword, name, firstCart, survey, id, loc, url} = req.body;
        if(id.length){
         if (password === confirmPassword) {
             const hashedPassword = hashPassword(password);
@@ -43,8 +43,9 @@ module.exports.register = async (req, res, next) => {
                    survey: survey,
                    locatie: loc
                });
-               await newUser.save();
-               await sendVerificationEmail(newUser).then(response => {
+                await newUser.save();
+                const dbUser = await User.findOne({email: email, locatie: loc}).populate({path: 'locatie'})
+               await sendVerificationEmail(dbUser, url).then(response => {
                    if (response.message === 'Email sent') {
                        res.status(200).json({ message: response.message, id: newUser._id });
                    } else {
@@ -107,23 +108,22 @@ module.exports.registerEmployee = async (req, res, next) => {
 
 
 module.exports.login = async (req, res, next) => {
-    const { email, password } = req.body;
+    const { email, password, url, adminEmail} = req.body;
     const user = await User.findOne({ email: email})
                             .select([
                                 '-employee.cnp',
                                 '-employee.ciSerial',
                                 '-employee.ciNumber',
                                 '-employee.address',
-                            ]);
-    // if(user ){
-    //     await sendCompleteRegistrationEmail(user)
-    //     return res.status(401).json({message: `Nu ți-ai terminat procesul de înregistrare. Ți-am mai trimis un mail la ${user.email}. Urmează pașii.`})
-    // }
+                            ])
+                            .populate({
+                                    path: 'locatie'
+                            });
     if (!user || !comparePasswords(password, user.password)) {
         return res.status(401).json({ message: 'Invalid email or password' });
     };
     if (user.status === 'inactive') {
-        return await sendVerificationEmail(user).then(response => {
+        return await sendVerificationEmail(user, url).then(response => {
             const userData = {
                 name: user.name,
                 email: user.email,
@@ -155,7 +155,7 @@ module.exports.login = async (req, res, next) => {
             discount: user.discount
         };
         const data = {name: user.name, action: 's-a conectat'}
-        await sendInfoAdminEmail(data)
+        await sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
         res.status(200).json(sendData);
     };
 };
@@ -204,12 +204,12 @@ module.exports.verifyToken = async (req, res, next) => {
 
 
 module.exports.sendEmailResetPassword = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
     try {
-        const { email } = req.body;
-        const user = await User.findOne({ email: email, locatie: loc });
+        const { email, loc, url } = req.body;
+        const user = await User.findOne({ email: email, locatie: loc }).populate({path: 'locatie'});
         if (user) {
-            return sendResetEmail(user).then(response => {
+            console.log(user)
+            return sendResetEmail(user, url).then(response => {
                 const userData = {
                     name: user.name,
                     email: user.email,
@@ -232,11 +232,11 @@ module.exports.sendEmailResetPassword = async (req, res, next) => {
 }
 
 module.exports.resetPassword = async (req, res, next) => {
-    const { token, password, confirmPassword } = req.body;
+    const { token, password, confirmPassword, adminEmail} = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
         if (userId) {
-            const user = await User.findById(userId.userId);
+            const user = await User.findById(userId.userId).populate({path: 'locatie'});
             if (user) {
                 if (password === confirmPassword) {
                     const hashedPassword = hashPassword(password);
@@ -254,7 +254,7 @@ module.exports.resetPassword = async (req, res, next) => {
                     locatie: user.locatie
                 };
                 const data = {name: user.name, action: 'și-a resetat parola'}
-                await sendInfoAdminEmail(data)
+                await sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
                 res.status(200).json(userData);
             } else {
                 res.status(404).json({ message: 'User not found' });
