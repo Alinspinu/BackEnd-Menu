@@ -16,7 +16,7 @@
     <align mode="left">
       <text-line size="0:0"><%=product.qty%> X <%= product.name%></text-line>
     </align>
-    <% if(product.comment && product.toppings.length) { %>
+    <% if(product.toppings && product.toppings.length) { %>
       <% for(let topping of product.toppings)  {%>
     <align mode="left">
       <text-line size="0:0"><%= "  " + " +"+topping.name%></text-line>
