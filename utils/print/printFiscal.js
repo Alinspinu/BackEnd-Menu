@@ -1,5 +1,6 @@
 const axios = require('axios');
-const url = 'http://192.168.100.5:65400/api/Receipt';
+// const url = 'http://192.168.100.5:65400/api/Receipt';
+const url = '';
 
 const {log} = require('../functions')
 

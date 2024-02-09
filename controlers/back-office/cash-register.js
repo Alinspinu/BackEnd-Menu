@@ -28,7 +28,6 @@ module.exports.sendEntry = async (req, res, next) => {
 
 module.exports.addEntry = async (req, res, next) => {
     const { tip, date, description, amount, locatie } = req.body
-    console.log(req.body)
     if(tip && date && description && amount){
         const entryDate = new Date(date)
         const newEntry = new Entry({
@@ -43,7 +42,6 @@ module.exports.addEntry = async (req, res, next) => {
         const nextDay = new Date(entryDate);
         nextDay.setDate(entryDate.getDate() + 1);
         const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay}, locatie: locatie }).populate({ path: 'entry' })
-        console.log(day)
         if (day) {
             const daySum = day.entry.reduce((total, doc) => total + doc.amount, 0)
             day.entry.push(newEntry)
