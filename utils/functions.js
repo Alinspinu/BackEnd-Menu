@@ -71,5 +71,22 @@ function formatedDateToShow(date){
     }
 
 
+    const secretKey = crypto.randomBytes(32); // 256 bits for AES-256
 
-module.exports = {comparePasswords, hashPassword, round, checkTopping, formatedDateToShow, log}
+    function encryptData(data) {
+        const iv = crypto.randomBytes(16); // Initialization Vector
+        const cipher = crypto.createCipheriv('aes-256-cbc', secretKey, iv);
+        let encryptedData = cipher.update(data, 'utf-8', 'hex');
+        encryptedData += cipher.final('hex');
+        return { iv: iv.toString('hex'), encryptedData };
+    }
+    
+    // Function to decrypt data
+    function decryptData(encryptedData, iv) {
+        const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, Buffer.from(iv, 'hex'));
+        let decryptedData = decipher.update(encryptedData, 'hex', 'utf-8');
+        decryptedData += decipher.final('utf-8');
+        return decryptedData;
+    }
+
+module.exports = {comparePasswords, hashPassword, round, checkTopping, formatedDateToShow, log, encryptData, decryptData}

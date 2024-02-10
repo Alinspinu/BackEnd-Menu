@@ -2,10 +2,10 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const ejs = require('ejs');
 const jwt = require('jsonwebtoken');
+const {decryptData} =require ('./functions')
 
 
 async  function sendInfoAdminEmail(data, adminEmail, gmail) {
-    console.log(gmail)
     const templateSource = fs.readFileSync('views/layouts/info-admin.ejs', 'utf-8');
     const templateData = {
         name: data.name,
@@ -13,16 +13,9 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
 
-    let appKey = '0'
-    jwt.verify(gmail.app, process.env.AUTH_SECRET, (err, decoded) => {
-        if (err) {
-        return  console.error('JWT verification failed:', err.message);
-        } else {
-        appKey = decoded.key
-        }
-      });
 
-      if(appKey !== "0") {
+    const appKey = decryptData(gmail.app.key, gmail.app.iv);
+ 
           const transporter = nodemailer.createTransport({
               service: 'Gmail',
               auth: {
@@ -45,7 +38,6 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
               console.error('Error sending email:', error);
               return { message: 'Error sending email' };
           };
-      }
 };
 
 
@@ -62,14 +54,7 @@ async function sendVerificationEmail(newUser, baseUrlRedirect) {
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
     
-    let appKey = '0'
-    jwt.verify(newUser.locatie.gmail.app, process.env.AUTH_SECRET, (err, decoded) => {
-        if (err) {
-        return  console.error('JWT verification failed:', err.message);
-        } else {
-        appKey = decoded.key
-        }
-      });
+    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.iv);
 
       if(appKey !== "0") {
           const transporter = nodemailer.createTransport({
@@ -111,14 +96,7 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
 
-    let appKey = '0'
-    jwt.verify(newUser.locatie.gmail.app, process.env.AUTH_SECRET, (err, decoded) => {
-        if (err) {
-        return  console.error('JWT verification failed:', err.message);
-        } else {
-        appKey = decoded.key
-        }
-      });
+    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.iv);
 
       if(appKey !== "0") {
         console.log(newUser.locatie.gmail.email)
@@ -154,14 +132,7 @@ async function sendMailToCustomer(data, emails) {
     const templateSource = fs.readFileSync('views/layouts/info-customer.ejs', 'utf-8');      
         const renderedTemplate = ejs.render(templateSource,{data: data});
     
-        let appKey = '0'
-        jwt.verify(data.locatie.gmail.app, process.env.AUTH_SECRET, (err, decoded) => {
-            if (err) {
-            return  console.error('JWT verification failed:', err.message);
-            } else {
-            appKey = decoded.key
-            }
-          });
+        const appKey = decryptData(data.locatie.gmail.app.key, data.locatie.gmail.app.iv);
     
           if(appKey !== "0") {
                   const transporter = nodemailer.createTransport({

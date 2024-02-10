@@ -155,6 +155,7 @@ module.exports.login = async (req, res, next) => {
             discount: user.discount
         };
         const data = {name: user.name, action: 's-a conectat'}
+        console.log(user.locatie)
         await sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
         res.status(200).json(sendData);
     };
@@ -209,7 +210,6 @@ module.exports.sendEmailResetPassword = async (req, res, next) => {
         const { email, loc, url } = req.body;
         const user = await User.findOne({ email: email, locatie: loc }).populate({path: 'locatie'});
         if (user) {
-            console.log(user)
             return sendResetEmail(user, url).then(response => {
                 const userData = {
                     name: user.name,

@@ -34,7 +34,14 @@ const locatieSchema = new Schema({
       },
       gmail: {
        email: String,
-       app: String
+       app: {
+        iv: {
+          type: String,
+        },
+        key: {
+          type: String
+        }
+       }
       },
     
 })

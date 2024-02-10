@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
 
-const {hashPassword} = require('../../utils/functions')
+const {hashPassword, encryptData} = require('../../utils/functions')
 
 // const loc = '655e2e7c5a3d53943c6b7c53'
 
@@ -155,8 +155,8 @@ module.exports.editLocatie = async (req, res, next) => {
     try{
         const {email, appKey, locId} = req.body;
         if(email.length && appKey.length){
-            const appKeySingt = jwt.sign({ key: appKey }, process.env.AUTH_SECRET, { expiresIn: '24h' });
-            const gmail = {email: email, app: appKeySingt}
+            const { iv, encryptedData } = encryptData(appKey)
+            const gmail = {email: email, app: {iv: iv, key: encryptedData} }
             const locToEdit = await Locatie.findByIdAndUpdate(locId, {gmail: gmail}, {new: true})
             console.log(locToEdit)
             res.status(200).json({message: 'Datele au fost actualizate'})
