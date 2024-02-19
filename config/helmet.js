@@ -25,6 +25,8 @@ const helmetConfig = {
             "https://www.flowmanager.ro",
             "https://true-meniu.web.app",
             "https://demo.vivapayments.com",
+            "https://cash-flow-8a7f4.web.app",
+            "https://cash-flow-cafetish.web.app",
             "https://flow-api-394209.lm.r.appspot.com",
         ],
         formAction: ["'self'", "https://checkout.stripe.com", "https://demo.vivapayments.com"],

@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const users = require('../../controlers/users/users')
 
+const multer = require('multer');
+const { storage } = require('../../cloudinary/photo-true.js');
+const upload = multer({ storage });
+
 
 router.route('/')
     .post(users.sendUsers)
@@ -9,6 +13,8 @@ router.route('/')
 router.route('/user')
     .post(users.sendUser)
     .put(users.editUser)
+
+router.route('/front-user').put(upload.single('image'), users.updateUser)
 
 router.route('/ed-user')
     .delete(users.deleteUser)

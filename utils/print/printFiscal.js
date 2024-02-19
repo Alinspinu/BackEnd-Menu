@@ -84,17 +84,17 @@ async function printBill(bill) {
         }
         
         log(billToPrint, "bils")
-        axios.post(url, billToPrint, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            })
-                .then(response => {
-                    console.log('Response:', response.data);
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                });
+        // axios.post(url, billToPrint, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     })
+        //         .then(response => {
+        //             console.log('Response:', response.data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error.message);
+        //         });
 
     } else {
         return

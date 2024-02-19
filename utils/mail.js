@@ -12,10 +12,8 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
         action: data.action
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
+    const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);
 
-
-    const appKey = decryptData(gmail.app.key, gmail.app.iv);
- 
           const transporter = nodemailer.createTransport({
               service: 'Gmail',
               auth: {
@@ -54,7 +52,7 @@ async function sendVerificationEmail(newUser, baseUrlRedirect) {
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
     
-    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.iv);
+    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
 
       if(appKey !== "0") {
           const transporter = nodemailer.createTransport({
@@ -96,7 +94,7 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
 
-    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.iv);
+    const appKey = decryptData(newUser.locatie.gmail.app.key,newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
 
       if(appKey !== "0") {
         console.log(newUser.locatie.gmail.email)
@@ -132,7 +130,7 @@ async function sendMailToCustomer(data, emails) {
     const templateSource = fs.readFileSync('views/layouts/info-customer.ejs', 'utf-8');      
         const renderedTemplate = ejs.render(templateSource,{data: data});
     
-        const appKey = decryptData(data.locatie.gmail.app.key, data.locatie.gmail.app.iv);
+        const appKey = decryptData(data.locatie.gmail.app.key, data.locatie.gmail.app.secret, data.locatie.gmail.app.iv);
     
           if(appKey !== "0") {
                   const transporter = nodemailer.createTransport({

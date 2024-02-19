@@ -118,7 +118,7 @@ module.exports.login = async (req, res, next) => {
                             ])
                             .populate({
                                     path: 'locatie'
-                            });
+                            })
     if (!user || !comparePasswords(password, user.password)) {
         return res.status(401).json({ message: 'Invalid email or password' });
     };
@@ -137,7 +137,7 @@ module.exports.login = async (req, res, next) => {
             };
         });
     } else if (user.status === "active") {
-        let time = '15m';
+        let time = '60m';
         if (user.admin === 1) {
             time = '12h';
         };
@@ -152,10 +152,12 @@ module.exports.login = async (req, res, next) => {
             telephone: user.telephone,
             employee: user.employee,
             locatie: user.locatie._id,
-            discount: user.discount
+            discount: user.discount,
+            profilePic: user.profilePic,
+            hobbies: user.hobbies,
+            description: user.description,
         };
         const data = {name: user.name, action: 's-a conectat'}
-        console.log(user.locatie)
         await sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
         res.status(200).json(sendData);
     };

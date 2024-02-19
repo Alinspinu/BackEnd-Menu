@@ -13,6 +13,9 @@ router.route('/nir')
     .delete(nirRoutes.deleteNir)
 router.route('/pay').post(nirRoutes.payBill)
 
+router.route('/get-nirs-by-date')
+        .post(nirRoutes.getNirsByDate)
+
 
 module.exports = router
 

@@ -189,7 +189,7 @@ module.exports.uploadIngs = async (req, res, next) => {
 
 module.exports.saveOrder = async (req, res, next) => {
     try {
-        const {order, adminEmail,nrMasa} = req.body
+        const {order, adminEmail, loc} = req.body
         const newOrder = new Order(order) 
         if (order.user !== 'john doe') {
             const user = await User.findById(order.user);
@@ -201,10 +201,10 @@ module.exports.saveOrder = async (req, res, next) => {
                 const savedOrder = await newOrder.save()
                 const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
                 console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
-                if(nrMasa > 0){
-                    const table = await Table.findOne({locatie: loc , index: nrMasa});
+                if(newOrder.masa > 0){
+                    const table = await Table.findOne({locatie: loc , index: newOrder.masa});
                     if(table){
-                        table.bills.push(order._id)
+                        table.bills.push(savedOrder._id)
                         await table.save()
                     }
                 }
@@ -216,17 +216,26 @@ module.exports.saveOrder = async (req, res, next) => {
                     action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
                 await sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
-                res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: order.index, preOrderPickUpDate: order.preOrderPickUpDate });
+                res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: newOrder.index, preOrderPickUpDate: newOrder.preOrderPickUpDate });
             }
         } else {
             order.preOrder = true
             const savedOrder = await newOrder.save();
             const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
             console.log(`Order ${dbOrder._id} saved without a user!`)
+            if(newOrder.masa > 0){
+                const table = await Table.findOne({locatie: loc , index: newOrder.masa});
+                if(table){
+                    table.bills.push(savedOrder._id)
+                    await table.save()
+                }
+            }
+
             const data = {name: 'No user', action: 'a dat o comanda ce a fost platita Online'}
             await sendInfoAdminEmail(data, adminEmail, dbOrder.locatie.gmail)
             res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
         }
+   
     } catch (err) {
         console.log('Error', err);
         res.status(404).json({ message: err.message });

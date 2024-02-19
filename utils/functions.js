@@ -71,18 +71,22 @@ function formatedDateToShow(date){
     }
 
 
-    const secretKey = crypto.randomBytes(32); // 256 bits for AES-256
-
+    
     function encryptData(data) {
+        const secretKey = crypto.randomBytes(32); // 256 bits for AES-256
+        const binaryData = Buffer.from(secretKey)
+        const base64Encoded = binaryData.toString('base64')
         const iv = crypto.randomBytes(16); // Initialization Vector
         const cipher = crypto.createCipheriv('aes-256-cbc', secretKey, iv);
         let encryptedData = cipher.update(data, 'utf-8', 'hex');
         encryptedData += cipher.final('hex');
-        return { iv: iv.toString('hex'), encryptedData };
+        return { iv: iv.toString('hex'), encryptedData, secret: base64Encoded };
     }
     
     // Function to decrypt data
-    function decryptData(encryptedData, iv) {
+    function decryptData(encryptedData, secret, iv) {
+        const secretKey = Buffer.from(secret, 'base64')
+        console.log(secretKey)
         const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, Buffer.from(iv, 'hex'));
         let decryptedData = decipher.update(encryptedData, 'hex', 'utf-8');
         decryptedData += decipher.final('utf-8');

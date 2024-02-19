@@ -37,13 +37,10 @@ module.exports.saveIng = async(req, res, next) => {
         if(filter && filter.dep && filter.dep.length){
           filterTo.dep = filter.dep
         }
-        const userData = req.body.search;
         filterTo.locatie = loc
         const ings = await Ingredient.find(filterTo).populate({path: 'ings.ing'});
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
-        let filterData = sortedIngs.filter((object) =>
-        object.name.toLocaleLowerCase().includes(userData.toLocaleLowerCase()))
-        res.status(200).json(filterData)
+        res.status(200).json(sortedIngs)
       }catch (err) {
         console.log(err)
         res.status(500).json({message: err})
@@ -74,7 +71,24 @@ module.exports.saveIng = async(req, res, next) => {
     }
 
 
+
+
+
+
+
+
+
+
+
   
+
+
+
+
+
+
+
+
 
 
 

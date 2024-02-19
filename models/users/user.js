@@ -36,6 +36,7 @@ const UserTrueSchema = new Schema({
         ref: 'Locatie'
     },
     cardIndex: Number,
+    cardName: String,
     discount: {
         general: {
             type: Number,
@@ -84,6 +85,36 @@ const UserTrueSchema = new Schema({
         enum: ['active', 'inactive'],
         default: 'inactive'
     },
+    hobbies: {
+        type: String,
+        default: ''
+    },
+    description: {
+        type: String,
+        default: ''
+    },
+    admin: {
+        type: Number,
+        default: 0
+    },
+    profilePic: {
+        type: String,
+        default: 'https://res.cloudinary.com/dhetxk68c/image/upload/v1681544380/gossips/jee-75-512_msbpdw.webp'
+    },
+    gossips:
+        [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Gossip'
+            }
+        ],
+    comments:
+        [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Comment'
+            }
+        ],
     survey: String,
     firstCart: String,
     orders:

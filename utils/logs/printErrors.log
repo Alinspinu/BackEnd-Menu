@@ -1,0 +1,13 @@
+13:42:15  - prin-buc-error connect EHOSTDOWN 192.168.1.87:9100 - Local (192.168.1.4:57199)
+13:42:18  - prin-buc-error connect EHOSTDOWN 192.168.1.87:9100 - Local (192.168.1.4:57213)
+13:43:23  - prin-buc-error connect ETIMEDOUT 192.168.1.87:9100
+13:43:27  - prin-buc-error connect ETIMEDOUT 192.168.1.87:9100
+13:58:55  - prin-buc-error connect EHOSTDOWN 192.168.1.87:9100 - Local (192.168.1.4:61736)
+13:58:59  - prin-buc-error connect EHOSTDOWN 192.168.1.87:9100 - Local (192.168.1.4:61756)
+13:59:04  - prin-buc-error connect EHOSTDOWN 192.168.1.87:9100 - Local (192.168.1.4:61777)
+13:59:08  - prin-buc-error connect EHOSTDOWN 192.168.1.87:9100 - Local (192.168.1.4:61799)
+14:00:06  - prin-buc-error connect ETIMEDOUT 192.168.1.87:9100
+14:01:50  - prin-buc-error connect EHOSTDOWN 192.168.1.87:9100 - Local (192.168.1.4:62571)
+14:03:03  - prin-buc-error connect ETIMEDOUT 192.168.1.87:9100
+14:21:57  - prin-buc-error connect ETIMEDOUT 192.168.1.87:9100
+14:22:32  - prin-buc-error connect ETIMEDOUT 192.168.1.87:9100

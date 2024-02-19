@@ -1,1 +1,8 @@
 23:46:29 - ERROR - request aborted
+23:18:54 - ERROR - Unexpected field
+02:34:20 - ERROR - Request Timeout
+23:32:13 - ERROR - Request Timeout
+16:17:51 - ERROR - Server returned unexpected status code - 502
+16:19:28 - ERROR - Server returned unexpected status code - 502
+12:55:44 - ERROR - connection 5 to 20.160.138.111:27017 closed
+15:58:14 - ERROR - Request Timeout

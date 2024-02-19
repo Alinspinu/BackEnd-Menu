@@ -52,6 +52,7 @@ module.exports.sendUsers = async (req, res, next) => {
 module.exports.sendUser = async (req, res, next) => {
     try{
         const {userId} = req.body
+        console.log(userId)
         const user = await User.findById(userId)
             .select('-password')
             .populate({
@@ -92,6 +93,29 @@ module.exports.editUser = async (req, res, next) => {
     }
 }
 
+module.exports.updateUser = async (req, res, next) => {
+    const formData = req.body
+    const {id} = req.query
+    const file = req.file
+    let update = {
+        email: formData.email,
+        name: formData.username,
+        hobbies: formData.hobbies,
+        descrioption: formData.description,
+        profilePic: file && file.path ? file.path : ''
+    }
+    try{
+        const user = await User.findByIdAndUpdate(id, update, {new: true})
+        console.log(user)
+        res.status(200).json({message: 'Utilizatorul a fost actualizat!'})
+    } catch (err) {
+        console.log(err)
+        res.status(200).json({message: err.message})
+    }
+}
+
+
+
 module.exports.deleteUser = async (req, res, next) => {
     try{
         const {id} = req.query;
@@ -107,14 +131,23 @@ module.exports.deleteUser = async (req, res, next) => {
 module.exports.sendCustomer = async (req, res, next) => {
   try{
       const {id, loc } = req.query;
-      if(id.length < 22 || id.length === 4 ){
-        const customer = await User.findOne({cardIndex: +id, locatie: loc}).select('name email telphone cashBack discount cardIndex');
+      if(id.length < 22 && id !== "andrei" && id !== 'a' && id !== 'o' && id !== 'ds10' && id !== 'ds15' && id !== 'ds20'){
+        const customer = await User.findOne({cardIndex:  +id, locatie: loc}).select('name email telphone cashBack discount cardIndex');
         if(customer){
             res.status(200).json({message: 'All good', customer})
         } else {
             res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
         }
-      } else {
+      } 
+      if( id === "andrei" || id === 'a' || id === 'o' || id === 'ds10' || id === 'ds15' || id === 'ds20'){
+        const customer = await User.findOne({cardName:  id, locatie: loc}).select('name email telphone cashBack discount cardIndex');
+        if(customer){
+            res.status(200).json({message: 'All good', customer})
+        } else {
+            res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
+        }
+      }
+      if(id.length > 22) {
           const customer = await User.findById(id).select('name email telphone cashBack, discount');
           if(customer){
               res.status(200).json({message: 'All good', customer})
@@ -155,10 +188,9 @@ module.exports.editLocatie = async (req, res, next) => {
     try{
         const {email, appKey, locId} = req.body;
         if(email.length && appKey.length){
-            const { iv, encryptedData } = encryptData(appKey)
-            const gmail = {email: email, app: {iv: iv, key: encryptedData} }
+            const { iv, secret, encryptedData } = encryptData(appKey)
+            const gmail = {email: email, app: {iv: iv, key: encryptedData, secret: secret} }
             const locToEdit = await Locatie.findByIdAndUpdate(locId, {gmail: gmail}, {new: true})
-            console.log(locToEdit)
             res.status(200).json({message: 'Datele au fost actualizate'})
         }
     } catch (err) {
@@ -182,7 +214,8 @@ module.exports.newCustomer = async (req, res, next) => {
               name: name,
               email: email,
               locatie: loc,
-              cardIndex: cardIndex
+              cardIndex:  cardIndex,
+              discount: {general: 10}
           });
           const savedUser = await user.save();
           const customer = await User.findById(savedUser._id).select('name telephone email cashBack');

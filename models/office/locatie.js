@@ -40,7 +40,8 @@ const locatieSchema = new Schema({
         },
         key: {
           type: String
-        }
+        },
+        secret: String,
        }
       },
     

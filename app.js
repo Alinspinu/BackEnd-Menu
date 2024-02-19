@@ -13,7 +13,7 @@ const session = require("express-session");
 const helmet = require('helmet');
 
 const helmetConfig = require('./config/helmet');
-const sessionConfig = require('./config/session');
+
 
 const toppingRoutes = require('./routes/back-office/topping');
 const ordersTrueRoutes = require('./routes/back-office/orders');
@@ -21,7 +21,6 @@ const payRoutes = require('./routes/payment/payment');
 const authRoutes = require('./routes/users/auth');
 const nutritionRoutes = require('./routes/nutrition');
 const registerRoutes = require('./routes/back-office/cash-register');
-// const messRoutes = require('./routes/messages');
 const tableRoutes = require('./routes/back-office/table');
 const usersRoutes = require('./routes/users/users');
 
@@ -31,10 +30,12 @@ const productRoutes = require('./routes/back-office/product')
 const ingRoutes = require('./routes/back-office/ing')
 const subRoutes = require('./routes/back-office/subProduct')
 const catRoutes = require('./routes/back-office/cats')
+const gossipsRoutes = require('./routes/gossips')
+const notifRoutes = require('./routes/notifications')
+
 const fs = require('fs');
 const https = require('https');
 
-const {logMiddleware } = require('./utils/middleware')
 
 const dbUrl = process.env.DB_URL
 
@@ -67,7 +68,7 @@ app.use('/register', registerRoutes);
 app.use('/table',tableRoutes);
 app.use('/users', usersRoutes);
 // app.use('/message', messRoutes);
-
+app.use('/notification', notifRoutes)
 app.use("/top", toppingRoutes);
 app.use('/suplier', suplierRoutes);
 app.use('/nir', nirRoutes);
@@ -75,6 +76,7 @@ app.use('/product', productRoutes);
 app.use('/ing', ingRoutes);
 app.use('/sub', subRoutes);
 app.use('/cat', catRoutes);
+app.use('/gossips', gossipsRoutes)
 
 
 

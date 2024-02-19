@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Product = require('../office/product/product')
+const SubProduct = require('../office/product/sub-product')
 
 const invIngSchema = new Schema({
   name: {
@@ -14,6 +16,29 @@ const invIngSchema = new Schema({
     type: Number,
     default: 0
   },
+  updateLog: [
+    {
+      index: {
+        type: Number,
+        index: true
+      },
+      date: String,
+      suplier: String,
+      qty: Number
+
+    }
+  ],
+  saleLog: [
+    {
+      index: {
+        type: Number,
+        index: true
+      },
+      product: String,
+      date: String,
+      qty: Number
+    }
+  ],
   price: {
     type: Number,
     default: 0
@@ -54,7 +79,9 @@ const invIngSchema = new Schema({
 
 invIngSchema.pre('deleteOne', { document: true }, async function (next) {
   await this.constructor.updateMany({ 'ings.ing': this._id }, { $pull: { ings: {ing: this._id} } }).exec()
-  // await this.updateMany({ paring: this._id }, { $pull: { paring: this._id } }).exec()
+  await Product.updateMany({ 'ings.ing': this._id }, { $pull: { ings: {ing: this._id} } }).exec()
+  await Product.updateMany({ 'toppings.ing': this._id }, { $pull: { toppings: {ing: this._id} } }).exec()
+  await SubProduct.updateMany({ 'ings.ing': this._id }, { $pull: { ings: {ing: this._id} } }).exec()
   next()
 })
 

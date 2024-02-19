@@ -64,11 +64,29 @@ module.exports.payBill = async (req, res, next) => {
 module.exports.getNirs = async(req, res, next) => {
   const loc = req.body.loc
   try{
-    const nirs = await Nir.find({locatie: loc}).populate({path: 'suplier'})
+    const nirs = await Nir.find({locatie: loc})
+          .sort({ createdAt: -1 }) // Assuming you have a 'createdAt' field for timestamp
+          .limit(20)
+          .populate({path: 'suplier'})
     res.status(200).json(nirs)
   } catch(err) {
     console.log(err)
     res.status(500).json({messahe: err.message})
+  }
+}
+
+module.exports.getNirsByDate = async (req, res, next) => {
+  try{
+    console.log(req.body)
+    const {loc, startDate, endDate} = req.body
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    const nirs = await Nir.find({locatie: loc, documentDate: {$gte: start, $lte: end}}).populate({path: 'suplier'})
+    console.log(nirs)
+    res.status(200).json(nirs)
+  }catch(err) {
+    console.log(err)
+    res.status(500).json({message: err.message})
   }
 }
 
