@@ -9,20 +9,16 @@ const createCashRegisterDay = require('../../utils/createDay')
 module.exports.sendEntry = async (req, res, next) => {
     const{loc} = req.query
         createCashRegisterDay(loc)
-        const data = req.query.date
-        const page = req.query.page || 1;
-        const limit = 4
+        createCashRegisterDay('65c221374c46336d1e6ac423')
             try{
                 const documents = await Day.find({locatie: loc}).populate({path: "entry"})
-                .skip((page - 1) * limit)
-                .limit(limit)
+                .limit(10)
                 .sort({ date: -1 });
                 res.status(200).json({message: 'all good', documents})
             } catch(err){
                 console.log(err.message)
                 res.status(500).json({message: 'Error'+ err})
             }
-  
 }
 
 
@@ -76,6 +72,20 @@ module.exports.deleteEntry = async (req, res, next) => {
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: err.message })
+    }
+}
+
+module.exports.showDocs = async (req, res, next) => {
+    try{    
+        const {startDate, endDate, loc} = req.body
+        const start = new Date(startDate).setUTCHours(0,0,0,0)
+        const end = new Date(endDate).setUTCHours(0,0,0,0)
+        const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end} }).populate({ path: 'entry' }).sort({ date: -1 });
+        res.status(200).json({message: 'all good', documents: days})
+    
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
     }
 }
 

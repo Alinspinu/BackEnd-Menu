@@ -1,22 +1,34 @@
 
 const Table = require('../../models/utils/table')
 const Order = require('../../models/office/product/order')
+const User = require('../../models/users/user')
 
 module.exports.sendTables = async (req, res, next) => {
     const {loc} = req.query
     const {user} = req.query
-    console.log('hit function')
     try{
-        const tables = await Table.find({locatie: loc, index: { $ne: 54 }}).populate({
-            path: 'bills', 
-            model: "Order", 
-            match: {status: "open", "employee.user": user}, 
-            populate: {path: 'masaRest', select: 'index'}
-        })
+        const userDb = await User.findById(user)
+        let tables
+        if(userDb && userDb.employee.access > 1){
+            tables = await Table.find({locatie: loc, index: { $ne: 54 }}).populate({
+             path: 'bills', 
+             model: "Order", 
+             match: {status: "open", locatie: loc}, 
+             populate: {path: 'masaRest', select: 'index'}
+         })
+        } 
+        if(userDb &&  userDb.employee.access === 1){
+            tables = await Table.find({locatie: loc, index: { $ne: 54 }}).populate({
+                path: 'bills', 
+                model: "Order", 
+                match: {status: "open", "employee.user": user}, 
+                populate: {path: 'masaRest', select: 'index'}
+            })
+        }
         const onlineTable = await Table.findOne({locatie: loc, index: 54}).populate({
             path: 'bills', 
             model: "Order", 
-            match: {status: 'open'}, 
+            match: {status: 'open', locatie: loc}, 
             populate: {path: 'masaRest', select: 'index'}
         })
         if(onlineTable){

@@ -48,6 +48,21 @@ module.exports.sendUsers = async (req, res, next) => {
       }
 }
 
+module.exports.sendUserCashback = async (req, res, next) => {
+    try{
+        const {id} = req.query
+        const user = await User.findById(id).select('cashBack')
+        if(user){
+            res.status(200).json({message: 'User found', cashBack: user.cashBack})
+        } else{
+            res.status(404).json({message: 'User not found', cashBack: 0})
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
 
 module.exports.sendUser = async (req, res, next) => {
     try{
@@ -134,7 +149,7 @@ module.exports.sendCustomer = async (req, res, next) => {
       if(id.length < 22 && id !== "andrei" && id !== 'a' && id !== 'o' && id !== 'ds10' && id !== 'ds15' && id !== 'ds20'){
         const customer = await User.findOne({cardIndex:  +id, locatie: loc}).select('name email telphone cashBack discount cardIndex');
         if(customer){
-            res.status(200).json({message: 'All good', customer})
+            res.status(200).json({message: 'All good', customer: customer})
         } else {
             res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
         }
@@ -148,7 +163,7 @@ module.exports.sendCustomer = async (req, res, next) => {
         }
       }
       if(id.length > 22) {
-          const customer = await User.findById(id).select('name email telphone cashBack, discount');
+          const customer = await User.findById(id).select('name email telphone cashBack  discount');
           if(customer){
               res.status(200).json({message: 'All good', customer})
           } else {

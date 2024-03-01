@@ -134,7 +134,8 @@ module.exports.fetchGossips = async (req, res, next) => {
                 description: obj.description,
                 imgPath: obj.image,
                 comments: obj.comments,
-                likes: obj.likes
+                likes: obj.likes,
+                createdAt: obj.createdAt
             }));
 
             const data = {
@@ -166,7 +167,8 @@ module.exports.fetchGossips = async (req, res, next) => {
                     description: obj.description,
                     imgPath: obj.image,
                     comments: obj.comments,
-                    likes: obj.likes
+                    likes: obj.likes,
+                    createdAt: obj.createdAt
                 }));
 
                 const data = {
@@ -212,7 +214,8 @@ module.exports.fetchGossipsByUser = async (req, res, next) => {
                     description: obj.description,
                     imgPath: obj.image,
                     comments: obj.comments,
-                    likes: obj.likes
+                    likes: obj.likes,
+                    createdAt: obj.createdAt
                 }))
                 const data = {
                     count: count,
@@ -242,7 +245,8 @@ module.exports.fetchGossipsByUser = async (req, res, next) => {
                     description: obj.description,
                     imgPath: obj.image,
                     comments: obj.comments,
-                    likes: obj.likes.length
+                    likes: obj.likes.length,
+                    createdAt: obj.createdAt
                 }));
 
                 const data = {

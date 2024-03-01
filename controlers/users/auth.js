@@ -33,7 +33,7 @@ module.exports.register = async (req, res, next) => {
                return res.status(256).json({ message: 'This email allrady exist' });
            }
            if (password === confirmPassword) {
-               const hashedPassword = hashPassword(password);
+               const hashedPassword = hashPassword(password);      
                const newUser = new User({
                    email: email,
                    password: hashedPassword,
@@ -41,8 +41,16 @@ module.exports.register = async (req, res, next) => {
                    telephone: tel,
                    firstCart: firstCart,
                    survey: survey,
-                   locatie: loc
+                   locatie: loc,
+                   cashBackProcent: 5,
                });
+               if(loc === '65ba7dcf1694ff43f52d44ed'){
+                    newUser.discount.general = 10
+                    newUser.cashBackProcent = 10
+                    newUser.discount.category.push({precent: 0, name: 'Cafea pentru acasa', cat: "65bb5fdb04258e1abf216a3d"})
+                    newUser.discount.category.push({precent: 0, name: 'Sucuri', cat: "65bb5cb804258e1abf216a28"})
+                    newUser.discount.category.push({precent: 0, name: 'Patiserie', cat: "65cc686ad78998e172bfee6b"})
+                }   
                 await newUser.save();
                 const dbUser = await User.findOne({email: email, locatie: loc}).populate({path: 'locatie'})
                await sendVerificationEmail(dbUser, url).then(response => {
@@ -108,8 +116,10 @@ module.exports.registerEmployee = async (req, res, next) => {
 
 
 module.exports.login = async (req, res, next) => {
-    const { email, password, url, adminEmail} = req.body;
-    const user = await User.findOne({ email: email})
+    const { email, password, url, adminEmail, loc} = req.body;
+
+    try{
+               const user = await User.findOne({ email: email, locatie: loc})
                             .select([
                                 '-employee.cnp',
                                 '-employee.ciSerial',
@@ -138,7 +148,7 @@ module.exports.login = async (req, res, next) => {
         });
     } else if (user.status === "active") {
         let time = '60m';
-        if (user.admin === 1) {
+        if (user.employee.access > 1) {
             time = '12h';
         };
         const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: time });
@@ -161,6 +171,12 @@ module.exports.login = async (req, res, next) => {
         await sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
         res.status(200).json(sendData);
     };
+
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+
 };
 
 
@@ -210,6 +226,7 @@ module.exports.verifyToken = async (req, res, next) => {
 module.exports.sendEmailResetPassword = async (req, res, next) => {
     try {
         const { email, loc, url } = req.body;
+        console.log(url)
         const user = await User.findOne({ email: email, locatie: loc }).populate({path: 'locatie'});
         if (user) {
             return sendResetEmail(user, url).then(response => {
@@ -270,6 +287,8 @@ module.exports.resetPassword = async (req, res, next) => {
         res.status(500).json({ message: 'Server Error' });
     };
 }
+
+
 
 
 

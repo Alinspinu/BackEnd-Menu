@@ -66,7 +66,7 @@ async function printKitchen(products, dataPrint) {
         }
 
         log(JSON.stringify(dataToPrint), 'buc-orders')
-        createXml(dataToPrint)
+        // createXml(dataToPrint)
        
     } else {
         return

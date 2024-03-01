@@ -45,6 +45,10 @@ const orderTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+    voucher:{
+        type: Number,
+        default: 0
+    },
     status: {
         type: String,
         default: "open",
@@ -96,7 +100,6 @@ const orderTrueSchema = new Schema({
         cash: Number,
         card: Number,
         viva: Number,
-        voucher: Number,
         online: Number,
         
     },

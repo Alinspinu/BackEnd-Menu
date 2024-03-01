@@ -6,5 +6,6 @@ router.route('/show-cash-register').get(regRoutes.sendEntry)
 router.route('/create-xcel').post(regRoutes.createXcel)
 router.route('/add-entry').post(regRoutes.addEntry)
 router.route('/delete-entry').delete(regRoutes.deleteEntry)
+router.route('/get-days').post(regRoutes.showDocs)
 
 module.exports = router

@@ -81,8 +81,8 @@ app.use('/gossips', gossipsRoutes)
 
 
 const options = {
-    key: fs.readFileSync('cert/private-key.pem'),
-    cert: fs.readFileSync('cert/public-cert.pem')
+    key: fs.readFileSync('cert/key.pem'),
+    cert: fs.readFileSync('cert/cert.pem')
   };
   
 

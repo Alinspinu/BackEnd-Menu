@@ -9,7 +9,7 @@ const User = require('../../models/users/user');
 const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
 const { round } = require('../../utils/functions')
-const {reports, inAndOut, printBill, posPayment} = require('../../utils/print/printFiscal')
+const {reports, inAndOut, printBill, posPayment, printNefiscal} = require('../../utils/print/printFiscal')
 
 module.exports.getToken = async (req, res, next) => {
     try {
@@ -214,6 +214,7 @@ module.exports.printBill = async (req, res, next) => {
         if(bill.total > 0) {
             printBill(bill)
         }
+
         await Order.findByIdAndUpdate(bill._id, bill)
         res.status(200).json({message: "Bonul a fos tipărit!"})
     } catch(err) {

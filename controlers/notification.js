@@ -47,9 +47,14 @@ module.exports.updateNotification = async (req, res, next) => {
 module.exports.deleteNotification = async (req, res, next) => {
     try{
         const {eventId, event} = req.query
+        console.log(req.query)
        const notif =  await Notification.findOne({eventId: eventId, event: event})
-       await notif.deleteOne()
-        res.status(200).json({message: "Notificarea a fost stearsa!"})
+       if(notif){
+           await notif.deleteOne()
+           res.status(200).json({message: "Notificarea a fost stearsa!"})
+       } else{
+           res.status(200).json({message: 'Notificarea nu a fost găsită!'})
+       }
     } catch(err){
         console.log(err)
         res.status(500).json({message: err.message})

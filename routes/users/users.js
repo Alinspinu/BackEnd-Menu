@@ -31,7 +31,7 @@ router.route('/loc')
     .put(users.editLocatie)
 
 
-
+router.route('/get-cash').get(users.sendUserCashback)
 
 
 module.exports = router  

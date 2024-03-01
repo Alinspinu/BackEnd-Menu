@@ -63,9 +63,23 @@ module.exports.getOrderByUser = async (req, res, nex) => {
     const end = new Date(date).setHours(23, 59, 59, 999)
      const {userId} = req.query;
      const user = await User.findById(userId)
-     const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
-     res.status(200).json(orders)
+    const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', updatedAt: {$gte: start, $lt: end} })   
+    res.status(200).json(orders)
     } catch (err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.getAllOrders = async (req, res, next) => {
+    try{
+        const date = new Date()
+        const start = new Date(date).setHours(0,0,0,0)
+        const end = new Date(date).setHours(23, 59, 59, 999)
+        const {loc} = req.query;
+        const orders = await Order.find({locatie: loc, status: 'done', updatedAt: {$gte: start, $lt: end} }) 
+        res.status(200).json(orders) 
+    } catch(err){
         console.log(err)
         res.status(500).json({message: err.message})
     }
@@ -129,13 +143,13 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 }
             })
             const savedBill = await newBill.save();
-          
             table.bills.push(savedBill);
             await table.save();
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, masa: {_id: table._id, index: table.index}})
         } else {
             print(parsedBill)
             parsedBill.products.forEach(el => {
+                el.sentToPrint ? resaveOrder = true : resaveOrder = false
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length) {
                     if(el.toppings.length){
                         unloadIngs(el.toppings, el.quantity);
@@ -143,6 +157,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                     if(el.ings.length){
                         unloadIngs(el.ings, el.quantity);
                     }
+
                     el.sentToPrint = false;
                     console.log("old",el.sentToPrint)
                 } else if(el.sentToPrint){
@@ -150,8 +165,20 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                     console.log("old",el.sentToPrint)
                 }
             })
-            const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-            res.status(200).json({billId: bill._id, index: bill.index, products: bill.products, masa: bill.masaRest})
+            async function saveBill() {
+                const order = await Order.findById(billId)
+                if(order.status === "done"){
+                    parsedBill.status = 'done'
+                    parsedBill.payment = order.payment
+                    parsedBill.pending = order.pending
+                    const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
+                    res.status(200).json({billId: bill._id, index: bill.index, products: bill.products, masa: bill.masaRest})
+                } else {
+                    const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
+                    res.status(200).json({billId: bill._id, index: bill.index, products: bill.products, masa: bill.masaRest})
+                }
+            }
+            setTimeout(saveBill, 1000)
         }
     } catch(err){
         console.log(err)

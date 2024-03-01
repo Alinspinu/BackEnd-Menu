@@ -512,11 +512,12 @@ module.exports.printNir = async (req, res, next) => {
           }
           filterTo.locatie = loc
     try{
+
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Lista ingrediente');
         const ings = await Ingredient.find(filterTo)
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
-
+     
         const docTitle =  [
           'Lista ingrediente',
            '',
@@ -531,8 +532,12 @@ module.exports.printNir = async (req, res, next) => {
         ]
         worksheet.addRow(docTitle)
         worksheet.addRow(header)
-
+        let totalPretAchizitie = 0
         sortedIngs.forEach((el, i) => {
+          if(el.qty > 0){
+            const price = round(el.qty * el.price)
+            totalPretAchizitie += price
+          }
           worksheet.addRow(
             [
               `${i+1}`,
@@ -543,7 +548,7 @@ module.exports.printNir = async (req, res, next) => {
             ]
             )
         })
-
+        worksheet.addRow(['Total cu Tva', '', '', '', `${round(totalPretAchizitie)} Lei`])
         worksheet.getColumn(1).eachCell((cell) => {
           cell.alignment = { vertical: "middle", horizontal: 'center'}
         })
@@ -566,6 +571,7 @@ module.exports.printNir = async (req, res, next) => {
         cell.alignment = {horizontal: 'center'}
     })
 
+
       worksheet.getRow(2).eachCell((cell)=>{
         cell.font = {
             bold: true,
@@ -574,12 +580,24 @@ module.exports.printNir = async (req, res, next) => {
         cell.alignment = {horizontal: 'center'}
     })
 
+    const totalsRowNumber = worksheet.lastRow
+
+    totalsRowNumber.eachCell((cell)=>{
+      cell.font = {
+          bold: true,
+          size: 14
+      }
+      cell.alignment = {horizontal: 'right'}
+  })
+
+    console.log(totalsRowNumber)
         worksheet.getColumn(1).width = 5;
         worksheet.getColumn(2).width = 25; 
         worksheet.getColumn(3).width = 10; 
         worksheet.getColumn(4).width = 16; 
         worksheet.getColumn(5).width = 16; 
         worksheet.mergeCells(`A1:D1`)
+        worksheet.mergeCells(`A${totalsRowNumber.number}:D${totalsRowNumber.number}`)
           res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
           res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
           workbook.xlsx.write(res)
@@ -603,10 +621,12 @@ module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
     const {filter, loc, startDate, endDate} = req.body
+    console.log(req.body)
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(0,0,0,0)
     const startDateToShow = new Date(startDate).toISOString().split('T')[0]
     const endDateToShow = new Date(endDate).toISOString().split('T')[0]
+    console.log(start, end)
     const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lte: end}}).populate([
       {
         path: 'products.ings.ing', 
@@ -832,7 +852,7 @@ module.exports.factura = async (req, res, next) => {
   const {orderId, locId, clientId, userId} = req.body
   const nota = await Order.findById(orderId)
   const locatie = await Locatie.findById(locId)
-  const client = await Suplier.findById('65c4f88be5be13b2ef3615ab')
+  const client = await Suplier.findById(clientId)
   const user = await User.findById(userId)
   const bill = new Bill({
       serie: 'SLR',
@@ -899,20 +919,20 @@ module.exports.factura = async (req, res, next) => {
   doc.fontSize(10);
   doc.font('Times-Bold')
   doc.text('Client:', 395 - 40, 50, { width: 35, align: "left" })
-  doc.text(`C.I.F.:`, 395 - 40, 70 - 7, { width: 30, align: "left" });
-  doc.text(`Nr. Reg. Com.:`, 395 - 40, 82 - 7, { width: 70, align: "left" });
-  doc.text(`Adresa:`, 395 - 40, 94 - 7, { width: 40, align: "left" })
+  doc.text(`C.I.F.:`, 395 - 40, 82 - 7, { width: 30, align: "left" });
+  doc.text(`Nr. Reg. Com.:`, 395 - 40, 94 - 7, { width: 70, align: "left" });
+  doc.text(`Adresa:`, 395 - 40, 106 - 7, { width: 40, align: "left" })
 
 
 
   //date client
   doc.fontSize(10);
   doc.font('Times-Roman')
-  doc.text(`${client.name}`, 430 - 40, 50, { width: 130, align: "left" });
-  doc.text(`${client.vatNumber}`, 415 + 10 - 40, 70 - 7, { width: 145, align: "left" });
-  doc.text(`${client.register}`, 455 + 10 - 40, 82 - 7, { width: 105, align: "left" });
+  doc.text(`${client.name}`, 430 - 40, 50, { width: 215, align: "left" });
+  doc.text(`${client.vatNumber}`, 415 + 10 - 40, 82 - 7, { width: 145, align: "left" });
+  doc.text(`${client.register}`, 455 + 10 - 40, 94 - 7, { width: 105, align: "left" });
   doc.font("public/font/RobotoSlab-Regular.ttf");
-  doc.text(`${client.address || ''}`, 395 - 40, 94 + 5, { width: 215, align: "left" })
+  doc.text(`${client.address || ''}`, 395 - 40, 106 + 5, { width: 215, align: "left" })
 
 
 
@@ -1070,10 +1090,10 @@ module.exports.factura = async (req, res, next) => {
       doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
       doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
       doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
-      doc.text(`${round(price - (price * (el.tva / 100)))}`, 364, newValue, { width: 58, align: "center" })
-      doc.text(`${round(el.quantity * (price - (price * (el.tva / 100))))}`, 424, newValue, { width: 58, align: "center" })
+      doc.text(`${round(price / (1 + (el.tva / 100)))}`, 364, newValue, { width: 58, align: "center" })
+      doc.text(`${round(el.quantity * (price / (1 + (el.tva / 100))))}`, 424, newValue, { width: 58, align: "center" })
       doc.text(`${el.tva}%`, 486, newValue, { width: 35, align: "left" })
-      doc.text(`${round((el.quantity * price) - (el.quantity * (price - (price * (el.tva / 100)))))}0`, 523, newValue, { width: 30, align: "right" })
+      doc.text(`${round((el.quantity * price) - (el.quantity * (price / (1 + (el.tva / 100)))))}0`, 523, newValue, { width: 30, align: "right" })
       const valTotProdFaraTva = round(el.quantity * (price - (price * (el.tva / 100))))
       const valTotProdTva = round((el.quantity * price) - (el.quantity * (price - (price * (el.tva / 100)))))
       valFaraTva += valTotProdFaraTva

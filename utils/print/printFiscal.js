@@ -61,6 +61,11 @@ async function printBill(bill) {
             let discountLine = `DV^${bill.cashBack * 100}`
             billToPrint.push(discountLine)
         }
+        if(bill.voucher > 0) {
+            billToPrint.push("ST^")
+            let voucherLine = `DV^${bill.voucher * 100}`
+            billToPrint.push(voucherLine)
+        }
         billToPrint.push("ST^")
         if(bill.payment.card){
             let cardLine = `P^2^${bill.payment.card * 100}`
@@ -74,16 +79,13 @@ async function printBill(bill) {
             let cardLine = `P^7^${bill.payment.viva * 100}`
             billToPrint.push(cardLine)
         }
-        if(bill.payment.voucher) {
-            let voucherLine = `P^6^${bill.payment.voucher * 100}`
-            billToPrint.push(voucherLine)
-        }
         if(bill.payment.online) {
             let onlineLine = `P^7^${bill.payment.online * 100}`
             billToPrint.push(onlineLine)
         }
         
         log(billToPrint, "bils")
+        console.log(billToPrint)
         // axios.post(url, billToPrint, {
         //     headers: {
         //         'Content-Type': 'application/json',
@@ -96,6 +98,40 @@ async function printBill(bill) {
         //             console.error('Error:', error.message);
         //         });
 
+    } else {
+        return
+    }
+}
+
+
+async function printNefiscal(bill) {
+    const url = 'http://192.168.1.90:65400/api/Receipt';
+    let data = [
+        `TL^           NOTA DE PLATA NEFISCALA    `,
+        "TL^ ", 
+        `TL^SE ELIBEREAZA IN CAZUL IN CARE PRODUSELE AU FOT PLATITE CU UN VOUCHER`,
+        "TL^", 
+    ];
+    if(bill.products.length){
+        for(let pro of bill.products){
+            let entry = `TL^  ${pro.name} --- ${pro.price} X ${pro.quantity} === ${pro.total} Lei`
+            data.push(entry)
+        }
+        let totalLine = `TL^ TOTAL-------${bill.payment.voucher} Lei`
+        let thanks = `TL^MULTUMIM SI VA MAI ASTEPTAM!`
+        data.push(totalLine)
+        // console.log(data)
+        // axios.post(url, data, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     })
+        //         .then(response => {
+        //             console.log('Response:', response.data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error.message);
+        //         });
     } else {
         return
     }
@@ -163,4 +199,4 @@ function sendToPrint(print){
 
 
 
-module.exports = {printBill, posPayment, reports, inAndOut}
+module.exports = {printBill, posPayment, reports, inAndOut, printNefiscal}
