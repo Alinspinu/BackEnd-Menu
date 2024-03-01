@@ -8,7 +8,7 @@ const { json } = require('body-parser');
 const User = require('../../models/users/user');
 const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
-const { round } = require('../../utils/functions')
+const { round, log } = require('../../utils/functions')
 const {reports, inAndOut, printBill, posPayment} = require('../../utils/print/printFiscal')
 
 module.exports.getToken = async (req, res, next) => {
@@ -200,8 +200,8 @@ module.exports.cashInandOut = async (req, res, next) =>{
 module.exports.printBill = async (req, res, next) => {
     try{
         const {bill} = req.body
-        bill.status = 'done'
-        bill.pending = false
+        // bill.status = 'done'
+        // bill.pending = false
         const id = bill.clientInfo._id
         if(id && id.length){
             const client = await User.findById(id)
@@ -217,7 +217,16 @@ module.exports.printBill = async (req, res, next) => {
                 printBill(bill)
             }
         }
-        await Order.findByIdAndUpdate(bill._id, bill)
+        const update = {
+            status: 'done',
+            pending: false,
+            payment: bill.payment,
+            dont: bill.dont,
+            cif: bill.cif
+        }
+       const order = await Order.findByIdAndUpdate(bill._id, update, {new: true})
+       const logMessage = `Index ${order.index} status: ${order.status}, `
+        log(logMessage, 'billStatus')
         res.status(200).json({message: "Bonul a fos tipărit!"})
     } catch(err) {
         console.log(err)
