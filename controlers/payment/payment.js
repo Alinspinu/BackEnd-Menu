@@ -205,6 +205,7 @@ module.exports.printBill = async (req, res, next) => {
         const id = bill.clientInfo._id
         if(id && id.length){
             const client = await User.findById(id)
+            console.log(client)
             if(client){
                 client.orders.push(bill)
                 client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))

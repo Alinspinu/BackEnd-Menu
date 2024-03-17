@@ -11,6 +11,7 @@ router.route('/ingredient')
 
 router.route('/print-ing-list').post(printRoutes.createIngredientsInvXcel)
 router.route('/print-consum').post(printRoutes.printConsum)
+router.route('/save-inventary').get(ingRoutes.saveInventary)
 
 
 

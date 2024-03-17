@@ -51,6 +51,10 @@ async function printBill(bill) {
                 })
             }   
         })
+        if(bill.tips > 0){
+            let tipsLine = `S^Tips^${bill.tips*100}^1000^buc^3^2`
+            billToPrint.push(tipsLine)
+        }
         if(bill.discount > 0){
             billToPrint.push("ST^")
             let discountLine = `DV^${bill.discount * 100}`

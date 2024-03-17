@@ -71,6 +71,36 @@ module.exports.saveIng = async(req, res, next) => {
     }
 
 
+    module.exports.saveInventary = async (req, res, next) => {
+      try{
+        const {loc} = req.query
+        const ings = await Ingredient.find({locatie: loc})
+        for(let ing of ings) {
+          const date = new Date();
+          date.setHours(23, 0, 0, 0, 0);
+          const formattedDate = date.toISOString();
+          let index = 1
+          if(ing.inventary && ing.inventary.length){
+            index += ing.inventary.length  
+          } else {
+            index = 1
+          }
+          const entry = {
+            index: index,
+            day: formattedDate,
+            qty: ing.qty
+          }
+          ing.inventary.push(entry)
+           await ing.save()
+        } 
+        res.status(200).json({message: "inventary saved"})
+      } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+      }
+    }
+
+
 
 
 

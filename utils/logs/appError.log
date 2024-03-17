@@ -6,3 +6,5 @@
 16:19:28 - ERROR - Server returned unexpected status code - 502
 12:55:44 - ERROR - connection 5 to 20.160.138.111:27017 closed
 15:58:14 - ERROR - Request Timeout
+11:11:30 - ERROR - Updating the path 'uploadLog' would create a conflict at 'uploadLog'
+11:20:06 - ERROR - Updating the path 'uploadLog' would create a conflict at 'uploadLog'

@@ -46,7 +46,6 @@ module.exports.getOrder = async (req, res, next) => {
 
 module.exports.sendDeletedproduct = async (req, res, next) => {
     try{
-        
         const delProds = DelProd.find({})
         re.status(200).json(delProds)
     } catch (err){
@@ -130,10 +129,10 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             newBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
                     if(el.toppings.length){
-                        unloadIngs(el.toppings, el.quantity);
+                        unloadIngs(el.toppings, el.quantity, {name:'vanzare', details: el.name});
                     } 
                     if(el.ings.length){
-                        unloadIngs(el.ings, el.quantity);
+                        unloadIngs(el.ings, el.quantity, {name:'vanzare', details: el.name});
                     }
                     el.sentToPrint = false;
                     console.log("new", el.sentToPrint)
@@ -152,10 +151,10 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 el.sentToPrint ? resaveOrder = true : resaveOrder = false
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length) {
                     if(el.toppings.length){
-                        unloadIngs(el.toppings, el.quantity);
+                        unloadIngs(el.toppings, el.quantity, {name:'vanzare', details: el.name});
                     } 
                     if(el.ings.length){
-                        unloadIngs(el.ings, el.quantity);
+                        unloadIngs(el.ings, el.quantity, {name:'vanzare', details: el.name});
                     }
 
                     el.sentToPrint = false;
@@ -202,9 +201,9 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
 module.exports.uploadIngs = async (req, res, next) => {
     try{
         const {loc} = req.query
-        const {ings, quantity} = req.body;
+        const {ings, quantity, operation} = req.body;
         if(ings && quantity){
-            uploadIngs(ings, quantity)
+            uploadIngs(ings, quantity, operation)
         res.status(200).json({message: 'Success, stocul a fost actualizat!'})
         }
     } catch (err) {

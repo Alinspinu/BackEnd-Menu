@@ -41,6 +41,8 @@ async function print(order) {
     setTimeout(()=>{
         printMain(mainProd, dataToPrint);
     }, 500)
+    console.log("barista",baristaProd)
+    console.log('main',mainProd)
 } 
 
 

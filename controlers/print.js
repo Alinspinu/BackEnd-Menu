@@ -131,11 +131,12 @@ module.exports.printNir = async (req, res, next) => {
 
     // Table headers
     doc.font("public/font/RobotoSlab-Bold.ttf");
-    doc.fontSize(7);
-    doc.text("Denumire Articol", 10, y, { width: 210 });
+    doc.fontSize(9);
+    doc.text("Nr.", 10, y, { width: 15 });
+    doc.text("Denumire Articol", 30, y, { width: 210 });
     doc.text("UM", 215, headerHeigth, { width: 30, align: "center" });
-    doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
-    doc.text("Tip", 290, headerHeigth, { width: 50, align: "center" });
+    doc.text("Qty", 250, headerHeigth, { width: 20, align: "center" });
+    doc.text("Tip", 270, headerHeigth, { width: 65, align: "center" });
     doc.text("Gestiune", 340, headerHeigth, { width: 50, align: "center" });
   
     if (firma.VAT) {
@@ -166,17 +167,34 @@ module.exports.printNir = async (req, res, next) => {
     let valVanzare = 0;
     let valTvaVanzare = 0;
     let valTotal = 0;
-    nir.ingredients.forEach((produs, i) => {
-      const lineHeigth = 8
+    let lineHeigth = 16
+    const ingCount = nir.ingredients.length
+    if(ingCount >= 10 && ingCount <= 20){
+      doc.fontSize(8);
+      lineHeigth = 12
+    }
+    if(ingCount >= 21 && ingCount <= 30){
+      doc.fontSize(7);
+      lineHeigth = 10
+    }
+    if(ingCount >= 31 && ingCount <= 40){
+      doc.fontSize(6);
+      lineHeigth = 9
+    }
+    if(ingCount > 40){
       doc.fontSize(5);
-      doc.text(produs.name, 10, y + i * lineHeigth + lineHeigth , { width: 210 });
+      lineHeigth = 7
+    }
+    nir.ingredients.forEach((produs, i) => {
+      doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
+      doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
       doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 30, align: "center" });
       doc.text(produs.qty.toString(), 250, y + i * lineHeigth + lineHeigth, {
-        width: 30,
+        width: 20,
         align: "center",
       });
-      doc.text(produs.dep, 290, y + i * lineHeigth + lineHeigth, {
-        width: 50,
+      doc.text(produs.dep, 270, y + i * lineHeigth + lineHeigth, {
+        width: 65,
         align: "center",
       });
       doc.text(cap(produs.gestiune), 340, y + i * lineHeigth + lineHeigth, {
@@ -239,58 +257,58 @@ module.exports.printNir = async (req, res, next) => {
 
       // y += 5
     });
-    const height = nir.ingredients.length * 8;
+    const height = nir.ingredients.length * lineHeigth;
     doc.lineWidth(0.4);
     doc
-      .moveTo(10, y + height + 10)
-      .lineTo(830, y + height + 10)
+      .moveTo(10, y + height + 14)
+      .lineTo(830, y + height + 14)
       .stroke();
     doc.font("public/font/RobotoSlab-Bold.ttf");
     doc.fontSize(9);
-    doc.text("Total:", 370, y + height + 18);
-    doc.text(`${round(valoareIntTotal)}`, 460, y + height + 18, {
+    doc.text("Total:", 370, y + height + 20);
+    doc.text(`${round(valoareIntTotal)}`, 460, y + height + 20, {
       width: 50,
       align: "center",
     });
-    doc.text(`${round(valTvaTotal)}`, 530, y + height + 18, {
+    doc.text(`${round(valTvaTotal)}`, 530, y + height + 20, {
       width: 50,
       align: "center",
     });
     if (firma.VAT) {
-      doc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 18, {
+      doc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 20, {
         width: 50,
         align: "center",
       });
     } else if (!firma.VAT) {
-      doc.text(`${round(valTotal)}`, 585, y + height + 18, {
+      doc.text(`${round(valTotal)}`, 585, y + height + 20, {
         width: 50,
         align: "center",
       });
     }
-    doc.text(`${round(valVanzare)}`, 705, y + height + 18, {
+    doc.text(`${round(valVanzare)}`, 705, y + height + 20, {
       width: 60,
       align: "center",
     });
-    doc.text(`${round(valTvaVanzare)}`, 770, y + height + 18, {
+    doc.text(`${round(valTvaVanzare)}`, 770, y + height + 20, {
       width: 60,
       align: "center",
     });
   
     doc.lineWidth(0.5);
     doc
-      .moveTo(365, y + height + 30)
-      .lineTo(830, y + height + 30)
+      .moveTo(365, y + height + 35)
+      .lineTo(830, y + height + 35)
       .stroke();
   
     // doc.font("Helvetica-Bold");
     doc.fontSize(9);
-    doc.text("Responsabil", 80, y + height + 40);
-    doc.text(`Data`, 400, y + height + 40);
-    doc.text("Semnatura", 680, y + height + 40);
+    doc.text("Responsabil", 80, y + height + 45);
+    doc.text(`Data`, 400, y + height + 45);
+    doc.text("Semnatura", 680, y + height + 45);
     doc.font("public/font/RobotoSlab-Regular.ttf");
     doc.fontSize(9);
     // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
-    doc.text(`${date}`, 400, y + height + 50);
+    doc.text(`${date}`, 400, y + height + 55);
   
     doc.end();
   
@@ -620,14 +638,12 @@ module.exports.printNir = async (req, res, next) => {
 module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
-    const {filter, loc, startDate, endDate} = req.body
-    console.log(req.body)
+    const {dep, loc, startDate, endDate, dont} = req.body
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(0,0,0,0)
     const startDateToShow = new Date(startDate).toISOString().split('T')[0]
     const endDateToShow = new Date(endDate).toISOString().split('T')[0]
-    console.log(start, end)
-    const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lte: end}}).populate([
+    const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lte: end}, dont: dont}).populate([
       {
         path: 'products.ings.ing', 
         populate: {path: 'ings.ing'}
@@ -637,6 +653,7 @@ module.exports.printConsum = async (req, res) => {
         populate: {path: 'ings.ing'}
       }
     ])
+    console.log('numar comenzi', orders.length)
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
@@ -660,16 +677,21 @@ module.exports.printConsum = async (req, res) => {
                   }
                 })
               } else {
-                const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
-                if (existingIngredient) {
-                  const updatedIng = {
-                    qty: existingIngredient.qty + ing.qty,
-                    ing: existingIngredient.ing
+                if(ing && ing.ing){
+                  const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
+                  if (existingIngredient) {
+                    const updatedIng = {
+                      qty: existingIngredient.qty + ing.qty,
+                      ing: existingIngredient.ing
+                    }
+                    ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                    // existingIngredient.qty += ing.qty
+                  } else {
+                    ings.push(ing);
                   }
-                  ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-                  // existingIngredient.qty += ing.qty
-                } else {
-                  ings.push(ing);
+                }
+                else {
+                  // console.log(ing)
                 }
               }
             })
@@ -696,9 +718,9 @@ module.exports.printConsum = async (req, res) => {
                       qty: existingIngredient.qty + topping.qty,
                       ing: existingIngredient.ing
                     }
-                    if(updatedIng.ing.name === "Lapte Vegetal"){
-                      console.log(updatedIng.qty)
-                    }
+                    // if(updatedIng.ing.name === "Lapte Vegetal"){
+                    //   console.log(updatedIng.qty)
+                    // }
                     ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
                   } else {
                     const ig = {
@@ -714,19 +736,10 @@ module.exports.printConsum = async (req, res) => {
         })
       } 
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
-
-      // const depFilter = ings.filter(obj => obj.ing['dep'] === filter.dep)
-      // const gestFilter = ings.filter(obj => obj.ing['gestiune'] === filter.gesiune)
-      // const prodIngFilter = ings.filter(obj => obj.ing['productIngredient'] === true)
-      // let filterIngredients = [...prodIngFilter, ...gestFilter, ...depFilter]
-      // if(filterIngredients.length) {
-      //   filterIngredients.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
-      // } else {
-      // }
       filterIngredients = ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
-
-
-
+      if(dep && dep.length){
+        filterIngredients = filterIngredients.filter(ing => ing.ing.dep === dep)
+      }
       const workbook = new exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
 
@@ -752,6 +765,7 @@ module.exports.printConsum = async (req, res) => {
         'Valoare F TVA',
         'Valoare TVA',
         'Valoare cu Tva',
+        'Pret Vanzare',
         `Consum`, 
       ]
       worksheet.addRow(docTitle)
@@ -761,6 +775,7 @@ module.exports.printConsum = async (req, res) => {
         priceNoVat: 0,
         priceVat: 0,
         priceWithVat: 0,
+        sellPrice: 0
       }
 
 
@@ -779,12 +794,14 @@ module.exports.printConsum = async (req, res) => {
             `${round(priceNoVat)}`,
             `${round(priceVat)}`,
             `${round(priceWithVat)}`,
+            `${ing.ing.sellPrice}`,
             `${round(ing.qty)}`,
           ]
           )
          totals.priceNoVat += priceNoVat 
          totals.priceVat += priceVat
          totals.priceWithVat += priceWithVat
+         totals.sellPrice += (ing.ing.sellPrice * ing.qty)
       })
 
       const totalsRow = [
@@ -797,6 +814,7 @@ module.exports.printConsum = async (req, res) => {
         `${round(totals.priceNoVat)}`,
         `${round(totals.priceVat)}`,
         `${round(totals.priceWithVat)}`,
+        `${round(totals.sellPrice)}`
       ]
       worksheet.addRow(totalsRow)
 
@@ -817,7 +835,8 @@ module.exports.printConsum = async (req, res) => {
       worksheet.getColumn(7).width = 13; 
       worksheet.getColumn(8).width = 13; 
       worksheet.getColumn(9).width = 13; 
-      worksheet.getColumn(10).eachCell((cell) => {
+      worksheet.getColumn(10).width = 13; 
+      worksheet.getColumn(11).eachCell((cell) => {
         cell.font = {
           bold: true,
           size: 14
@@ -841,10 +860,6 @@ module.exports.printConsum = async (req, res) => {
     console.log(err)
   }
 }
-
-
-
-
 
 
 
@@ -1082,9 +1097,48 @@ module.exports.factura = async (req, res, next) => {
   let valFaraTva = 0
   let valTva = 0
   doc.font("public/font/RobotoSlab-Regular.ttf");
-  doc.fontSize(8)
-  savedBill.products.forEach((el, i) => {
-    const price = el.price - el.discount
+  doc.fontSize(9)
+  let products = []
+  savedBill.products.forEach(el => {
+    const existingProduct = products.find(p => p.name === el.name)
+    if(existingProduct){
+      existingProduct.quantity += el.quantity
+    } else {
+      products.push(el)
+    }
+  })
+  if(nota.tips > 0){
+    const tips ={
+      name: 'Bacsis',
+      quantity: 1,
+      price: nota.tips,
+      total: nota.tips,
+      tva: 0,
+      discount: 0,
+    }
+    products.push(tips)
+  }
+  const productsCount = products.length
+  let rowHeigth = 12
+
+  if(productsCount >= 25 && productsCount <= 40){
+    doc.fontSize(8)
+    rowHeigth = 10
+  }
+  if(productsCount >= 41 && productsCount <= 50){
+    doc.fontSize(6)
+    rowHeigth = 8
+  }
+  if(productsCount > 50){
+    doc.fontSize(5)
+    rowHeigth = 7
+  }
+
+  products.forEach((el, i) => {
+    const price = +el.total - el.discount
+    if(el.name.length > 30){
+      el.name = el.name.slice(0, 40)
+    }
       let newValue = y + heghtValue
       doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
       doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
@@ -1098,7 +1152,7 @@ module.exports.factura = async (req, res, next) => {
       const valTotProdTva = round((el.quantity * price) - (el.quantity * (price - (price * (el.tva / 100)))))
       valFaraTva += valTotProdFaraTva
       valTva += valTotProdTva
-      heghtValue += 12
+      heghtValue += rowHeigth
   })
 
   doc.fontSize(10)

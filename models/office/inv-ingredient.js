@@ -10,36 +10,52 @@ const invIngSchema = new Schema({
   },
   um: {
     type: String,
-    required: true,
   },
   qty: {
     type: Number,
     default: 0
   },
-  updateLog: [
+  uploadLog: [
     {
-      index: {
-        type: Number,
-        index: true
-      },
       date: String,
-      suplier: String,
-      qty: Number
-
+      qty: Number,
+      operation: {
+        name: {
+          type: String,
+          enum: ['intrare', 'transfer', 'intoarcere']
+        },
+        details: String,
+      }
     }
   ],
-  saleLog: [
+  unloadLog: [
+    {
+      date: String,
+      qty: Number,
+      operation: {
+        name: {
+          type: String,
+          enum: ['vanzare', 'transfer', 'intoarcere']
+        },
+        details: String,
+      }
+    }
+  ],
+  inventary: [
     {
       index: {
         type: Number,
         index: true
       },
-      product: String,
-      date: String,
+      day: String,
       qty: Number
     }
   ],
   price: {
+    type: Number,
+    default: 0
+  },
+  sellPrice: {
     type: Number,
     default: 0
   },
