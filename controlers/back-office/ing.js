@@ -21,6 +21,7 @@ module.exports.saveIng = async(req, res, next) => {
   
     module.exports.searchIng = async (req, res, next) => {
       const loc = req.body.loc
+      console.log(loc)
       try{  
         let filterTo = {}
         const filter = req.body.filter

@@ -19,7 +19,10 @@ module.exports.getOrder = async (req, res, next) => {
         const startTime = new Date(start).setHours(0,0,0,0)
         const endTime = new Date(end).setHours(23, 59, 59, 9999)
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
+                                .populate({path: 'products.ings.ing', populate: {path: 'ings.ing'}})
+                                .populate({path: 'products.toppings.ing', populate: {path: 'ings.ing'}})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
+        console.log(orders[0])
         res.status(200).json({orders: orders, delProducts: delProds})
     }
 

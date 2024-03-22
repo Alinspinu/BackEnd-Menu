@@ -32,6 +32,7 @@ const subRoutes = require('./routes/back-office/subProduct')
 const catRoutes = require('./routes/back-office/cats')
 const gossipsRoutes = require('./routes/gossips')
 const notifRoutes = require('./routes/notifications')
+const printRoutes = require('./routes/print')
 
 const fs = require('fs');
 const https = require('https');
@@ -48,7 +49,6 @@ db.once("open", () => {
 });
 
 
-
 app.use(helmet.contentSecurityPolicy(helmetConfig));
 
 app.engine("ejs", ejsMate);
@@ -58,7 +58,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors())
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }))
 
 app.use("/orders", ordersTrueRoutes);
 app.use('/pay', payRoutes);
@@ -77,6 +77,7 @@ app.use('/ing', ingRoutes);
 app.use('/sub', subRoutes);
 app.use('/cat', catRoutes);
 app.use('/gossips', gossipsRoutes)
+app.use('/print', printRoutes)
 
 
 

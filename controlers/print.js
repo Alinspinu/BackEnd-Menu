@@ -608,7 +608,6 @@ module.exports.printNir = async (req, res, next) => {
       cell.alignment = {horizontal: 'right'}
   })
 
-    console.log(totalsRowNumber)
         worksheet.getColumn(1).width = 5;
         worksheet.getColumn(2).width = 25; 
         worksheet.getColumn(3).width = 10; 
@@ -653,7 +652,6 @@ module.exports.printConsum = async (req, res) => {
         populate: {path: 'ings.ing'}
       }
     ])
-    console.log('numar comenzi', orders.length)
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
@@ -1229,6 +1227,446 @@ module.exports.factura = async (req, res, next) => {
 
 
 
+module.exports.saleProducts = async (req, res, next) => {
+  const {products, startDay, endDay} = req.body
+  const parsedProducts = JSON.parse(products)
+  try{
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(`Produse vandute`);
+  
+  
+    const docTitle =  [
+      `Centralizator produse vândute în perioada ${startDay} -- ${endDay}`,
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+      ]
+    const header = [
+      'Nr',
+      `Denumire Produs`,
+      'Cantitate',
+      'Preț UM',
+      `Discount`, 
+      `Total`, 
+      'Total Încasat',
+    ]
+    worksheet.addRow(docTitle)
+    worksheet.addRow()
+    worksheet.addRow(header)
+    let totalSale = 0
+    let totalDiscount = 0
+    parsedProducts.forEach((product, i) => {
+      const total = round(product.quantity * product.price - product.discount)
+      worksheet.addRow(
+        [
+          `${i+1}`,
+          `${product.name}`,
+          `${product.quantity} buc`,
+          `${product.price} Lei`,
+          `${round(product.discount)} Lei`,
+          `${round(product.quantity * product.price)} Lei`,
+          `${total} Lei`
+        ]
+        )
+        totalDiscount += product.discount
+        totalSale += total
+    })
+  
+    const totalsRow = [
+      'TOTALURI',
+      '',
+      '',
+      '',
+      `- ${round(totalDiscount)} Lei`,
+      `+ ${round(totalDiscount + totalSale)} Lei`,
+      `= ${round(totalSale)} Lei`,
+    ]
+    worksheet.addRow()
+    worksheet.addRow(totalsRow)
+  
+    const totalsRowNumber = worksheet.lastRow.number
+    worksheet.getRow(totalsRowNumber).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+    })
+    worksheet.getRow(1).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+    })
+    worksheet.getRow(3).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            // size: 14
+        }
+    })
+  
+    worksheet.getColumn(1).width = 5;
+    worksheet.getColumn(2).width = 35; 
+    worksheet.getColumn(3).width = 10; 
+    worksheet.getColumn(4).width = 10; 
+    worksheet.getColumn(5).width = 10; 
+    worksheet.getColumn(6).width = 10; 
+    worksheet.getColumn(7).width = 18; 
+    worksheet.getColumn(7).eachCell((cell) => {
+      cell.font = {
+        bold: true,
+        size: 14
+    },
+      cell.alignment = { vertical: "middle", horizontal: 'right'}
+    }) 
+    worksheet.mergeCells(`A1:G1`)
+    worksheet.mergeCells(`A2:G2`)
+    worksheet.mergeCells(`A${totalsRowNumber}:D${totalsRowNumber}`)
+    worksheet.mergeCells(`A${totalsRowNumber-1}:G${totalsRowNumber-1}`)
+  
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+    workbook.xlsx.write(res)
+    .then(() => {
+      res.end();
+    })
+    .catch((error) => {
+      console.error('Error writing Excel file:', error);
+      res.status(500).send('Internal Server Error');
+    });
+  } catch(err){
+    console.log(err)
+    res.status(500).json({message: err.message})
+  }
+}
+
+
+
+
+module.exports.printConsumption = async (req, res, next) => {
+  const {ings, startDay, endDay} = req.body
+  const parsedIngs = JSON.parse(ings)
+
+  try{
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
+    const docTitle =  [
+      `Centralizator consum materii prime ${startDay} -- ${endDay}`,
+       '',
+       '',
+       '',
+       '',
+       '',
+      ]
+    const header = [
+      'Nr',
+      `Denumire Ingredient`,
+      `Consum`, 
+      'UM',
+      `Pret UM`,
+      `Total`, 
+    ]
+    worksheet.addRow(docTitle)
+    worksheet.addRow()
+    worksheet.addRow(header)
+
+    let totalConsumption = 0
+
+    parsedIngs.forEach((ing, i) =>{
+      const total = round(ing.qty * ing.ing.price)
+      worksheet.addRow(
+        [
+          `${i+1}`,
+          `${ing.ing.name}`,
+          `${round(ing.qty)}`,
+          `${ing.ing.um}`,
+          `${ing.ing.price} Lei`,
+          `${round(ing.qty * ing.ing.price)} Lei`,
+        ]
+        )
+        if(total){
+          totalConsumption += total
+        }
+    })
+    const totalsRow = [
+      'TOTAL CONSUM',
+      '',
+      '',
+      '',
+      '',
+      `${round(totalConsumption)} Lei`,
+ 
+    ]
+    worksheet.addRow()
+    worksheet.addRow(totalsRow)
+
+    const totalsRowNumber = worksheet.lastRow.number
+    worksheet.getRow(totalsRowNumber).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+    })
+    worksheet.getRow(1).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 15
+        }
+    })
+    worksheet.getRow(3).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            // size: 15
+        }
+    })
+
+    worksheet.getColumn(1).width = 5;
+    worksheet.getColumn(2).width = 30; 
+    worksheet.getColumn(3).width = 10; 
+    worksheet.getColumn(4).width = 10; 
+    worksheet.getColumn(5).width = 10; 
+    worksheet.getColumn(6).width = 15; 
+    worksheet.getColumn(5).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'right'}
+    }) 
+    worksheet.getColumn(6).eachCell((cell) => {
+      cell.font = {
+        bold: true,
+        size: 14
+    },
+      cell.alignment = { vertical: "middle", horizontal: 'right'}
+    }) 
+    worksheet.mergeCells(`A1:F1`)
+    worksheet.mergeCells(`A2:F2`)
+    worksheet.mergeCells(`A${totalsRowNumber}:D${totalsRowNumber}`)
+    worksheet.mergeCells(`A${totalsRowNumber-1}:F${totalsRowNumber-1}`)
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+    workbook.xlsx.write(res)
+    .then(() => {
+      res.end();
+    })
+    .catch((error) => {
+      console.error('Error writing Excel file:', error);
+      res.status(500).send('Internal Server Error');
+    });
+  } catch(err){
+  console.log(err)
+}
+}
+
+
+
+module.exports.printProduction = async (req, res, next) => {
+  const {products, startDay, endDay} = req.body
+  const parsedProducts = JSON.parse(products)
+  try{
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(`Produse vandute`);
+  
+  
+    const docTitle =  [
+      `Raport productie detaliat în perioada ${startDay} pana la ${endDay}`,
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+      ]
+    const header = [
+      'Nr',
+      `Denumire Produs / Ingredient`,
+      '(Rețetă / 1 Buc)',
+      'Cantitate',
+      'Preț UM',
+      'Discount',
+      `Total-Ing`, 
+      `Total`, 
+      'Adaos',
+    ]
+    worksheet.addRow(docTitle)
+    worksheet.addRow()
+    let totalSale = 0
+    let totalCons = 0
+    parsedProducts.forEach((product, i) => {
+      const total = round(product.quantity * product.price - product.discount)
+      worksheet.addRow(header)
+      worksheet.addRow(
+        [ 
+          `${i+1}`,
+          `${product.name}`,
+          '',
+          `${product.quantity} buc`,
+          `${product.price} Lei`,
+          `${round(product.discount)} Lei`,
+          '',
+          `${total} Lei`,
+          '',
+        ]
+        )
+        const rowCount = worksheet.rowCount
+        worksheet.getRow(rowCount).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+        }
+    })
+      totalSale += total
+      const ings =  showProduction(product)
+      let totalRecipe = 0
+      console.log(ings.length)
+      ings.forEach((ing, i) => {
+        const tot = round(ing.qty * ing.ing.price * product.quantity)
+        worksheet.addRow(
+          [
+            'Ing',
+            `${ing.ing.name}`,
+            `${round(ing.qty)} ${ing.ing.um}`,
+            `${ing.qty * product.quantity} ${ing.ing.um}`,
+            `${ing.ing.price} Lei`,
+            '',
+            `${tot} Lei`,
+            '',
+          ]
+          )
+          totalRecipe += tot
+          totalCons += tot 
+      })
+      const recipeTotal = [
+        `Total consum ingrediente (${product.quantity} X ${product.name})`,
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        `${round(totalRecipe)} Lei`,
+        `${round((total-totalRecipe)/totalRecipe * 100)} %`,
+      ]
+      worksheet.addRow(recipeTotal)
+      const recipeTotalIndex = worksheet.rowCount
+      worksheet.getRow(recipeTotalIndex).eachCell((cell) => {
+        cell.font = {
+          bold: true
+        }
+      })
+      worksheet.mergeCells(`A${recipeTotalIndex}:F${recipeTotalIndex}`)
+      worksheet.addRow()
+      worksheet.mergeCells(`A${recipeTotalIndex+1}:I${recipeTotalIndex+1}`)
+})
+
+    const totalsRow = [
+      'TOTAL ÎNCASAT',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      `${round(totalSale)} Lei`,
+    ]
+
+    const totalsCons = [
+      'TOTAL CONSUM',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      `${round(totalCons)} Lei`,
+    ]
+
+    const totalsAdaos = [
+      'TOTAL ADAOS COMERCIAL',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+      `${round((totalSale-totalCons)/ totalCons * 100)} %`,
+    ]
+    worksheet.addRow()
+    worksheet.addRow(totalsRow)
+    worksheet.addRow(totalsCons)
+    worksheet.addRow(totalsAdaos)
+  
+    const totalsRowNumber = worksheet.lastRow.number
+    worksheet.getRow(totalsRowNumber-2).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+    })
+    worksheet.getRow(totalsRowNumber-1).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+    })
+    worksheet.getRow(totalsRowNumber).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+    })
+    worksheet.getRow(1).eachCell((cell)=>{
+        cell.font = {
+            bold: true,
+            size: 14
+        }
+    })
+  
+    worksheet.getColumn(1).width = 5;
+    worksheet.getColumn(2).width = 25;
+    worksheet.getColumn(3).width = 13; 
+    worksheet.getColumn(4).width = 10; 
+    worksheet.getColumn(5).width = 10; 
+    worksheet.getColumn(6).width = 10; 
+    worksheet.getColumn(7).width = 10; 
+    worksheet.getColumn(8).width = 10; 
+    worksheet.getColumn(9).width = 15; 
+    worksheet.getColumn(9).eachCell((cell) => {
+      cell.font = {
+        bold: true,
+        size: 14
+    },
+      cell.alignment = { vertical: "middle", horizontal: 'right'}
+    }) 
+    worksheet.mergeCells(`A1:I1`)
+    worksheet.mergeCells(`A2:I2`)
+    worksheet.mergeCells(`A${totalsRowNumber-3}:I${totalsRowNumber-3}`)
+    worksheet.mergeCells(`A${totalsRowNumber-2}:H${totalsRowNumber-2}`)
+    worksheet.mergeCells(`A${totalsRowNumber-1}:H${totalsRowNumber-1}`)
+    worksheet.mergeCells(`A${totalsRowNumber}:H${totalsRowNumber}`)
+  
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+    workbook.xlsx.write(res)
+    .then(() => {
+      res.end();
+    })
+    .catch((error) => {
+      console.error('Error writing Excel file:', error);
+      res.status(500).send('Internal Server Error');
+    });
+  } catch(err){
+    console.log(err)
+    res.status(500).json({message: err.message})
+  }
+}
+
+
+
 
 
 
@@ -1240,4 +1678,67 @@ module.exports.factura = async (req, res, next) => {
   }
   function cap(value) {
     return String(value).charAt(0).toUpperCase() + String(value).slice(1);
+  }
+
+
+
+
+  function showProduction(product){
+    let = productIngredients = []
+    const productQty = product.quantity
+    const ingredients = [...product.ings]
+    ingredients.forEach((ing) => {
+      if(ing.ings && ing.ing.ings.length){
+        ing.ing.ings.forEach((ing) => {
+          if(ing.ing){
+            const existingIng = this.productIngredients.find((p) => p.ing._id === ing.ing._id)
+            if(existingIng){
+              existingIng.qty += ing.qty
+            } else {
+              const ig = {...ing}
+              this.productIngredients.push(ig)
+            }
+          }
+          })
+        }
+        if(ing.ing){
+          const existingIng = this.productIngredients.find((p) => p.ing._id === ing.ing._id)
+          if(existingIng){
+            existingIng.qty += ing.qty
+          } else {
+            const ig = {...ing}
+            this.productIngredients.push(ig)
+          }
+        }
+    })
+    if(product.toppings.length){
+      const toppings = [...product.toppings]
+      toppings.forEach((topping) => {
+        if(topping.ing){
+          if(topping.ing.ings.length){
+            topping.ing.ings.forEach((ing) => {
+              console.log(ing)
+              if(ing.ing){
+                const existingIng = this.productIngredients.find((p) => p.ing._id === ing.ing._id)
+                if(existingIng){
+                  existingIng.qty += ing.qty
+                } else {
+                  const ig = {...ing}
+                  this.productIngredients.push(ig)
+                }
+              }
+            })
+          } else {
+            const existingIng = this.productIngredients.find((p) => p.ing._id === topping.ing._id)
+            if(existingIng){
+              existingIng.qty += topping.qty
+            } else {
+              const topp = {...{qty: topping.qty, ing: topping.ing}}
+              this.productIngredients.push(topp)
+            }
+          }
+        }
+      })
+    }
+    return productIngredients
   }
