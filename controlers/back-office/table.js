@@ -36,7 +36,6 @@ module.exports.sendTables = async (req, res, next) => {
             res.status(200).json(sortedTables)
         } else {
             const sortedTables = tables.sort((a,b) => a.index - b.index)
-            console.log(sortedTables)
             res.status(200).json(sortedTables)
         }
     } catch(err){

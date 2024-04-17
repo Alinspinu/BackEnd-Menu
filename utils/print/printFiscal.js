@@ -113,7 +113,7 @@ async function printNefiscal(bill) {
     let data = [
         `TL^           NOTA DE PLATA NEFISCALA    `,
         "TL^ ", 
-        `TL^SE ELIBEREAZA IN CAZUL IN CARE PRODUSELE AU FOT PLATITE CU UN VOUCHER`,
+        `TL^SE ELIBEREAZA CA NOTA INFORMATIVA`,
         "TL^", 
     ];
     if(bill.products.length){
@@ -121,10 +121,14 @@ async function printNefiscal(bill) {
             let entry = `TL^  ${pro.name} --- ${pro.price} X ${pro.quantity} === ${pro.total} Lei`
             data.push(entry)
         }
-        let totalLine = `TL^ TOTAL-------${bill.payment.voucher} Lei`
+        let totalProductsLine = `TL^ Total Produse    ${bill.totalProducts}`
+        data.push(totalProductsLine)
+        let discountLine = `TL^ Discount    ${bill.discount}`
+        data.push(discountLine)
+        let totalLine = `TL^ TOTAL        ${bill.total} Lei`
         let thanks = `TL^MULTUMIM SI VA MAI ASTEPTAM!`
         data.push(totalLine)
-        // console.log(data)
+        console.log(data)
         // axios.post(url, data, {
         //     headers: {
         //         'Content-Type': 'application/json',

@@ -23,6 +23,7 @@ const deletetProductSchema = new Schema ({
             enum: ['in', 'out']
         },
         reason: String,
+        admin: String,
         billProduct: {
             name: {
                 type: String,

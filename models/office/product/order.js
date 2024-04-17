@@ -45,10 +45,13 @@ const orderTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+
     voucher:{
         type: Number,
         default: 0
     },
+
+    inOrOut: String,
     status: {
         type: String,
         default: "open",
@@ -101,7 +104,6 @@ const orderTrueSchema = new Schema({
         card: Number,
         viva: Number,
         online: Number,
-        
     },
     cif: String,
     clientInfo: {
@@ -167,6 +169,8 @@ const orderTrueSchema = new Schema({
                 dep: String,
                 sub: Boolean,
                 qty: String,
+                section: String,
+                description: String,
                 quantity: {
                     type: Number,
                     required: true
@@ -239,3 +243,14 @@ orderTrueSchema.pre('deleteOne', async function (next){
 })
 
 module.exports = mongoose.model('Order', orderTrueSchema)
+
+
+
+
+
+const filter = {
+    inreg: this.isInreg,
+    unreg: this.isUnreg,
+    goods: this.isGoods,
+    prod: this.isProduction
+  }

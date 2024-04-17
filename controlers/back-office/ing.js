@@ -16,31 +16,15 @@ module.exports.saveIng = async(req, res, next) => {
       return res.status(200).json({message: `Ingredientul ${newIng.name} a fost salvat cu succes!`})
     }
   }
-
-  
   
     module.exports.searchIng = async (req, res, next) => {
       const loc = req.body.loc
-      console.log(loc)
       try{  
-        let filterTo = {}
-        const filter = req.body.filter
-        if(filter && filter.gestiune && filter.gestiune.length){
-          filterTo.gestiune = filter.gestiune
-        }
-        if(filter &&  filter.type && filter.type.length){
-          if(filter.type === "compus"){
-            filterTo.ings = { $exists: true, $ne: [] }
-          } else {
-            filterTo.ings = { $eq: [] }
-          }
-        }
-        if(filter && filter.dep && filter.dep.length){
-          filterTo.dep = filter.dep
-        }
-        filterTo.locatie = loc
-        const ings = await Ingredient.find(filterTo).populate({path: 'ings.ing'});
+        const ings = await Ingredient.find({locatie: loc})
+          .select([ '-unloadLog', '-uploadLog'])
+          .populate({path: 'ings.ing', select: '-unloadLog -uploadLog -inventary'});
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
+        console.log("ingrediente", sortedIngs.length)
         res.status(200).json(sortedIngs)
       }catch (err) {
         console.log(err)
@@ -59,12 +43,14 @@ module.exports.saveIng = async(req, res, next) => {
         res.status(500).json({message: err.message})
       }
     }
+
     module.exports.editIng = async (req, res, next) => {
       try{  
         const {id} = req.query;
         const {newIng} = req.body;
-        const ing = await Ingredient.findByIdAndUpdate(id, newIng, {new: true});
-        res.status(200).json({message: `Ingredientul ${ing.name} a fost actualizat cu succes!`})
+        await Ingredient.findByIdAndUpdate(id, newIng);
+        const ing = await Ingredient.findById(id).populate({path: "ings.ing"})
+        res.status(200).json({message: `Ingredientul ${ing.name} a fost actualizat cu succes!`, ing: ing})
       } catch(err){
         console.log(err)
         res.status(500).json({message: err.message})
@@ -101,17 +87,22 @@ module.exports.saveIng = async(req, res, next) => {
       }
     }
 
-
-
-
-
-
-
-
-
-
-
-  
+module.exports.saveManualInventary = async (req, res, next) => {
+  try{
+    const {data} = req.body
+    const ing  = await Ingredient.findById(data.ingId)
+    ing.inventary.forEach(inv => {
+      if(inv.index === data.invIndex){
+        inv.faptic = data.qtyInv
+      }
+    })
+    const newIng = await ing.save()
+    res.status(200).json({message: 'Inventarul a fost actualizat', ing: newIng})
+  } catch(err){
+    console.log(err)
+    res.status(500).json({message: err.message})
+  }
+}
 
 
 

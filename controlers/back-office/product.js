@@ -9,31 +9,17 @@ const cloudinary = require('cloudinary').v2;
 const {checkTopping, round} = require('../../utils/functions')
 
  module.exports.getProducts = async (req, res, next) => {
+    console.log('hit the function')
     try{
-      let filterTo = {}
-      const {filter} = req.body;
-      if(filter && filter.mainCat && filter.mainCat.length){
-        filterTo.mainCat = filter.mainCat
-      }
-      if(filter && filter.cat && filter.cat.length){
-        filterTo.category = new mongoose.Types.ObjectId(filter.cat);
-      } 
-      filterTo.locatie = filter.locatie
-      const products = await Product.find(filterTo).populate([
+      const {loc} = req.body
+      const products = await Product.find({locatie: loc}).populate([
         {path: 'category', select: 'name'}, 
-        {path: 'subProducts', populate: {path: 'ings.ing', select: 'price'}},
-        {path: 'ings.ing', select: 'price'}
+        {path: 'subProducts', populate: {path: 'ings.ing', select: 'price name'}},
+        {path: 'ings.ing', select: 'price name'}
     ])
+    console.log(products.length)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
-      let filterProducts = []
-      if(req.query.search.length){
-        filterProducts = sortedProducts.filter((object) =>
-        object.name.toLocaleLowerCase().includes(req.query.search.toLocaleLowerCase())
-        );
-      } else {
-        filterProducts = sortedProducts
-      }
-      res.status(200).json(filterProducts)
+      res.status(200).json(sortedProducts)
     } catch(error) {
       console.log(error);
       res.status(500).json({message: error})
@@ -43,10 +29,10 @@ const {checkTopping, round} = require('../../utils/functions')
   module.exports.getProduct = async (req, res, next) => {
     try{
       const product = await Product.findById(req.query.id).populate([
-        {path: 'subProducts', populate:{path: 'ings.ing'} }, 
+        {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
         {path: "category", select: 'name'},
-        {path: 'toppings.ing'},
-        {path: 'ings.ing'},
+        {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+        {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
     ])
       res.status(200).json(product)
     }catch(error) {
@@ -54,6 +40,7 @@ const {checkTopping, round} = require('../../utils/functions')
       res.status(500).json({message: error})
     }
   }
+
 
   module.exports.updateProductIngPeice = async (req, res, next) => {
     try{
@@ -110,7 +97,12 @@ const {checkTopping, round} = require('../../utils/functions')
         cat.product.push(product);
         await product.save();
         await cat.save();
-        const productToSend = await Product.findById(product._id);
+        const productToSend = await Product.findById(product._id).populate([
+            {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
+            {path: "category", select: 'name'},
+            {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+            {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
+        ]);
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
         res.status(200)
     } catch (err) {
@@ -171,7 +163,13 @@ module.exports.editProduct = async (req, res, next) => {
                     oldProduct.image.path = path;
                 }
                 await oldProduct.save()
-                res.status(200).json({ message: `Produst ${oldProduct.name} a fost modificat cu success!`, product: oldProduct })
+                const newProduct = await Product.findById(id).populate([
+                    {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
+                    {path: "category", select: 'name'},
+                    {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+                    {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
+                ])
+                res.status(200).json({ message: `Produst ${oldProduct.name} a fost modificat cu success!`, product: newProduct })
             } else {
                 res.status(404).json({ message: 'Produsul nu a fost găsit in baza de date!' })
             }
@@ -267,6 +265,7 @@ module.exports.delProduct = async (req, res, next) => {
     try {
         const { id } = req.query
         const product = await Product.findById(id)
+        console.log(product)
         if (!product.subProducts.length) {
             if (!product.image.filename === 'no_image_dreptunghi_ktwclc') {
                 await cloudinary.uploader.destroy(product.image.filename)
@@ -278,7 +277,7 @@ module.exports.delProduct = async (req, res, next) => {
         }
     } catch (err) {
         console.log(err)
-        res.status(err.status).json({ message: err.error.message })
+        res.status(err.status).json({ message: err.message })
     }
 }
 
@@ -353,3 +352,25 @@ module.exports.removeParingProduct = async (req, res, next) => {
         res.status(500).json({ messaje: err.error.error.message })
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+

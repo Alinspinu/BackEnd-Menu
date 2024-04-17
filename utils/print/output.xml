@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
   <align mode="center">
-    <text-line size="0:0">Ora: 14:51 </text-line>
+    <text-line size="0:0">Ora: 09:21 </text-line>
+  </align>
+  <align mode="center">
+    <text-line size="1:0">TERASA</text-line>
   </align>
   <line-feed/>
   <align mode="left">
-    <text-line size="1:0">Ghervan Ana-Maria   Masa 31</text-line>
+    <text-line size="1:0">Alin Spinu   Masa 53</text-line>
   </align>
 
   <line-feed/>
@@ -14,7 +17,14 @@
   <!-- Start of loop -->
   
     <align mode="left">
-      <text-line size="0:0">1 X Salată Baba Ganoush</text-line>
+      <text-line size="0:0">1 X Folded Eggs with Truffle</text-line>
+    </align>
+    
+    
+    <line-feed/>
+    
+    <align mode="left">
+      <text-line size="0:0">1 X Brioșă Englezească cu Ouă Benedict</text-line>
     </align>
     
     

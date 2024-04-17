@@ -22,6 +22,9 @@ function hashPassword(password) {
 function round(num){
     return Math.round(num * 1000) / 1000
 }
+function roundd(num){
+    return Math.round(num * 100000) / 100000
+}
 
 
 async function checkTopping(toppings, res, loc) {
@@ -93,4 +96,4 @@ function formatedDateToShow(date){
         return decryptedData;
     }
 
-module.exports = {comparePasswords, hashPassword, round, checkTopping, formatedDateToShow, log, encryptData, decryptData}
+module.exports = {comparePasswords, hashPassword, round, checkTopping, formatedDateToShow, log, encryptData, decryptData, roundd}

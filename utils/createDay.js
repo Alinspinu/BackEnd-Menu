@@ -9,11 +9,15 @@ const createCashRegisterDay = async (loc) => {
     firtsDay.save()
   }
   
-  let startDate = latestDocument ? latestDocument.date : currentDate;
+  let stDate = latestDocument ? latestDocument.date : currentDate;
   let cashIn = latestDocument ? latestDocument.cashOut : defaultValue;
-  
-  
+  const strDate = new Date(stDate)
+  strDate.setUTCHours(0,0,0,0)
+  let startDate = strDate
+
+
   while (startDate < currentDate) {
+    let inDate = new Date(startDate)
     const existingDocument = await Day.findOne({locatie: loc, date: startDate });  
     if (!existingDocument) {
       startDate.setUTCHours(0,0,0,0)
@@ -22,6 +26,11 @@ const createCashRegisterDay = async (loc) => {
       console.log('Document created for', startDate);
     }
     startDate.setDate(startDate.getDate() + 1);
+
+    if (inDate.getTime() === startDate.getTime()) {
+          console.log('Dates are equal');
+          break;
+    }
   }
 };
 

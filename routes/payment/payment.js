@@ -14,7 +14,7 @@ router.route('/pos').post(payRoutes.posPaymentCheck)
 router.route('/reports').get(payRoutes.reports)
 router.route('/in-and-out').post(payRoutes.cashInandOut)
 router.route('/change-payment-method').post(payRoutes.changePaymentMethod)
-
+router.route('/print-unreg').post(payRoutes.printUnreg)
 
 
 module.exports = router;

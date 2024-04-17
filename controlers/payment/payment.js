@@ -200,30 +200,46 @@ module.exports.cashInandOut = async (req, res, next) =>{
 module.exports.printBill = async (req, res, next) => {
     try{
         const {bill} = req.body
+        console.log("bill dont", bill.dont)
         bill.status = 'done'
         bill.pending = false
         const id = bill.clientInfo._id
         if(id && id.length){
             const client = await User.findById(id)
-            console.log(client)
             if(client){
                 client.orders.push(bill)
                 client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
             }
             await client.save()
         }
-        if(bill.total > 0) {
-            printBill(bill)
+        const savedBill = await Order.findByIdAndUpdate(bill._id, bill, {new: true})
+        if(savedBill){
+            if(bill.total > 0) {
+                printBill(savedBill)
+                res.status(200).json({message: "Bonul a fos tipărit!", bill: savedBill})
+            } else {
+                res.status(200).json({message: "Nota de plata a fost salvată!", bill: savedBill})
+            }
+        } else {
+            throw new Error('Nota de plată nu a putut fi salvată!')
         }
-
-        await Order.findByIdAndUpdate(bill._id, bill)
-        res.status(200).json({message: "Bonul a fos tipărit!"})
     } catch(err) {
         console.log(err)
         res.status(500).json({message: err.message})
     }
 }
 
+module.exports.printUnreg = async (req, res, next) => {
+    try{
+        const {bill} = req.body
+        printNefiscal(bill)
+        res.status(200).json({message: 'Bonul a fost tipărit!'})
+
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
 
 module.exports.changePaymentMethod = async (req, res, next) => {
     try{

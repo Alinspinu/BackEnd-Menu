@@ -48,7 +48,12 @@ const invIngSchema = new Schema({
         index: true
       },
       day: String,
-      qty: Number
+      qty: Number,
+      faptic: {
+        type: Number,
+        default: 0
+      }
+      
     }
   ],
   price: {
@@ -100,6 +105,8 @@ invIngSchema.pre('deleteOne', { document: true }, async function (next) {
   await SubProduct.updateMany({ 'ings.ing': this._id }, { $pull: { ings: {ing: this._id} } }).exec()
   next()
 })
+
+
 
 
 module.exports = mongoose.model("IngredientInv", invIngSchema);

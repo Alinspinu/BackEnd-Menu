@@ -47,7 +47,7 @@ module.exports.addEntry = async (req, res, next) => {
             await day.save()
             res.status(200).json(day)
         } else {
-
+  
         }
     } else {
         res.status(226).json({message: 'Nu ai completat toate campurile mai incearca.. :)'})
@@ -102,7 +102,6 @@ module.exports.createXcel = async (req, res, next) => {
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Sheet 1');
         const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end} }).populate({ path: 'entry' }).populate({path: 'locatie'})
-        console.log(days)
         const day1 = days[0]
         const lastDay = days.at(-1)
         let totalIn = 0
@@ -122,6 +121,7 @@ module.exports.createXcel = async (req, res, next) => {
            totalIn += dayIn
            totalOut += dayOut
         })
+      
         const docTitle =  [
             `${days[0].locatie.bussinessName}`,'',`Registru de casă perioadă ${startDateToShow} -- ${endDateToShow}`,'','']
         const header = ['Nr',`Data`,'Descriere','Tip', `Lei`]
@@ -133,10 +133,15 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.addRow([])
         worksheet.addRow(cashIn)
         worksheet.addRow(header)
+        const entryArr = []
         days.forEach(el => {
             el.entry.forEach(el => {
-                worksheet.addRow([`${el.index}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Cheltuiala'}`,`${el.amount}`])
+                entryArr.push(el)
             })
+        })
+        const sortedEntries = entryArr.sort((a,b) => b.index - a.index)
+        sortedEntries.forEach(el => {
+            worksheet.addRow([`${el.index}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Cheltuiala'}`,`${el.amount}`])
         })
         worksheet.addRow(footer)
         worksheet.addRow(inAndOut)

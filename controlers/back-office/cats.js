@@ -5,19 +5,20 @@ const cloudinary = require('cloudinary').v2;
 module.exports.sendCats = async (req, res, next) => {
     try {
         const { loc } = req.query;
-        console.log(req.query)
         const cats = await Cat.find({locatie: loc}).populate({
             path: 'product',
             populate: [
                 { path: 'category' },
                 {
                     path: 'subProducts',
-                    populate: {
-                        path: 'product',
-                    }
+                    populate: [
+                        {path: 'product'},
+                        {path: 'ings.ing', select: 'name qty'}
+                    ],
                 },
                 { path: 'paring', populate: { path: 'category', select: 'name' } },
-                { path: 'ingredients.ingredient' }
+                { path: 'ingredients.ingredient' },
+                { path: 'ings.ing', select: 'name qty' }
             ]
         }).maxTimeMS(20000);
         res.status(200).json(cats);

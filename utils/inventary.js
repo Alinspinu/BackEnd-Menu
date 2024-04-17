@@ -36,7 +36,7 @@ async function unloadIngs (ings, qtyProdus, operation) {
                 qty: ing.qty,
                 ing: lapte._id
               }
-                uploadIngs([ingTo],  qtyProdus, operation)
+                uploadIngs([ingTo],  qtyProdus, 'intoarcere')
             }
         }
 
@@ -82,7 +82,7 @@ async function uploadIngs (ings, qtyProdus, operation) {
                 qty: ing.qty,
                 ing: lapte._id
               }
-                unloadIngs([ingTo],  qtyProdus, operation)
+                unloadIngs([ingTo],  qtyProdus, 'intoarcere')
             }
       }
 

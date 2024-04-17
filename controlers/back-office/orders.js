@@ -7,9 +7,13 @@ const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../
 const {formatedDateToShow, round} = require('../../utils/functions')
 
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
+const {getIngredients, getBillProducts} = require('../../utils/reports')
 
 const {print} = require('../../utils/print/printOrders')
 const {printBill, posPayment} = require('../../utils/print/printFiscal')
+
+const io = require('socket.io-client')
+const socket = io("https://live669-0bac3349fa62.herokuapp.com")
 
 //************************SEND ORDERS********************** */
 
@@ -19,10 +23,7 @@ module.exports.getOrder = async (req, res, next) => {
         const startTime = new Date(start).setHours(0,0,0,0)
         const endTime = new Date(end).setHours(23, 59, 59, 9999)
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
-                                .populate({path: 'products.ings.ing', populate: {path: 'ings.ing'}})
-                                .populate({path: 'products.toppings.ing', populate: {path: 'ings.ing'}})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
-        console.log(orders[0])
         res.status(200).json({orders: orders, delProducts: delProds})
     }
 
@@ -45,6 +46,67 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
+module.exports.getHavyOrders = async (req, res, next) => {
+    try{
+        const {start, end, day, loc, filter} = req.body
+        if(start && end){
+            const startTime = new Date(start).setHours(0,0,0,0)
+            const endTime = new Date(end).setHours(23, 59, 59, 9999)
+            const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
+                                    .select([
+                                        'dont',
+                                        'products.name', 
+                                        'products.discount', 
+                                        'products.sub', 
+                                        'products.quantity', 
+                                        'products.price', 
+                                        'products.total', 
+                                        'products.toppings', 
+                                        'products.ings',
+                                        'products.dep',
+                                        'products.section',
+
+                                    ])
+                                    .populate({
+                                        path: 'products.ings.ing',
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient', 
+                                        populate: {
+                                            path: 'ings.ing', 
+                                            select: 'name price qty tva tvaPrice sellPrice um productIngredient ings', 
+                                            populate: { 
+                                                path:'ings.ing',
+                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings"
+                                            }
+                                        }
+                                    })
+                                    .populate({
+                                        path: 'products.toppings.ing', 
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient', 
+                                        populate: {
+                                            path: 'ings.ing',
+                                             select: 'name price qty tva tvaPrice sellPrice um productIngredient ings',
+                                             populate: {
+                                                path: 'ings.ing',
+                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings", 
+                                                }
+                                            }
+                                        })                   
+            console.log('orders length',orders.length)
+            const result = await getBillProducts(orders, filter)
+            // console.log('products length', .length)
+            const ingredients = await getIngredients(result.allProd)
+            console.log('ingredients length', ingredients.length)
+            res.status(200).json({result: result, ingredients: ingredients})
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err})
+    }
+}
+
+
+
+
 
 
 module.exports.sendDeletedproduct = async (req, res, next) => {
@@ -65,7 +127,8 @@ module.exports.getOrderByUser = async (req, res, nex) => {
     const end = new Date(date).setHours(23, 59, 59, 999)
      const {userId} = req.query;
      const user = await User.findById(userId)
-    const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', updatedAt: {$gte: start, $lt: end} })   
+     console.log((end-start) / (1000 * 60 * 60) )
+    const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
     res.status(200).json(orders)
     } catch (err){
         console.log(err)
@@ -79,7 +142,8 @@ module.exports.getAllOrders = async (req, res, next) => {
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const {loc} = req.query;
-        const orders = await Order.find({locatie: loc, status: 'done', updatedAt: {$gte: start, $lt: end} }) 
+        const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lt: end} }) 
+        console.log(orders)
         res.status(200).json(orders) 
     } catch(err){
         console.log(err)
@@ -118,6 +182,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
     const {bill} = req.body;
     const parsedBill = JSON.parse(bill)
     const {index, billId} = req.query;
+    console.log(parsedBill)
     try{
         if(billId === "new"){
             delete parsedBill._id
@@ -194,6 +259,7 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     const {product} = req.body
     const { ['_id']:_, ...newProduct } = product;
     const delProd = new DelProd(newProduct)
+    console.log(delProd)
     delProd.employee.name = product.employee.fullName
     await delProd.save()
     res.status(200).json({message: 'The product was registred as deleted!'})
@@ -228,6 +294,8 @@ module.exports.saveOrder = async (req, res, next) => {
                 newOrder.clientInfo.cashBack = user.cashBack
                 newOrder.preOrder = true
                 const savedOrder = await newOrder.save()
+
+                
                 const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
                 console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
                 if(newOrder.masa > 0){
@@ -244,12 +312,16 @@ module.exports.saveOrder = async (req, res, next) => {
                 if(order.payOnline){
                     action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
+                socket.emit('orderId', JSON.stringify(savedOrder))
                 await sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
-                res.status(200).json({ user: user, orderId: newOrder._id, orderIndex: newOrder.index, preOrderPickUpDate: newOrder.preOrderPickUpDate });
+                res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate });
             }
         } else {
             order.preOrder = true
             const savedOrder = await newOrder.save();
+
+            socket.emit('orderId', JSON.stringify(savedOrder))
+
             const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
             console.log(`Order ${dbOrder._id} saved without a user!`)
             if(newOrder.masa > 0){
@@ -331,5 +403,80 @@ module.exports.deleteOrder = async (req, res, next) => {
         res.status(500).json({message: err.message})
     }   
 }
+
+
+
+// module.exports.updateProducts = async (req, res, next) => {
+//     console.log('hit the function')
+//   try {
+
+//     const start = new Date('2024-01-01').setHours(0,0,0,0)
+//     console.log(start)
+//     // Find all documents in the collection
+//     const documents = await Order.find({ createdAt: { $gte: start}, locatie: "65ba7dcf1694ff43f52d44ed"}).select(['products']).populate({path: 'products.ings.ing', select: 'name'});
+//     console.log(documents.length)
+//     let count = 0
+//     for (const doc of documents) {
+//       // Update products array in the document
+//       doc.products = doc.products.map(product => {
+//         if(product.name === "Brazilia Agua Lipa-1 kg"){
+//             count += 1
+//             console.log(count)
+//             product.ings[0].qty = 1
+//         }
+//         return product;
+//       });
+//       doc.totalProducts = doc.products.length
+//       // Save the updated document back to the database
+//       await doc.save();
+//     }
+//     res.send('all good in the hood')
+//     console.log('Products updated successfully.');
+//   } catch (error) {
+//     console.error('Error updating products:', error);
+//   }
+// }
+
+
+// module.exports.updateProducts = async (req, res, next) => {
+//     console.log('hit the function')
+//   try {
+
+//     const start = new Date('2024-01-01').setHours(0,0,0,0)
+//     console.log(start)
+//     // Find all documents in the collection
+//     const documents = await Order.find({ createdAt: { $gte: start}, locatie: "65ba7dcf1694ff43f52d44ed"}).select(['products']).populate({path: 'products.ings.ing', select: 'name'});
+//     console.log(documents.length)
+//     let count = 0
+//     for (const doc of documents) {
+//       // Update products array in the document
+//       doc.products = doc.products.map(product => {
+//         product.ings.forEach(ing => {
+//             if(ing.ing && (
+//                 ing.ing.name === "Sirop Apple Pie" || 
+//                 ing.ing.name === "Sirop Caramel" ||
+//                 ing.ing.name === "Sirop Ciocolata" ||
+//                 ing.ing.name === "Sirop de Cocos" ||
+//                 ing.ing.name === "Sirop Pumkin Spice" ||
+//                 ing.ing.name === "Sirop migdale" 
+//                 )){
+//                 count += 1
+//                 console.log(count)
+//                 ing.qty *= 2
+//             }
+//         })
+//         return product;
+//       });
+//       doc.totalProducts = doc.products.length
+//       // Save the updated document back to the database
+//       await doc.save();
+//     }
+//     res.send('all good in the hood')
+//     console.log('Products updated successfully.');
+//   } catch (error) {
+//     console.error('Error updating products:', error);
+//   }
+// }
+
 
 

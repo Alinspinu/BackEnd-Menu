@@ -2,7 +2,7 @@
 const Ingredient = require('../../models/office/inv-ingredient')
 const Nir = require('../../models/office/nir')
 const Suplier = require('../../models/office/suplier')
-const {round} = require('../../utils/functions')
+const {round, roundd} = require('../../utils/functions')
 
 module.exports.saveNir = async( req, res, next) => {
     const {nir, loc} = req.body;
@@ -12,8 +12,7 @@ module.exports.saveNir = async( req, res, next) => {
    try{
       const newNir = new Nir(nir)
       newNir.locatie = loc
-      const savedNir = await newNir.save()
-      const suplier = await Suplier.findById(savedNir.suplier)
+      const suplier = await Suplier.findById(nir.suplier)
 
     
       const operation = {name: 'intrare', details: suplier.name}
@@ -31,7 +30,8 @@ module.exports.saveNir = async( req, res, next) => {
               price: el.price,
               tva: el.tva,
               dep: el.dep,
-              tvaPrice: round(el.price * (1 + el.tva / 100)),
+              tvaPrice: roundd(el.price * (1 + el.tva / 100)),
+              sellPrice: el.sellPrice
             },
             $inc: {qty: el.qty},
             $push: {
@@ -45,11 +45,17 @@ module.exports.saveNir = async( req, res, next) => {
           { upsert: true, new: true }
         ).exec();
       });
-    
+      
       Promise.all(promises)
         .then((results) => {
-          console.log(`Updated/created documents: ${results}`);
-          res.status(200).json({message: "Documentul a fost salvat cu success!", nir: savedNir})
+          console.log(`Ingredientele au fost create/actualizate`);
+          newNir.save().then((savedNir) => {
+            console.log("Documentul a fost salvat cu success!");
+            res.status(200).json({ message: "Documentul a fost salvat cu success!", nir: savedNir });
+          }).catch((error) => {
+            console.error("Error saving document:", error);
+            res.status(500).json({ message: "Failed to save document" });
+          });
         })
         .catch((err) => {
           console.log(`Error: ${err}`);
@@ -91,7 +97,7 @@ module.exports.deleteNir = async (req, res, next) => {
     });
     Promise.all(promises)
     .then((results) => {
-      console.log(`Updated documents: ${results}`);
+      console.log(`Ingredientele au fost actualizate`);
       res.status(200).json({message: "Documentul a fos sters cu success, stocul a fost actualizat!"})
     })
     .catch((err) => {
@@ -130,6 +136,8 @@ module.exports.getNirs = async(req, res, next) => {
     res.status(500).json({messahe: err.message})
   }
 }
+
+
 
 module.exports.getNirsByDate = async (req, res, next) => {
   try{

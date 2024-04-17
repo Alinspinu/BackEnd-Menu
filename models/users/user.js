@@ -78,7 +78,38 @@ const UserTrueSchema = new Schema({
         },
         access: {
             type: Number,
-        }
+        },
+        salary: {
+            inHeand: {
+                type: Number
+            },
+            onPaper: {
+                salary: Number,
+                tax: Number,
+            }
+        },
+        workLog: [
+            {
+                day: Date,
+                checkIn: String,
+                chekOut: String,
+                hours: Number,
+                earnd: Number,
+                comments: [
+                    {
+                    user: {
+                        type: Schema.Types.ObjectId,
+                        ref: 'User'
+                    },
+                    comment: String,
+                    type: {
+                        type: String,
+                        enum: ['positive', 'negative']
+                    }
+                    },
+                ],
+            }
+        ],
     },
     status: {
         type: String,

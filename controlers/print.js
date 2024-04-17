@@ -134,8 +134,8 @@ module.exports.printNir = async (req, res, next) => {
     doc.fontSize(9);
     doc.text("Nr.", 10, y, { width: 15 });
     doc.text("Denumire Articol", 30, y, { width: 210 });
-    doc.text("UM", 215, headerHeigth, { width: 30, align: "center" });
-    doc.text("Qty", 250, headerHeigth, { width: 20, align: "center" });
+    doc.text("UM", 215, headerHeigth, { width: 25, align: "center" });
+    doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
     doc.text("Tip", 270, headerHeigth, { width: 65, align: "center" });
     doc.text("Gestiune", 340, headerHeigth, { width: 50, align: "center" });
   
@@ -188,9 +188,9 @@ module.exports.printNir = async (req, res, next) => {
     nir.ingredients.forEach((produs, i) => {
       doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
       doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
-      doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 30, align: "center" });
-      doc.text(produs.qty.toString(), 250, y + i * lineHeigth + lineHeigth, {
-        width: 20,
+      doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 25, align: "center" });
+      doc.text(round(produs.qty).toString(), 250, y + i * lineHeigth + lineHeigth, {
+        width: 30,
         align: "center",
       });
       doc.text(produs.dep, 270, y + i * lineHeigth + lineHeigth, {
@@ -529,11 +529,12 @@ module.exports.printNir = async (req, res, next) => {
             }
           }
           filterTo.locatie = loc
+          filterTo.dep = filter.dep
     try{
-
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Lista ingrediente');
-        const ings = await Ingredient.find(filterTo)
+        const ings = await Ingredient.find(filterTo).select([ '-unloadLog', '-uploadLog'])
+        console.log(ings.length)
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
      
         const docTitle =  [
@@ -551,17 +552,26 @@ module.exports.printNir = async (req, res, next) => {
         worksheet.addRow(docTitle)
         worksheet.addRow(header)
         let totalPretAchizitie = 0
+       
         sortedIngs.forEach((el, i) => {
+          let qty = el.qty
           if(el.qty > 0){
             const price = round(el.qty * el.price)
             totalPretAchizitie += price
+          }
+          if(filter.date && filter.date.length){
+
+              const day = el.inventary.find(day => day.day.split('T')[0] === filter.date)
+              if(day){
+                qty = day.qty
+              }
           }
           worksheet.addRow(
             [
               `${i+1}`,
               `${el.name}`,
               `${el.um}`,
-              `${round(el.qty)}`,
+              `${round(qty)}`,
               `${el.price} Lei`,
             ]
             )
@@ -875,7 +885,7 @@ module.exports.factura = async (req, res, next) => {
   })
  const savedBill = await bill.save()
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-  const date = savedBill.createdAt
+  const date = nota.createdAt
       .toLocaleDateString("en-GB", options)
       .replace(/\//g, "-");
 
@@ -1365,8 +1375,8 @@ module.exports.printConsumption = async (req, res, next) => {
       `Denumire Ingredient`,
       `Consum`, 
       'UM',
-      `Pret UM`,
-      `Total`, 
+      `Pret UM cu TVA Lei`,
+      `Total Lei`, 
     ]
     worksheet.addRow(docTitle)
     worksheet.addRow()
@@ -1375,15 +1385,15 @@ module.exports.printConsumption = async (req, res, next) => {
     let totalConsumption = 0
 
     parsedIngs.forEach((ing, i) =>{
-      const total = round(ing.qty * ing.ing.price)
+      const total = round(ing.qty * ing.ing.tvaPrice)
       worksheet.addRow(
         [
           `${i+1}`,
           `${ing.ing.name}`,
           `${round(ing.qty)}`,
           `${ing.ing.um}`,
-          `${ing.ing.price} Lei`,
-          `${round(ing.qty * ing.ing.price)} Lei`,
+          `${roundd(ing.ing.tvaPrice)}`,
+          `${round(ing.qty * ing.ing.tvaPrice)}`,
         ]
         )
         if(total){
@@ -1426,7 +1436,7 @@ module.exports.printConsumption = async (req, res, next) => {
     worksheet.getColumn(2).width = 30; 
     worksheet.getColumn(3).width = 10; 
     worksheet.getColumn(4).width = 10; 
-    worksheet.getColumn(5).width = 10; 
+    worksheet.getColumn(5).width = 20; 
     worksheet.getColumn(6).width = 15; 
     worksheet.getColumn(5).eachCell((cell) => {
       cell.alignment = { vertical: "middle", horizontal: 'right'}
@@ -1521,14 +1531,14 @@ module.exports.printProduction = async (req, res, next) => {
       let totalRecipe = 0
       console.log(ings.length)
       ings.forEach((ing, i) => {
-        const tot = round(ing.qty * ing.ing.price * product.quantity)
+        const tot = round(ing.qty * ing.ing.tvaPrice * product.quantity)
         worksheet.addRow(
           [
             'Ing',
             `${ing.ing.name}`,
             `${round(ing.qty)} ${ing.ing.um}`,
-            `${ing.qty * product.quantity} ${ing.ing.um}`,
-            `${ing.ing.price} Lei`,
+            `${round(ing.qty * product.quantity)} ${ing.ing.um}`,
+            `${round(ing.ing.tvaPrice)} Lei`,
             '',
             `${tot} Lei`,
             '',
@@ -1675,6 +1685,9 @@ module.exports.printProduction = async (req, res, next) => {
 
  function round(num){
     return Math.round((num + Number.EPSILON) * 100) / 100;
+  }
+ function roundd(num){
+    return Math.round((num + Number.EPSILON) * 100000) / 100000;
   }
   function cap(value) {
     return String(value).charAt(0).toUpperCase() + String(value).slice(1);

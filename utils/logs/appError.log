@@ -14,3 +14,17 @@
 17:04:46 - ERROR - request entity too large
 17:05:52 - ERROR - request entity too large
 17:07:32 - ERROR - request entity too large
+13:43:48 - ERROR - Field value too long
+13:44:00 - ERROR - Field value too long
+13:45:06 - ERROR - Field value too long
+15:33:21 - ERROR - Field value too long
+15:44:45 - ERROR - Field value too long
+15:47:40 - ERROR - Field value too long
+15:48:59 - ERROR - Field value too long
+15:51:16 - ERROR - Field value too long
+16:03:56 - ERROR - connection 18 to 20.160.138.111:27017 closed
+16:03:56 - ERROR - connection 13 to 20.160.138.111:27017 closed
+16:04:00 - ERROR - connection 24 to 20.160.138.111:27017 closed
+16:08:48 - ERROR - connection 23 to 20.160.138.111:27017 closed
+16:54:51 - ERROR - connection 35 to 20.160.138.111:27017 closed
+13:43:35 - ERROR - newNir.save(...).exec is not a function

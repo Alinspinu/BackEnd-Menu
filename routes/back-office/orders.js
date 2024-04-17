@@ -4,6 +4,7 @@ const orderRoutes = require('../../controlers/back-office/orders')
 const printRoutes = require('../../controlers/print')
 
 router.route('/get-orders').post(orderRoutes.getOrder);
+router.route('/get-havy-orders').post(orderRoutes.getHavyOrders)
 router.route('/get-user-orders').get(orderRoutes.getOrderByUser)
 
 router.route('/order-done').get(orderRoutes.orderDone);
@@ -23,6 +24,8 @@ router.route('/upload-ings').post(orderRoutes.uploadIngs)
 router.route('/invoice').post(printRoutes.factura)
 
 router.route('/all-orders').get(orderRoutes.getAllOrders)
+
+// router.route('/update-bills').get(orderRoutes.updateProducts)
 
 
 module.exports = router  

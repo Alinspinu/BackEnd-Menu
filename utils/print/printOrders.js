@@ -32,10 +32,12 @@ async function print(order) {
     const minutes = date.getMinutes();
     const timeString = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
     const dataToPrint = {
+        inOrOut: order.inOrOut,
         employee: order.employee,
         masa: order.masa,
         time: timeString
     }
+    console.log('print orders', dataToPrint)
     printKitchen(foodProd, dataToPrint);
     printBarista(baristaProd, dataToPrint);
     setTimeout(()=>{
@@ -62,6 +64,7 @@ async function printKitchen(products, dataPrint) {
         const dataToPrint = {
             time: dataPrint.time,
             name: dataPrint.employee.fullName,
+            inOrOut: dataPrint.inOrOut,
             position: dataPrint.employee.position,
             masa: dataPrint.masa,
             products: productsToPrint
@@ -78,13 +81,21 @@ async function printKitchen(products, dataPrint) {
 
 async function printBarista(products, dataPrint) {   
     const url = 'http://192.168.1.90:65400/api/Receipt';
-    let data = [
-        `TL^           ORA: ${dataPrint.time}   `,
-        "TL^ ", 
-        `TL^ NUME:${dataPrint.employee.fullName.split(' ')[0]} MASA: *${dataPrint.masa}*`,
-        "TL^", 
-    ];
+    // let data = [
+    //     `TL^           ORA: ${dataPrint.time}   `,
+    //     "TL^ ", 
+    //     `TL^ NUME:${dataPrint.employee.fullName.split(' ')[0]} MASA: *${dataPrint.masa}*`,
+    //     "TL^", 
+    // ];
     if(products.length){
+        let data = [
+            `TL^           ORA: ${dataPrint.time}   `,
+            "TL^ ", 
+            `TL^ NUME:${dataPrint.employee.fullName.split(' ')[0]} MASA: *${dataPrint.masa}*`,
+            "TL^ ", 
+            `TL^        -=- ${dataPrint.inOrOut} -=-`, 
+            "TL^ ", 
+        ];
         for(let pro of products){
             let entry = `TL^  ${pro.quantity} X ${pro.name}`
             data.push(entry)
@@ -116,6 +127,47 @@ async function printBarista(products, dataPrint) {
     }
 }
 
+async function printUnregisterBills(products){
+    const url = 'http://192.168.1.90:65400/api/Receipt';
+    let total = 0
+    let data = [
+        `TL^           NOTA DE PLATA  `,
+        "TL^ ", 
+        "TL^", 
+    ];
+    if(products.length){
+        for(let pro of products){
+            let entry = `TL^  ${pro.name}   ${pro.quantity} BUC X ${pro.price} = ${pro.quantity * pro.price}`
+            total += (pro.price*pro.quantity)
+            data.push(entry)
+            if(pro.toppings && pro.toppings.length){
+                for(let top of pro.toppings){
+                    let topp =`TL^     + ${top.name.split('/')[0]}`
+                    data.push(topp)
+                }
+            }
+        }
+        data.push('TL^---------------------------------------')
+        const totalRow = `TL^ TOTAL LEI                ${total}`
+        data.push(totalRow)
+
+
+            axios.post(url, data, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
+    } else {    
+        return
+    }
+}
+
 async function printMain(products, dataPrint){
     printBarista(products, dataPrint)
 }
@@ -128,7 +180,7 @@ function createXml(data) {
           return;
         }
         const renderedXml = ejs.render(templateContent, data);
-    
+        console.log(renderedXml)
         fs.writeFile(outputPath, renderedXml, (writeErr) => {
           if (writeErr) {
             log(`Error writing XML file: ${writeErr}`, 'errors')
@@ -160,4 +212,4 @@ try{
 }
 
 
-module.exports = {print}
+module.exports = {print, printUnregisterBills}

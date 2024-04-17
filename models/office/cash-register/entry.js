@@ -36,6 +36,8 @@ const entrySchema = new Schema({
 })
 
 
+
+
 entrySchema.pre('deleteOne', { document: true, query: false }, async function (next) {
     // Get the index of the document being deleted
     const deletedIndex = this.index;
@@ -55,7 +57,7 @@ entrySchema.pre('deleteOne', { document: true, query: false }, async function (n
       return next(error);
     }
   
-    next();
+    next(); 
   });
   
   entrySchema.pre('save', async function (next) {

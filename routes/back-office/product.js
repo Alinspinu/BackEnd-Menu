@@ -3,7 +3,10 @@ const router = express.Router();
 
 const multer = require('multer');
 const { storage } = require('../../cloudinary/photo-true.js');
-const upload = multer({ storage });
+const upload = multer({ 
+    storage,   
+    limits: {fieldSize: 10 * 1024 * 1024, }
+ });
 
 const productRoutes = require('../../controlers/back-office/product')
 
