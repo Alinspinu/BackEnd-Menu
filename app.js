@@ -14,7 +14,7 @@ const helmet = require('helmet');
 
 const helmetConfig = require('./config/helmet');
 
-
+const methodOverride = require("method-override");
 const toppingRoutes = require('./routes/back-office/topping');
 const ordersTrueRoutes = require('./routes/back-office/orders');
 const payRoutes = require('./routes/payment/payment');
@@ -33,6 +33,7 @@ const catRoutes = require('./routes/back-office/cats')
 const gossipsRoutes = require('./routes/gossips')
 const notifRoutes = require('./routes/notifications')
 const printRoutes = require('./routes/print')
+const recipesRoutes = require("./routes/recipe");
 
 const fs = require('fs');
 const https = require('https');
@@ -57,6 +58,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(methodOverride("_method"));
 
 app.use(bodyParser.json({ limit: '10mb' }))
 
@@ -78,6 +80,7 @@ app.use('/sub', subRoutes);
 app.use('/cat', catRoutes);
 app.use('/gossips', gossipsRoutes)
 app.use('/print', printRoutes)
+app.use("/recipes", recipesRoutes)
 
 
 

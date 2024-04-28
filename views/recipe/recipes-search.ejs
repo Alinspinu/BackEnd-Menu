@@ -1,0 +1,35 @@
+<% layout('layouts/center') %>
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3" id="container">
+                <i class="bi bi-backspace" id="back-menu"></i>
+               <i class="bi bi-plus-lg" id="add"></i>
+              
+   
+                  
+                <div class="wrap">
+                    <div class="search-input">
+                        <input type="text" id="cauta" placeholder="Search Recipe...">
+                        <div class="nomenclator">
+                            <%sortedRecipes.forEach(recipe => {%>
+                                <li class="recipes m-0"><a href="/recipes/<%=recipe._id%>"> 
+                                    <% if(recipe._doc.image){ %>
+                                        <img src="<%=recipe._doc.image.path%>" 
+                                        style="width:50px; height:50px;"
+                                        class="float-start img-fluid" alt="">
+                                        <% } else { %>
+                                            <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1683306917/Recipes/5057709_ojy0wt.png" 
+                                            style="width:50px; height:50px;"
+                                            class="float-start img-fluid" alt="">
+                                            <% } %>
+                                    <%=recipe._doc.name%> 
+                                </a></li>
+                                <% }) %>
+                        </div>
+                        <div class="icon"><i class="bi bi-search"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/javascripts/recipe-search.js"></script>

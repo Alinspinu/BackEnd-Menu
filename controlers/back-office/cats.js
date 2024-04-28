@@ -47,7 +47,10 @@ module.exports.searchCats = async (req, res, next) => {
 
 module.exports.addCat = async (req, res, next) => {
     const {loc} = req.query
+    console.log('hit the function')
     try {
+        console.log(req.body)
+        console.log(req.file)
         const cat = new Cat(req.body)
         cat.locatie = loc
         if (req.file) {

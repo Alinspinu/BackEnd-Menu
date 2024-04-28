@@ -127,7 +127,6 @@ module.exports.getOrderByUser = async (req, res, nex) => {
     const end = new Date(date).setHours(23, 59, 59, 999)
      const {userId} = req.query;
      const user = await User.findById(userId)
-     console.log((end-start) / (1000 * 60 * 60) )
     const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
     res.status(200).json(orders)
     } catch (err){
@@ -143,7 +142,6 @@ module.exports.getAllOrders = async (req, res, next) => {
         const end = new Date(date).setHours(23, 59, 59, 999)
         const {loc} = req.query;
         const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lt: end} }) 
-        console.log(orders)
         res.status(200).json(orders) 
     } catch(err){
         console.log(err)
@@ -182,7 +180,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
     const {bill} = req.body;
     const parsedBill = JSON.parse(bill)
     const {index, billId} = req.query;
-    console.log(parsedBill)
     try{
         if(billId === "new"){
             delete parsedBill._id
@@ -259,7 +256,6 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     const {product} = req.body
     const { ['_id']:_, ...newProduct } = product;
     const delProd = new DelProd(newProduct)
-    console.log(delProd)
     delProd.employee.name = product.employee.fullName
     await delProd.save()
     res.status(200).json({message: 'The product was registred as deleted!'})

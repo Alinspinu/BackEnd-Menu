@@ -1,0 +1,313 @@
+.hide{
+    display: none;
+}
+#back{
+    position: relative;
+    top: 10px;
+    left: 0px;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+
+
+.label-name{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    width: 100%;
+}
+
+span{
+    font-size: 14px;
+}
+
+#lastLabel{
+   position: relative;
+   left: 27%;
+}
+
+#secondLabel{
+    position: relative;
+    left: 10%;
+}
+
+#thirdLabel{
+    position: relative;
+    left: 24%;
+}
+
+#ingSecond{
+    position: relative;
+    left: 40%;
+}
+
+#ingThird{
+    position: relative;
+    left: 50%;
+}
+
+
+#close{
+    position: relative;
+    top: 8px;
+    left: 3px;
+    right:0;
+    z-index: 2;
+}
+
+.containe{
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px 0 10px;
+}
+
+#add{
+position: relative;
+top: 10px;
+left: 85%;
+font-size: 23px;
+}
+
+#login{
+    position: relative;
+    top: 10px;
+    left: 0;
+    font-size: 23px;
+}
+
+#profile{
+    position: relative;
+    top: 8px;
+    left: 0;
+    border-radius: 50%;
+    height: 28px;
+    width: 28px;
+}
+
+
+.wrap{
+    position: relative;
+    width: 100%;
+    margin: 60px 130px auto auto;
+}
+.wrap .search-input{
+    background: #fff;
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 1px 5px 3px rgba(0,0,0,0.12);
+}
+
+
+.search-input input{
+    height: 55px;
+    width: 100%;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    padding: 0 20px 0;
+    font-size: 18px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+}
+
+.search-input .icon{
+    height: 55px;
+    width: 55px;
+    line-height: 55px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: center;
+    font-size: 20px;
+    color: #778da9;
+    cursor: pointer;
+}
+
+
+.nomenclator {
+    max-height: 100%;
+    width: auto;
+    /* background-color: #fae0e4; */
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    /* box-shadow: 0 1px 1px 1px rgba(0,0,0,0.12); */
+}
+
+
+.nomenclator li{
+    margin:2px 8px;
+    padding-left: 10px;
+    list-style:none ;
+}
+
+.nomenclator li a{
+    text-decoration: none;
+    color:#292d32;;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+}
+.nomenclator li a img{
+    margin: 0 19px 0 0;
+}
+
+.nomenclator li:hover{
+    background-color:#e9ecef;
+    cursor: pointer;
+}
+.search-res.active{
+    opacity: 1;
+}
+
+.ing{
+    display: flex;
+    position: relative;
+}
+
+.x-row-reteta{
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+.x-row-reteta:hover{
+    color: white;
+}
+
+.card-container{
+    background-color: #e0cebf;
+}
+
+.search-res{
+    padding: 0;
+    overflow-y: auto;
+    max-height: 800px;
+    width: 100%;
+    opacity: 0;
+    background-color: #e9ecef;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 1px 1px rgba(0,0,0,0.12);
+}
+.search-res li{
+    height: 60px;
+    margin:2px 8px;
+    border-radius:4px;
+    padding-left: 10px;
+    list-style:none ;
+    box-shadow: 0 1px 1px 1px rgba(0,0,0,0.12);
+}
+.search-res li:hover{
+    background-color:#e9ecef;
+    cursor: pointer;
+}
+
+.result:focus{
+    border: 0.5px solid black;
+}
+
+
+.search-res2.active{
+    opacity: 1;
+}
+
+.hide{
+    display: none;
+}
+
+
+
+
+.icon-container a{
+    text-decoration: none;
+    color: black;
+}
+
+#back-icon{
+    position: relative;
+    font-size: 22px;
+    top: 10px;
+    left: 20px
+}
+
+#back-menu{
+    position: relative;
+    font-size: 22px;
+    top: 10px;
+    left: 10px
+}
+
+#edit-icon{
+    position:relative;
+    font-size: 22px;
+    top: 10px;
+    left: 72%
+}
+
+#trash-icon{
+    position: relative;
+    font-size: 22px;
+    top: 10px;
+    left: 78%
+}
+
+
+.recipe-header{
+    font-size:16px;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+}
+
+.recipe-content{
+    font-size: 15px;
+    line-height: 1.2;
+    margin:0;
+    padding: 0;
+}
+
+/* #image{
+    height: 20%;
+} */
+
+
+.card{
+    border:none;
+}
+
+
+.bg-middle{
+    background-color: #e9ecef;
+}
+
+.bg-light{
+    background-color: #f8f9fa;
+}
+
+.bg-gray{
+    background-color: #dee2e6;
+}
+
+.round{
+    border-radius: 5px;
+}
+.bg-danger{
+    background-color: #fd756e;
+}
+
+.round-up{
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.round-down{
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#ingredient{
+    padding: 10px 0 10px 5px;
+    list-style: none;
+}
+ 

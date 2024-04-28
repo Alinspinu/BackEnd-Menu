@@ -14,6 +14,7 @@ module.exports.saveNir = async( req, res, next) => {
       newNir.locatie = loc
       const suplier = await Suplier.findById(nir.suplier)
 
+      // await newNir.save()
     
       const operation = {name: 'intrare', details: suplier.name}
 
@@ -61,6 +62,7 @@ module.exports.saveNir = async( req, res, next) => {
           console.log(`Error: ${err}`);
           next(err);
         });
+      // res.status(200)
     } catch (err) {
       console.log(err)
       res.status(500).json({message: err.message})

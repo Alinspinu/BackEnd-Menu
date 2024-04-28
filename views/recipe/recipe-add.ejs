@@ -1,0 +1,71 @@
+<% layout('layouts/center') %>
+
+    <div class="row">
+        <div class="col-lg-6 offset-lg-3" id="container">
+            <i class="bi bi-backspace" id="back"></i>
+            <h5 class="text-center mt-3 mb-5">Create a recipe</h5>
+            <div class="mb-3">
+                <select class="form-select" aria-label="Select recipe type" id="selectCocktail">
+                    <option value="">Select the type of Recipe</option>
+                    <option value="1">Coffee Recipe</option>
+                    <option value="2">Cocktail Recipe</option>
+                    <option value="3">Food Recipe</option>
+                  </select>
+            </div>
+            <div class="form-container hide">
+            <form action="/recipes/add" method="POST" novalidate class="validated-form" enctype="multipart/form-data">
+              <div class="mb-3">
+                <select class="form-select" aria-label="Select recipe type" name="recipe[shop]"id="selectShop">
+                    <option value="">Select Shop</option>
+                    <option value="cafetish">Cafetish</option>
+                    <option value="true">True</option>
+                  </select>
+            </div>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" id="name" name="recipe[name]" aria-describedby="name" placeholder="Recipe name" required>
+                  <input type="text" class="form-control" id="name" name="recipe[totalVolume]" aria-describedby="name" placeholder="Recipe volume" required>
+                </div>
+                <div class="cocktail-setup hide">
+                  <div class="input-group mb-3">
+                      <input type="text" class="form-control" id="method-name" aria-describedby="method-name" name="recipe[method][name]" placeholder="Method">
+                  </div>
+                  <div class="input-group mb-3">
+                      <input type="text" class="form-control" id="recipent" name="recipe[recipent]" aria-describedby="recipent" placeholder="Recipent type">
+                      <input type="text" class="form-control" id="garnish" name="recipe[garnish]" aria-describedby="recipent" placeholder="Garnish">
+                  </div>
+                </div>
+                <div class="coffee-setup hide">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control"  name="recipe[grinderStep]" aria-describedby="grinder-step" placeholder="Grinder Step">
+                        <input type="text" class="form-control" name="recipe[brewTime]" aria-describedby="brew-time" placeholder="Brew time">
+                        <input type="text" class="form-control" name="recipe[waterTemp]" aria-describedby="water-temperature" placeholder="Water °C">
+                    </div>
+                </div>
+                 
+                  <div id="ingContainer">
+                  <div class="input-group mb-3">
+                        <input type="text" class="form-control" style="width:50%;" id="ingredient" placeholder="Igredient" name="recipe[ingredients][name]" required>
+                        <input type="text" class="form-control" placeholder="Um" name="recipe[ingredients][um]" required>
+                        <input type="text" class="form-control" placeholder="Qty" name="recipe[ingredients][quantity]" required>
+                    </div>
+                </div>
+                <button type="button" class="btn bg-middle addIngredient mb-3" style="width: 100%;" id="">+ Ingredient</button>
+                  <div class="mb-3">
+                    <textarea type="text" class="form-control" id="method-description" aria-describedby="method-description" name="recipe[method][description]" placeholder="Description" required></textarea>
+                    <div id="method-description" class="form-text">Describe the workflow in detail</div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="method-description" class="form-label">Image</label>
+                    <input type="file" class="form-control" id="method-description" aria-describedby="method-description" name="recipe-image">
+                    
+                  </div>
+                  <!-- <div class="mb-3">
+                    <input type="text" class="form-control" id="method-description" aria-describedby="method-description" name="recipe[video]" placeholder="Video URL">
+                  </div> -->
+                <button type="submit" class="btn bg-gray mb-3" style="width:100%;">Save Recipe</button>
+              </form>
+              </div>    
+        </div>
+    </div>
+
+    <script src="/javascripts/recipe-add.js"></script>

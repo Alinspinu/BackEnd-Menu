@@ -147,11 +147,11 @@ module.exports.login = async (req, res, next) => {
             };
         });
     } else if (user.status === "active") {
-        let time = '60m';
-        if (user.employee.access > 1) {
-            time = '12h';
-        };
-        const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: time });
+        // let time = '60m';
+        // if (user.employee.access > 1) {
+        //     time = '12h';
+        // };
+        const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: '7d'});
         const sendData = {
             token: token,
             name: user.name,

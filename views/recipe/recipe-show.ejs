@@ -1,0 +1,92 @@
+<% layout('layouts/center') %>
+<div class="row">
+    <div class="col-lg-6 offset-lg-3 p-0">
+        <div class="icon-container">
+            <i class="bi bi-backspace" id="back-icon"></i>
+            <i class="bi bi-pencil-square" id="edit-icon"></i>
+            <i class="bi bi-trash3" id="trash-icon" type="button" data-bs-toggle="modal" data-bs-target="#deleteModal"></i>
+        </div>
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header text-center bg-middle">
+                  <h1 class="modal-title fs-5" id="loginModal">Delete <%=recipe._doc.name%></h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body bg-light">
+                       Are you shore you wanna delete <%=recipe._doc.name%>?
+                    </div>
+                    <form action="/recipes/<%=recipe._id%>?_method=DELETE" method="POST">
+                        <div class="modal-footer text-center bg-middle">
+                            <button type="submit" data-bs-dismiss="modal"  class="btn bg-danger">Delete</button>
+                        </div>
+                    </form>
+             
+              </div>
+            </div>
+        </div>
+        </div>
+    
+        <div class="col-lg-6 offset-lg-3 card text-center mt-2 card-container">
+            <% if(recipe._doc.image.path){%>
+                <img src="<%=recipe._doc.image.path%>" class="card-img-top" id="image" alt="recipe-image">
+                <% } else {%>
+                    <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1683306917/Recipes/5057709_ojy0wt.png" class="card-img-top" id="image" alt="default-image">
+                    <% } %>
+            <h3 class="text-center"><%= recipe._doc.name%></h3>
+            <span class="recipe-header text-center"><%=recipe._doc.totalVolume%></span>
+            <div class="card-body text-center px-3">
+                <% if(recipe._doc.recipent || recipe._doc.method.name || recipe._doc.garnish) {%>
+                        <div class="row p-0 bg-gray round-up" id="first-header">
+                            <div class="col p-2">
+                                    <span class="recipe-header">Recipent</span>
+                               <p class="recipe-content"><%=recipe._doc.recipent%></p>
+                            </div>
+                            <div class="col p-2 bg-light">
+                                <span class="recipe-header">Method</span> <br> 
+                                <p class="recipe-content"><%=recipe._doc.method.name%></p>
+                            </div>
+                            <div class="col p-2">
+                                <span class="recipe-header">Garnish </span><br> 
+                                <p class="recipe-content"><%=recipe._doc.garnish%></p>
+                             </div>
+                        </div>
+                        <% } %>
+                        <% if(recipe._doc.waterTemp || 
+                            recipe._doc.grinderStep ||
+                            recipe._doc.brewTime
+                            )  {%>
+                        <div class="row bg-light round-down" id="second-header">
+                            <div class="col p-2">
+                               <span class="recipe-header">Grinder Step</span><br> 
+                               <p class="recipe-content"><%=recipe._doc.grinderStep%></p>
+                            </div>
+                            <div class="col p-2 bg-gray">
+                               <span class="recipe-header">Brew Temp</span><br> 
+                               <p class="recipe-content"><%=recipe._doc.waterTemp%>°C</p>
+                            </div>
+                            <div class="col p-2">
+                                <span class="recipe-header">Brew Time</span><br> 
+                                <p class="recipe-content"><%=recipe._doc.brewTime%></p>
+                             </div>
+                        </div>
+                      <% }  %>
+            </div>
+            <h5 class="card-title ms-2">Ingredients</h5>
+            <ul class="p-0 mb-0">
+                <% console.log(recipe._doc)%>
+                <% recipe._doc.ingredients.forEach(ing=>{ %>
+                    <li class="" id="ingredient"><%=ing._doc.name%>  <%=ing._doc.quantity%>  <%=ing._doc.um%></li>
+                    <% }) %>
+            </ul>
+            <div class="card-body text-center bg-light round-down p-0" id="description">
+            <div class="row px-4">
+                <span class="recipe-header mt-2">Description</span> <br> 
+                <p class="recipe-content my-2"><%=recipe._doc.method.description%></p>
+            </div>
+            </div>
+          </div>
+    </div>
+</div>
+
+

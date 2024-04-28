@@ -89,6 +89,7 @@ async function printBill(bill) {
         }
         
         log(billToPrint, "bils")
+        console.log(bill.payment)
         console.log(billToPrint)
         // axios.post(url, billToPrint, {
         //     headers: {

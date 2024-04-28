@@ -1,0 +1,165 @@
+
+<style>
+.navbar {
+    background-color:#f4ede6;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 0 0.5rem 0 0.5rem;
+    width: 100%;
+}
+
+.logo{
+    display: flex;
+    align-items: baseline;
+}
+
+.logo span {
+    font-size: 1.5rem;
+    margin-left: 10px;
+}
+.logo img{
+    height: 40px;
+}
+
+.nav-links {
+    display: flex;
+    height: 60px;
+    margin-bottom: 0;
+}
+
+.nav-links div {
+    display: flex;
+    height: 100%;
+    margin-right: 20px;
+    font-size: 1.2rem;
+}
+
+.link-3{
+    background-color: #e0cebf;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.link-3:active{
+    background-color:#f4ede6;
+}
+.link-3 i{
+    font-size:30px;
+}
+
+
+.active{
+    background-color: #e0cebf;
+}
+
+.nav-links a {
+    padding: 0.5rem;
+    text-decoration: none;
+    margin-top:auto;
+    color: black;
+}
+.hide{
+    display: none;
+}
+
+
+
+</style>
+<nav class="navbar">
+    <div class="logo">
+        <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1693319361/black-coffee_okh4fc.png" alt="logo">
+       <!-- <span>Comenzi</span>  -->
+
+    </div>
+        <!-- <div class="link-3 play">
+            <i class="bi bi-megaphone" id="playIcon"></i>
+        </div> -->
+    <div class="nav-links">
+        <!-- <div class="link-5">
+            <a href="/api/cake-orders">Comenzi Cozonaci</a>
+        </div> -->
+        <div class="link-4">
+            <a href="/recipes">Rețete Bar</a>
+        </div>
+        <!-- <div class="link-1">
+            <a href="/api/order-page">Comenzi Live</a>
+        </div>
+        <div class="link-2">
+            <a href="/api/finish-order-page">Comenzi Terminate</a>
+        </div> -->
+    </div>
+</nav>
+
+<script>
+
+    const playButton = document.querySelector('.play')
+    const playIcon = document.querySelector('#playIcon')
+    const comenziLive = document.querySelector('.link-1')
+    const comenziTerminate = document.querySelector('.link-2')
+    const recipe = document.querySelector('.link-4')
+    const register = document.querySelector('.link-5')
+    const currentTab = window.location.href;
+    const indexTab = currentTab.lastIndexOf('/');
+    const tab = currentTab.slice(indexTab +1);
+    if(tab === 'finish-order-page'){
+       comenziTerminate.classList.add('active');     
+       comenziLive.classList.remove('active');
+       recipe.classList.remove('active');
+        register.classList.remove('active');
+    } else if(tab === 'order-page') {
+        comenziTerminate.classList.remove('active');     
+        comenziLive.classList.add('active');
+        recipe.classList.remove('active');
+        register.classList.remove('active');
+    } else if(tab === "recipes") {
+        recipe.classList.add('active')
+        comenziTerminate.classList.remove('active');     
+        comenziLive.classList.remove('active');
+        register.classList.remove('active');
+    } else {
+        recipe.classList.remove('active')
+        comenziTerminate.classList.remove('active');     
+        comenziLive.classList.remove('active');
+        register.classList.add('active');
+    }
+    comenziLive.addEventListener('click', () =>{
+        comenziLive.classList.add('active');
+        comenziTerminate.classList.remove('active'); 
+        recipe.classList.remove('active');
+        register.classList.remove('active');
+    })
+    comenziTerminate.addEventListener('click', () => {
+        comenziTerminate.classList.add('active')     
+       comenziLive.classList.remove('active')
+       recipe.classList.remove('active')
+       register.classList.remove('active');
+    })
+
+    recipe.addEventListener('click', () => {
+        recipe.classList.add('active')
+        comenziTerminate.classList.remove('active')     
+        comenziLive.classList.remove('active')
+        register.classList.remove('active');
+    });
+    register.addEventListener('click', () => {
+        recipe.classList.remove('active')
+        comenziTerminate.classList.remove('active');     
+        comenziLive.classList.remove('active');
+        register.classList.add('active');
+    })
+    playButton.addEventListener('click', function(){
+        if(!playIcon.classList.contains("bi-megaphone-fill")){
+            playIcon.classList.remove('bi-megaphone');
+            playIcon.classList.add('bi-megaphone-fill');
+            dingSound.play()
+        } 
+    })
+
+
+</script>
+

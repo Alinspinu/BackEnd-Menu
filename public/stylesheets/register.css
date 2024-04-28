@@ -1,0 +1,82 @@
+#dayTab li{
+    font-size: 14px;
+}
+#dayTab li button{
+    color: #a46529;
+}
+#prevBtn{
+    font-size: 25px;
+    cursor: pointer;
+    color: #a46529;
+}
+
+.containe{
+    margin: 0 0 0 0 !important;
+    width: 100% !important;
+    padding: 0 10px 0 10px;
+  }
+
+.next{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    
+}
+#nextBtn{
+    font-size: 25px;
+    cursor: pointer;
+    color: #a46529;
+    /* box-shadow: 0 1px 5px 3px rgba(0, 0, 0, 0.12); */
+}
+#nextBtn:active{
+  color: #e0d4c9
+}
+
+#prevBtn:active{
+    color: #e0d4c9;
+}
+
+.border{
+    border: 1px, solid, black;
+    border-radius: 4px;
+}
+
+.prev-day-header{
+    margin: 30px 0 30px 0;
+    font-size: 21px;
+    font-weight: 500;
+}
+
+.prev-day-footer{
+    margin: 30px 0 30px 0;
+    font-size: 21px;
+    font-weight: 500;
+}
+
+.heder-row{
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.red-mark{
+   color: red;
+}
+
+.green-mark{
+   color: green;
+}
+
+.message{
+    background-color: #fbc4ab;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.no-records{
+    font-size: 24px;
+    margin-left: 40%;
+}
+
+.tab-styles{
+    background-color: white !important;
+}
