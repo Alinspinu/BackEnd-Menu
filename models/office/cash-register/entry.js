@@ -10,7 +10,6 @@ const entrySchema = new Schema({
     },
     description: {
         type: String,
-        required: true
     },
     date: {
         type: Date,
@@ -29,6 +28,46 @@ const entrySchema = new Schema({
         enum: ['income', 'expense'],
         required: true
     },
+    typeOf: {
+      type: String,
+      enum: [
+        'Incasare raport Z',
+        'Incasare din banca',
+        'Incasare de la administrator',
+        'Altele',
+        'Plata furnizor',
+        'Plata catre administrator',
+        'Avans',
+        'Salariu',
+        'Bonus vanzari',
+        'Bonus excelenta',
+        'Tips Card'
+      ],
+      requred: true
+    },
+    document: {
+        tip: {
+          type: String,
+          enum: [
+            'Bon fiscal',
+            'Chitanta',
+            'Dispozitie de plata',
+            'Dispozitie de incasare',
+            'Fara',
+          ],
+        },
+        number: String
+    },
+    suplier: {
+      type: Schema.Types.ObjectId,
+      ref: 'Suplier'
+    },
+    user: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      }
+    ],
     index: {
         type: Number,
         index: true

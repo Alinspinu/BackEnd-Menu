@@ -34,9 +34,7 @@ const daySchema = new Schema({
 
 
 daySchema.pre('save', async function (next) {
-    console.log("hit pre save")
     if (this.isModified('cashOut')) {
-        console.log('this cash out modified')
         let cashOutDifference;
 
         if (this.isNew) {
@@ -46,7 +44,7 @@ daySchema.pre('save', async function (next) {
             cashOutDifference = this.cashOut - originalDocument.cashOut;
         }
         const nextDocument = await this.constructor.findOne({locatie: this.locatie , date: { $gt: this.date } });
-
+        console.log('cashout',cashOutDifference)
         if (nextDocument) {
             nextDocument.cashIn += cashOutDifference;
             await nextDocument.save();
@@ -54,7 +52,7 @@ daySchema.pre('save', async function (next) {
     }
 
     if (this.isModified('cashIn')) {
-        console.log('this cash in modified')
+     
         let cashInDifference;
 
         if (this.isNew) {
@@ -64,7 +62,7 @@ daySchema.pre('save', async function (next) {
             cashInDifference = this.cashIn - originalDocument.cashIn;
         }
         this.cashOut += cashInDifference;
-
+        console.log('cashin', cashInDifference)
         const nextDoc = await this.constructor.findOne({locatie: this.locatie,  date: { $gt: this.date } });
         if (nextDoc) {
             nextDoc.cashIn += cashInDifference;

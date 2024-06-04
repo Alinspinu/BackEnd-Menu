@@ -1,4 +1,5 @@
 const Ingredient = require('../../models/office/inv-ingredient')
+const {round} = require('./../../utils/functions')
 
 
 
@@ -6,7 +7,7 @@ const Ingredient = require('../../models/office/inv-ingredient')
 module.exports.saveIng = async(req, res, next) => {
     const {ing} = req.body;
     const {loc} = req.body;
-    const checkIng = await Ingredient.findOne({name: ing.name, gestiune: ing.gestiune})
+    const checkIng = await Ingredient.findOne({name: ing.name, gestiune: ing.gestiune, locatie: loc})
     if(checkIng){
       return res.status(226).json({message: "Ingredientul deja exista în baza de date!"})
     } else {
@@ -21,7 +22,7 @@ module.exports.saveIng = async(req, res, next) => {
       const loc = req.body.loc
       try{  
         const ings = await Ingredient.find({locatie: loc})
-          .select([ '-unloadLog', '-uploadLog'])
+          .select([ '-unloadLog'])
           .populate({path: 'ings.ing', select: '-unloadLog -uploadLog -inventary'});
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
         console.log("ingrediente", sortedIngs.length)
@@ -31,6 +32,17 @@ module.exports.saveIng = async(req, res, next) => {
         res.status(500).json({message: err})
       }
     };
+
+    module.exports.getIngConsumabil = async (req, res, next) => {
+      const loc = req.query.loc
+      try{
+        const ings = await Ingredient.find({locatie: loc, dep: 'consumabil'}).select(['name', 'tvaPrice', 'uploadLog'])
+        res.status(200).json(ings)
+      } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+      }
+    }
 
     module.exports.deleteIng = async (req, res, next) => {
       try{
@@ -57,6 +69,23 @@ module.exports.saveIng = async(req, res, next) => {
       }
     }
 
+    module.exports.updateStoc = async (req, res, next) => {
+      const {loc} = req.query
+    //   const ings = await Ingredient.find({locatie: loc, gestiune: 'bar', productIngredient: false})
+    //   const date = new Date('2024-6-1').setUTCHours(0,0,0,0)
+     
+    //  for(let ing of ings){
+    //   const inv = ing.inventary.find(inv => {
+    //     const invDate = new Date(inv.day).setUTCHours(0,0,0,0)
+    //     return invDate === date
+    //   })
+    //   const diference = inv.qty - ing.qty
+    //   ing.qty = round(inv.faptic - diference)
+    //   await ing.save()
+    //  }
+      res.status(200).json({messahe: 'all good in the ings world'})
+    }
+
 
     module.exports.saveInventary = async (req, res, next) => {
       try{
@@ -64,7 +93,7 @@ module.exports.saveIng = async(req, res, next) => {
         const ings = await Ingredient.find({locatie: loc})
         for(let ing of ings) {
           const date = new Date();
-          date.setHours(23, 0, 0, 0, 0);
+          date.setUTCHours(23, 0, 0, 0, 0);
           const formattedDate = date.toISOString();
           let index = 1
           if(ing.inventary && ing.inventary.length){

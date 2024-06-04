@@ -14,4 +14,8 @@ router.route('/print-consum').post(printRoutes.printConsum)
 router.route('/save-inventary').get(ingRoutes.saveInventary)
 router.route('/save-faptic').post(ingRoutes.saveManualInventary)
 
+router.route('/get-consumabil').get(ingRoutes.getIngConsumabil)
+
+router.route('/update').get(ingRoutes.updateStoc)
+
 module.exports = router

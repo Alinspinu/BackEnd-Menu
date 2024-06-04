@@ -200,10 +200,9 @@ module.exports.cashInandOut = async (req, res, next) =>{
 module.exports.printBill = async (req, res, next) => {
     try{
         const {bill} = req.body
-        console.log("bill dont", bill.dont)
         bill.status = 'done'
         bill.pending = false
-        const id = bill.clientInfo._id
+        const id = bill.clientInfo.userId
         if(id && id.length){
             const client = await User.findById(id)
             if(client){

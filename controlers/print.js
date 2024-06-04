@@ -528,11 +528,14 @@ module.exports.printNir = async (req, res, next) => {
               filterTo.ings = { $eq: [] }
             }
           }
+          if(filter && filter.dep.length){
+            filterTo.dep = filter.dep
+          }
           filterTo.locatie = loc
-          filterTo.dep = filter.dep
     try{
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Lista ingrediente');
+        console.log(filterTo)
         const ings = await Ingredient.find(filterTo).select([ '-unloadLog', '-uploadLog'])
         console.log(ings.length)
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
@@ -878,7 +881,7 @@ module.exports.factura = async (req, res, next) => {
   const client = await Suplier.findById(clientId)
   const user = await User.findById(userId)
   const bill = new Bill({
-      serie: 'SLR',
+      serie: 'CFT',
       locatie: locatie._id,
       client: clientId,
       products: nota.products
@@ -926,7 +929,7 @@ module.exports.factura = async (req, res, next) => {
   doc.font("public/font/RobotoSlab-Regular.ttf");
   doc.text(`${locatie.address}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
 
-  doc.text(`office@truefinecoffee.ro`, 60 + 10, 140)
+  doc.text(`alin@cafetish.com`, 60 + 10, 140)
   doc.text(`${locatie.bank}`, 60 + 10, 152)
   doc.text(`${locatie.account}`, 55 + 10, 164)
 
@@ -1110,7 +1113,10 @@ module.exports.factura = async (req, res, next) => {
   savedBill.products.forEach(el => {
     const existingProduct = products.find(p => p.name === el.name)
     if(existingProduct){
+      let total = +existingProduct.total
       existingProduct.quantity += el.quantity
+      total += +el.price
+      existingProduct.total = total
     } else {
       products.push(el)
     }
@@ -1143,7 +1149,7 @@ module.exports.factura = async (req, res, next) => {
   }
 
   products.forEach((el, i) => {
-    const price = +el.total - el.discount
+    const price = +el.total / el.quantity - el.discount
     if(el.name.length > 30){
       el.name = el.name.slice(0, 40)
     }

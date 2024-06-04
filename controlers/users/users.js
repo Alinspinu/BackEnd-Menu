@@ -16,7 +16,7 @@ module.exports.sendUsers = async (req, res, next) => {
         let filterTo = {}
         const {filter} = req.body;
         if(filter === 'employees'){
-           filterTo = { employee: { 
+           filterTo = { 'employee.fullName': { 
                 $exists: true,                                     
               },
             }
@@ -67,7 +67,6 @@ module.exports.sendUserCashback = async (req, res, next) => {
 module.exports.sendUser = async (req, res, next) => {
     try{
         const {userId} = req.body
-        console.log(userId)
         const user = await User.findById(userId)
             .select('-password')
             .populate({
@@ -130,8 +129,6 @@ module.exports.updateUser = async (req, res, next) => {
         res.status(200).json({message: err.message})
     }
 }
-
-
 
 module.exports.deleteUser = async (req, res, next) => {
     try{
@@ -243,4 +240,48 @@ module.exports.newCustomer = async (req, res, next) => {
       console.log(err);
       res.status(500).json(err);
   }
+}
+
+
+module.exports.updateWorkLog = async (req, res, next) => {
+    try{
+        const {userId, workLog} = req.body
+        const user = await User.findById(userId)
+        if(user){
+            const dayIndex = user.employee.workLog.findIndex(obj => {
+                const objDay = new Date(obj.day);
+                const inputDay = new Date(workLog.day);
+                objDay.setHours(0, 0, 0, 0);
+                inputDay.setHours(0, 0, 0, 0);
+                return objDay.getTime() === inputDay.getTime();
+            }) 
+                if(dayIndex !== -1){
+                    user.employee.workLog[dayIndex] = workLog
+                    const newUser = await user.save()
+                    res.status(200).json(newUser)
+                } else {
+                    user.employee.workLog.push(workLog)
+                    const newUser = await user.save()
+                    res.status(200).json(newUser)
+                }
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json(err.message)
+    }
+}
+
+module.exports.deleteWorkEntry = async (req, res, next) => {
+    try{
+        const {userId, day} = req.body
+        const date = new Date(day)
+        const newUser = await User.findOneAndUpdate(
+            {_id: userId}, 
+            {$pull: {'employee.workLog': {day: date}}}, 
+            {new: true})
+        res.status(200).json(newUser)
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message: err.messsage})
+    }
 }

@@ -34,6 +34,8 @@ const gossipsRoutes = require('./routes/gossips')
 const notifRoutes = require('./routes/notifications')
 const printRoutes = require('./routes/print')
 const recipesRoutes = require("./routes/recipe");
+const sheduleRoutes = require('./routes/back-office/shedule')
+const repRoutes = require('./routes/back-office/report.js')
 
 const fs = require('fs');
 const https = require('https');
@@ -78,10 +80,11 @@ app.use('/product', productRoutes);
 app.use('/ing', ingRoutes);
 app.use('/sub', subRoutes);
 app.use('/cat', catRoutes);
-app.use('/gossips', gossipsRoutes)
-app.use('/print', printRoutes)
-app.use("/recipes", recipesRoutes)
-
+app.use('/gossips', gossipsRoutes);
+app.use('/print', printRoutes);
+app.use("/recipes", recipesRoutes);
+app.use('/shedule', sheduleRoutes);
+app.use('/report', repRoutes);
 
 
 const options = {

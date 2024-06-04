@@ -30,3 +30,6 @@
 17:01:02  - Print-main Error connect ETIMEDOUT 192.168.1.90:65400
 17:01:21  - Print-main Error connect ETIMEDOUT 192.168.1.90:65400
 17:14:43  - Print-main Error connect ETIMEDOUT 192.168.1.90:65400
+15:43:55  - Print-main Error connect ETIMEDOUT 192.168.1.90:65400
+15:45:36  - Print-main Error connect ETIMEDOUT 192.168.1.90:65400
+15:46:48  - Print-main Error connect ECONNREFUSED 192.168.1.90:65400

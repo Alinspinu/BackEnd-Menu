@@ -1,5 +1,6 @@
 const Day = require('../../models/office/cash-register/day');
 const Entry = require('../../models/office/cash-register/entry');
+const User = require('../../models/users/user')
 const exceljs = require('exceljs');
 const createCashRegisterDay = require('../../utils/createDay')
 
@@ -12,7 +13,7 @@ module.exports.sendEntry = async (req, res, next) => {
         createCashRegisterDay('65c221374c46336d1e6ac423')
             try{
                 const documents = await Day.find({locatie: loc}).populate({path: "entry"})
-                .limit(10)
+                .limit(15)
                 .sort({ date: -1 });
                 res.status(200).json({message: 'all good', documents})
             } catch(err){
@@ -23,9 +24,9 @@ module.exports.sendEntry = async (req, res, next) => {
 
 
 module.exports.addEntry = async (req, res, next) => {
-    const { tip, date, description, amount, locatie } = req.body
+    const { tip, date, typeOf, suplier, user, description, document, amount, locatie } = req.body
     createCashRegisterDay(locatie)
-    if(tip && date && description && amount){
+    if(tip && date && amount){
         const entryDate = new Date(date)
         const newEntry = new Entry({
             tip: tip,
@@ -33,7 +34,29 @@ module.exports.addEntry = async (req, res, next) => {
             description: description,
             amount: tip === 'expense' ? -amount : amount,
             locatie: locatie,
+            typeOf: typeOf,
+            suplier: suplier,
+            user: user,
+            document: document
         })
+        if(typeOf === 'Bonus vanzari'){
+            const payment = {
+                amount: amount / user.length,
+                tip: typeOf,
+                date: entryDate
+            }
+            for(let id of user){
+            await User.findOneAndUpdate({_id: id}, {$push: {'employee.payments': payment}})
+            }
+        }
+        if(user && user.length && typeOf !== 'Bonus vanzari'){
+            const payment = {
+                amount: amount,
+                tip: typeOf,
+                date: entryDate
+            }
+           await User.findOneAndUpdate({_id: user[0]}, {$push: {'employee.payments': payment}})
+        }
         newEntry.save()
         entryDate.setUTCHours(0,0,0,0)
         const nextDay = new Date(entryDate);
@@ -68,6 +91,29 @@ module.exports.deleteEntry = async (req, res, next) => {
         }
         newDay.cashOut -= entry.amount
         await newDay.save()
+        if(entry.typeOf === 'Bonus vanzari'){
+            const payment = {
+                amount: Math.abs(entry.amount / entry.user.length),
+                tip: entry.typeOf,
+            }
+            for(let id of entry.user){
+                const query = {
+                    _id: id,
+                }
+            await User.findOneAndUpdate(query, {$pull: {'employee.payments': payment}})
+            }
+        }
+        if(entry.user.length && entry.typeOf !== 'Bonus vanzari'){
+            const payment = {
+                amount: Math.abs(entry.amount),
+                tip: entry.typeOf,
+            }
+            const query = {
+                _id: entry.user[0],
+            }
+            console.log(payment, query)
+           await User.findOneAndUpdate(query, {$pull: {'employee.payments': payment}})
+        }
         res.status(200).json({ message: `Entry ${entry.description}, with the amount ${entry.amount} was deleted` })
     } catch (err) {
         console.log(err)

@@ -2,18 +2,23 @@ const Order = require('../../models/office/product/order');
 const Table = require('../../models/utils/table')
 const User = require ('../../models/users/user')
 const DelProd = require('../../models/office/product/deletetProduct')
+const Ingredient = require('../../models/office/inv-ingredient')
+const Product = require('../../models/office/product/product')
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
 const {formatedDateToShow, round} = require('../../utils/functions')
 
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
-const {getIngredients, getBillProducts} = require('../../utils/reports')
+const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
 
 const {print} = require('../../utils/print/printOrders')
 const {printBill, posPayment} = require('../../utils/print/printFiscal')
 
 const io = require('socket.io-client')
 const socket = io("https://live669-0bac3349fa62.herokuapp.com")
+// const socket = io("http://localhost:8090")
+
+
 
 //************************SEND ORDERS********************** */
 
@@ -46,57 +51,147 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
+module.exports.calcDep = async (req, res, next) => {
+    const {start, end, loc} = req.query
+    try{
+    let ingIds = []
+    let oldProd = []
+    let totalIngs = 0
+    if(start && end){
+        const startTime = new Date(start).setHours(0,0,0,0)
+        const endTime = new Date(end).setHours(23, 59, 59, 9999)
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'})
+        for(const prod of delProds){
+            for(const ing of prod.billProduct.ings){
+                if(ing.ing){
+                    const existingIng = ingIds.find(obj => obj._id === ing._id)
+                    if(existingIng){
+                        existingIng.qty += ing.qty
+                    } else {
+                        ingIds.push(ing)
+                    }
+                } else {
+                    const existingProd = oldProd.find(obj => obj.name === prod.billProduct.name)
+                    if(existingProd){
+                        existingProd.qty += 1
+                    } else {
+                        oldProd.push({
+                            name: prod.billProduct.name,
+                            qty: 1
+                        })
+                    }
+                    break
+                }
+            }
+        }
+        for (let i = 0; i < ingIds.length; i++) {
+            const ing = ingIds[i];
+                const dbIng = await Ingredient.findById(ing.ing).select('tvaPrice')
+                totalIngs += (ing.qty * dbIng.tvaPrice)
+          }
+        for(const prod of oldProd){
+            const product = await Product.findOne({name: prod.name}).select('ings').populate('ings.ing').select('tvaPrice')
+            if(product){
+                for(const ing of product.ings){
+                    totalIngs += (ing.qty * ing.ing.tvaPrice * prod.qty)
+                }
+            }
+        }
+        res.status(200).json(totalIngs)
+    }
+    } catch (err){
+        console.log(err)
+    }
+}
+
+
+function convertToDateISOString(dateString) {
+  // Define month mappings
+  const monthMap = {
+    'Ianuarie': '01',
+    'Februarie': '02',
+    'Martie': '03',
+    'Aprilie': '04',
+    'Mai': '05',
+    'Iunie': '06',
+    'Iulie': '07',
+    'August': '08',
+    'Septembrie': '09',
+    'Octombrie': '10',
+    'Noiembrie': '11',
+    'Decembrie': '12'
+  };
+
+  // Split the date string and remove any leading or trailing whitespace
+  const trimmedDateString = dateString.trim();
+  const parts = trimmedDateString.split('-');
+
+  // Extract day, month, and year
+  const day = parts[0].padStart(2, '0');
+  const month = monthMap[parts[1]];
+  const year = parts[2];
+  // Return the date string in ISO 8601 format
+  return `${year}-${month}-${day}T00:00:00.000Z`;
+}
+
+  
+
+
 module.exports.getHavyOrders = async (req, res, next) => {
     try{
-        const {start, end, day, loc, filter} = req.body
+        const {start, end, day, loc, filter, report} = req.body
         if(start && end){
-            const startTime = new Date(start).setHours(0,0,0,0)
-            const endTime = new Date(end).setHours(23, 59, 59, 9999)
+            const startTime = new Date(start).setUTCHours(0,0,0,0)
+            const endTime = new Date(end).setUTCHours(23,59,59,9999)
+            // const startTime = new Date(convertToDateISOString(start)).setHours(0,0,0,0)
+            // const endTime = new Date(convertToDateISOString(end)).setHours(23,59,59,9999)
             const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
-                                    .select([
-                                        'dont',
-                                        'products.name', 
-                                        'products.discount', 
-                                        'products.sub', 
-                                        'products.quantity', 
-                                        'products.price', 
-                                        'products.total', 
-                                        'products.toppings', 
-                                        'products.ings',
-                                        'products.dep',
-                                        'products.section',
-
-                                    ])
+                                    // .select([
+                                    //     'dont',
+                                    //     'products.name', 
+                                    //     'products.discount', 
+                                    //     'products.sub', 
+                                    //     'products.quantity', 
+                                    //     'products.price', 
+                                    //     'products.total', 
+                                    //     'products.toppings', 
+                                    //     'products.ings',
+                                    //     'products.dep',
+                                    //     'products.section',
+                                    //     'products.mainCat',
+                                    //     'products.tva'
+                                    // ])
                                     .populate({
                                         path: 'products.ings.ing',
-                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient', 
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
                                         populate: {
                                             path: 'ings.ing', 
-                                            select: 'name price qty tva tvaPrice sellPrice um productIngredient ings', 
+                                            select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog', 
                                             populate: { 
                                                 path:'ings.ing',
-                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings"
+                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog"
                                             }
                                         }
                                     })
                                     .populate({
                                         path: 'products.toppings.ing', 
-                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient', 
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
                                         populate: {
                                             path: 'ings.ing',
-                                             select: 'name price qty tva tvaPrice sellPrice um productIngredient ings',
+                                             select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog',
                                              populate: {
                                                 path: 'ings.ing',
-                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings", 
+                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog", 
                                                 }
                                             }
                                         })                   
-            console.log('orders length',orders.length)
             const result = await getBillProducts(orders, filter)
-            // console.log('products length', .length)
             const ingredients = await getIngredients(result.allProd)
-            console.log('ingredients length', ingredients.length)
-            res.status(200).json({result: result, ingredients: ingredients})
+            if(report === 'report'){
+                await createDayReport(result.allProd, ingredients, loc, orders, startTime)
+            } else {
+                res.status(200).json({result: result, ingredients: ingredients})
+            }
         }
     } catch(err){
         console.log(err)
@@ -209,7 +304,10 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             const savedBill = await newBill.save();
             table.bills.push(savedBill);
             await table.save();
-            res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, masa: {_id: table._id, index: table.index}})
+            setTimeout(() => {
+                socket.emit('bill', JSON.stringify(savedBill))
+            }, 1000)
+            res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
         } else {
             print(parsedBill)
             parsedBill.products.forEach(el => {
@@ -236,10 +334,12 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                     parsedBill.payment = order.payment
                     parsedBill.pending = order.pending
                     const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-                    res.status(200).json({billId: bill._id, index: bill.index, products: bill.products, masa: bill.masaRest})
+                    socket.emit('bill', JSON.stringify(bill))
+                    res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
                 } else {
                     const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-                    res.status(200).json({billId: bill._id, index: bill.index, products: bill.products, masa: bill.masaRest})
+                    socket.emit('bill', JSON.stringify(bill))
+                    res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
                 }
             }
             setTimeout(saveBill, 1000)
@@ -339,6 +439,9 @@ module.exports.saveOrder = async (req, res, next) => {
     }
 }
 
+
+
+
  
 
 //************************UPDATE ORDERS********************** */
@@ -390,6 +493,9 @@ module.exports.deleteOrder = async (req, res, next) => {
         if(data && data.length) {
             for(let obj of data) {
                 let order = await Order.findById(obj.id)
+                setTimeout(() => {
+                    socket.emit('tableBillId', JSON.stringify({number: order.masa, id: order._id}))
+                }, 500)
                 await order.deleteOne()
             }
             res.status(200).json({messgae: 'Comenzile au fost sterse!'})
@@ -399,80 +505,6 @@ module.exports.deleteOrder = async (req, res, next) => {
         res.status(500).json({message: err.message})
     }   
 }
-
-
-
-// module.exports.updateProducts = async (req, res, next) => {
-//     console.log('hit the function')
-//   try {
-
-//     const start = new Date('2024-01-01').setHours(0,0,0,0)
-//     console.log(start)
-//     // Find all documents in the collection
-//     const documents = await Order.find({ createdAt: { $gte: start}, locatie: "65ba7dcf1694ff43f52d44ed"}).select(['products']).populate({path: 'products.ings.ing', select: 'name'});
-//     console.log(documents.length)
-//     let count = 0
-//     for (const doc of documents) {
-//       // Update products array in the document
-//       doc.products = doc.products.map(product => {
-//         if(product.name === "Brazilia Agua Lipa-1 kg"){
-//             count += 1
-//             console.log(count)
-//             product.ings[0].qty = 1
-//         }
-//         return product;
-//       });
-//       doc.totalProducts = doc.products.length
-//       // Save the updated document back to the database
-//       await doc.save();
-//     }
-//     res.send('all good in the hood')
-//     console.log('Products updated successfully.');
-//   } catch (error) {
-//     console.error('Error updating products:', error);
-//   }
-// }
-
-
-// module.exports.updateProducts = async (req, res, next) => {
-//     console.log('hit the function')
-//   try {
-
-//     const start = new Date('2024-01-01').setHours(0,0,0,0)
-//     console.log(start)
-//     // Find all documents in the collection
-//     const documents = await Order.find({ createdAt: { $gte: start}, locatie: "65ba7dcf1694ff43f52d44ed"}).select(['products']).populate({path: 'products.ings.ing', select: 'name'});
-//     console.log(documents.length)
-//     let count = 0
-//     for (const doc of documents) {
-//       // Update products array in the document
-//       doc.products = doc.products.map(product => {
-//         product.ings.forEach(ing => {
-//             if(ing.ing && (
-//                 ing.ing.name === "Sirop Apple Pie" || 
-//                 ing.ing.name === "Sirop Caramel" ||
-//                 ing.ing.name === "Sirop Ciocolata" ||
-//                 ing.ing.name === "Sirop de Cocos" ||
-//                 ing.ing.name === "Sirop Pumkin Spice" ||
-//                 ing.ing.name === "Sirop migdale" 
-//                 )){
-//                 count += 1
-//                 console.log(count)
-//                 ing.qty *= 2
-//             }
-//         })
-//         return product;
-//       });
-//       doc.totalProducts = doc.products.length
-//       // Save the updated document back to the database
-//       await doc.save();
-//     }
-//     res.send('all good in the hood')
-//     console.log('Products updated successfully.');
-//   } catch (error) {
-//     console.error('Error updating products:', error);
-//   }
-// }
 
 
 

@@ -180,3 +180,6 @@ productTrueSchema.pre('deleteOne', { document: true }, async function (next) {
 
 
 module.exports = mongoose.model('Product', productTrueSchema)
+
+
+

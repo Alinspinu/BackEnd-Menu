@@ -43,3 +43,30 @@
 14:50:49  - S^Crodino^2000^1000^buc^2^1,S^Campari Spritz^2900^1000^buc^2^1,S^Crodino^2000^1000^buc^2^1,ST^,P^1^6900
 14:53:37  - S^Paste cu Zucchini Ciuperci și Roșii Cherry^3300^1000^buc^2^1,S^Lasagna^2500^1000^buc^2^1,S^Risotto cu Ciuperci și Parmezan^3800^1000^buc^2^1,ST^,P^1^9600
 14:54:24  - S^Salată Baba Ganoush^3500^1000^buc^2^1,S^Hummus cu Salsa de Roșii^3700^1000^buc^2^1,S^Salată Baba Ganoush^3500^1000^buc^2^1,S^Tips^2140^1000^buc^3^2,ST^,P^1^12840
+18:08:21  - S^Blossom Tonic -True Blend^2200^1000^buc^1^1,S^Espresso Tonic-True Blend^1800^1000^buc^1^1,S^Limonada cu mango si busuioc^2000^1000^buc^2^1,S^Limonada cu Menta^1800^1000^buc^2^1,S^Hummus cu Salsa de Roșii^3700^1000^buc^2^1,S^Tips^2300^1000^buc^3^2,ST^,P^1^13800
+18:09:02  - S^Limonadă Simplă^1500^1000^buc^2^1,S^Gustoso^3600^1000^buc^2^1,S^Gustoso^3600^1000^buc^2^1,S^Limonada cu mango si busuioc^2000^1000^buc^2^1,S^Loaded Shrimps Fries^3500^1000^buc^2^1,S^Tips^2840^1000^buc^3^2,ST^,P^1^17040
+18:09:27  - S^Limonadă cu mentă și ghimbir^1800^1000^buc^2^1,S^Gourmet^3000^1000^buc^2^1,S^Tips^480^1000^buc^3^2,ST^,P^1^5280
+18:09:45  - S^Limonada cu mango si busuioc^2000^1000^buc^2^1,S^Limonada cu Menta^1800^1000^buc^2^1,S^Suc proaspăt grapefruit^2000^1000^buc^2^1,S^Limonada cu Lavandă^1800^1000^buc^2^1,S^Limonadă cu mentă și ghimbir^1800^1000^buc^2^1,S^Limonadă Simplă^1500^1000^buc^2^1,S^Suc proaspăt portocale și grapefruit^2000^1000^buc^2^1,S^Suc proaspăt de portocale^2000^1000^buc^2^1,S^Tips^2980^1000^buc^3^2,ST^,P^1^17880
+18:10:03  - S^Gustoso^3600^1000^buc^2^1,S^Tips^720^1000^buc^3^2,ST^,P^1^4320
+18:10:18  - S^Limonada cu mango si busuioc^2000^1000^buc^2^1,S^Tips^200^1000^buc^3^2,ST^,P^1^2200
+18:10:37  - S^Limonada cu mango si busuioc^2000^1000^buc^2^1,S^Tips^400^1000^buc^3^2,ST^,P^1^2400
+18:10:54  - S^Pain au Chocolat^1700^1000^buc^2^1,S^Tips^340^1000^buc^3^2,ST^,P^1^2039.9999999999998
+18:11:13  - S^New York Rolls-Vanilie și cireșe^2700^1000^buc^1^1,ST^,P^1^2700
+18:12:26  - S^Cremina^2900^1000^buc^2^1,S^Chiabata Milan^850^1000^buc^2^1,ST^,DV^1875,ST^,P^1^1875
+18:12:34  - S^Salată cu Creveți^4200^1000^buc^2^1,S^Salată Caesar^3700^1000^buc^2^1,S^Ambalaj^200^2000^buc^1^1,ST^,DV^4150,ST^,P^1^4150
+18:12:41  - S^Salată Caesar^3700^1000^buc^2^1,S^Salată cu Creveți^4200^1000^buc^2^1,S^Ambalaj^200^2000^buc^1^1,ST^,DV^4150,ST^,P^1^4150
+18:12:53  - S^Salată Caesar^3700^1000^buc^2^1,S^Salată cu Creveți^4200^1000^buc^2^1,S^Ambalaj^200^2000^buc^1^1,ST^,DV^4150,ST^,P^1^4150
+18:19:30  - S^Campari Spritz^2900^1000^buc^2^1,S^Crodino^2000^1000^buc^2^1,S^Campari Spritz^2900^1000^buc^2^1,ST^,P^1^7800
+18:24:27  - S^ESPRESSO-Etiopia Beshasha^1100^1000^buc^3^1,ST^,P^1^1100
+18:24:33  - S^ESPRESSO DUBLU-Nicaragua Pacamara^1500^1000^buc^3^1,ST^,P^1^1500
+18:24:41  - S^Hot Brew-Papua Noua Guinee^1800^1000^buc^3^1,ST^,P^1^1800
+18:24:47  - S^Long Black-Etiopia Beshasha^1500^1000^buc^3^1,S^ESPRESSO DUBLU-Guatema Tzkyn^1400^1000^buc^3^1,ST^,P^1^2900
+18:24:52  - S^Long Black-Decofeinizat^1300^1000^buc^3^1,ST^,P^1^1300
+18:25:17  - S^Americano-Brazilia Agua Lipa^800^1000^buc^3^1,ST^,P^1^800
+18:25:37  - S^Americano-Nicaragua Pacamara^1100^1000^buc^3^1,ST^,P^1^1100
+18:25:53  - S^ESPRESSO DUBLU-Nicaragua Pacamara^1500^1000^buc^3^1,S^ESPRESSO-Etiopia Beshasha^1100^1000^buc^3^1,ST^,P^1^2600
+18:26:11  - S^Latte-Papua Noua Guinee^1600^1000^buc^3^1,S^Flat White-Papua Noua Guinee^1800^1000^buc^3^1,ST^,P^2^3400
+18:27:05  - S^ESPRESSO-Nicaragua Pacanara^1100^1000^buc^3^1,S^Long Black-Columbia Jairo^1600^1000^buc^3^1,ST^,P^1^2700
+18:39:50  - S^Love Cocoa-Gingerbread^2500^1000^buc^2^1,S^Otherly-Sea Salt^2500^1000^buc^2^1,S^TRUE BLEND^6000^1000^buc^2^1,ST^,P^1^11000
+15:01:30  - S^Pahar fluta^900^102000^buc^3^1,S^Pahar Vin^900^102000^buc^3^1,ST^,P^1^183600
+8:01:48 AM  - S^Americano-Brazilia Agua Lipa^800^1000^buc^3^1,ST^,DV^80,ST^,P^1^720

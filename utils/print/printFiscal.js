@@ -89,19 +89,17 @@ async function printBill(bill) {
         }
         
         log(billToPrint, "bils")
-        console.log(bill.payment)
-        console.log(billToPrint)
-        // axios.post(url, billToPrint, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     })
-        //         .then(response => {
-        //             console.log('Response:', response.data);
-        //         })
-        //         .catch(error => {
-        //             console.error('Error:', error.message);
-        //         });
+        axios.post(url, billToPrint, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            })
+                .then(response => {
+                    console.log('Response:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                });
 
     } else {
         return
@@ -129,7 +127,6 @@ async function printNefiscal(bill) {
         let totalLine = `TL^ TOTAL        ${bill.total} Lei`
         let thanks = `TL^MULTUMIM SI VA MAI ASTEPTAM!`
         data.push(totalLine)
-        console.log(data)
         // axios.post(url, data, {
         //     headers: {
         //         'Content-Type': 'application/json',

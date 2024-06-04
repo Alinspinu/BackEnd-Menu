@@ -86,15 +86,27 @@ const UserTrueSchema = new Schema({
             onPaper: {
                 salary: Number,
                 tax: Number,
-            }
+            },
+            fix: Boolean,
         },
+        payments: [
+            {
+                date: Date,
+                amount: Number,
+            tip: {
+                    type: String,
+                    enum: ['Avans', 'Salariu', 'Bonus vanzari', 'Bonus excelenta']
+                }
+            }
+        ], 
         workLog: [
             {
                 day: Date,
-                checkIn: String,
-                chekOut: String,
+                checkIn: Date,
+                checkOut: Date,
                 hours: Number,
                 earnd: Number,
+                position: String,
                 comments: [
                     {
                     user: {

@@ -33,5 +33,9 @@ router.route('/loc')
 
 router.route('/get-cash').get(users.sendUserCashback)
 
+router.route('/work-log')
+    .put(users.updateWorkLog)
+    .post(users.deleteWorkEntry)
+
 
 module.exports = router  

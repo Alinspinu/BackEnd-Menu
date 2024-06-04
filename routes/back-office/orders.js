@@ -25,6 +25,8 @@ router.route('/invoice').post(printRoutes.factura)
 
 router.route('/all-orders').get(orderRoutes.getAllOrders)
 
+router.route('/dep').get(orderRoutes.calcDep)
+
 // router.route('/update-bills').get(orderRoutes.updateProducts)
 
 

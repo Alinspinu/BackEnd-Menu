@@ -68,17 +68,12 @@ const deletetProductSchema = new Schema ({
             ],
             ings: [
                 {
-                    name: {
-                      type: String,
+                    ing: {
+                        type: Schema.Types.ObjectId,
+                        ref: 'IngredientInv'
                     },
                     qty: {
                       type: Number,
-                    },
-                    price: {
-                      type: Number,
-                    },
-                    um: {
-                        type: String,
                     }
                   },
             ]
