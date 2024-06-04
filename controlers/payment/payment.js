@@ -203,6 +203,7 @@ module.exports.printBill = async (req, res, next) => {
         // bill.status = 'done'
         // bill.pending = false
         const id = bill.clientInfo._id
+        console.log(id)
         if(id && id.length){
             const client = await User.findById(id)
             if(client){
