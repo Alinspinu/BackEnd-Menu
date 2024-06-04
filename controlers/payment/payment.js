@@ -225,8 +225,8 @@ module.exports.printBill = async (req, res, next) => {
             dont: bill.dont,
             cif: bill.cif
         }
-       const order = await Order.findByIdAndUpdate(bill._id, update, {new: true})
-       const logMessage = `Index ${order.index} status: ${order.status}, `
+       const savedBill = await Order.findByIdAndUpdate(bill._id, update, {new: true})
+       const logMessage = `Index ${savedBill.index} status: ${savedBill.status}, `
         log(logMessage, 'billStatus')
         if(savedBill){
             if(bill.total > 0) {
@@ -238,7 +238,7 @@ module.exports.printBill = async (req, res, next) => {
         } else {
             throw new Error('Nota de plată nu a putut fi salvată!')
         }
-        res.status(200).json({message: "Bonul a fos tipărit!"})
+        // res.status(200).json({message: "Bonul a fos tipărit!"})
     } catch(err) {
         console.log(err)
         res.status(500).json({message: err.message})
