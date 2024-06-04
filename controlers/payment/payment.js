@@ -213,11 +213,6 @@ module.exports.printBill = async (req, res, next) => {
             await client.save()
         }
         console.log(bill.dont)
-        if(bill.total > 0) {
-            if(!bill.dont){
-                printBill(bill)
-            }
-        }
         const update = {
             status: 'done',
             pending: false,
@@ -226,10 +221,9 @@ module.exports.printBill = async (req, res, next) => {
             cif: bill.cif
         }
        const savedBill = await Order.findByIdAndUpdate(bill._id, update, {new: true})
-       const logMessage = `Index ${savedBill.index} status: ${savedBill.status}, `
-        log(logMessage, 'billStatus')
+        console.log(savedBill)
         if(savedBill){
-            if(bill.total > 0) {
+            if(savedBill.total > 0 && !savedBill.dont) {
                 printBill(savedBill)
                 res.status(200).json({message: "Bonul a fos tipărit!", bill: savedBill})
             } else {
