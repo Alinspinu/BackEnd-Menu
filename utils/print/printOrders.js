@@ -8,11 +8,16 @@ const { EscPos } = require("@tillpos/xml-escpos-helper")
 const { connectToPrinter } = require("../connectToPrinter")
 const{ log } = require('../functions')
 
+const io = require('socket.io-client')
+const socket = io("https://live669-0bac3349fa62.herokuapp.com")
+// const socket = io("http://localhost:8090")
+
 const templatePath = './utils/print/input.ejs';
 const outputPath = './utils/print/output.xml';
 
 
 async function print(order) {
+    console.log(order)
     let foodProd = []
     let mainProd = []
     let baristaProd = []
@@ -37,15 +42,80 @@ async function print(order) {
         masa: order.masa,
         time: timeString
     }
-    console.log('print orders', dataToPrint)
     printKitchen(foodProd, dataToPrint);
     printBarista(baristaProd, dataToPrint);
     setTimeout(()=>{
         printMain(mainProd, dataToPrint);
     }, 500)
-    console.log("barista",baristaProd)
-    console.log('main',mainProd)
 } 
+
+
+
+const outCategories = {
+    blackCoffee: '64c8071c378605eb04628210',
+    withMilk: '64c8074e378605eb04628212',
+    iceCoffee: '64c8078d378605eb04628214',
+    craft: '64c8e5d648b61f91a0d45e62'
+}
+
+function compareCategory(obj, valueToCompare) {
+    let value = false
+    Object.keys(obj).forEach(key => {
+        console.log('object cat',obj[key])
+        if(obj[key] === valueToCompare.toString()){
+           value = true
+        } 
+    })
+    return value
+  }
+
+async function printTwo(order) {
+    let foodProd = []
+    let mainProd = []
+    let baristaProd = []
+    let outProducts = []
+    order.products.forEach(el => {
+        if(el.sentToPrint){
+            if(el.printer === 'kitchen'){
+                foodProd.push(el)
+            } else if( el.printer === 'barista' && !compareCategory(outCategories, el.category)){
+                baristaProd.push(el)
+            } else if(el.printer === 'main'){
+                mainProd.push(el) 
+            } else if(compareCategory(outCategories, el.category)) {
+                outProducts.push(el)
+            }
+        }
+    })
+    const date = new Date(Date.now());
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const timeString = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
+    const dataToPrint = {
+        inOrOut: order.inOrOut,
+        employee: order.employee,
+        masa: order.masa,
+        time: timeString
+    }
+    socket.emit('outsideOrder', JSON.stringify({outProducts, dataToPrint}))
+    getOutProducts()
+    printKitchen(foodProd, dataToPrint);
+    printBarista(baristaProd, dataToPrint);
+    setTimeout(()=>{
+        printMain(mainProd, dataToPrint);
+    }, 500)
+}
+
+
+function getOutProducts(){
+    if (!socket.hasListeners('outsideOrder')) {    
+        socket.on('outsideOrder', (data) => {
+            const products = JSON.parse(data);
+            printBarista(products.outProducts, products.dataToPrint)
+        });
+    }
+    }
+
 
 
 
@@ -110,6 +180,7 @@ async function printBarista(products, dataPrint) {
                 data.push(comment)
             }
         }
+        console.log(data)
         log(data, 'barista-orders')
         // axios.post(url, data, {
         //     headers: {
@@ -212,4 +283,4 @@ try{
 }
 
 
-module.exports = {print, printUnregisterBills}
+module.exports = {print, printUnregisterBills, printTwo}

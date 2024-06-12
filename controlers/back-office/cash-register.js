@@ -24,7 +24,7 @@ module.exports.sendEntry = async (req, res, next) => {
 
 
 module.exports.addEntry = async (req, res, next) => {
-    const { tip, date, typeOf, suplier, user, description, document, amount, locatie } = req.body
+    const { tip, date, typeOf, suplier, user, description, document, amount, locatie, month } = req.body
     createCashRegisterDay(locatie)
     if(tip && date && amount){
         const entryDate = new Date(date)
@@ -43,7 +43,8 @@ module.exports.addEntry = async (req, res, next) => {
             const payment = {
                 amount: amount / user.length,
                 tip: typeOf,
-                date: entryDate
+                date: entryDate,
+                workMonth: new Date(Date.now()).getMonth()
             }
             for(let id of user){
             await User.findOneAndUpdate({_id: id}, {$push: {'employee.payments': payment}})
@@ -53,7 +54,8 @@ module.exports.addEntry = async (req, res, next) => {
             const payment = {
                 amount: amount,
                 tip: typeOf,
-                date: entryDate
+                date: entryDate,
+                workMonth: month
             }
            await User.findOneAndUpdate({_id: user[0]}, {$push: {'employee.payments': payment}})
         }

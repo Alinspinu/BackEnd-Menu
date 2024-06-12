@@ -11,7 +11,7 @@ const {formatedDateToShow, round} = require('../../utils/functions')
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
 
-const {print} = require('../../utils/print/printOrders')
+const {print, printTwo} = require('../../utils/print/printOrders')
 const {printBill, posPayment} = require('../../utils/print/printFiscal')
 
 const io = require('socket.io-client')
@@ -187,6 +187,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
                                         })                   
             const result = await getBillProducts(orders, filter)
             const ingredients = await getIngredients(result.allProd)
+            console.log(orders[0])
             if(report === 'report'){
                 await createDayReport(result.allProd, ingredients, loc, orders, startTime)
             } else {
@@ -285,7 +286,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             } 
-            print(newBill)
+            newBill.out ? printTwo(newBill) : print(newBill)
             newBill.products.forEach(el => {
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
                     if(el.toppings.length){
@@ -302,6 +303,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 }
             })
             const savedBill = await newBill.save();
+            socket.emit('bill', JSON.stringify(bill))
             table.bills.push(savedBill);
             await table.save();
             setTimeout(() => {
@@ -309,7 +311,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             }, 1000)
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
         } else {
-            print(parsedBill)
+            parsedBill.out ? printTwo(parsedBill) : print(parsedBill)
             parsedBill.products.forEach(el => {
                 el.sentToPrint ? resaveOrder = true : resaveOrder = false
                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length) {
@@ -342,7 +344,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                     res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
                 }
             }
-            setTimeout(saveBill, 1000)
+            setTimeout(saveBill, 500)
         }
     } catch(err){
         console.log(err)

@@ -8,8 +8,11 @@ const { json } = require('body-parser');
 const User = require('../../models/users/user');
 const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
+const Locatie = require('../../models/office/locatie')
+
 const { round } = require('../../utils/functions')
 const {reports, inAndOut, printBill, posPayment, printNefiscal} = require('../../utils/print/printFiscal')
+const https = require('https');
 
 module.exports.getToken = async (req, res, next) => {
     try {
@@ -65,6 +68,97 @@ module.exports.getToken = async (req, res, next) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+
+async function makeRequestWithRetry(url, expectedCondition, retries, delayTime) {
+    const agent = new https.Agent({
+        rejectUnauthorized: false
+      });
+    for (let attempt = 0; attempt < retries; attempt++) {
+        try {
+            const response = await axios.get(url, {headers: {'Content-Type': 'application/json'},httpsAgent: agent});
+            if (expectedCondition(response)) {
+                return response;
+            }
+            console.log(`Attempt ${attempt + 1} failed, retrying...`);
+        } catch (error) {
+            console.error(`Attempt ${attempt + 1} encountered an error:`, error);
+        }
+        await delay(delayTime);
+    }
+    throw new Error(`Failed to get the expected response after ${retries} attempts`);
+}
+
+
+
+
+module.exports.getTokenForPos = async (req, res, next) => {
+    const agent = new https.Agent({
+        rejectUnauthorized: false
+      });
+    try{
+        const {sessionId, amount, abort, loc} = req.query
+        const locatie = await Locatie.findById(loc)
+        if(locatie){
+            const baseUrl = `https://${locatie.pos.vivaWalletLocal.ip}:${locatie.pos.vivaWalletLocal.port}/pos/v1/`
+            if(abort === 'abort'){
+                const abortUrl = `${baseUrl}abort`
+                axios.post(abortUrl, {"sessionId": `${sessionId}`}, {headers: {'Content-Type': 'application/json'},httpsAgent: agent})
+                .then(response => {
+                    console.log('Abort succesful', response.data);
+                    res.status(200).json(response.data)
+                })
+                .catch(error => {
+                    console.error('Error in the abort process:', error);
+                    res.status(500).json(err.message)
+                });
+            }else{
+                const urlSearchPos = `${baseUrl}sale`
+                const urlGetInfo = `${baseUrl}sessions/${sessionId}`
+    
+                const body = {             
+                        "sessionId": `${sessionId}`,
+                        "amount": amount*100,
+                    }
+                    axios.post(urlSearchPos, body, {headers: {'Content-Type': 'application/json'},httpsAgent: agent})
+                        .then(response => {
+                            console.log('First request successful:', response.data);
+                    
+                            return delay(3000);
+                        })
+                        .then(() => {
+                            return makeRequestWithRetry(urlGetInfo, 
+                                response => response.data.payloadData, 
+                                30, 
+                                2500
+                            );
+                        })
+                        .then(response => {
+                            console.log('Second request successful:', response.data);
+                            res.status(200).json(response.data)
+                        })
+                        .catch(error => {
+                            console.error('Error in one of the requests:', error);
+                            res.status(500).json(error)
+                        });
+            }
+        } else {
+            throw new Error(`Lipsete locatia, login!`);
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+
+}
+
+
 
 module.exports.checkCashBack = async (req, res, next) => {
     try {

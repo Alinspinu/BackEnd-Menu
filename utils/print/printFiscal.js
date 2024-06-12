@@ -87,8 +87,7 @@ async function printBill(bill) {
             let onlineLine = `P^7^${bill.payment.online * 100}`
             billToPrint.push(onlineLine)
         }
-        
-        log(billToPrint, "bils")
+        console.log(billToPrint)
         axios.post(url, billToPrint, {
             headers: {
                 'Content-Type': 'application/json',

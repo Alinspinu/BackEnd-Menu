@@ -122,6 +122,7 @@ const reportSchema = new Schema({
                     employee:{
                       fullName: String,
                     },
+                    createdAt: Date,
                     products:
                         [
                             {

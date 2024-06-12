@@ -29,6 +29,7 @@ router.route('/generateQr')
 router.route('/loc')
     .get(users.sendLocatie)
     .put(users.editLocatie)
+    .post(users.updateVivaData)
 
 
 router.route('/get-cash').get(users.sendUserCashback)
@@ -36,6 +37,7 @@ router.route('/get-cash').get(users.sendUserCashback)
 router.route('/work-log')
     .put(users.updateWorkLog)
     .post(users.deleteWorkEntry)
+
 
 
 module.exports = router  

@@ -881,7 +881,7 @@ module.exports.factura = async (req, res, next) => {
   const client = await Suplier.findById(clientId)
   const user = await User.findById(userId)
   const bill = new Bill({
-      serie: 'CFT',
+      serie: 'SLR',
       locatie: locatie._id,
       client: clientId,
       products: nota.products
@@ -929,7 +929,7 @@ module.exports.factura = async (req, res, next) => {
   doc.font("public/font/RobotoSlab-Regular.ttf");
   doc.text(`${locatie.address}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
 
-  doc.text(`alin@cafetish.com`, 60 + 10, 140)
+  doc.text(`office@truefinecoffee.ro`, 60 + 10, 140)
   doc.text(`${locatie.bank}`, 60 + 10, 152)
   doc.text(`${locatie.account}`, 55 + 10, 164)
 

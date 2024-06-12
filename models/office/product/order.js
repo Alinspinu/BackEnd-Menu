@@ -97,6 +97,10 @@ const orderTrueSchema = new Schema({
         type: String,
         default: 'open'
     },
+    out: {
+        type: Boolean,
+        default: false
+    },
     dont: Boolean,
     paymentMethod: String,
     payment: {
@@ -161,6 +165,11 @@ const orderTrueSchema = new Schema({
                 sgrTax: {
                     type: Boolean,
                     default: false
+                },
+                category:
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Category'
                 },
                 discount: Number,
                 mainCat: String,
@@ -244,13 +253,3 @@ orderTrueSchema.pre('deleteOne', async function (next){
 
 module.exports = mongoose.model('Order', orderTrueSchema)
 
-
-
-
-
-const filter = {
-    inreg: this.isInreg,
-    unreg: this.isUnreg,
-    goods: this.isGoods,
-    prod: this.isProduction
-  }

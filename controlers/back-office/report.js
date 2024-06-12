@@ -1,7 +1,9 @@
 
 const { createDayReport } = require('../../utils/reports')
 const Report = require('./../../models/office/report')
+const Order = require('./../../models/office/product/order')
 const {round, formatedDateToShow} = require('./../../utils/functions')
+const User = require('./../../models/users/user')
 
 
 
@@ -10,14 +12,55 @@ module.exports.getReports = async(req, res, next) => {
         const {startDate, endDate, loc} = req.query
         const start = new Date(startDate).setUTCHours(0,0,0,0)
         const end = new Date(endDate).setUTCHours(0,0,0,0)
-        console.log( new Date(start), new Date(end))
         const reports = await Report.find({day: {$gte: start, $lte: end}}).sort({day: 1})
-        console.log(reports.length)
         const report = await createReport(reports)
         res.status(200).json(report)
     } catch(err) {
         console.log(err)
         res.status(500).json({message: err.message})
+    }
+}
+
+
+module.exports.updateRap = async(req, res, next) => {
+    try{
+        // const startDate = new Date('2024-05-01T00:00:00Z');
+        // const endDate = new Date('2024-06-06T23:59:59Z');
+        // const reports = await Report.find({})
+        // const bills = await Order.find({createdAt: {$gte: startDate, $lte: endDate}}).select(['index', 'createdAt'])
+        // const saveReports = reports.map(async (report) => {
+        //         for (let method of report.paymentMethods) {
+        //             for( let bill of method.bills){
+        //                 for (let dbBill of bills) {
+        //                     if (bill.index === dbBill.index) {
+        //                         bill.createdAt = dbBill.createdAt;
+        //                         bill.updatedAt = dbBill.updatedAt
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //         return report.save();
+        // });
+        // await Promise.all(saveReports);
+        // res.send('all good')
+
+        // const users = await User.find({ 'employee.fullName': { 
+        //     $exists: true,                                     
+        //   }
+        // }).select(['employee.payments'])
+        // console.log(users.length)
+        // const savedUsers = users.map(async (user) => {
+        //     for(let payment of user.employee.payments){
+        //         const docMonth = new Date(payment.date).getMonth()
+
+        //         payment.workMonth = docMonth 
+        //     }
+        //     return user.save()
+        // })
+        // await Promise.all(savedUsers)
+        res.send('all good')
+    } catch(err){   
+        console.log(err)
     }
 }
 

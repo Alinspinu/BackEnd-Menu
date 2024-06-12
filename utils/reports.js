@@ -210,8 +210,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     const daysNumber = getDaysInMonthFromDate(new Date(dat))
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
+
+    console.log('hit function')
     
-    const pontaj = await Pontaj.findOne({locatie: loc, month: 'Mai - 2024'}).populate('days.users.employee')
+    const pontaj = await Pontaj.findOne({locatie: loc, month: 'Iunie - 2024'}).populate('days.users.employee')
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'})
     const allIngs = await Ingredient.find({locatie: loc, productIngredient: false, dep: 'consumabil'}).select(['uploadLog', 'tvaPrice'])
     const dbUsers = await User.find({locatie: loc, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
@@ -467,7 +469,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
 
 
     //CALC INGREDIENTS VALUE
-
+      console.log(ingredients.length)
     ingredients.forEach(ing => {
       if(ing.ing && ing.ing.tvaPrice && ing.qty){
         const ingValue = round(ing.ing.tvaPrice *ing.qty)

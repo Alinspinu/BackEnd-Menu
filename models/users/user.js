@@ -93,10 +93,12 @@ const UserTrueSchema = new Schema({
             {
                 date: Date,
                 amount: Number,
-            tip: {
-                    type: String,
-                    enum: ['Avans', 'Salariu', 'Bonus vanzari', 'Bonus excelenta']
-                }
+                tip: {
+                        type: String,
+                        enum: ['Avans', 'Salariu', 'Bonus vanzari', 'Bonus excelenta', 'Plata catre administrator']
+                    },
+                workMonth: Number
+            
             }
         ], 
         workLog: [

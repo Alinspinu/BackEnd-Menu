@@ -213,6 +213,27 @@ module.exports.editLocatie = async (req, res, next) => {
     }
 }
 
+module.exports.updateVivaData = async (req, res, next) => {
+    try{
+        const {ip, port, locId} = req.body;
+        if(ip.length && port.length && locId.length){
+              const pos = {
+                    vivaWalletLocal: {
+                        ip: ip,
+                        port: port,
+                    }
+                }
+            const locToEdit = await Locatie.findByIdAndUpdate(locId, {pos: pos}, {new: true})
+            console.log(locToEdit)
+            res.status(200).json({message: 'Datele au fost actualizate'})
+        } else {
+            throw new Error('Date incomplete')
+        }
+    } catch(err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
+}
 
 module.exports.newCustomer = async (req, res, next) => {
   try{
