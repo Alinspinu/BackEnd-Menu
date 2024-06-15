@@ -25,6 +25,9 @@ const productTrueSchema = new Schema({
         type: String,
         default: 'barista'
     },
+    printOut:{
+        type: Boolean,
+    },
     toppings:[
             {
                 name: String,

@@ -12,6 +12,7 @@ const Locatie = require('../../models/office/locatie')
 
 const { round } = require('../../utils/functions')
 const {reports, inAndOut, printBill, posPayment, printNefiscal} = require('../../utils/print/printFiscal')
+const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 const https = require('https');
 
 module.exports.getToken = async (req, res, next) => {
@@ -126,6 +127,7 @@ module.exports.getTokenForPos = async (req, res, next) => {
                         "sessionId": `${sessionId}`,
                         "amount": amount*100,
                     }
+                    console.log(urlSearchPos)
                     axios.post(urlSearchPos, body, {headers: {'Content-Type': 'application/json'},httpsAgent: agent})
                         .then(response => {
                             console.log('First request successful:', response.data);
@@ -313,6 +315,14 @@ module.exports.printBill = async (req, res, next) => {
             } else {
                 res.status(200).json({message: "Nota de plata a fost salvată!", bill: savedBill})
             }
+                savedBill.products.map((el) => {
+                if (el.toppings.length) {
+                    unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+                if (el.ings.length) {
+                    unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+            });
         } else {
             throw new Error('Nota de plată nu a putut fi salvată!')
         }

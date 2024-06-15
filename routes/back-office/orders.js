@@ -20,6 +20,7 @@ router.route('/register-del-prod').post(orderRoutes.registerDeletedOrderProducts
 router.route('/save-order')
     .post(orderRoutes.saveOrder)
 router.route('/upload-ings').post(orderRoutes.uploadIngs)
+router.route('/unload-ings').post(orderRoutes.unloadIngs)
 
 router.route('/invoice').post(printRoutes.factura)
 

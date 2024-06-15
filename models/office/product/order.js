@@ -166,11 +166,7 @@ const orderTrueSchema = new Schema({
                     type: Boolean,
                     default: false
                 },
-                category:
-                {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Category'
-                },
+                printOut: Boolean,
                 discount: Number,
                 mainCat: String,
                 imgPath: String,

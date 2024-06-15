@@ -22,7 +22,6 @@ const invIngSchema = new Schema({
       operation: {
         name: {
           type: String,
-          enum: ['intrare', 'transfer', 'intoarcere']
         },
         details: String,
       }
@@ -35,7 +34,6 @@ const invIngSchema = new Schema({
       operation: {
         name: {
           type: String,
-          enum: ['vanzare', 'transfer', 'intoarcere']
         },
         details: String,
       }

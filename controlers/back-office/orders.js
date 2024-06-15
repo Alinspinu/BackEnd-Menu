@@ -11,7 +11,7 @@ const {formatedDateToShow, round} = require('../../utils/functions')
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
 
-const {print, printTwo} = require('../../utils/print/printOrders')
+const {print} = require('../../utils/print/printOrders')
 const {printBill, posPayment} = require('../../utils/print/printFiscal')
 
 const io = require('socket.io-client')
@@ -146,21 +146,6 @@ module.exports.getHavyOrders = async (req, res, next) => {
             // const startTime = new Date(convertToDateISOString(start)).setHours(0,0,0,0)
             // const endTime = new Date(convertToDateISOString(end)).setHours(23,59,59,9999)
             const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
-                                    // .select([
-                                    //     'dont',
-                                    //     'products.name', 
-                                    //     'products.discount', 
-                                    //     'products.sub', 
-                                    //     'products.quantity', 
-                                    //     'products.price', 
-                                    //     'products.total', 
-                                    //     'products.toppings', 
-                                    //     'products.ings',
-                                    //     'products.dep',
-                                    //     'products.section',
-                                    //     'products.mainCat',
-                                    //     'products.tva'
-                                    // ])
                                     .populate({
                                         path: 'products.ings.ing',
                                         select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
@@ -286,65 +271,29 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             } 
-            newBill.out ? printTwo(newBill) : print(newBill)
+            print(newBill)
             newBill.products.forEach(el => {
-                if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
-                    if(el.toppings.length){
-                        unloadIngs(el.toppings, el.quantity, {name:'vanzare', details: el.name});
-                    } 
-                    if(el.ings.length){
-                        unloadIngs(el.ings, el.quantity, {name:'vanzare', details: el.name});
-                    }
-                    el.sentToPrint = false;
-                    console.log("new", el.sentToPrint)
-                } else if(el.sentToPrint){
+                if(el.sentToPrint){
                     el.sentToPrint = false
                     console.log("new",el.sentToPrint)
                 }
             })
             const savedBill = await newBill.save();
-            socket.emit('bill', JSON.stringify(bill))
             table.bills.push(savedBill);
             await table.save();
-            setTimeout(() => {
-                socket.emit('bill', JSON.stringify(savedBill))
-            }, 1000)
+            socket.emit('bill', JSON.stringify(savedBill))
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
         } else {
-            parsedBill.out ? printTwo(parsedBill) : print(parsedBill)
+            print(parsedBill)
             parsedBill.products.forEach(el => {
-                el.sentToPrint ? resaveOrder = true : resaveOrder = false
-                if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length) {
-                    if(el.toppings.length){
-                        unloadIngs(el.toppings, el.quantity, {name:'vanzare', details: el.name});
-                    } 
-                    if(el.ings.length){
-                        unloadIngs(el.ings, el.quantity, {name:'vanzare', details: el.name});
-                    }
-
-                    el.sentToPrint = false;
-                    console.log("old",el.sentToPrint)
-                } else if(el.sentToPrint){
+                if(el.sentToPrint){
                     el.sentToPrint = false
                     console.log("old",el.sentToPrint)
                 }
             })
-            async function saveBill() {
-                const order = await Order.findById(billId)
-                if(order.status === "done"){
-                    parsedBill.status = 'done'
-                    parsedBill.payment = order.payment
-                    parsedBill.pending = order.pending
-                    const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-                    socket.emit('bill', JSON.stringify(bill))
-                    res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
-                } else {
-                    const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-                    socket.emit('bill', JSON.stringify(bill))
-                    res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
-                }
-            }
-            setTimeout(saveBill, 500)
+            const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
+            socket.emit('bill', JSON.stringify(bill))
+            res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
         }
     } catch(err){
         console.log(err)
@@ -370,7 +319,22 @@ module.exports.uploadIngs = async (req, res, next) => {
         const {loc} = req.query
         const {ings, quantity, operation} = req.body;
         if(ings && quantity){
-            uploadIngs(ings, quantity, operation)
+        uploadIngs(ings, quantity, operation)
+        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.unloadIngs = async (req, res, next) => {
+    console.log('hit the function')
+    try{
+        const {ings, quantity, operation} = req.body;
+        console.log(req.body)
+        if(ings && quantity){
+        unloadIngs(ings, quantity, operation)
         res.status(200).json({message: 'Success, stocul a fost actualizat!'})
         }
     } catch (err) {

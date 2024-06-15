@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document>
   <align mode="center">
-    <text-line size="0:0">Ora: 09:21 </text-line>
+    <text-line size="0:0">Ora: 15:43 </text-line>
   </align>
+  <line-feed/>
   <align mode="center">
-    <text-line size="1:0">TERASA</text-line>
+    <text-line size="1:0">INTERIOR</text-line>
   </align>
   <line-feed/>
   <align mode="left">
-    <text-line size="1:0">Alin Spinu   Masa 53</text-line>
+    <text-line size="1:0">Alin Spinu   Masa 4</text-line>
   </align>
 
   <line-feed/>
@@ -17,14 +18,7 @@
   <!-- Start of loop -->
   
     <align mode="left">
-      <text-line size="0:0">1 X Folded Eggs with Truffle</text-line>
-    </align>
-    
-    
-    <line-feed/>
-    
-    <align mode="left">
-      <text-line size="0:0">1 X Brioșă Englezească cu Ouă Benedict</text-line>
+      <text-line size="0:0">1 X Mic Dejun Turcesc</text-line>
     </align>
     
     

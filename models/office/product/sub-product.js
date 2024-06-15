@@ -30,6 +30,9 @@ const subProductSchema = new Schema({
     tva: {
         type: Number
     },
+    printOut:{
+        type: Boolean,
+    },
     ings: [
         {
        

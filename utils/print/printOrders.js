@@ -16,77 +16,45 @@ const templatePath = './utils/print/input.ejs';
 const outputPath = './utils/print/output.xml';
 
 
+// async function print(order) {
+//     let foodProd = []
+//     let mainProd = []
+//     let baristaProd = []
+//     order.products.forEach(el => {
+//         if(el.sentToPrint){
+//             if(el.printer === 'kitchen'){
+//                 foodProd.push(el)
+//             } else if( el.printer === 'barista'){
+//                 baristaProd.push(el)
+//             } else if(el.printer === 'main'){
+//                 mainProd.push(el) 
+//             }
+//         }
+//     })
+//     const date = new Date(Date.now());
+//     const hours = date.getHours();
+//     const minutes = date.getMinutes();
+//     const timeString = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
+//     const dataToPrint = {
+//         inOrOut: order.inOrOut,
+//         employee: order.employee,
+//         masa: order.masa,
+//         time: timeString
+//     }
+//     printKitchen(foodProd, dataToPrint);
+//     printBarista(baristaProd, dataToPrint);
+//     setTimeout(()=>{
+//         printMain(mainProd, dataToPrint);
+//     }, 500)
+// } 
+
+
 async function print(order) {
-    console.log(order)
-    let foodProd = []
-    let mainProd = []
-    let baristaProd = []
-    order.products.forEach(el => {
-        if(el.sentToPrint){
-            if(el.printer === 'kitchen'){
-                foodProd.push(el)
-            } else if( el.printer === 'barista'){
-                baristaProd.push(el)
-            } else if(el.printer === 'main'){
-                mainProd.push(el) 
-            }
-        }
-    })
-    const date = new Date(Date.now());
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const timeString = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
-    const dataToPrint = {
-        inOrOut: order.inOrOut,
-        employee: order.employee,
-        masa: order.masa,
-        time: timeString
-    }
-    printKitchen(foodProd, dataToPrint);
-    printBarista(baristaProd, dataToPrint);
-    setTimeout(()=>{
-        printMain(mainProd, dataToPrint);
-    }, 500)
-} 
-
-
-
-const outCategories = {
-    blackCoffee: '64c8071c378605eb04628210',
-    withMilk: '64c8074e378605eb04628212',
-    iceCoffee: '64c8078d378605eb04628214',
-    craft: '64c8e5d648b61f91a0d45e62'
-}
-
-function compareCategory(obj, valueToCompare) {
-    let value = false
-    Object.keys(obj).forEach(key => {
-        console.log('object cat',obj[key])
-        if(obj[key] === valueToCompare.toString()){
-           value = true
-        } 
-    })
-    return value
-  }
-
-async function printTwo(order) {
     let foodProd = []
     let mainProd = []
     let baristaProd = []
     let outProducts = []
-    order.products.forEach(el => {
-        if(el.sentToPrint){
-            if(el.printer === 'kitchen'){
-                foodProd.push(el)
-            } else if( el.printer === 'barista' && !compareCategory(outCategories, el.category)){
-                baristaProd.push(el)
-            } else if(el.printer === 'main'){
-                mainProd.push(el) 
-            } else if(compareCategory(outCategories, el.category)) {
-                outProducts.push(el)
-            }
-        }
-    })
+
     const date = new Date(Date.now());
     const hours = date.getHours();
     const minutes = date.getMinutes();
@@ -95,26 +63,45 @@ async function printTwo(order) {
         inOrOut: order.inOrOut,
         employee: order.employee,
         masa: order.masa,
-        time: timeString
+        time: timeString,
+        products: []
     }
+    if(order.out){
+        order.products.forEach(el => {
+            if(el.sentToPrint){
+                if(el.printer === 'kitchen'){
+                    foodProd.push(el)
+                } else if( el.printer === 'barista' && !el.printOut){
+                    baristaProd.push(el)
+                } else if(el.printer === 'main'){
+                    mainProd.push(el) 
+                } else if(el.printOut) {
+                    outProducts.push(el)
+                    dataToPrint.products.push(el)
+                }
+            }
+        })
+    } else {
+        order.products.forEach(el => {
+            if(el.sentToPrint){
+                if(el.printer === 'kitchen'){
+                    foodProd.push(el)
+                } else if( el.printer === 'barista'){
+                    baristaProd.push(el)
+                } else if(el.printer === 'main'){
+                    mainProd.push(el) 
+                }
+            }
+        })
+    }
+
     socket.emit('outsideOrder', JSON.stringify({outProducts, dataToPrint}))
-    getOutProducts()
     printKitchen(foodProd, dataToPrint);
     printBarista(baristaProd, dataToPrint);
     setTimeout(()=>{
         printMain(mainProd, dataToPrint);
     }, 500)
 }
-
-
-function getOutProducts(){
-    if (!socket.hasListeners('outsideOrder')) {    
-        socket.on('outsideOrder', (data) => {
-            const products = JSON.parse(data);
-            printBarista(products.outProducts, products.dataToPrint)
-        });
-    }
-    }
 
 
 
@@ -151,20 +138,15 @@ async function printKitchen(products, dataPrint) {
 
 async function printBarista(products, dataPrint) {   
     const url = 'http://192.168.1.90:65400/api/Receipt';
-    // let data = [
-    //     `TL^           ORA: ${dataPrint.time}   `,
-    //     "TL^ ", 
-    //     `TL^ NUME:${dataPrint.employee.fullName.split(' ')[0]} MASA: *${dataPrint.masa}*`,
-    //     "TL^", 
-    // ];
     if(products.length){
+
         let data = [
             `TL^           ORA: ${dataPrint.time}   `,
             "TL^ ", 
             `TL^ NUME:${dataPrint.employee.fullName.split(' ')[0]} MASA: *${dataPrint.masa}*`,
             "TL^ ", 
             `TL^        -=- ${dataPrint.inOrOut} -=-`, 
-            "TL^ ", 
+            "TL^ ",  
         ];
         for(let pro of products){
             let entry = `TL^  ${pro.quantity} X ${pro.name}`
@@ -179,6 +161,30 @@ async function printBarista(products, dataPrint) {
                 let comment = `TL^       -- ${pro.comment}`
                 data.push(comment)
             }
+        }
+
+        if(dataPrint.products && dataPrint.products.length){
+            data.push(`TL^  `)
+            data.push(`TL^     -=-  SFARSITUL COMENZII  -=-    `)
+            data.push(`TL^   ************************************   `)
+            data.push(`TL^  -=- PRODUSE DE RIDICAT DE PE TERASA  -=- `)
+            data.push(`TL^  `)
+            for(let pro of dataPrint.products){
+                let entry = `TL^  ${pro.quantity} X ${pro.name}`
+                data.push(entry)
+                if(pro.toppings && pro.toppings.length){
+                    for(let top of pro.toppings){
+                        let topp =`TL^          +++ ${top.name.split('/')[0]}`
+                        data.push(topp)
+                    }
+                }
+                if(pro.comment && pro.comment.length){
+                    let comment = `TL^       -- ${pro.comment}`
+                    data.push(comment)
+                }
+            }
+            data.push(`TL^   ************************************   `)
+
         }
         console.log(data)
         log(data, 'barista-orders')
@@ -283,4 +289,4 @@ try{
 }
 
 
-module.exports = {print, printUnregisterBills, printTwo}
+module.exports = {print, printUnregisterBills}

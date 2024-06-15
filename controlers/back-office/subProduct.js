@@ -6,7 +6,7 @@ const SubProduct = require('../../models/office/product/sub-product')
 module.exports.saveSubProd = async (req, res, next) => {
     const {loc} = req.query
     try {
-        const {product, name, price, order, qty, ings, toppings, tva, description} = req.body;
+        const {product, name, price, order, qty, ings, toppings, tva, description, printOut} = req.body;
         const productSub = await Product.findById(product);
         const newSubProduct = new SubProduct({
             name: name,
@@ -18,6 +18,7 @@ module.exports.saveSubProd = async (req, res, next) => {
             locatie: loc,
             tva: tva,
             description: description,
+            printOut: printOut,
         });
         productSub.subProducts.push(newSubProduct);
         await newSubProduct.save();
@@ -31,13 +32,15 @@ module.exports.saveSubProd = async (req, res, next) => {
 };
 
 module.exports.editSubproduct = async (req, res, next) => {
-    const { id, prodId, name, price, order} = req.body;
+    const { id, prodId, name, price, order, printOut} = req.body;
+    console.log('hit the sub save function')
     if (id) {
         const oldSub = await SubProduct.findById(id).populate({ path: 'product', select: ['name', 'category'] });
         if (oldSub) {
             oldSub.name = name;
             oldSub.price = price;
             oldSub.order = order;
+            oldSub.printOut = printOut;
             if (oldSub.product._id.toString() !== prodId) {
                 try {
                     await Product.updateOne({ _id: oldSub.product._id }, { $pull: { subProducts: oldSub._id } })
@@ -48,6 +51,7 @@ module.exports.editSubproduct = async (req, res, next) => {
                     return res.status(404).json({ message: 'Ceva nu a mers bine' })
                 }
             }
+            console.log(printOut, oldSub)
             await oldSub.save()
             const productToSend = await SubProduct.findById(id).populate({ path: 'product', select: 'category' })
             res.status(200).json({ message: 'Sub Produsl a fost modificat cu succes', subProd: productToSend })

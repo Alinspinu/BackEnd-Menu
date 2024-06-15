@@ -112,15 +112,17 @@ const {checkTopping, round} = require('../../utils/functions')
 }
 
 module.exports.editProduct = async (req, res, next) => {
-    const { category, name, price, qty, description, order, longDescription, printer, tva, dep, sgrTax } = req.body
+    const { category, name, price, qty, description, order, longDescription, printer, tva, dep, sgrTax, printOut } = req.body
     const { id } = req.query
     try{
         if(req.body.sub){
             const subs = JSON.parse(req.body.sub);
             if(subs){
                 for(let el of subs){
+                    console.log(el)
                     if(el._id){
-                       await SubProduct.findOneAndUpdate({_id: el._id}, el)   
+                      const newSub = await SubProduct.findOneAndUpdate({_id: el._id}, el, {new: true})   
+                      console.log(newSub)
                     }
                 }
             }
@@ -145,6 +147,7 @@ module.exports.editProduct = async (req, res, next) => {
                 oldProduct.printer = printer;
                 oldProduct.tva = tva;
                 oldProduct.dep = dep;
+                oldProduct.printOut = printOut
                 oldProduct.order = parseFloat(order);
                 if (oldProduct.category._id.toString() !== category) {
                     try {
