@@ -16,38 +16,6 @@ const templatePath = './utils/print/input.ejs';
 const outputPath = './utils/print/output.xml';
 
 
-// async function print(order) {
-//     let foodProd = []
-//     let mainProd = []
-//     let baristaProd = []
-//     order.products.forEach(el => {
-//         if(el.sentToPrint){
-//             if(el.printer === 'kitchen'){
-//                 foodProd.push(el)
-//             } else if( el.printer === 'barista'){
-//                 baristaProd.push(el)
-//             } else if(el.printer === 'main'){
-//                 mainProd.push(el) 
-//             }
-//         }
-//     })
-//     const date = new Date(Date.now());
-//     const hours = date.getHours();
-//     const minutes = date.getMinutes();
-//     const timeString = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
-//     const dataToPrint = {
-//         inOrOut: order.inOrOut,
-//         employee: order.employee,
-//         masa: order.masa,
-//         time: timeString
-//     }
-//     printKitchen(foodProd, dataToPrint);
-//     printBarista(baristaProd, dataToPrint);
-//     setTimeout(()=>{
-//         printMain(mainProd, dataToPrint);
-//     }, 500)
-// } 
-
 
 async function print(order) {
     let foodProd = []

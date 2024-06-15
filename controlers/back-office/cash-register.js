@@ -25,7 +25,6 @@ module.exports.sendEntry = async (req, res, next) => {
 
 module.exports.addEntry = async (req, res, next) => {
     const { tip, date, typeOf, suplier, user, description, document, amount, locatie, month } = req.body
-    console.log(month)
     createCashRegisterDay(locatie)
     if(tip && date && amount){
         const entryDate = new Date(date)

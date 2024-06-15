@@ -315,14 +315,14 @@ module.exports.printBill = async (req, res, next) => {
             } else {
                 res.status(200).json({message: "Nota de plata a fost salvată!", bill: savedBill})
             }
-                savedBill.products.map((el) => {
-                if (el.toppings.length) {
-                    unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-                if (el.ings.length) {
-                    unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-            });
+            savedBill.products.map((el) => {
+            if (el.toppings.length) {
+                unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+            }
+            if (el.ings.length) {
+                unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+            }
+        });
         } else {
             throw new Error('Nota de plată nu a putut fi salvată!')
         }

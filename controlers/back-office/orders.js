@@ -329,7 +329,6 @@ module.exports.uploadIngs = async (req, res, next) => {
 }
 
 module.exports.unloadIngs = async (req, res, next) => {
-    console.log('hit the function')
     try{
         const {ings, quantity, operation} = req.body;
         console.log(req.body)

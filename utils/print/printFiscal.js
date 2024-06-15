@@ -52,7 +52,7 @@ async function printBill(bill) {
             }   
         })
         if(bill.tips > 0){
-            let tipsLine = `S^Tips^${bill.tips*100}^1000^buc^3^2`
+            let tipsLine = `S^Tips^${bill.tips * 100}^1000^buc^3^2`
             billToPrint.push(tipsLine)
         }
         if(bill.discount > 0){
@@ -87,7 +87,7 @@ async function printBill(bill) {
             let onlineLine = `P^7^${bill.payment.online * 100}`
             billToPrint.push(onlineLine)
         }
-        console.log(billToPrint)
+    
         axios.post(url, billToPrint, {
             headers: {
                 'Content-Type': 'application/json',

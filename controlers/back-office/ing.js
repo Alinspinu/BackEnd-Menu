@@ -70,38 +70,38 @@ module.exports.saveIng = async(req, res, next) => {
     }
 
     module.exports.updateStoc = async (req, res, next) => {
-      const {loc} = req.query
-      const ings = await Ingredient.find({locatie: loc, gestiune: 'bucatarie', productIngredient: false})
-      const date = new Date('2024-6-1').setUTCHours(0,0,0,0)
+    //   const {loc} = req.query
+    //   const ings = await Ingredient.find({locatie: loc, gestiune: 'bucatarie', productIngredient: false})
+    //   const date = new Date('2024-6-1').setUTCHours(0,0,0,0)
       
-     let num = 0
-     for(let ing of ings){
-      const inv = ing.inventary.find(inv => {
-        const invDate = new Date(inv.day).setUTCHours(0,0,0,0)
-        return invDate === date
-      })
-      let inn = 0
-      let out = 0
-      for (let inLog of ing.uploadLog){
-        const inDate = new Date(inLog.date).setUTCHours(0,0,0,0)
-        if(inDate > date){
-          inn += inLog.qty
-        }
-      }
-      for ( let outLog of ing.unloadLog){
-        const outDate = new Date(outLog.date)
-        if(outDate > date) {
-          out += outLog.qty
-        }
-      }
-      if(inv){
-        num ++
-        console.log(ing.name, 'cant inv', inv.faptic, 'cant intrata', inn, 'cantitate vanduta', out, 'qty actuala', inv.faptic + inn - out)
-        ing.qty = round(inv.faptic + inn - out)
-        await ing.save()
-      }
-     }
-     console.log(num)
+    //  let num = 0
+    //  for(let ing of ings){
+    //   const inv = ing.inventary.find(inv => {
+    //     const invDate = new Date(inv.day).setUTCHours(0,0,0,0)
+    //     return invDate === date
+    //   })
+    //   let inn = 0
+    //   let out = 0
+    //   for (let inLog of ing.uploadLog){
+    //     const inDate = new Date(inLog.date).setUTCHours(0,0,0,0)
+    //     if(inDate > date){
+    //       inn += inLog.qty
+    //     }
+    //   }
+    //   for ( let outLog of ing.unloadLog){
+    //     const outDate = new Date(outLog.date)
+    //     if(outDate > date) {
+    //       out += outLog.qty
+    //     }
+    //   }
+    //   if(inv){
+    //     num ++
+    //     console.log(ing.name, 'cant inv', inv.faptic, 'cant intrata', inn, 'cantitate vanduta', out, 'qty actuala', inv.faptic + inn - out)
+    //     ing.qty = round(inv.faptic + inn - out)
+    //     await ing.save()
+    //   }
+    //  }
+    //  console.log(num)
     
       res.status(200).json({messahe: 'all good in the ings world'})
     }
