@@ -38,7 +38,6 @@ async function printBill(bill) {
             if(el.quantity === 0){
                 qty = 1
                 log(`----${JSON.stringify(bill)}`, 'zero-quantity')
-                console.log(bill)
             } else {
                 qty = el.quantity
             }
@@ -54,7 +53,11 @@ async function printBill(bill) {
                 })
             }   
         })
-        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ")
+
+        if(bill.tips > 0){
+            let tipsLine = `S^Tips^${bill.tips*100}^1000^buc^3^2`
+            billToPrint.push(tipsLine)
+        }
         
         if(bill.discount > 0){
             billToPrint.push("ST^")
@@ -79,9 +82,6 @@ async function printBill(bill) {
             let onlineLine = `P^3^${bill.payment.online * 100}`
             billToPrint.push(onlineLine)
         }
-        billToPrint.push("TL^   MULTUMIM!")
-        billToPrint.push("TL^~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~  ")
-        
         log(billToPrint, "bils")
         axios.post(url, billToPrint, {
             headers
