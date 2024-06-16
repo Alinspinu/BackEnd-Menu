@@ -1,8 +1,17 @@
 const axios = require('axios');
-// const url = 'http://192.168.100.5:65400/api/Receipt';
-const url = '';
+// const url = 'http://192.168.100.7:65400/api/Receipt';
+const url = 'https://casa-terasa-true.loca.lt/print';
 
 const {log} = require('../functions')
+
+const username = '655e2e7c5a3d53943c6b7c53';
+const password = 'afara-ploua';
+
+const credentials = Buffer.from(`${username}:${password}`).toString('base64');
+const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Basic ${credentials}`
+}
 
 async function printBill(bill) {   
     let billToPrint = [];
@@ -75,12 +84,14 @@ async function printBill(bill) {
         
         log(billToPrint, "bils")
         axios.post(url, billToPrint, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            })
+            headers
+            // headers: {
+            //     'Content-Type': 'application/json',
+            // },
+            }
+            )
                 .then(response => {
-                    console.log('Response:', response.data);
+                    console.log('Response:', response);
                 })
                 .catch(error => {
                     console.error('Error:', error.message);
@@ -90,6 +101,9 @@ async function printBill(bill) {
         return
     }
 }
+
+
+
 
 
 async function posPayment(sum){
@@ -137,8 +151,10 @@ async function inAndOut(mode, sum){
 }
 
 function sendToPrint(print){
+
     axios.post(url, print, { 
-        headers: {'Content-Type': 'application/json'}
+        headers
+        // headers: {'Content-Type': 'application/json'}
     }).then(response => {
          console.log('Response:', response.data);
     })

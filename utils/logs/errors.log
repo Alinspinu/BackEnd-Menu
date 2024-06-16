@@ -2,3 +2,15 @@
 09:01:09  - Print-main Error connect ECONNREFUSED ::1:80
 09:05:28  - Print-main Error connect ECONNREFUSED ::1:80
 09:15:05  - Print-main Error connect ECONNREFUSED ::1:80
+12:53:00 PM  - Print-main Error Request failed with status code 404
+12:54:06 PM  - Print-main Error Request failed with status code 404
+12:55:01 PM  - Print-main Error Request failed with status code 401
+12:56:31 PM  - Print-main Error Request failed with status code 401
+12:58:38 PM  - Print-main Error Request failed with status code 401
+1:02:22 PM  - Print-main Error Request failed with status code 401
+1:04:20 PM  - Print-main Error Request failed with status code 401
+1:07:08 PM  - Print-main Error Request failed with status code 401
+1:08:24 PM  - Print-main Error Request failed with status code 401
+1:29:02 PM  - Print-main Error Request failed with status code 404
+1:29:33 PM  - Print-main Error Request failed with status code 404
+1:30:27 PM  - Print-main Error Request failed with status code 401
