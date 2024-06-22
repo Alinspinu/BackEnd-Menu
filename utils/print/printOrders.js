@@ -195,8 +195,6 @@ async function printUnregisterBills(products){
         data.push('TL^---------------------------------------')
         const totalRow = `TL^ TOTAL LEI                ${total}`
         data.push(totalRow)
-
-
             axios.post(url, data, {
             headers: {
                 'Content-Type': 'application/json',

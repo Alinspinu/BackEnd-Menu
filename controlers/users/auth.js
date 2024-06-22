@@ -1,6 +1,7 @@
 
 const jwt = require('jsonwebtoken');
 const User = require('../../models/users/user');
+const Locatie = require('../../models/office/locatie')
 
 const { comparePasswords, hashPassword } = require('../../utils/functions')
 const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, } = require('../../utils/mail')
@@ -289,7 +290,16 @@ module.exports.resetPassword = async (req, res, next) => {
 }
 
 
-
+module.exports.getLoc = async (req, res) => {
+    try{
+        const {id} = req.query 
+        console.log(id)
+        const loc = await Locatie.findById(id)
+        res.status(200).json({ip: loc.pos.vivaWalletLocal.ip, port: loc.pos.vivaWalletLocal.port})
+    } catch(err){
+        res.status(500).json(err)
+    }
+}
 
 
 

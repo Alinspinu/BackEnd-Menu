@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const BlackList = require('../models/office/product/blacList')
 const path = require('path');
 const fs = require('fs');
+const axios = require('axios')
 
 function comparePasswords(password, hashedPassword) {
     const [salt, originalHash] = hashedPassword.split("$");
@@ -96,4 +97,53 @@ function formatedDateToShow(date){
         return decryptedData;
     }
 
-module.exports = {comparePasswords, hashPassword, round, checkTopping, formatedDateToShow, log, encryptData, decryptData, roundd}
+
+
+const username = '655e2e7c5a3d53943c6b7c53';
+const password = 'afara-ploua';
+
+const credentials = Buffer.from(`${username}:${password}`).toString('base64');
+const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Basic ${credentials}`
+}
+const baseUrl = 'https://print-orders-true.loca.lt/'
+// const baseUrl = 'http://localhost:8081/'
+
+    async function sendToPrint(data, url) {
+        try{
+            const response = await axios.post(`${baseUrl}${url}`, data, {headers})
+            return response
+        } catch(err){
+            console.log(err.message)
+            throw(err)
+        }
+    }
+
+
+    function handleError(error, res) {
+        if (error.response) {
+          console.error('Server responded with non-2xx status:', error.response.status);
+          console.error('Response data:', error.response.data);
+          res.status(error.response.status).json({ message: 'Error from server', data: error.response.data });
+        } else if (error.request) {
+          console.error('No response received:', error.request);
+          res.status(500).json({ message: 'No response received from server' });
+        } else {
+          console.error('Error:', error.message);
+          res.status(500).json({ message: 'Error occurred while making the request', error: error.message });
+        }
+      }
+
+module.exports = {comparePasswords, 
+    hashPassword, 
+    round, 
+    checkTopping, 
+    formatedDateToShow, 
+    log, 
+    encryptData, 
+    decryptData, 
+    roundd, 
+    sendToPrint,
+    handleError
+}

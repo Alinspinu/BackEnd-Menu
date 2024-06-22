@@ -62,7 +62,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
 
-app.use(bodyParser.json({ limit: '10mb' }))
+app.use(bodyParser.json({ limit: '100mb' }))
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/orders", ordersTrueRoutes);
 app.use('/pay', payRoutes);

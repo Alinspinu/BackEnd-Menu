@@ -48,6 +48,28 @@ module.exports.sendUsers = async (req, res, next) => {
       }
 }
 
+module.exports.detectPaymentError = async (req, res, next) => {
+    const users = await User.find({ 'employee.fullName': {$exists: true}}).select('employee')
+
+    // for(let user of users){
+    //     for(let pay of user.employee.payments){
+    //         if(!pay.workMonth){
+    //             pay.workMonth = 5
+    //         }
+    //     }
+    //     await user.save()
+    // }
+
+    users.forEach(user => {
+        user.employee.payments.forEach(pay => {
+            if(!pay.workMonth){
+                pay.workMonth = 5
+            }
+        })
+    })
+    res.status(200).json({message: "afara este soare si bine"})
+}
+
 module.exports.sendUserCashback = async (req, res, next) => {
     try{
         const {id} = req.query

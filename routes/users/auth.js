@@ -8,6 +8,8 @@ router.route('/reset-password').post(authRoutes.resetPassword);
 router.route('/register').post(authRoutes.register);
 router.route('/login').post(authRoutes.login);
 router.route('/register-employee').post(authRoutes.registerEmployee)
+router.route('/loc').get(authRoutes.getLoc)
+
 // router.route('/new-user').get(authRoutes.newUser)
 
 

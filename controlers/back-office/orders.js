@@ -6,7 +6,7 @@ const Ingredient = require('../../models/office/inv-ingredient')
 const Product = require('../../models/office/product/product')
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
-const {formatedDateToShow, round} = require('../../utils/functions')
+const {formatedDateToShow, round, sendToPrint, handleError} = require('../../utils/functions')
 
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
@@ -270,8 +270,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             newBill.clientInfo = parsedBill.clientInfo
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
-            } 
-            print(newBill)
+            }         
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
                     el.sentToPrint = false
@@ -284,7 +283,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             socket.emit('bill', JSON.stringify(savedBill))
             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
         } else {
-            print(parsedBill)
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint){
                     el.sentToPrint = false
@@ -300,6 +298,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
         res.status(500).json({message: 'Something went wrong', err: err.message})
     }
 }
+
 
 
 
