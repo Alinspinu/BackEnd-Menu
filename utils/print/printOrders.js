@@ -15,6 +15,9 @@ const socket = io("https://live669-0bac3349fa62.herokuapp.com")
 const templatePath = './utils/print/input.ejs';
 const outputPath = './utils/print/output.xml';
 
+const reportTemplate = './utils/print/reportInput.ejs'
+const reportOutput = './utils/print/reportOutput.xml'
+
 
 
 async function print(order) {
@@ -62,7 +65,7 @@ async function print(order) {
             }
         })
     }
-
+    console.log('hit before soket', outProducts)
     socket.emit('outsideOrder', JSON.stringify({outProducts, dataToPrint}))
     printKitchen(foodProd, dataToPrint);
     printBarista(baristaProd, dataToPrint);
@@ -223,13 +226,12 @@ function createXml(data) {
           return;
         }
         const renderedXml = ejs.render(templateContent, data);
-        console.log(renderedXml)
         fs.writeFile(outputPath, renderedXml, (writeErr) => {
           if (writeErr) {
             log(`Error writing XML file: ${writeErr}`, 'errors')
             console.error('Error writing XML file:', writeErr);
           } else {
-            testPrint()
+            testPrint(outputPath)
             console.log('XML file created successfully.');
           }
         });
@@ -237,8 +239,28 @@ function createXml(data) {
      
 }
 
-const testPrint = async () => {
-    const template = fs.readFileSync(outputPath, {encoding: "utf8"})
+
+function createRaortXml(report) {
+    fs.readFile(reportTemplate, 'utf-8', (err, templateContent) => {
+        if (err) {
+          console.error('Error reading EJS template:', err);
+          return;
+        }
+        const renderedXml = ejs.render(templateContent, report);
+        fs.writeFile(reportOutput, renderedXml, (writeErr) => {
+          if (writeErr) {
+            log(`Error writing XML file: ${writeErr}`, 'errors')
+            console.error('Error writing XML file:', writeErr);
+          } else {
+            testPrint(reportOutput)
+            console.log('XML file created successfully.');
+          }
+        });
+      });
+}
+
+const testPrint = async (path) => {
+    const template = fs.readFileSync(path, {encoding: "utf8"})
     const PRINTER = {
         device_name: "GTP-180",
         host: "192.168.1.87",
@@ -255,4 +277,41 @@ try{
 }
 
 
-module.exports = {print, printUnregisterBills}
+// const { createCanvas } = require('canvas');
+
+
+
+
+
+// // Step 1: Create a canvas and draw on it
+// const canvas = createCanvas(200, 200);
+// const ctx = canvas.getContext('2d');
+
+// // Draw a circle
+// ctx.beginPath();
+// ctx.arc(100, 100, 50, 0, Math.PI * 2, true);
+// ctx.fillStyle = 'black';
+// ctx.fill();
+
+// // Step 2: Convert the canvas to a buffer (PNG format)
+// const buffer = canvas.toBuffer('image/png');
+
+// // Step 3: Convert the image buffer to base64
+// const imageBase64 = buffer.toString('base64');
+
+// // Step 4: Embed the base64 image into the XML
+// const imageXml = `
+// <document>
+//   <image>${imageBase64}</image>
+//   <cut />
+// </document>
+// `;
+
+// // Convert the XML to ESC/POS commands
+// const escposBuffer = EscPos.fromXML(imageXml);
+
+// Step 5: Send the escposBuffer to the printer
+
+
+
+module.exports = {print, printUnregisterBills, createRaortXml}

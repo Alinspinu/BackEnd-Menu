@@ -23,7 +23,7 @@ async function unloadIngs (ings, qtyProdus, operation) {
             const update = {
               date: formattedDate,
               qty: cantFinal,
-              operation: operation
+              operation: operation,
             }
 
             ingredientInv.unloadLog.push(update)
@@ -68,7 +68,8 @@ async function uploadIngs (ings, qtyProdus, operation) {
               const update = {
                   date: formattedDate,
                   qty: cantFinal,
-                  operation: operation
+                  operation: operation,
+                  uploadPrice: ingredientInv.price
               }
             
               ingredientInv.uploadLog.push(update)

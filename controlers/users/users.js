@@ -1,8 +1,7 @@
 const User = require('../../models/users/user')
-const Employee = require('../../models/users/employee')
 const Locatie = require('../../models/office/locatie')
 const QRCode = require('qrcode');
-const jwt = require('jsonwebtoken');
+
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
 
@@ -14,34 +13,10 @@ module.exports.sendUsers = async (req, res, next) => {
     try{
         const {loc} = req.query
         let filterTo = {}
-        const {filter} = req.body;
-        if(filter === 'employees'){
-           filterTo = { 'employee.fullName': { 
-                $exists: true,                                     
-              },
-            }
-        } else if(filter === 'users'){
-            filterTo = { employee: { 
-                $exists: false,                                     
-              },
-            }
-        } else if (filter.length > 10) {
-            filterTo = {
-                _id: filter
-            }
-        }
         filterTo.locatie = loc
-        const user = await User.find(filterTo);
+        const user = await User.find(filterTo).select('-password');
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
-        let filterProducts = [];
-        if(req.query.search.length){
-          filterProducts = sortedUsers.filter((object) =>
-          object.name.toLocaleLowerCase().includes(req.query.search.toLocaleLowerCase())
-          );
-        } else {
-          filterProducts = sortedUsers;
-        }
-        res.status(200).json(filterProducts);
+        res.status(200).json(sortedUsers);
       } catch(error) {
         console.log(error);
         res.status(500).json({message: error});
@@ -124,7 +99,7 @@ module.exports.editUser = async (req, res, next) => {
     const {id} = req.query;
     try{
         const user = await User.findByIdAndUpdate(id, update, {new: true})
-        res.status(200).json({message: 'Utilizatorul a fost actualizat!'})
+        res.status(200).json({message: 'Utilizatorul a fost actualizat!', user: user})
     } catch (err) {
         console.log(err)
         res.status(200).json({message: err.message})

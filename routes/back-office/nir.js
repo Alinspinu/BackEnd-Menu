@@ -16,6 +16,8 @@ router.route('/pay').post(nirRoutes.payBill)
 router.route('/get-nirs-by-date')
         .post(nirRoutes.getNirsByDate)
 
+router.route('/update').get(nirRoutes.updateIngsLogs)
+
 
 module.exports = router
 

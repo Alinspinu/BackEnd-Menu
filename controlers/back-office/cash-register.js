@@ -3,6 +3,7 @@ const Entry = require('../../models/office/cash-register/entry');
 const User = require('../../models/users/user')
 const exceljs = require('exceljs');
 const createCashRegisterDay = require('../../utils/createDay')
+const Suplier = require('../../models/office/suplier')
 
 
 
@@ -13,13 +14,32 @@ module.exports.sendEntry = async (req, res, next) => {
         createCashRegisterDay('65c221374c46336d1e6ac423')
             try{
                 const documents = await Day.find({locatie: loc}).populate({path: "entry"})
-                .limit(15)
+                .limit(40)
                 .sort({ date: -1 });
                 res.status(200).json({message: 'all good', documents})
             } catch(err){
                 console.log(err.message)
                 res.status(500).json({message: 'Error'+ err})
             }
+}
+
+
+module.exports.creataDaty = async (req, res) => {
+    try{
+        const date = new Date('2024-06-01')
+        date.setUTCHours(0,0,0,0)
+        const day = new Day({
+            locatie: '655e2e7c5a3d53943c6b7c53',
+            date: date
+        })
+        const newDay = await day.save()
+
+        res.status(200).json(newDay)
+
+    } catch(err){
+        console.log(err)
+        res.status(500).json(err)
+    }
 }
 
 
@@ -39,18 +59,34 @@ module.exports.addEntry = async (req, res, next) => {
             user: user,
             document: document
         })
+        if(typeOf === 'Plata furnizor'){
+            const record = {
+                typeOf: 'iesire',
+                document: {
+                    typeOf: document.tip,
+                    docId: document.number,
+                    amount: amount
+                },
+                date: entryDate
+            }
+            await Suplier.findByIdAndUpdate(
+                suplier,  
+                { $push: { records: record }, $inc: { sold: - amount }},
+                { new: true, useFindAndModify: false })
+        }
         if(typeOf === 'Bonus vanzari'){
             const payment = {
                 amount: amount / user.length,
                 tip: typeOf,
                 date: entryDate,
-                workMonth: new Date(Date.now()).getMonth()
+                workMonth: month
             }
             for(let id of user){
             await User.findOneAndUpdate({_id: id}, {$push: {'employee.payments': payment}})
             }
         }
-        if(user && user.length && typeOf !== 'Bonus vanzari'){
+  
+        if(user && user.length && typeOf !== 'Bonus vanzari' && typeOf !== 'Plata furnizor'){
             const payment = {
                 amount: amount,
                 tip: typeOf,
@@ -105,7 +141,7 @@ module.exports.deleteEntry = async (req, res, next) => {
             await User.findOneAndUpdate(query, {$pull: {'employee.payments': payment}})
             }
         }
-        if(entry.user.length && entry.typeOf !== 'Bonus vanzari'){
+        if((entry.user.length) && entry.typeOf !== 'Bonus vanzari' && entry.typeOf !== 'Plata furnizor'){
             const payment = {
                 amount: Math.abs(entry.amount),
                 tip: entry.typeOf,
@@ -113,8 +149,17 @@ module.exports.deleteEntry = async (req, res, next) => {
             const query = {
                 _id: entry.user[0],
             }
-            console.log(payment, query)
            await User.findOneAndUpdate(query, {$pull: {'employee.payments': payment}})
+        }
+        if(entry.typeOf === "Plata furnizor" && entry.suplier){
+            await Suplier.findByIdAndUpdate(
+                entry.suplier,
+                { 
+                    $pull: { records: { 'document.docId': entry.document.number } },
+                    $inc: { sold: - entry.amount }
+                },
+                { new: true, useFindAndModify: false }
+                );
         }
         res.status(200).json({ message: `Entry ${entry.description}, with the amount ${entry.amount} was deleted` })
     } catch (err) {

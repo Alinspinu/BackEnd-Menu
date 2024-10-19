@@ -90,7 +90,6 @@ function formatedDateToShow(date){
     // Function to decrypt data
     function decryptData(encryptedData, secret, iv) {
         const secretKey = Buffer.from(secret, 'base64')
-        console.log(secretKey)
         const decipher = crypto.createDecipheriv('aes-256-cbc', secretKey, Buffer.from(iv, 'hex'));
         let decryptedData = decipher.update(encryptedData, 'hex', 'utf-8');
         decryptedData += decipher.final('utf-8');
@@ -135,7 +134,39 @@ const baseUrl = 'https://print-orders-true.loca.lt/'
         }
       }
 
-module.exports = {comparePasswords, 
+
+
+      function convertToDateISOString(dateString) {
+        // Define month mappings
+        const monthMap = {
+          'Ianuarie': '01',
+          'Februarie': '02',
+          'Martie': '03',
+          'Aprilie': '04',
+          'Mai': '05',
+          'Iunie': '06',
+          'Iulie': '07',
+          'August': '08',
+          'Septembrie': '09',
+          'Octombrie': '10',
+          'Noiembrie': '11',
+          'Decembrie': '12'
+        };
+      
+        // Split the date string and remove any leading or trailing whitespace
+        const trimmedDateString = dateString.trim();
+        const parts = trimmedDateString.split('-');
+      
+        // Extract day, month, and year
+        const day = parts[0].padStart(2, '0');
+        const month = monthMap[parts[1]];
+        const year = parts[2];
+        // Return the date string in ISO 8601 format
+        return `${year}-${month}-${day}T00:00:00.000Z`;
+      }
+
+module.exports = {
+    comparePasswords, 
     hashPassword, 
     round, 
     checkTopping, 
@@ -145,5 +176,6 @@ module.exports = {comparePasswords,
     decryptData, 
     roundd, 
     sendToPrint,
-    handleError
+    handleError,
+    convertToDateISOString
 }

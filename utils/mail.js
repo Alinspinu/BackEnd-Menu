@@ -9,7 +9,8 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
     const templateSource = fs.readFileSync('views/layouts/info-admin.ejs', 'utf-8');
     const templateData = {
         name: data.name,
-        action: data.action
+        action: data.action,
+        prompt: data.prompt ? data.prompt : ''
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
     const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);

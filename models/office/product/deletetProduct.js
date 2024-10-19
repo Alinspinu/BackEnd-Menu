@@ -21,7 +21,7 @@ const deletetProductSchema = new Schema ({
             type: String,
             required: true,
             enum: ['in', 'out']
-        },
+    },
         reason: String,
         admin: String,
         billProduct: {

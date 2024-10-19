@@ -1,10 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Counter = require('../utils/counter')
 
 
 
 const reportSchema = new Schema({
 
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    },
+    index: {
+        type: Number,
+        index: true
+    },
     day: Date,
 
     cashIn: {
@@ -26,6 +35,17 @@ const reportSchema = new Schema({
     rentValue: {
         type: Number,
         required: true 
+    },
+    diverse:{
+        total: Number,
+        entry: [
+            {
+                value: Number,
+                reason: String,
+                index: Number,
+                date: Date,
+            }
+        ]
     },
     impairment: 
         {
@@ -66,6 +86,23 @@ const reportSchema = new Schema({
         type: Number,
         required: true
     },
+    serviceValue: {
+        type: Number
+    },
+    marketingValue: {
+        type: Number
+    },
+    inventarySpendings: {
+        type: Number
+    },
+    gasValue:{
+        type: Number
+    },
+    constructionsValue: {
+        type: Number
+    },
+    rent: Number,
+    utilities: Number,
     departaments: [
         {
             total: Number,
@@ -123,6 +160,7 @@ const reportSchema = new Schema({
                       fullName: String,
                     },
                     createdAt: Date,
+                    updatedAt: Date,
                     products:
                         [
                             {
@@ -172,6 +210,25 @@ const reportSchema = new Schema({
         }
     ],
 })
+
+
+reportSchema.pre("save", async function (next) {
+    try {
+      const doc = this;
+      if(doc.index > 0){
+      } else {
+        const counter = await Counter.findOneAndUpdate(
+          { locatie: this.locatie, model: "Report" },
+          { $inc: { value: 1 } },
+          { upsert: true, new: true }
+        );
+        doc.index = counter.value;
+      }
+      next();
+    } catch (error) {
+      next(error);
+    }
+  });
 
 
 

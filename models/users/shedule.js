@@ -17,6 +17,7 @@ const SheduleSchema = new Schema({
                         end: Date,
                         hours: Number,
                         position: String,
+                        concediu: Boolean,
                     },
                     employee: {
                         type: Schema.Types.ObjectId,

@@ -18,7 +18,14 @@ const invIngSchema = new Schema({
   uploadLog: [
     {
       date: String,
-      qty: Number,
+      qty:  {
+        type: Number,
+        required: true
+      },
+      uploadPrice: {
+        type: Number,
+        required: true
+      },
       operation: {
         name: {
           type: String,

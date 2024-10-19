@@ -15,6 +15,8 @@ router.route('/reports').get(payRoutes.reports)
 router.route('/in-and-out').post(payRoutes.cashInandOut)
 router.route('/change-payment-method').post(payRoutes.changePaymentMethod)
 router.route('/print-unreg').post(payRoutes.printUnreg)
+router.route('/save-bill-cloud').post(payRoutes.saveBillInCloud)
+router.route('/reprint-fiscal').post(payRoutes.reprinFiscal)
 
 // router.route('/pos2').get(payRoutes.getTokenForPos)
 

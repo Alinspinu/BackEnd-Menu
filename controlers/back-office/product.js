@@ -9,7 +9,6 @@ const cloudinary = require('cloudinary').v2;
 const {checkTopping, round} = require('../../utils/functions')
 
  module.exports.getProducts = async (req, res, next) => {
-    console.log('hit the function')
     try{
       const {loc} = req.body
       const products = await Product.find({locatie: loc}).populate([
@@ -17,7 +16,6 @@ const {checkTopping, round} = require('../../utils/functions')
         {path: 'subProducts', populate: {path: 'ings.ing', select: 'price name'}},
         {path: 'ings.ing', select: 'price name'}
     ])
-    console.log(products.length)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -119,10 +117,8 @@ module.exports.editProduct = async (req, res, next) => {
             const subs = JSON.parse(req.body.sub);
             if(subs){
                 for(let el of subs){
-                    console.log(el)
                     if(el._id){
                       const newSub = await SubProduct.findOneAndUpdate({_id: el._id}, el, {new: true})   
-                      console.log(newSub)
                     }
                 }
             }

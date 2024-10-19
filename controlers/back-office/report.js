@@ -4,6 +4,7 @@ const Report = require('./../../models/office/report')
 const Order = require('./../../models/office/product/order')
 const {round, formatedDateToShow} = require('./../../utils/functions')
 const User = require('./../../models/users/user')
+const Ingredient = require('../../models/office/inv-ingredient')
 
 
 
@@ -12,7 +13,7 @@ module.exports.getReports = async(req, res, next) => {
         const {startDate, endDate, loc} = req.query
         const start = new Date(startDate).setUTCHours(0,0,0,0)
         const end = new Date(endDate).setUTCHours(0,0,0,0)
-        const reports = await Report.find({day: {$gte: start, $lte: end}}).sort({day: 1})
+        const reports = await Report.find({day: {$gte: start, $lte: end}, locatie: loc}).sort({day: 1})
         const report = await createReport(reports)
         res.status(200).json(report)
     } catch(err) {
@@ -22,42 +23,102 @@ module.exports.getReports = async(req, res, next) => {
 }
 
 
-module.exports.updateRap = async(req, res, next) => {
+module.exports.getReportsDates = async (req, res) => {
     try{
-        // const startDate = new Date('2024-05-01T00:00:00Z');
-        // const endDate = new Date('2024-06-06T23:59:59Z');
-        // const reports = await Report.find({})
-        // const bills = await Order.find({createdAt: {$gte: startDate, $lte: endDate}}).select(['index', 'createdAt'])
-        // const saveReports = reports.map(async (report) => {
-        //         for (let method of report.paymentMethods) {
-        //             for( let bill of method.bills){
-        //                 for (let dbBill of bills) {
-        //                     if (bill.index === dbBill.index) {
-        //                         bill.createdAt = dbBill.createdAt;
-        //                         bill.updatedAt = dbBill.updatedAt
-        //                     }
-        //                 }
-        //             }
+        console.log('hit the function')
+        const {loc} = req.query
+        const firstRep = await Report.find({locatie: loc}).sort({day: 1}).limit(1)
+        const lastRep = await Report.find({locatie: loc}).sort({day: -1}).limit(1)
+        const firstRepDate = firstRep[0].day
+        const lastReportDate = lastRep[0].day
+        res.status(200).json({start: firstRepDate, end: lastReportDate})
+    } catch(err){
+        console.log(err)
+        res.status(500).json(err)
+    }
+}
+
+
+module.exports.getAllReports = async(req, res, next) => {
+    try{
+        const {loc} = req.query
+        const reports = await Report.find({locatie: loc}).sort({day: -1}).limit(5)
+        res.status(200).json(reports)
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+
+module.exports.deleteReport = async(req, res, next) => {
+    try{
+        const {id} = req.query
+        if(id){
+            console.log(id)
+            const report = await Report.findByIdAndDelete(id)
+            if(report){
+                res.status(200).json({message: 'Raportul a fost ștes cu success'})
+            } else {
+                res.status(256).json({message: 'A apărut o eroare la ștergerea raportului'})
+            }
+        }
+    } catch(err){
+        console.elog(err)
+        res.status(500).json(err)
+    }
+}
+
+
+
+
+
+
+
+module.exports.updateRap = async(req, res, next) => {
+    try{    
+
+        // const cursor = await Ingredient.find({locatie: '655e2e7c5a3d53943c6b7c53'})
+        // console.log(cursor.length)
+        // let index = 1
+        // for (let doc of cursor){
+        //     const updatedLogs = doc.uploadLog.map(log => {
+        //         if (log.uploadPrice === undefined || log.uploadPrice === null) {
+        //             log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
+        //             index ++
+        //             console.log(log)
         //         }
-        //         return report.save();
-        // });
-        // await Promise.all(saveReports);
-        // res.send('all good')
+        //         return log;
+        //     });
+        //     await Ingredient.updateOne(
+        //         { _id: doc._id },
+        //         { $set: { uploadLog: updatedLogs } }
+        //     );
 
-        // const users = await User.find({ 'employee.fullName': { 
-        //     $exists: true,                                     
-        //   }
-        // }).select(['employee.payments'])
-        // console.log(users.length)
-        // const savedUsers = users.map(async (user) => {
-        //     for(let payment of user.employee.payments){
-        //         const docMonth = new Date(payment.date).getMonth()
+        // }
+        // console.log(index)
 
-        //         payment.workMonth = docMonth 
-        //     }
-        //     return user.save()
-        // })
-        // await Promise.all(savedUsers)
+        // while (await cursor.hasNext()) {
+        //     const doc = await cursor.next();
+
+        //     // Loop through each uploadLog entry and update it if uploadPrice is missing
+        //     const updatedLogs = doc.uploadLog.map(log => {
+        //         if (log.uploadPrice === undefined || log.uploadPrice === null) {
+        //             log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
+        //             index ++
+        //             console.log(log)
+        //         }
+        //         return log;
+        //     });
+
+        //     // Update the document with the modified uploadLog array
+        //     await Ingredient.updateOne(
+        //         { _id: doc._id },
+        //         { $set: { uploadLog: updatedLogs } }
+        //     );
+        // }
+        // console.log(index)
+
         res.send('all good')
     } catch(err){   
         console.log(err)
@@ -79,6 +140,10 @@ async function createReport(reports){
         cashInNoVat: 0,
         ingsValue: 0,
         rentValue: 0,
+        diverse: {
+            total: 0,
+            entry: []
+        },
         impairment: {
             total: 0,
             products: []
@@ -89,6 +154,13 @@ async function createReport(reports){
             users: []
         },
         supliesValue: reports[reports.length -1].supliesValue,
+        serviceValue: reports[reports.length -1].serviceValue ? reports[reports.length -1].serviceValue : 0,
+        marketingValue: reports[reports.length -1].marketingValue ? reports[reports.length -1].marketingValue : 0,
+        inventarySpendings: reports[reports.length -1].inventarySpendings ? reports[reports.length -1].inventarySpendings : 0,
+        gasValue: reports[reports.length -1].gasValue ? reports[reports.length -1].gasValue : 0,
+        constructionsValue: reports[reports.length -1].constructionsValue ? reports[reports.length -1].constructionsValue : 0,
+        rent: reports[reports.length -1].rent ? reports[reports.length -1].rent : 0,
+        utilities: reports[reports.length -1].utilities ? reports[reports.length -1].utilities : 0,
         departaments: [],
         paymentMethods: [],
         hours: [],
@@ -172,6 +244,15 @@ async function createReport(reports){
                 existingProd.qty += product.qty
             } else {
                 report.impairment.products.push(product)
+            }
+        }
+
+        for( let entry of rep.diverse.entry){
+            const existingEntry = report.diverse.entry.find(e => e.index === entry.index)
+            if(!existingEntry){
+                report.diverse.entry.push(entry)
+                report.diverse.total = round(report.diverse.total + entry.value)
+
             }
         }
 

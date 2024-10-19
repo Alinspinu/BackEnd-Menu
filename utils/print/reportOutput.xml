@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <align mode="center">
+    <text-line size="0:0">RAPORT ZILNIC</text-line>
+  </align>
+  <align mode="center">
+    <text-line size="0:0">18-Octombrie-2024 ora 23:51  </text-line>
+  </align>
+  <line-feed/>
+  <align mode="center">
+    <text-line size="1:0">Alin Spinu</text-line>
+  </align>
+  <line-feed/>
+  <align mode="left">
+    <text-line size="1:0">Cash 4107 Lei</text-line>
+  </align>
+
+  
+  <line-feed/>
+  <line-feed/>
+
+
+
+  <align mode="center">
+    <text-line size="1:0">Plati</text-line>
+  </align>
+  <line-feed/>
+  <!-- Start of loop -->
+  
+    <align mode="left">
+      <text-line size="0:0">Plata furnizor KAUFLAND ROMANIA SCS chitanta 123</text-line>
+    </align>
+    <align mode="left">
+      <text-line size="1:0">Suma 123 Lei</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="left">
+      <text-line size="0:0">Bonus vanzari</text-line>
+    </align>
+    <align mode="left">
+      <text-line size="1:0">Suma 150 Lei</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="left">
+      <text-line size="0:0">Plata furnizor BETTY ICE DISTRIBUTIE S.R.L. chitanta 123123</text-line>
+    </align>
+    <align mode="left">
+      <text-line size="1:0">Suma 2232 Lei</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="left">
+      <text-line size="0:0">Alte plăți: am dat banii la un client pentru un espresso</text-line>
+    </align>
+    <align mode="left">
+      <text-line size="1:0">Suma 12 Lei</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="left">
+      <text-line size="0:0">Alte plăți: Piata</text-line>
+    </align>
+    <align mode="left">
+      <text-line size="1:0">Suma 200 Lei</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="left">
+      <text-line size="0:0">Avans Ciobanu Andra</text-line>
+    </align>
+    <align mode="left">
+      <text-line size="1:0">Suma 200 Lei</text-line>
+    </align>
+    <line-feed/>
+    
+    <align mode="left">
+        <text-line size="1:0">Incasat     4107 Lei</text-line>
+      </align>
+    <line-feed/>
+    <align mode="left">
+        <text-line size="1:0">Total plati 2917 Lei</text-line>
+    </align>
+    <line-feed/>
+    <align mode="left">
+      <text-line size="1:0">Predat      1190 Lei</text-line>
+    </align>
+    <line-feed/>
+    <line-feed/>
+    <line-feed/>
+
+
+  <align mode="center">
+    <text-line size="1:0">Monetar</text-line>
+  </align>
+  <line-feed/>
+  
+  <align mode="left">
+    <text-line size="0.5:0"> 500 Lei X 1 = 500 Lei </text-line>
+  </align>
+  <line-feed/>
+  
+  
+  <align mode="left">
+    <text-line size="0.5:0"> 200 Lei X 2 = 400 Lei </text-line>
+  </align>
+  <line-feed/>
+  
+  
+  <align mode="left">
+    <text-line size="0.5:0"> 100 Lei X 1 = 100 Lei </text-line>
+  </align>
+  <line-feed/>
+  
+  
+  <align mode="left">
+    <text-line size="0.5:0"> 50 Lei X 3 = 150 Lei </text-line>
+  </align>
+  <line-feed/>
+  
+  
+  <align mode="left">
+    <text-line size="0.5:0"> 10 Lei X 4 = 40 Lei </text-line>
+  </align>
+  <line-feed/>
+  
+  
+  
+  
+  <align mode="left">
+    <text-line size="1:0">TOTAL 1190 Lei</text-line>
+  </align>
+  
+  <line-feed/>
+  <line-feed/>
+  <line-feed/>
+  <align mode="left">
+    <text-line size="1:0">Semnatura</text-line>
+  </align>
+  <line-feed/>
+  <line-feed/>
+  <!-- End of loop -->
+  <paper-cut></paper-cut>
+</document>

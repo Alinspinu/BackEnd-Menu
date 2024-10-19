@@ -6,9 +6,11 @@ const Suplier = require('../models/office/suplier')
 const Order = require('../models/office/product/order')
 const Bill = require('../models/office/bill')
 const User = require('../models/users/user')
+const Inventary = require('../models/office/inventary')
 const PDFDocument = require("pdfkit");
 const { getProducts } = require('./back-office/product');
 const { saveProductIngredient } = require('./nutrition');
+const {createRaortXml} = require('../utils/print/printOrders');
 
 
 module.exports.printNir = async (req, res, next) => {
@@ -52,10 +54,15 @@ module.exports.printNir = async (req, res, next) => {
         console.log(nir.discount)
       }
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+
     const date = nir.documentDate
       .toLocaleDateString("en-GB", options)
       .replace(/\//g, "-");
-  
+
+    const recDate = nir.receptionDate
+      .toLocaleDateString("en-GB", options)
+      .replace(/\//g, "-");
+
     const doc = new PDFDocument({
       size: "A4",
       layout: "landscape",
@@ -94,7 +101,8 @@ module.exports.printNir = async (req, res, next) => {
     // doc.font("Helvetica-Bold");
     doc.fontSize(9);
     doc.text("Nr. NIR", 20, 50, { width: 80, align: "center" });
-    doc.text("Data", 110, 50, { width: 120, align: "center" });
+    doc.text("Data Document", 110, 50, { width: 120, align: "center" });
+    doc.text("Data Receptie", 230, 50, { width: 120, align: "center" });
 
     doc.text("Furnizor", 370, 50, { width: 220, align: "center" });
     doc.text("CIF", 590, 50, { width: 120, align: "center" });
@@ -109,6 +117,7 @@ module.exports.printNir = async (req, res, next) => {
     doc.fontSize(9);
     doc.text(nir.index, 20, 63, { width: 80, align: "center" });
     doc.text(date, 110, 63, { width: 120, align: "center" });
+    doc.text(recDate, 230, 63, { width: 120, align: "center" });
 
     doc.text(nir.suplier.name, 370, 63, { width: 220, align: "center" });
     doc.text(nir.suplier.vatNumber, 590, 63, { width: 120, align: "center" });
@@ -332,6 +341,7 @@ module.exports.printNir = async (req, res, next) => {
 
 
 
+
   module.exports.createNirsXcel = async (req, res, next) => {
     const {startDate, endDate, loc} = req.body
     const start = new Date(startDate).setUTCHours(0,0,0,0)
@@ -535,7 +545,6 @@ module.exports.printNir = async (req, res, next) => {
     try{
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Lista ingrediente');
-        console.log(filterTo)
         const ings = await Ingredient.find(filterTo).select([ '-unloadLog', '-uploadLog'])
         console.log(ings.length)
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
@@ -642,6 +651,173 @@ module.exports.printNir = async (req, res, next) => {
         console.log(err)
         res.status(500).json({message: "Error", err})
     }
+}
+
+
+
+
+module.exports.printInventary = async(req, res, next) => {
+  const {id} = req.query
+  const inventary = await Inventary.findById(id).populate({path: 'ingredients.ing', select: 'price um sellPrice'}).populate({path: 'locatie', select: 'bussinessName'})
+  const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+  const date = inventary.date
+    .toLocaleDateString("en-GB", options)
+    .replace(/\//g, "-");
+
+  console.log(id)
+  const workbook = new exceljs.Workbook();
+  const worksheet = workbook.addWorksheet(`Inventar din ${date}`);
+  const sortedIngs = inventary.ingredients.sort((a, b) => a.name.localeCompare(b.name))
+
+
+  const docTitle =  [
+    `Inventar ${date}`,
+     '',
+     '',
+     '',
+     '',
+     '',
+     '',
+     '',
+     '',
+     '']
+  const header = [
+    'Nr',
+    `Denumire Ingredient`,
+    'UM',
+    'Pret (lei)',
+    'Gestiune',
+    'Departament',
+    `Faptic (um)`, 
+    `Scriptic (um)`, 
+    `Diferenta (um)`, 
+    `Diferenta (lei)`, 
+  ]
+  worksheet.addRow(docTitle)
+  worksheet.addRow(header)
+  let totalPretAchizitie = 0
+  let scripticValue = 0
+  let fapticValue = 0
+
+   sortedIngs.forEach((el, i) => {
+      const faptic = round(el.faptic * el.ing.price)
+      const scriptic = round(el.scriptic * el.ing.price)
+      scripticValue += scriptic
+      fapticValue += faptic
+    worksheet.addRow(
+      [
+        `${i+1}`,
+        `${el.name}`,
+        `${el.ing.um}`,
+        `${el.ing.price}`,
+        `${el.gestiune}`,
+        `${el.dep}`,
+        `${round(el.faptic)}`,
+        `${round(el.scriptic)}`,
+        `${round(el.faptic - el.scriptic)}`,
+        `${round((el.faptic - el.scriptic) * el.ing.price)} Lei`,
+      ]
+      )
+  })
+  worksheet.addRow(
+      [
+        'TOTALURI (lei)', 
+        '', 
+        '', 
+        '',
+        '', 
+        '', 
+        `${round(fapticValue)}`, 
+        `${round(scripticValue)}`, 
+        `${round(fapticValue - scripticValue)}`, ''
+      ]
+      )
+  worksheet.getColumn(1).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(2).eachCell((cell)=> {
+    cell.alignment = { vertical: "right", horizontal: 'left'}
+  })
+
+  worksheet.getColumn(3).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(4).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(5).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(6).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(7).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(8).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(9).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(10).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'right'}
+  })
+
+worksheet.getRow(1).eachCell((cell)=>{
+  cell.font = {
+      bold: true,
+      size: 14
+  }
+  cell.alignment = {horizontal: 'center'}
+})
+
+
+worksheet.getRow(2).eachCell((cell)=>{
+  cell.font = {
+      bold: true,
+      size: 13
+  }
+  cell.alignment = {horizontal: 'center'}
+})
+
+const totalsRowNumber = worksheet.lastRow
+
+totalsRowNumber.eachCell((cell)=>{
+cell.font = {
+    bold: true,
+    size: 14
+}
+cell.alignment = {horizontal: 'center'}
+})
+
+  worksheet.getColumn(1).width = 5;
+  worksheet.getColumn(2).width = 25; 
+  worksheet.getColumn(3).width = 10; 
+  worksheet.getColumn(4).width = 11; 
+  worksheet.getColumn(5).width = 11; 
+  worksheet.getColumn(6).width = 13; 
+  worksheet.getColumn(7).width = 13; 
+  worksheet.getColumn(8).width = 13; 
+  worksheet.getColumn(9).width = 15; 
+  worksheet.getColumn(10).width = 15; 
+  worksheet.mergeCells(`A1:J1`)
+  worksheet.mergeCells(`A${totalsRowNumber.number}:F${totalsRowNumber.number}`)
+  worksheet.mergeCells(`I${totalsRowNumber.number}:J${totalsRowNumber.number}`)
+
+
+
+
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+  workbook.xlsx.write(res)
+  .then(() => {
+    res.end();
+  })
+  .catch((error) => {
+    console.error('Error writing Excel file:', error);
+    res.status(500).send('Internal Server Error');
+  });
 }
 
 
@@ -1684,7 +1860,16 @@ module.exports.printProduction = async (req, res, next) => {
 
 
 
-
+module.exports.report = async (req, res) => {
+  try{
+    const {report} = req.body
+    createRaortXml(report)
+    res.status(200).json({message: 'Raport printat'})
+  } catch(err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
 
 
 

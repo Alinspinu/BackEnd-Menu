@@ -7,5 +7,6 @@ router.route('/create-xcel').post(regRoutes.createXcel)
 router.route('/add-entry').post(regRoutes.addEntry)
 router.route('/delete-entry').delete(regRoutes.deleteEntry)
 router.route('/get-days').post(regRoutes.showDocs)
+// router.route('/create').get(regRoutes.creataDaty)
 
 module.exports = router

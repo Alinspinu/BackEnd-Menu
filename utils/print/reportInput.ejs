@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <align mode="center">
+    <text-line size="0:0">RAPORT ZILNIC</text-line>
+  </align>
+  <align mode="center">
+    <text-line size="0:0"><%= date %> </text-line>
+  </align>
+  <line-feed/>
+  <align mode="center">
+    <text-line size="1:0"><%= name %></text-line>
+  </align>
+  <line-feed/>
+  <align mode="left">
+    <text-line size="1:0">Cash <%= totalCash %> Lei</text-line>
+  </align>
+
+  
+  <line-feed/>
+  <line-feed/>
+
+
+
+  <align mode="center">
+    <text-line size="1:0">Plati</text-line>
+  </align>
+  <line-feed/>
+  <!-- Start of loop -->
+  <% for (let pay of payments) { %>
+    <align mode="left">
+      <text-line size="0:0"><%=pay.description%></text-line>
+    </align>
+    <align mode="left">
+      <text-line size="1:0">Suma <%= pay.amount%> Lei</text-line>
+    </align>
+    <line-feed/>
+    <% } %>
+    <align mode="left">
+        <text-line size="1:0">Incasat     <%= totalCash %> Lei</text-line>
+      </align>
+    <line-feed/>
+    <align mode="left">
+        <text-line size="1:0">Total plati <%= totalPayments %> Lei</text-line>
+    </align>
+    <line-feed/>
+    <align mode="left">
+      <text-line size="1:0">Predat      <%= totalCash - totalPayments %> Lei</text-line>
+    </align>
+    <line-feed/>
+    <line-feed/>
+    <line-feed/>
+
+
+  <align mode="center">
+    <text-line size="1:0">Monetar</text-line>
+  </align>
+  <line-feed/>
+  <% if(monetary.fiveH > 0) { %>
+  <align mode="left">
+    <text-line size="0.5:0"> 500 Lei X <%= monetary.fiveH %> = <%= 500*monetary.fiveH %> Lei </text-line>
+  </align>
+  <line-feed/>
+  <% } %>
+  <% if(monetary.twoH > 0) { %>
+  <align mode="left">
+    <text-line size="0.5:0"> 200 Lei X <%= monetary.twoH %> = <%= 200*monetary.twoH %> Lei </text-line>
+  </align>
+  <line-feed/>
+  <% } %>
+  <% if(monetary.oneH > 0) { %>
+  <align mode="left">
+    <text-line size="0.5:0"> 100 Lei X <%= monetary.oneH %> = <%= 100*monetary.oneH %> Lei </text-line>
+  </align>
+  <line-feed/>
+  <% } %>
+  <% if(monetary.fiveT > 0) { %>
+  <align mode="left">
+    <text-line size="0.5:0"> 50 Lei X <%= monetary.fiveT %> = <%= 50*monetary.fiveT %> Lei </text-line>
+  </align>
+  <line-feed/>
+  <% } %>
+  <% if(monetary.ten > 0) { %>
+  <align mode="left">
+    <text-line size="0.5:0"> 10 Lei X <%= monetary.ten %> = <%= 10*monetary.ten %> Lei </text-line>
+  </align>
+  <line-feed/>
+  <% } %>
+  <% if(monetary.five > 0) { %>
+  <align mode="left">
+    <text-line size="0.5:0"> 5 Lei X <%= monetary.five %> = <%= 5*monetary.five %> Lei </text-line>
+  </align>
+  <line-feed/>
+  <% } %>
+  <% if(monetary.one > 0) { %>
+  <align mode="left">
+    <text-line size="0.5:0"> 1 Lei X <%= monetary.one %> = <%= 1*monetary.one %> Lei </text-line>
+  </align>
+  <line-feed/>
+  <% } %>
+  <% if(monetary.oneByTwo> 0) { %>
+  <align mode="left">
+    <text-line size="0.5:0"> 0.5 Lei X <%= monetary.oneByTwo %> = <%= 0.5*monetary.oneByTwo %> Lei </text-line>
+  </align>
+  <line-feed/>
+  <% } %>
+  <align mode="left">
+    <text-line size="1:0">TOTAL <%= totalCash - totalPayments %> Lei</text-line>
+  </align>
+  
+  <line-feed/>
+  <line-feed/>
+  <line-feed/>
+  <align mode="left">
+    <text-line size="1:0">Semnatura</text-line>
+  </align>
+  <align mode="left">
+    <text-line size="0:0"><%= name %></text-line>
+  </align>
+  <line-feed/>
+  <line-feed/>
+  <!-- End of loop -->
+  <paper-cut></paper-cut>
+</document>

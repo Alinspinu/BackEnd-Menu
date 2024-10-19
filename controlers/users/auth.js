@@ -13,7 +13,7 @@ module.exports.register = async (req, res, next) => {
     // const loc = '655e2e7c5a3d53943c6b7c53'
     try{
         const { email, password, tel, confirmPassword, name, firstCart, survey, id, loc, url} = req.body;
-       if(id.length){
+       if(id && id.length){
         if (password === confirmPassword) {
             const hashedPassword = hashPassword(password);
             const update = {
@@ -29,8 +29,8 @@ module.exports.register = async (req, res, next) => {
             return res.status(401).json({ message: "Passwords don't match!" });
         };
        } else {
-           const check = await User.find({ email: email, locatie: loc });
-           if (check.length) {
+           const check = await User.findOne({ email: email, locatie: loc });
+           if (check) {
                return res.status(256).json({ message: 'This email allrady exist' });
            }
            if (password === confirmPassword) {
@@ -54,7 +54,7 @@ module.exports.register = async (req, res, next) => {
                 }   
                 await newUser.save();
                 const dbUser = await User.findOne({email: email, locatie: loc}).populate({path: 'locatie'})
-               await sendVerificationEmail(dbUser, url).then(response => {
+                sendVerificationEmail(dbUser, url).then(response => {
                    if (response.message === 'Email sent') {
                        res.status(200).json({ message: response.message, id: newUser._id });
                    } else {
@@ -101,19 +101,6 @@ module.exports.registerEmployee = async (req, res, next) => {
     }
 }
 
-// module.exports.newUser = async (req, res, next) => {
-//     const user = {
-//         name: 'Andrei Stoleru',
-//         status: 'active',
-//         email: "andrei@stoleru.ro",
-//         cardIndex: "andrei",
-//         password: "123",
-//         locatie: "65ba7dcf1694ff43f52d44ed"
-//     }
-//     const newUser = await new User(user)
-//     newUser.save()
-//     res.send(newUser)
-// }
 
 
 module.exports.login = async (req, res, next) => {
@@ -134,7 +121,7 @@ module.exports.login = async (req, res, next) => {
         return res.status(401).json({ message: 'Invalid email or password' });
     };
     if (user.status === 'inactive') {
-        return await sendVerificationEmail(user, url).then(response => {
+        return  sendVerificationEmail(user, url).then(response => {
             const userData = {
                 name: user.name,
                 email: user.email,
@@ -169,7 +156,7 @@ module.exports.login = async (req, res, next) => {
             description: user.description,
         };
         const data = {name: user.name, action: 's-a conectat'}
-        await sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
+         sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
         res.status(200).json(sendData);
     };
 

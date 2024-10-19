@@ -12,6 +12,7 @@ router.route('/')
 router.route('/pontaj')
     .get(sheduleRoutes.getPontaj)
     .post(sheduleRoutes.addPontaj)
+    .delete(sheduleRoutes.deletePontaj)
 
 
 

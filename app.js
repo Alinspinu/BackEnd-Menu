@@ -36,6 +36,14 @@ const printRoutes = require('./routes/print')
 const recipesRoutes = require("./routes/recipe");
 const sheduleRoutes = require('./routes/back-office/shedule')
 const repRoutes = require('./routes/back-office/report.js')
+const invoiceRoutes = require('./routes/back-office/invoice.js')
+const gbtRoutes = require('./routes/gbt.js')
+
+const auth = require('./auth/auth')
+
+const compression = require('compression');
+
+
 
 const fs = require('fs');
 const https = require('https');
@@ -50,6 +58,11 @@ db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected");
 });
+
+app.use(compression());
+
+app.options('*', cors()); 
+
 app.use(cors())
 
 
@@ -62,8 +75,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
 
-app.use(bodyParser.json({ limit: '100mb' }))
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: '200mb' }))
+app.use(bodyParser.urlencoded({limit: '200mb', extended: true }));
+app.use(express.json({ limit: '150mb' }))
 
 app.use("/orders", ordersTrueRoutes);
 app.use('/pay', payRoutes);
@@ -71,7 +85,7 @@ app.use('/auth', authRoutes);
 app.use('/nutrition', nutritionRoutes);
 app.use('/register', registerRoutes);
 app.use('/table',tableRoutes);
-app.use('/users', usersRoutes);
+app.use('/users', auth.basicAuth, usersRoutes);
 // app.use('/message', messRoutes);
 app.use('/notification', notifRoutes)
 app.use("/top", toppingRoutes);
@@ -86,11 +100,14 @@ app.use('/print', printRoutes);
 app.use("/recipes", recipesRoutes);
 app.use('/shedule', sheduleRoutes);
 app.use('/report', repRoutes);
+app.use('/invoice', invoiceRoutes)
+app.use('/gbt', gbtRoutes)
+
 
 
 const options = {
-    key: fs.readFileSync('cert/key.pem'),
-    cert: fs.readFileSync('cert/cert.pem')
+    key: fs.readFileSync('private.key'),
+    cert: fs.readFileSync('certificate.crt')
   };
   
 
@@ -105,9 +122,10 @@ const options = {
         });
         next(err);
     });
-    
+
+const subdomain = 'flow-app-now-cash-true-mobile1'    
 const server = https.createServer(options, app);
 const port = process.env.PORT || 8080;
-app.listen(port,() => {
+app.listen(port, async () => {
     console.log(`App running on port ${port}`);
 });

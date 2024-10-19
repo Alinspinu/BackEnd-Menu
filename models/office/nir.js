@@ -23,6 +23,9 @@ const nirSchema = new Schema({
     type: Date,
     required: true
   },
+  receptionDate: {
+    type: Date
+  },
   totalDoc: {
     type: Number
   },
@@ -33,7 +36,10 @@ const nirSchema = new Schema({
   type: {
     type: String,
     default: 'unpayd',
-    enum: ['bank','cash', 'unpayd'],
+    enum: ['bank', 'cash', 'unpayd'],
+  },
+  document: {
+    type: String
   },
   discount: [
     {
@@ -95,12 +101,16 @@ const nirSchema = new Schema({
 nirSchema.pre("save", async function (next) {
   try {
     const doc = this;
-    const counter = await Counter.findOneAndUpdate(
-      { locatie: this.locatie, model: "Nir" },
-      { $inc: { value: 1 } },
-      { upsert: true, new: true }
-    );
-    doc.index = counter.value;
+    if(doc.index > 0){
+
+    } else {
+      const counter = await Counter.findOneAndUpdate(
+        { locatie: this.locatie, model: "Nir" },
+        { $inc: { value: 1 } },
+        { upsert: true, new: true }
+      );
+      doc.index = counter.value;
+    }
     next();
   } catch (error) {
     next(error);

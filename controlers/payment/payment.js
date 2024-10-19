@@ -188,7 +188,7 @@ module.exports.useVoucher = async (req, res, next) => {
 module.exports.reports = async (req, res, next) => {
     try{
         const {value} = req.query;
-        const response = await sendToPrint({rep: value}, 'print')
+        const response = await reports(value)
         res.status(200).json({message: response.message})
     } catch(err) {
         handleError(err, res)
@@ -199,12 +199,29 @@ module.exports.reports = async (req, res, next) => {
 module.exports.cashInandOut = async (req, res, next) =>{
     try{
         const {data} = req.body;
-        const response = await sendToPrint({inOut: data}, 'print')
-        res.status(200).json({message: response.message})
+     
+       const message = await inAndOut(data.mode, data.sum)
+        res.status(200).json({message: message.message})
     } catch(err) {
        handleError(err, res)
        return
     } 
+}
+
+module.exports.reprinFiscal = async (req, res, next) => {
+    try{
+        const {fiscal} = req.body
+        if(fiscal){
+            const bill = JSON.parse(fiscal)
+            await printBill(bill)
+            res.status(200).json({message: 'Bunul a fost retipărit!'})
+        } else {
+            res.status(226).json({message: 'Bonul nu a putut fi tipărit!'})
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json(err)
+    }
 }
 
 module.exports.printBill = async (req, res, next) => {
@@ -212,23 +229,23 @@ module.exports.printBill = async (req, res, next) => {
         const {bill} = req.body
         bill.status = 'done'
         bill.pending = false
-        const id = bill.clientInfo.userId
-        if(id && id.length){
-            const client = await User.findById(id)
+        const email = bill.clientInfo.email
+        if(email && email.length){
+            const client = await User.findOne({email: email})
             if(client){
                 client.orders.push(bill)
                 client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
+                await client.save()
             }
-            await client.save()
         }
         const savedBill = await Order.findByIdAndUpdate(bill._id, bill, {new: true})
         if(savedBill){
             savedBill.products.map((el) => {
             if (el.toppings.length) {
-                unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                // unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
             }
             if (el.ings.length) {
-                unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                // unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
             }
         });
         res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
@@ -240,6 +257,77 @@ module.exports.printBill = async (req, res, next) => {
         res.status(500).json(err)
     }
 }
+
+
+
+module.exports.saveBillInCloud = async (req, res, next) => {
+    try{
+        const {bill} = req.body
+        bill.status = 'done'
+        bill.pending = false
+        const email = bill.clientInfo.email
+
+        if(email && email.length){
+
+            const client = await User.findOne({email: email})
+            if(client){
+                client.orders.push(bill)
+                client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
+            }
+            await client.save()
+        }
+    
+        const billl = await Order.findById(bill._id)
+
+        if(!billl){
+            delete bill._id
+            const order = new Order(bill);
+            const savedBill = await order.save()
+            if(savedBill){
+                const email = bill.clientInfo.email
+                if(email && email.length){
+
+                    const client = await User.findOne({email: email})  
+                    if(client){
+                        client.orders.push(savedBill)
+                        client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
+                    }
+                    await client.save()
+                }
+                savedBill.products.map((el) => {
+                if (el.toppings.length) {
+                    unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+                if (el.ings.length) {
+                    unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+            });
+            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+            } else {
+                throw new Error('Nota de plată nu a putut fi salvată!')
+            }
+        } else {
+            billl.tips = bill.tips
+            billl.total = bill.total
+            const savedBill = await billl.save()
+            billl.products.map((el) => {
+                if (el.toppings.length) {
+                    // unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+                if (el.ings.length) {
+                    // unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+            });
+            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+        }
+    } catch(err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
+}
+
+
+
 
 module.exports.printUnreg = async (req, res, next) => {
     try{
@@ -279,92 +367,3 @@ module.exports.posPaymentCheck = async (req, res, next) => {
 }
 
 
-
-
-
-
-
-
-
-// async function makeRequestWithRetry(url, expectedCondition, retries, delayTime) {
-//     const agent = new https.Agent({
-//         rejectUnauthorized: false
-//       });
-//     for (let attempt = 0; attempt < retries; attempt++) {
-//         try {
-//             const response = await axios.get(url, {headers: {'Content-Type': 'application/json'},httpsAgent: agent});
-//             if (expectedCondition(response)) {
-//                 return response;
-//             }
-//             console.log(`Attempt ${attempt + 1} failed, retrying...`);
-//         } catch (error) {
-//             console.error(`Attempt ${attempt + 1} encountered an error:`, error);
-//         }
-//         await delay(delayTime);
-//     }
-//     throw new Error(`Failed to get the expected response after ${retries} attempts`);
-// }
-
-
-
-
-// module.exports.getTokenForPos = async (req, res, next) => {
-//     const agent = new https.Agent({
-//         rejectUnauthorized: false
-//       });
-//     try{
-//         const {sessionId, amount, abort, loc} = req.query
-//         const locatie = await Locatie.findById(loc)
-//         if(locatie){
-//             const baseUrl = `https://${locatie.pos.vivaWalletLocal.ip}:${locatie.pos.vivaWalletLocal.port}/pos/v1/`
-//             if(abort === 'abort'){
-//                 const abortUrl = `${baseUrl}abort`
-//                 axios.post(abortUrl, {"sessionId": `${sessionId}`}, {headers: {'Content-Type': 'application/json'},httpsAgent: agent})
-//                 .then(response => {
-//                     console.log('Abort succesful', response.data);
-//                     res.status(200).json(response.data)
-//                 })
-//                 .catch(error => {
-//                     console.error('Error in the abort process:', error);
-//                     res.status(500).json(err.message)
-//                 });
-//             }else{
-//                 const urlSearchPos = `${baseUrl}sale`
-//                 const urlGetInfo = `${baseUrl}sessions/${sessionId}`
-    
-//                 const body = {             
-//                         "sessionId": `${sessionId}`,
-//                         "amount": amount*100,
-//                     }
-//                     console.log(urlSearchPos)
-//                     axios.post(urlSearchPos, body, {headers: {'Content-Type': 'application/json'},httpsAgent: agent})
-//                         .then(response => {
-//                             console.log('First request successful:', response.data);
-                    
-//                             return delay(3000);
-//                         })
-//                         .then(() => {
-//                             return makeRequestWithRetry(urlGetInfo, 
-//                                 response => response.data.payloadData, 
-//                                 30, 
-//                                 2500
-//                             );
-//                         })
-//                         .then(response => {
-//                             console.log('Second request successful:', response.data);
-//                             res.status(200).json(response.data)
-//                         })
-//                         .catch(error => {
-//                             console.error('Error in one of the requests:', error);
-//                             res.status(500).json(error)
-//                         });
-//             }
-//         } else {
-//             throw new Error(`Lipsete locatia, login!`);
-//         }
-//     } catch (err) {
-//         console.log(err)
-//         res.status(500).json({message: err.message})
-//     }
-
-// }

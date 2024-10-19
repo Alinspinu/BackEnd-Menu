@@ -47,14 +47,7 @@ const entrySchema = new Schema({
     },
     document: {
         tip: {
-          type: String,
-          enum: [
-            'Bon fiscal',
-            'Chitanta',
-            'Dispozitie de plata',
-            'Dispozitie de incasare',
-            'Fara',
-          ],
+          type: String
         },
         number: String
     },

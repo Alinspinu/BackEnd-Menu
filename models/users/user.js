@@ -58,6 +58,7 @@ const UserTrueSchema = new Schema({
         ]
     },
     employee: {
+        active: Boolean,
         fullName: {
             type: String,
         },
@@ -109,19 +110,7 @@ const UserTrueSchema = new Schema({
                 hours: Number,
                 earnd: Number,
                 position: String,
-                comments: [
-                    {
-                    user: {
-                        type: Schema.Types.ObjectId,
-                        ref: 'User'
-                    },
-                    comment: String,
-                    type: {
-                        type: String,
-                        enum: ['positive', 'negative']
-                    }
-                    },
-                ],
+                concediu: Boolean,
             }
         ],
     },
