@@ -3,6 +3,7 @@ const BlackList = require('../models/office/product/blacList')
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios')
+const crypto = require('crypto');
 
 function comparePasswords(password, hashedPassword) {
     const [salt, originalHash] = hashedPassword.split("$");
@@ -165,6 +166,13 @@ const baseUrl = 'https://print-orders-true.loca.lt/'
         return `${year}-${month}-${day}T00:00:00.000Z`;
       }
 
+
+
+
+function generateSoketId(length) {
+  return crypto.randomBytes(length).toString('hex').slice(0, length);
+}
+
 module.exports = {
     comparePasswords, 
     hashPassword, 
@@ -177,5 +185,6 @@ module.exports = {
     roundd, 
     sendToPrint,
     handleError,
-    convertToDateISOString
+    convertToDateISOString,
+    generateSoketId
 }

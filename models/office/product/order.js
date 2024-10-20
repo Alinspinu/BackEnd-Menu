@@ -9,6 +9,7 @@ const orderTrueSchema = new Schema({
         type: Number,
         index: true
     },
+    soketId: String,
     name: {
         type: String,
         default: 'COMANDA'
