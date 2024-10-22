@@ -20,6 +20,8 @@ const reportOutput = './utils/print/reportOutput.xml'
 
 
 
+
+
 async function print(order) {
     let foodProd = []
     let mainProd = []
@@ -65,7 +67,6 @@ async function print(order) {
             }
         })
     }
-    console.log('hit before soket', outProducts)
     socket.emit('outsideOrder', JSON.stringify({outProducts, dataToPrint}))
     printKitchen(foodProd, dataToPrint);
     printBarista(baristaProd, dataToPrint);
@@ -78,6 +79,7 @@ async function print(order) {
 
 
 async function printKitchen(products, dataPrint) {
+    console.log('buc products', products)
     if(products.length){
         let productsToPrint = []
         for(let pro of products){
@@ -108,6 +110,7 @@ async function printKitchen(products, dataPrint) {
 
 
 async function printBarista(products, dataPrint) {   
+    console.log('barsita products', products)
     const url = 'http://192.168.1.90:65400/api/Receipt';
     if(products.length){
 

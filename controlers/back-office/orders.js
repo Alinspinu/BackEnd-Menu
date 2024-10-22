@@ -6,7 +6,7 @@ const Ingredient = require('../../models/office/inv-ingredient')
 const Product = require('../../models/office/product/product')
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
-const {formatedDateToShow, round, sendToPrint, handleError} = require('../../utils/functions')
+const {generateSoketId} = require('../../utils/functions')
 
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
@@ -257,47 +257,6 @@ module.exports.sendOrderTime = async (req, res, next) => {
 
 
 
-// module.exports.saveOrEditBill = async (req, res, next) => {
-//     const {bill} = req.body;
-//     const parsedBill = JSON.parse(bill)
-//     const {index, billId} = req.query;
-//     try{
-//         if(billId === "new"){
-//             delete parsedBill._id
-//             delete parsedBill.index
-//             const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
-//             const newBill = new Order(parsedBill);
-//             newBill.clientInfo = parsedBill.clientInfo
-//             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
-//                 newBill.user = parsedBill.clientInfo._id
-//             }         
-//             newBill.products.forEach(el => {
-//                 if(el.sentToPrint){
-//                     el.sentToPrint = false
-//                     console.log("new",el.sentToPrint)
-//                 }
-//             })
-//             const savedBill = await newBill.save();
-//             table.bills.push(savedBill);
-//             await table.save();
-//             socket.emit('bill', JSON.stringify(savedBill))
-//             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
-//         } else {
-//             parsedBill.products.forEach(el => {
-//                 if(el.sentToPrint){
-//                     el.sentToPrint = false
-//                     console.log("old",el.sentToPrint)
-//                 }
-//             })
-//             const savedBill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-//             socket.emit('bill', JSON.stringify(bill))
-//             res.status(200).json({billId: parsedBill._id, index: parsedBill.index, billTotal: parsedBill.total, products: parsedBill.products, masa: parsedBill.masaRest})
-//         }
-//     } catch(err){
-//         console.log(err)
-//         res.status(500).json({message: 'Something went wrong', err: err.message})
-//     }
-// }
 
 module.exports.saveOrEditBill = async (req, res, next) => {
     const {bill} = req.body;
@@ -313,38 +272,49 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             }
-            // print(newBill)         
+            print(newBill)         
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
                     el.sentToPrint = false
                     console.log("new",el.sentToPrint)
                 }
             })
+            newBill.soketId = generateSoketId(16)
             const savedBill = await newBill.save();
             table.bills.push(savedBill);
             await table.save();
-            socket.emit('bill', JSON.stringify(savedBill))
-            res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
+            socket.emit('billl', JSON.stringify(savedBill))
+            res.status(200).json({bill: savedBill})
         } else {
-            // print(parsedBill)
+            print(parsedBill)
+            let productsToPrint = false
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint){
+                    productsToPrint = true
                     el.sentToPrint = false
                     console.log("old",el.sentToPrint)
                 }
             })
-            const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-            console.log(bill)
+            if(productsToPrint){
+                socket.emit('billl', JSON.stringify(parsedBill))
+                console.log('hit')
+            }
+            console.log(parsedBill.products.length)
+            delete parsedBill._id
+            const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId}, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
             if(bill){
-                socket.emit('bill', JSON.stringify(bill))
-                res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
+                console.log('bill found')
+                res.status(200).json({bill: bill})
             } else {
+                console.log(parsedBill.soketId)
+                delete parsedBill._id
+                delete parsedBill.index
                 const nBill = new Order(parsedBill)
                 const newBill = await nBill.save()
                 table.bills.push(nBill)
                 await table.save()
-                socket.emit('bill', JSON.stringify(newBill))
-                res.status(200).json({billId: newBill._id, index: newBill.index, billTotal: newBill.total, products: newBill.products, masa: newBill.masaRest})
+                const billToSend = await Order.findById(newBill._id).populate({path: 'masaRest', select: 'index'})
+                res.status(200).json({bill:billToSend})
             }
         }
     } catch(err){
@@ -353,75 +323,49 @@ module.exports.saveOrEditBill = async (req, res, next) => {
     }
 }
 
+module.exports.deleteOrder = async (req, res, next) => {
+    try {
+        const { data } = req.body;
+        console.log('data', data);
 
-// module.exports.saveOrEditBill = async (req, res, next) => {
-//     const {bill} = req.body;
-//     const parsedBill = JSON.parse(bill)
-//     const {index, billId} = req.query;
-//     try{
-//         if(billId === "new"){
-//             delete parsedBill._id
-//             delete parsedBill.index
-//             const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
-//             const newBill = new Order(parsedBill);
-//             newBill.clientInfo = parsedBill.clientInfo
-//             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
-//                 newBill.user = parsedBill.clientInfo._id
-//             } 
-//             print(newBill)
-//             newBill.products.forEach(el => {
-//                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
-//                     if(el.toppings.length){
-//                         unloadIngs(el.toppings, el.quantity, {name:'vanzare', details: el.name});
-//                     } 
-//                     if(el.ings.length){
-//                         unloadIngs(el.ings, el.quantity, {name:'vanzare', details: el.name});
-//                     }
-//                     el.sentToPrint = false;
-//                     console.log("new", el.sentToPrint)
-//                 } else if(el.sentToPrint){
-//                     el.sentToPrint = false
-//                     console.log("new",el.sentToPrint)
-//                 }
-//             })
-//             const savedBill = await newBill.save();
-          
-//             table.bills.push(savedBill);
-//             setTimeout(() => {
-//                 socket.emit('bill', JSON.stringify(savedBill))
-//             }, 1000)
-//             await table.save();
-//             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total, masa: {_id: table._id, index: table.index}})
-//         } else {
-//             print(parsedBill)
-//             parsedBill.products.forEach(el => {
-//               if(el.sentToPrint){
-//                     el.sentToPrint = false
-//                     console.log("old",el.sentToPrint)
-//                 }
-//             })
-//             async function saveBill() {
-//                 const order = await Order.findById(billId)
-//                 if(order.status === "done"){
-//                     parsedBill.status = 'done'
-//                     parsedBill.payment = order.payment
-//                     parsedBill.pending = order.pending
-//                     const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-//                     socket.emit('bill', JSON.stringify(bill))
-//                     res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
-//                 } else {
-//                     const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-//                     socket.emit('bill', JSON.stringify(bill))
-//                     res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
-//                 }
-//             }
-//             setTimeout(saveBill, 1000)
-//         }
-//     } catch(err){
-//         console.log(err)
-//         res.status(500).json({message: 'Something went wrong', err: err.message})
-//     }
-// }
+        if (data && data.length) {
+            const orderIds = data.map(obj => obj.id);
+
+            // Find all orders that match the given socketIds
+            const orders = await Order.find({ soketId: { $in: orderIds } });
+            console.log('Found orders:', orders.length);
+
+            if (orders.length) {
+                const deletePromises = orders.map(order => {
+                    if (!data.stopSend) {
+                        setTimeout(() => {
+                            socket.emit('tableBillId', JSON.stringify({ number: order.masa, id: order.soketId }));
+                        }, 500);
+                    }
+
+                    // Return the deletion promise
+                    return order.deleteOne()
+                        .then(() => console.log(`Order with socketId ${order.soketId} deleted.`))
+                        .catch(err => console.error(`Failed to delete order with socketId ${order.soketId}:`, err));
+                });
+
+                // Wait for all delete operations to complete
+                await Promise.all(deletePromises);
+                res.status(200).json({ message: 'Comenzile au fost sterse!' });
+            } else {
+                res.status(404).json({ message: 'No orders found to delete.' });
+            }
+        } else {
+            res.status(400).json({ message: 'Invalid data provided.' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
+
 
 
 
@@ -577,24 +521,118 @@ module.exports.endPending = async (req, res, next) => {
 }
 
 
-module.exports.deleteOrder = async (req, res, next) => {
-    try{
-        const {data} = req.body;
-        if(data && data.length) {
-            for(let obj of data) {
-                let order = await Order.findById(obj.id)
-                setTimeout(() => {
-                    socket.emit('tableBillId', JSON.stringify({number: order.masa, id: order._id}))
-                }, 500)
-                await order.deleteOne()
-            }
-            res.status(200).json({messgae: 'Comenzile au fost sterse!'})
-        }
-    }catch(err) {   
-        console.log(err)
-        res.status(500).json({message: err.message})
-    }   
-}
 
 
 
+
+
+// module.exports.saveOrEditBill = async (req, res, next) => {
+//     const {bill} = req.body;
+//     const parsedBill = JSON.parse(bill)
+//     const {index, billId} = req.query;
+//     try{
+//         if(billId === "new"){
+//             delete parsedBill._id
+//             delete parsedBill.index
+//             const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
+//             const newBill = new Order(parsedBill);
+//             newBill.clientInfo = parsedBill.clientInfo
+//             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
+//                 newBill.user = parsedBill.clientInfo._id
+//             }         
+//             newBill.products.forEach(el => {
+//                 if(el.sentToPrint){
+//                     el.sentToPrint = false
+//                     console.log("new",el.sentToPrint)
+//                 }
+//             })
+//             const savedBill = await newBill.save();
+//             table.bills.push(savedBill);
+//             await table.save();
+//             socket.emit('bill', JSON.stringify(savedBill))
+//             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
+//         } else {
+//             parsedBill.products.forEach(el => {
+//                 if(el.sentToPrint){
+//                     el.sentToPrint = false
+//                     console.log("old",el.sentToPrint)
+//                 }
+//             })
+//             const savedBill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
+//             socket.emit('bill', JSON.stringify(bill))
+//             res.status(200).json({billId: parsedBill._id, index: parsedBill.index, billTotal: parsedBill.total, products: parsedBill.products, masa: parsedBill.masaRest})
+//         }
+//     } catch(err){
+//         console.log(err)
+//         res.status(500).json({message: 'Something went wrong', err: err.message})
+//     }
+// }
+
+// module.exports.saveOrEditBill = async (req, res, next) => {
+//     const {bill} = req.body;
+//     const parsedBill = JSON.parse(bill)
+//     const {index, billId} = req.query;
+//     try{
+//         if(billId === "new"){
+//             delete parsedBill._id
+//             delete parsedBill.index
+//             const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
+//             const newBill = new Order(parsedBill);
+//             newBill.clientInfo = parsedBill.clientInfo
+//             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
+//                 newBill.user = parsedBill.clientInfo._id
+//             } 
+//             print(newBill)
+//             newBill.products.forEach(el => {
+//                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
+//                     if(el.toppings.length){
+//                         unloadIngs(el.toppings, el.quantity, {name:'vanzare', details: el.name});
+//                     } 
+//                     if(el.ings.length){
+//                         unloadIngs(el.ings, el.quantity, {name:'vanzare', details: el.name});
+//                     }
+//                     el.sentToPrint = false;
+//                     console.log("new", el.sentToPrint)
+//                 } else if(el.sentToPrint){
+//                     el.sentToPrint = false
+//                     console.log("new",el.sentToPrint)
+//                 }
+//             })
+//             const savedBill = await newBill.save();
+          
+//             table.bills.push(savedBill);
+//             setTimeout(() => {
+//                 socket.emit('bill', JSON.stringify(savedBill))
+//             }, 1000)
+//             await table.save();
+//             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total, masa: {_id: table._id, index: table.index}})
+//         } else {
+//             print(parsedBill)
+//             parsedBill.products.forEach(el => {
+//               if(el.sentToPrint){
+//                     el.sentToPrint = false
+//                     console.log("old",el.sentToPrint)
+//                 }
+//             })
+//             async function saveBill() {
+//                 const order = await Order.findById(billId)
+//                 if(order.status === "done"){
+//                     parsedBill.status = 'done'
+//                     parsedBill.payment = order.payment
+//                     parsedBill.pending = order.pending
+//                     const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
+//                     socket.emit('bill', JSON.stringify(bill))
+//                     res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
+//                 } else {
+//                     const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
+//                     socket.emit('bill', JSON.stringify(bill))
+//                     res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
+//                 }
+//             }
+//             setTimeout(saveBill, 1000)
+//         }
+//     } catch(err){
+//         console.log(err)
+//         res.status(500).json({message: 'Something went wrong', err: err.message})
+//     }
+// }
