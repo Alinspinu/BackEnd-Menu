@@ -105,34 +105,7 @@ module.exports.calcDep = async (req, res, next) => {
 }
 
 
-function convertToDateISOString(dateString) {
-  // Define month mappings
-  const monthMap = {
-    'Ianuarie': '01',
-    'Februarie': '02',
-    'Martie': '03',
-    'Aprilie': '04',
-    'Mai': '05',
-    'Iunie': '06',
-    'Iulie': '07',
-    'August': '08',
-    'Septembrie': '09',
-    'Octombrie': '10',
-    'Noiembrie': '11',
-    'Decembrie': '12'
-  };
 
-  // Split the date string and remove any leading or trailing whitespace
-  const trimmedDateString = dateString.trim();
-  const parts = trimmedDateString.split('-');
-
-  // Extract day, month, and year
-  const day = parts[0].padStart(2, '0');
-  const month = monthMap[parts[1]];
-  const year = parts[2];
-  // Return the date string in ISO 8601 format
-  return `${year}-${month}-${day}T00:00:00.000Z`;
-}
 
   
 
@@ -218,12 +191,35 @@ module.exports.getOrderByUser = async (req, res, nex) => {
 
 module.exports.getAllOrders = async (req, res, next) => {
     try{
+        console.log('hit the function')
         const date = new Date()
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const {loc} = req.query;
         const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} }) 
-        res.status(200).json(orders) 
+        // const orders = await Order.find({
+        //     locatie: loc,
+        //     status: 'done',
+        //     updatedAt: { $gte: start, $lt: end },
+        //     'payment.cash': 0,
+            //     'payment.online': 0
+            // });
+            
+            // // If no orders found, return
+            // console.log(orders.length)
+            // if (orders.length === 0) {
+            //     console.log('No matching orders found');
+            //     return;
+            // }
+    
+            // // Use Promise.all to perform updates for each order in parallel
+            // await Promise.all(orders.map(order => {
+            //     return Order.updateOne(
+                //         { _id: order._id },  // Find by the _id of each order
+            //         { $set: { 'payment.online': order.total } }  // Update the 'payment.online' field with 'total'
+            //     );
+            // }));
+            res.status(200).json(orders)         
     } catch(err){
         console.log(err)
         res.status(500).json({message: err.message})
@@ -297,7 +293,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             })
             if(productsToPrint){
                 socket.emit('billl', JSON.stringify(parsedBill))
-                console.log('hit')
             }
             console.log(parsedBill.products.length)
             delete parsedBill._id
