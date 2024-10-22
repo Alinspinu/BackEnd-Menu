@@ -26,7 +26,7 @@ env_variables:
   ANAF_AUTH_URL: https://logincert.anaf.ro/anaf-oauth2/v1/authorize
   ANAF_REDIRECT_URI: https://flow-api-394209.lm.r.appspot.com/invoice
   ANAF_TOKEN_URL: https://logincert.anaf.ro/anaf-oauth2/v1/token
-  GBT_APY_KEY: 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
+  GBT_APY_KEY: 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
   CAFETISH_IV: 1a1c249f8897ebbc38f552ca716bc8c7
   CAFETISH_KEY: ac3af789eb4a9dfeb53afc1f122c12e3519be1d8fa302e771dd91ebb3b851c24
   CAFETISH_SECRET: BIK9IGCgLVgzSNTbKYJImkjVKddghcofCwbdSNLjRRE

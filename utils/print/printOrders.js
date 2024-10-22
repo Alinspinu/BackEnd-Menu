@@ -65,7 +65,6 @@ async function print(order) {
             }
         })
     }
-    console.log('hit before soket', outProducts)
     socket.emit('outsideOrder', JSON.stringify({outProducts, dataToPrint}))
     printKitchen(foodProd, dataToPrint);
     printBarista(baristaProd, dataToPrint);
@@ -97,7 +96,7 @@ async function printKitchen(products, dataPrint) {
             masa: dataPrint.masa,
             products: productsToPrint
         }
-
+        console.log('comenzi bucatarie', dataToPrint)
         log(JSON.stringify(dataToPrint), 'buc-orders')
         // createXml(dataToPrint)
        
@@ -157,7 +156,7 @@ async function printBarista(products, dataPrint) {
             data.push(`TL^   ************************************   `)
 
         }
-        console.log(data)
+        console.log('comenzi barista', data)
         log(data, 'barista-orders')
         // axios.post(url, data, {
         //     headers: {
@@ -241,6 +240,7 @@ function createXml(data) {
 
 
 function createRaortXml(report) {
+    console.log(report)
     fs.readFile(reportTemplate, 'utf-8', (err, templateContent) => {
         if (err) {
           console.error('Error reading EJS template:', err);

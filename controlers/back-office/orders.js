@@ -6,7 +6,7 @@ const Ingredient = require('../../models/office/inv-ingredient')
 const Product = require('../../models/office/product/product')
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
-const {formatedDateToShow, round, sendToPrint, handleError} = require('../../utils/functions')
+const {generateSoketId} = require('../../utils/functions')
 
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
@@ -105,37 +105,6 @@ module.exports.calcDep = async (req, res, next) => {
 }
 
 
-function convertToDateISOString(dateString) {
-  // Define month mappings
-  const monthMap = {
-    'Ianuarie': '01',
-    'Februarie': '02',
-    'Martie': '03',
-    'Aprilie': '04',
-    'Mai': '05',
-    'Iunie': '06',
-    'Iulie': '07',
-    'August': '08',
-    'Septembrie': '09',
-    'Octombrie': '10',
-    'Noiembrie': '11',
-    'Decembrie': '12'
-  };
-
-  // Split the date string and remove any leading or trailing whitespace
-  const trimmedDateString = dateString.trim();
-  const parts = trimmedDateString.split('-');
-
-  // Extract day, month, and year
-  const day = parts[0].padStart(2, '0');
-  const month = monthMap[parts[1]];
-  const year = parts[2];
-  // Return the date string in ISO 8601 format
-  return `${year}-${month}-${day}T00:00:00.000Z`;
-}
-
-  
-
 
 module.exports.getHavyOrders = async (req, res, next) => {
     try{
@@ -186,10 +155,6 @@ module.exports.getHavyOrders = async (req, res, next) => {
 }
 
 
-
-
-
-
 module.exports.sendDeletedproduct = async (req, res, next) => {
     try{
         const delProds = DelProd.find({})
@@ -218,11 +183,34 @@ module.exports.getOrderByUser = async (req, res, nex) => {
 
 module.exports.getAllOrders = async (req, res, next) => {
     try{
+        console.log('hit the function')
         const date = new Date()
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const {loc} = req.query;
         const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} }) 
+        // const orders = await Order.find({
+        //     locatie: loc,
+        //     status: 'done',
+        //     updatedAt: { $gte: start, $lt: end },
+        //     'payment.cash': 0,
+        //     'payment.online': 0
+        // });
+
+        // // If no orders found, return
+        // console.log(orders.length)
+        // if (orders.length === 0) {
+        //     console.log('No matching orders found');
+        //     return;
+        // }
+
+        // // Use Promise.all to perform updates for each order in parallel
+        // await Promise.all(orders.map(order => {
+        //     return Order.updateOne(
+        //         { _id: order._id },  // Find by the _id of each order
+        //         { $set: { 'payment.online': order.total } }  // Update the 'payment.online' field with 'total'
+        //     );
+        // }));
         res.status(200).json(orders) 
     } catch(err){
         console.log(err)
@@ -254,6 +242,279 @@ module.exports.sendOrderTime = async (req, res, next) => {
 }
 
 //************************SAVE ORDERS********************** */
+
+
+
+
+
+module.exports.saveOrEditBill = async (req, res, next) => {
+    const {bill} = req.body;
+    const parsedBill = JSON.parse(bill)
+    const {index, billId} = req.query;
+    const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
+    try{
+        if(billId === "new"){
+            delete parsedBill._id
+            delete parsedBill.index
+            const newBill = new Order(parsedBill);
+            newBill.clientInfo = parsedBill.clientInfo
+            if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
+                newBill.user = parsedBill.clientInfo._id
+            }
+            // print(newBill)   
+           socket.emit('printOrder', JSON.stringify(newBill))
+            newBill.products.forEach(el => {
+                if(el.sentToPrint){
+                    el.sentToPrint = false
+                }
+            })
+            newBill.soketId = generateSoketId(16)
+            const savedBill = await newBill.save();
+            table.bills.push(savedBill);
+            await table.save();
+            console.log('new ID', savedBill._id)
+            socket.emit('billl', JSON.stringify(savedBill))
+            res.status(200).json({ bill: savedBill})
+        } else {
+            socket.emit('printOrder', JSON.stringify(parsedBill))
+            // print(parsedBill)
+            console.log('HIT BEFORE SAVE NOTA DE LA MASA', parsedBill.masa)
+            let productsToPrint = false   
+            parsedBill.products.forEach(product => {
+                if(product.sentToPrint){
+                    productsToPrint = true
+                    product.sentToPrint = false
+                }
+           })
+           if(productsToPrint){
+            console.log('second product',parsedBill.soketId)
+                 socket.emit('billl', JSON.stringify(parsedBill))
+                }
+            // delete parsedBill._id
+            const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId}, {products: parsedBill.products}, {new: true}).populate({path: 'masaRest', select: 'index'});
+            if(bill){
+                res.status(200).json({bill: bill})
+            } else {
+                console.log('HIT FIRST SAVE NOTA DE LA MASA', parsedBill.masa)
+                delete parsedBill._id
+                delete parsedBill.index
+                const nBill = new Order(parsedBill)
+                const newBill = await nBill.save()
+                table.bills.push(newBill)
+                await table.save()
+                const billToSend = await Order.findById(newBill._id).populate({path: 'masaRest', select: 'index'})
+                res.status(200).json({bill: billToSend})
+            }
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: 'Something went wrong', err: err.message})
+    }
+}
+
+
+
+
+module.exports.registerDeletedOrderProducts = async (req, res, next) => {
+    const {product} = req.body
+    const { ['_id']:_, ...newProduct } = product;
+    const delProd = new DelProd(newProduct)
+    delProd.employee.name = product.employee.fullName
+    await delProd.save()
+    res.status(200).json({message: 'The product was registred as deleted!'})
+}
+
+
+
+module.exports.uploadIngs = async (req, res, next) => {
+    try{
+        const {loc} = req.query
+        const {ings, quantity, operation} = req.body;
+        if(ings && quantity){
+        uploadIngs(ings, quantity, operation)
+        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.unloadIngs = async (req, res, next) => {
+    try{
+        const {ings, quantity, operation} = req.body;
+        console.log(req.body)
+        if(ings && quantity){
+        unloadIngs(ings, quantity, operation)
+        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+
+module.exports.saveOrder = async (req, res, next) => {
+    try {
+        const {order, adminEmail, loc} = req.body
+        order.soketId = generateSoketId(16)
+        if (order.user !== 'john doe') {
+            const newOrder = new Order(order) 
+            const user = await User.findById(order.user);
+            if (user) {
+                newOrder.clientInfo.email = user.email
+                newOrder.clientInfo.discount = user.discount
+                newOrder.clientInfo.cashBack = user.cashBack
+                newOrder.preOrder = true
+                const savedOrder = await newOrder.save()
+                const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
+                console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
+                let action 
+                if(order.payOnSite){
+                    action = `a dat o comanda pe care o plătește în locație cu cashBack ${order.cashBack}`
+                } 
+                if(order.payOnline){
+                    action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
+                }
+                socket.emit('orderId', JSON.stringify(savedOrder))
+                sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
+                res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate });
+            }
+        } else {
+            order.preOrder = true
+            delete order.user
+            const newOrder = new Order(order) 
+            const savedOrder = await newOrder.save();
+            socket.emit('orderId', JSON.stringify(savedOrder))
+            const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
+            console.log(`Order ${dbOrder._id} saved without a user!`)
+            const data = {name: 'No user', action: 'a dat o comanda ce a fost platita Online'}
+            sendInfoAdminEmail(data, adminEmail, dbOrder.locatie.gmail)
+            res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
+        }
+   
+    } catch (err) {
+        console.log('Error', err);
+        res.status(404).json({ message: err.message });
+    }
+}
+
+
+ 
+
+//************************UPDATE ORDERS********************** */
+
+
+
+module.exports.setOrderTime = async (req, res, next) => {   
+    try {
+        const time = parseFloat(req.query.time);
+        const orderId = (req.query.orderId);
+        const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true });
+        console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
+        res.status(200).json({ message: 'time set' });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ message: error.message })
+    }
+}
+
+
+module.exports.getOrderDone = async (req, res, next) => {
+    const loc = '655e2e7c5a3d53943c6b7c53'
+    try{
+        const today = new Date().setUTCHours(0,0,0,0)
+        const orders = await Order.find({locatie: loc, status: 'done', createdAt: {$gte: today}})
+        res.json(orders)
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+
+module.exports.endPending = async (req, res, next) => {
+    try{
+        const {id} = req.query;
+        const doc = await Order.findByIdAndUpdate(id, { pending: false })
+        console.log(` Success! Order ${id} - pending - false`)
+        res.status(200).json({message: 'pending is done'})
+    } catch(err){
+        console.log(err.message)
+    }
+}
+
+
+
+
+module.exports.deleteOrder = async (req, res, next) => {
+    try {
+        const { data } = req.body;
+        console.log('data', data);
+
+        if (data && data.length) {
+            const orderIds = data.map(obj => obj.id);
+
+            // Find all orders that match the given socketIds
+            const orders = await Order.find({ soketId: { $in: orderIds } });
+            console.log('Found orders:', orders.length);
+
+            if (orders.length) {
+                const deletePromises = orders.map(order => {
+                    if (!data.stopSend) {
+                        setTimeout(() => {
+                            socket.emit('tableBillId', JSON.stringify({ number: order.masa, id: order.soketId }));
+                        }, 500);
+                    }
+
+                    // Return the deletion promise
+                    return order.deleteOne()
+                        .then(() => console.log(`Order with socketId ${order.soketId} deleted.`))
+                        .catch(err => console.error(`Failed to delete order with socketId ${order.soketId}:`, err));
+                });
+
+                // Wait for all delete operations to complete
+                await Promise.all(deletePromises);
+                res.status(200).json({ message: 'Comenzile au fost sterse!' });
+            } else {
+                res.status(404).json({ message: 'No orders found to delete.' });
+            }
+        } else {
+            res.status(400).json({ message: 'Invalid data provided.' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// module.exports.deleteOrder = async (req, res, next) => {
+//     try{
+//         const {data} = req.body;
+//         console.log('data', data)
+//         if(data && data.length) {
+//             for(let obj of data) {
+//                 const order = await Order.findOne({soketId: obj.id})
+//                 console.log('order')
+//                 if(order){
+//                     if(!data.stopSend){
+//                         setTimeout(() => {
+//                             socket.emit('tableBillId', JSON.stringify({number: order.masa, id: order.soketId}))
+//                         }, 500)
+//                     }
+//                     await order.deleteOne()
+//                 }
+//             }
+//             res.status(200).json({messgae: 'Comenzile au fost sterse!'})
+//         }
+//     }catch(err) {   
+//         console.log(err)
+//         res.status(500).json({message: err.message})
+//     }   
+// }
+
+
 
 
 
@@ -298,60 +559,6 @@ module.exports.sendOrderTime = async (req, res, next) => {
 //         res.status(500).json({message: 'Something went wrong', err: err.message})
 //     }
 // }
-
-module.exports.saveOrEditBill = async (req, res, next) => {
-    const {bill} = req.body;
-    const parsedBill = JSON.parse(bill)
-    const {index, billId} = req.query;
-    const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
-    try{
-        if(billId === "new"){
-            delete parsedBill._id
-            delete parsedBill.index
-            const newBill = new Order(parsedBill);
-            newBill.clientInfo = parsedBill.clientInfo
-            if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
-                newBill.user = parsedBill.clientInfo._id
-            }
-            // print(newBill)         
-            newBill.products.forEach(el => {
-                if(el.sentToPrint){
-                    el.sentToPrint = false
-                    console.log("new",el.sentToPrint)
-                }
-            })
-            const savedBill = await newBill.save();
-            table.bills.push(savedBill);
-            await table.save();
-            socket.emit('bill', JSON.stringify(savedBill))
-            res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
-        } else {
-            // print(parsedBill)
-            parsedBill.products.forEach(el => {
-                if(el.sentToPrint){
-                    el.sentToPrint = false
-                    console.log("old",el.sentToPrint)
-                }
-            })
-            const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-            console.log(bill)
-            if(bill){
-                socket.emit('bill', JSON.stringify(bill))
-                res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
-            } else {
-                const nBill = new Order(parsedBill)
-                const newBill = await nBill.save()
-                table.bills.push(nBill)
-                await table.save()
-                socket.emit('bill', JSON.stringify(newBill))
-                res.status(200).json({billId: newBill._id, index: newBill.index, billTotal: newBill.total, products: newBill.products, masa: newBill.masaRest})
-            }
-        }
-    } catch(err){
-        console.log(err)
-        res.status(500).json({message: 'Something went wrong', err: err.message})
-    }
-}
 
 
 // module.exports.saveOrEditBill = async (req, res, next) => {
@@ -422,179 +629,4 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 //         res.status(500).json({message: 'Something went wrong', err: err.message})
 //     }
 // }
-
-
-
-
-module.exports.registerDeletedOrderProducts = async (req, res, next) => {
-    const {product} = req.body
-    const { ['_id']:_, ...newProduct } = product;
-    const delProd = new DelProd(newProduct)
-    delProd.employee.name = product.employee.fullName
-    await delProd.save()
-    res.status(200).json({message: 'The product was registred as deleted!'})
-}
-
-
-
-module.exports.uploadIngs = async (req, res, next) => {
-    try{
-        const {loc} = req.query
-        const {ings, quantity, operation} = req.body;
-        if(ings && quantity){
-        uploadIngs(ings, quantity, operation)
-        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
-        }
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({message: err.message})
-    }
-}
-
-module.exports.unloadIngs = async (req, res, next) => {
-    try{
-        const {ings, quantity, operation} = req.body;
-        console.log(req.body)
-        if(ings && quantity){
-        unloadIngs(ings, quantity, operation)
-        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
-        }
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({message: err.message})
-    }
-}
-
-
-module.exports.saveOrder = async (req, res, next) => {
-    try {
-        const {order, adminEmail, loc} = req.body
-        if (order.user !== 'john doe') {
-            const newOrder = new Order(order) 
-            const user = await User.findById(order.user);
-            if (user) {
-                newOrder.clientInfo.email = user.email
-                newOrder.clientInfo.discount = user.discount
-                newOrder.clientInfo.cashBack = user.cashBack
-                newOrder.preOrder = true
-                const savedOrder = await newOrder.save()
-
-                
-                const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
-                console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
-                if(newOrder.masa > 0){
-                    const table = await Table.findOne({locatie: loc , index: newOrder.masa});
-                    if(table){
-                        table.bills.push(savedOrder._id)
-                        await table.save()
-                    }
-                }
-                let action 
-                if(order.payOnSite){
-                    action = `a dat o comanda pe care o plătește în locație cu cashBack ${order.cashBack}`
-                } 
-                if(order.payOnline){
-                    action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
-                }
-                socket.emit('orderId', JSON.stringify(savedOrder))
-                sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
-                res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate });
-            }
-        } else {
-            order.preOrder = true
-            delete order.user
-            const newOrder = new Order(order) 
-            const savedOrder = await newOrder.save();
-
-            socket.emit('orderId', JSON.stringify(savedOrder))
-
-            const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
-            console.log(`Order ${dbOrder._id} saved without a user!`)
-            if(newOrder.masa > 0){
-                const table = await Table.findOne({locatie: loc , index: newOrder.masa});
-                if(table){
-                    table.bills.push(savedOrder._id)
-                    await table.save()
-                }
-            }
-
-            const data = {name: 'No user', action: 'a dat o comanda ce a fost platita Online'}
-            sendInfoAdminEmail(data, adminEmail, dbOrder.locatie.gmail)
-            res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
-        }
-   
-    } catch (err) {
-        console.log('Error', err);
-        res.status(404).json({ message: err.message });
-    }
-}
-
-
-
-
- 
-
-//************************UPDATE ORDERS********************** */
-
-
-
-module.exports.setOrderTime = async (req, res, next) => {   
-    try {
-        const time = parseFloat(req.query.time);
-        const orderId = (req.query.orderId);
-        const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true });
-        console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
-        res.status(200).json({ message: 'time set' });
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: error.message })
-    }
-}
-
-
-module.exports.getOrderDone = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
-    try{
-        const today = new Date().setUTCHours(0,0,0,0)
-        const orders = await Order.find({locatie: loc, status: 'done', createdAt: {$gte: today}})
-        res.json(orders)
-    } catch(err){
-        console.log(err)
-        res.status(500).json({message: err.message})
-    }
-}
-
-
-module.exports.endPending = async (req, res, next) => {
-    try{
-        const {id} = req.query;
-        const doc = await Order.findByIdAndUpdate(id, { pending: false })
-        console.log(` Success! Order ${id} - pending - false`)
-        res.status(200).json({message: 'pending is done'})
-    } catch(err){
-        console.log(err.message)
-    }
-}
-
-
-module.exports.deleteOrder = async (req, res, next) => {
-    try{
-        const {data} = req.body;
-        if(data && data.length) {
-            for(let obj of data) {
-                let order = await Order.findById(obj.id)
-                setTimeout(() => {
-                    socket.emit('tableBillId', JSON.stringify({number: order.masa, id: order._id}))
-                }, 500)
-                await order.deleteOne()
-            }
-            res.status(200).json({messgae: 'Comenzile au fost sterse!'})
-        }
-    }catch(err) {   
-        console.log(err)
-        res.status(500).json({message: err.message})
-    }   
-}
-
-
 

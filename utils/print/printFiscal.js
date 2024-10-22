@@ -87,18 +87,18 @@ async function printBill(bill) {
             let onlineLine = `P^7^${bill.payment.online * 100}`
             billToPrint.push(onlineLine)
         }
-    
-        axios.post(url, billToPrint, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            })
-                .then(response => {
-                    console.log('Response:', response.data);
-                })
-                .catch(error => {
-                    console.error('Error:', error.message);
-                });
+        console.log(billToPrint)
+        // axios.post(url, billToPrint, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //     },
+        //     })
+        //         .then(response => {
+        //             console.log('Response:', response.data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error.message);
+        //         });
 
     } else {
         return

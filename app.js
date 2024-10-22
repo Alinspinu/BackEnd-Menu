@@ -49,6 +49,39 @@ const fs = require('fs');
 const https = require('https');
 
 
+
+// const io = require('socket.io-client')
+// const socket = io("https://live669-0bac3349fa62.herokuapp.com")
+// const {print} = require('./utils/print/printOrders')
+// const {printBill} = require('./utils/print/printFiscal')
+
+// socket.on('connect', () => {
+//     console.log('Connected to server');
+  
+//   });
+  
+//   socket.on('printBill', (data) => {
+//     const bill =JSON.parse(data)
+//     printBill(bill)
+//     console.log('Received data from customEvent');
+//   });
+
+//   socket.on('printOrder', (data) => {
+//     const bill = JSON.parse(data)
+//     print(bill)
+//     console.log('Received data from customEvent');
+//   });
+
+//   socket.on('disconnect', () => {
+//     console.log('Disconnected from server');
+//   });
+  
+
+//   socket.on('connect_error', (err) => {
+//     console.error('Connection error:', err.message);
+//   });
+
+
 const dbUrl = process.env.DB_URL
 
 mongoose.connect(dbUrl);
