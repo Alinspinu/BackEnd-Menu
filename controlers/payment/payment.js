@@ -229,6 +229,9 @@ module.exports.reprinFiscal = async (req, res, next) => {
     }
 }
 
+
+
+
 module.exports.printBill = async (req, res, next) => {
     try{
         const {bill} = req.body
@@ -236,16 +239,13 @@ module.exports.printBill = async (req, res, next) => {
         bill.pending = false
         const email = bill.clientInfo.email
         socket.emit('printBill', JSON.stringify(bill))
-        if(email && email.length){
-            const client = await User.findOne({email: email})
-            if(client){
-                client.orders.push(bill)
-                client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
-                await client.save()
-            }
+
+         update = {
+            status: 'done',
+            pending: false
         }
-        delete bill._id
-        const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, bill, {new: true})
+    
+        const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
         socket.emit('billl', JSON.stringify(savedBill))
         if(savedBill){
         res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
@@ -257,8 +257,6 @@ module.exports.printBill = async (req, res, next) => {
         res.status(500).json(err)
     }
 }
-
-
 
 module.exports.saveBillInCloud = async (req, res, next) => {
     try{
@@ -278,7 +276,7 @@ module.exports.saveBillInCloud = async (req, res, next) => {
         const billl = await Order.findOne({soketId: bill.soketId})
     
         if(!billl){
-            console.log('bill not found')
+            // console.log('bill not found')
             delete bill._id
             const order = new Order(bill);
             const savedBill = await order.save()

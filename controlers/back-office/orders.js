@@ -116,8 +116,6 @@ module.exports.getHavyOrders = async (req, res, next) => {
         if(start && end){
             const startTime = new Date(start).setUTCHours(0,0,0,0)
             const endTime = new Date(end).setUTCHours(23,59,59,9999)
-            // const startTime = new Date(convertToDateISOString(start)).setHours(0,0,0,0)
-            // const endTime = new Date(convertToDateISOString(end)).setHours(23,59,59,9999)
             const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
                                     .populate({
                                         path: 'products.ings.ing',
@@ -142,7 +140,8 @@ module.exports.getHavyOrders = async (req, res, next) => {
                                                 select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog", 
                                                 }
                                             }
-                                        })                   
+                                        })    
+             console.log('comenzi', orders.length)                                   
             const result = await getBillProducts(orders, filter)
             const ingredients = await getIngredients(result.allProd)
             if(report === 'report'){
@@ -157,9 +156,6 @@ module.exports.getHavyOrders = async (req, res, next) => {
         res.status(500).json({message: err})
     }
 }
-
-
-
 
 
 
@@ -189,36 +185,14 @@ module.exports.getOrderByUser = async (req, res, nex) => {
     }
 }
 
+
 module.exports.getAllOrders = async (req, res, next) => {
     try{
-        console.log('hit the function')
         const date = new Date()
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const {loc} = req.query;
         const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} }) 
-        // const orders = await Order.find({
-        //     locatie: loc,
-        //     status: 'done',
-        //     updatedAt: { $gte: start, $lt: end },
-        //     'payment.cash': 0,
-            //     'payment.online': 0
-            // });
-            
-            // // If no orders found, return
-            // console.log(orders.length)
-            // if (orders.length === 0) {
-            //     console.log('No matching orders found');
-            //     return;
-            // }
-    
-            // // Use Promise.all to perform updates for each order in parallel
-            // await Promise.all(orders.map(order => {
-            //     return Order.updateOne(
-                //         { _id: order._id },  // Find by the _id of each order
-            //         { $set: { 'payment.online': order.total } }  // Update the 'payment.online' field with 'total'
-            //     );
-            // }));
             res.status(200).json(orders)         
     } catch(err){
         console.log(err)
@@ -268,7 +242,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             }
-            print(newBill)         
+            // print(newBill)         
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
                     el.sentToPrint = false
@@ -282,13 +256,12 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             socket.emit('billl', JSON.stringify(savedBill))
             res.status(200).json({bill: savedBill})
         } else {
-            print(parsedBill)
+            // print(parsedBill)
             let productsToPrint = false
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint){
                     productsToPrint = true
                     el.sentToPrint = false
-                    console.log("old",el.sentToPrint)
                 }
             })
             if(productsToPrint){
@@ -298,10 +271,8 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             delete parsedBill._id
             const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId}, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
             if(bill){
-                console.log('bill found')
                 res.status(200).json({bill: bill})
             } else {
-                console.log(parsedBill.soketId)
                 delete parsedBill._id
                 delete parsedBill.index
                 const nBill = new Order(parsedBill)

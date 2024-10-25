@@ -15,6 +15,7 @@ const inventarySchema = new Schema({
             scriptic: Number,
             gestiune: String,
             dep: String,
+            um: String,
         }
     ],
     updated: Boolean,

@@ -17,7 +17,7 @@ const invIngSchema = new Schema({
   },
   uploadLog: [
     {
-      date: String,
+      date: Date,
       qty:  {
         type: Number,
         required: true
@@ -36,7 +36,7 @@ const invIngSchema = new Schema({
   ],
   unloadLog: [
     {
-      date: String,
+      date: Date,
       qty: Number,
       operation: {
         name: {

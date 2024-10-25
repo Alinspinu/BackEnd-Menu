@@ -19,6 +19,8 @@ router.route('/update-ingredient-quantity').post(ingRoutes.updateIngredientQuant
 router.route('/get-consumabil').get(ingRoutes.getIngConsumabil)
 router.route('/get-inventary').get(ingRoutes.getInventary)
 
+router.route('/compare-inv').post(ingRoutes.compareScriptic)
+
 router.route('/update').get(ingRoutes.updateStoc)
 
 module.exports = router

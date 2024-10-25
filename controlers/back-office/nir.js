@@ -34,7 +34,7 @@ module.exports.saveNir = async( req, res, next) => {
             $inc: {qty: el.qty},
             $push: {
               uploadLog: {
-                date: nir.documentDate,
+                date: newNir.documentDate,
                 qty: el.qty,
                 operation: operation,
                 uploadPrice: roundd(el.price * (1 + el.tva / 100))
@@ -120,22 +120,21 @@ module.exports.deleteNir = async (req, res, next) => {
     const date = new Date();
     date.setHours(0, 0, 0, 0);
     const formattedDate = date.toISOString();
-    const operation = {name: 'intoarcere', details: suplier.name}
+    const operation = {name: 'intrare', details: suplier.name}
 
     const promises = nirToDelete.ingredients.map((el) => {
       return Ingredient.updateOne(
         { name: el.name, gestiune: el.gestiune, locatie: loc },
         {
           $inc: {qty: -el.qty},
-          $push: {
-            unloadLog: {
-              date: formattedDate,
+          $pull: {
+            uploadLog: {
+              date: nirToDelete.documentDate,
               qty: el.qty,
-              operation: operation
+              operation: operation,
             }
           }
         },
-        { upsert: true, new: true }
       ).exec();
     });
     Promise.all(promises)

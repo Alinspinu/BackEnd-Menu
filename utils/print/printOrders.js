@@ -79,7 +79,6 @@ async function print(order) {
 
 
 async function printKitchen(products, dataPrint) {
-    console.log('buc products', products)
     if(products.length){
         let productsToPrint = []
         for(let pro of products){
@@ -100,7 +99,7 @@ async function printKitchen(products, dataPrint) {
             products: productsToPrint
         }
         console.log('comenzi bucatarie', dataToPrint)
-        log(JSON.stringify(dataToPrint), 'buc-orders')
+        // log(JSON.stringify(dataToPrint), 'buc-orders')
         // createXml(dataToPrint)
        
     } else {
@@ -110,7 +109,6 @@ async function printKitchen(products, dataPrint) {
 
 
 async function printBarista(products, dataPrint) {   
-    console.log('barsita products', products)
     const url = 'http://192.168.1.90:65400/api/Receipt';
     if(products.length){
 
@@ -161,7 +159,7 @@ async function printBarista(products, dataPrint) {
 
         }
         console.log('comenzi barista', data)
-        log(data, 'barista-orders')
+        // log(data, 'barista-orders')
         // axios.post(url, data, {
         //     headers: {
         //         'Content-Type': 'application/json',
