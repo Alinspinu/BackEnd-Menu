@@ -238,15 +238,15 @@ module.exports.printBill = async (req, res, next) => {
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
-        // socket.emit('printBill', JSON.stringify(bill))
+        socket.emit('printBill', JSON.stringify(bill))
 
          update = {
             status: 'done',
             pending: false
         }
-        await createProductSaleReport(bill.products)
+
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
-        // socket.emit('billl', JSON.stringify(savedBill))
+        socket.emit('billl', JSON.stringify(savedBill))
         if(savedBill){
         res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
         } else {
@@ -264,6 +264,7 @@ module.exports.saveBillInCloud = async (req, res, next) => {
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
+        await createProductSaleReport(bill.products)
         if(email && email.length){
             const client = await User.findOne({email: email})
             if(client){
