@@ -12,7 +12,7 @@ const Locatie = require('../../models/office/locatie')
 
 const { round, sendToPrint, handleError } = require('../../utils/functions')
 const {reports, inAndOut, printBill, posPayment, printNefiscal} = require('../../utils/print/printFiscal')
-const {unloadIngs, uploadIngs} = require('../../utils/inventary')
+const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
 const https = require('https');
 
 
@@ -238,15 +238,15 @@ module.exports.printBill = async (req, res, next) => {
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
-        socket.emit('printBill', JSON.stringify(bill))
+        // socket.emit('printBill', JSON.stringify(bill))
 
          update = {
             status: 'done',
             pending: false
         }
-    
+        await createProductSaleReport(bill.products)
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
-        socket.emit('billl', JSON.stringify(savedBill))
+        // socket.emit('billl', JSON.stringify(savedBill))
         if(savedBill){
         res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
         } else {
@@ -281,12 +281,12 @@ module.exports.saveBillInCloud = async (req, res, next) => {
             const order = new Order(bill);
             const savedBill = await order.save()
             if(savedBill){
-                savedBill.products.map((el) => {
+                savedBill.products.map(async (el) => {
                 if (el.toppings.length) {
-                    unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                  await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
                 }
                 if (el.ings.length) {
-                    unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
                 }
             });
             res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
@@ -301,12 +301,12 @@ module.exports.saveBillInCloud = async (req, res, next) => {
             billl.payment = bill.payment
             const savedBill = await billl.save()
             console.log('saved bill in cloud-- STATUS-', savedBill.status, 'payment---', savedBill.payment )
-            billl.products.map((el) => {
+            billl.products.map(async (el) => {
                 if (el.toppings.length) {
-                    unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                  await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
                 }
                 if (el.ings.length) {
-                    unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
                 }
             });
             res.status(200).json({message: "Nota a fost salvată", bill: savedBill})

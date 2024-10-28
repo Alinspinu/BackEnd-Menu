@@ -33,6 +33,28 @@ const subProductSchema = new Schema({
     printOut:{
         type: Boolean,
     },
+    saleLog: [
+        {
+            date: {
+                type: Date,
+                index: true,
+            },
+            qty: {
+                type: Number
+            },
+            hours: [
+                {
+                    date: {
+                        type: Date,
+                        index: true
+                    },
+                    qty: {
+                        type: Number,
+                    }
+                }
+            ]
+        }
+    ],
     ings: [
         {
        

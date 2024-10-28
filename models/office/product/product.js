@@ -5,7 +5,10 @@ const Category = require('./cat');
 
 
 const productTrueSchema = new Schema({
-    name: String,
+    name: {
+        type: String,
+        index: true 
+    },
     image:
     {
         path: {
@@ -156,6 +159,29 @@ const productTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+    saleLog: [
+        {
+            date: {
+                type: Date,
+                index: true,
+            },
+            qty: {
+                type: Number,
+            },
+            hours: [
+                {
+                    date: {
+                        type: Date,
+                        index: true
+                    },
+                    qty: {
+                        type: Number,
+                    }
+                }
+            ]
+        }
+    ],
+
     category:
     {
         type: Schema.Types.ObjectId,
@@ -163,7 +189,8 @@ const productTrueSchema = new Schema({
     },
     locatie: {
         type: Schema.Types.ObjectId,
-        ref: 'Locatie'
+        ref: 'Locatie',
+        index: true
     },
     subProducts:
         [

@@ -7,6 +7,7 @@ const invIngSchema = new Schema({
   name: {
     type: String,
     required: true,
+    index: true,
   },
   um: {
     type: String,
@@ -17,7 +18,10 @@ const invIngSchema = new Schema({
   },
   uploadLog: [
     {
-      date: Date,
+      date: {
+        type: Date,
+        index: true
+      },
       qty:  {
         type: Number,
         required: true
@@ -36,7 +40,10 @@ const invIngSchema = new Schema({
   ],
   unloadLog: [
     {
-      date: Date,
+      date: {
+        type: Date,
+        index: true
+      },
       qty: Number,
       operation: {
         name: {
@@ -52,7 +59,10 @@ const invIngSchema = new Schema({
         type: Number,
         index: true
       },
-      day: String,
+      day: {
+        type: Date,
+        index: true
+      },
       qty: Number,
       faptic: {
         type: Number,
@@ -79,14 +89,15 @@ const invIngSchema = new Schema({
   },
   gestiune: {
     type: String,
-    default: 'magazie'
+    default: 'magazie',
+    index: true
   },
   dep: {
     type: String,
   },
   productIngredient: {
     type: Boolean, 
-    default: false
+    default: false,
   },
   ings: [
     {
@@ -99,7 +110,8 @@ const invIngSchema = new Schema({
   ],
   locatie: {
     type: Schema.Types.ObjectId,
-    ref: 'Locatie'
+    ref: 'Locatie',
+    index: true
   }
 });
 

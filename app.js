@@ -53,8 +53,8 @@ const fs = require('fs');
 const https = require('https');
 
 
-const dbUrl = process.env.DB_URL
-// const dbUrl = process.env.LOCAL
+// const dbUrl = process.env.DB_URL
+const dbUrl = process.env.LOCAL
 
 // const io = require('socket.io-client')
 // const socket = io("https://live669-0bac3349fa62.herokuapp.com")

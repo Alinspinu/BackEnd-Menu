@@ -242,7 +242,8 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             }
-            // print(newBill)         
+            // print(newBill)
+            // socket.emit('printOrder', JSON.stringify(newBill))         
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
                     el.sentToPrint = false
@@ -257,6 +258,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             res.status(200).json({bill: savedBill})
         } else {
             // print(parsedBill)
+            // socket.emit('printOrder', JSON.stringify(parsedBill))  
             let productsToPrint = false
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint){
@@ -267,7 +269,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(productsToPrint){
                 socket.emit('billl', JSON.stringify(parsedBill))
             }
-            console.log(parsedBill.products.length)
             delete parsedBill._id
             const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId}, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
             if(bill){
@@ -352,7 +353,7 @@ module.exports.uploadIngs = async (req, res, next) => {
         const {loc} = req.query
         const {ings, quantity, operation} = req.body;
         if(ings && quantity){
-        uploadIngs(ings, quantity, operation)
+        await  uploadIngs(ings, quantity, operation)
         res.status(200).json({message: 'Success, stocul a fost actualizat!'})
         }
     } catch (err) {
@@ -366,7 +367,7 @@ module.exports.unloadIngs = async (req, res, next) => {
         const {ings, quantity, operation} = req.body;
         console.log(req.body)
         if(ings && quantity){
-        unloadIngs(ings, quantity, operation)
+        await  unloadIngs(ings, quantity, operation)
         res.status(200).json({message: 'Success, stocul a fost actualizat!'})
         }
     } catch (err) {

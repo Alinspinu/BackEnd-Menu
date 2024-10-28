@@ -9,7 +9,10 @@ const orderTrueSchema = new Schema({
         type: Number,
         index: true
     },
-    soketId: String,
+    soketId: {
+        type: String,
+        index: true
+    },
     name: {
         type: String,
         default: 'COMANDA'
@@ -56,6 +59,7 @@ const orderTrueSchema = new Schema({
     status: {
         type: String,
         default: "open",
+        index: true
     },
     toGo: {
         type: Boolean,
@@ -134,10 +138,14 @@ const orderTrueSchema = new Schema({
     },
     locatie: {
         type: Schema.Types.ObjectId,
-        ref: 'Locatie'
+        ref: 'Locatie',
+        index: true
     },
     employee:{
-      fullName: String,
+      fullName: {
+        type: String,
+        indec: true
+      },
       position: String,
       user: {
         type: Schema.Types.ObjectId,
@@ -166,6 +174,13 @@ const orderTrueSchema = new Schema({
                 sgrTax: {
                     type: Boolean,
                     default: false
+                },
+                subProductId: {
+                    type: String
+                },
+                productId: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Product'
                 },
                 printOut: Boolean,
                 discount: Number,
@@ -225,6 +240,8 @@ const orderTrueSchema = new Schema({
 
 }, { timestamps: true, })
 
+orderTrueSchema.index({ createdAt: 1 })
+orderTrueSchema.index({ updatedAt: 1 })
 
 orderTrueSchema.pre("save", async function (next) {
     try {
@@ -246,7 +263,7 @@ orderTrueSchema.post('save', async function (doc, next) {
     console.log('HIT THE POST SAVE FUNCTION')
     try {
       // Find all documents with the same soketId
-      const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId });
+      const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId, socketId: { $exists: true }  });
       
       if (duplicates.length > 1) {
       
