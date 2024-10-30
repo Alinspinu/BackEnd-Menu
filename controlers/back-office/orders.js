@@ -178,6 +178,7 @@ module.exports.getOrderByUser = async (req, res, nex) => {
      const {userId} = req.query;
      const user = await User.findById(userId)
     const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })   
+   
     res.status(200).json(orders)
     } catch (err){
         console.log(err)

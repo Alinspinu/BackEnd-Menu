@@ -86,6 +86,10 @@ const reportSchema = new Schema({
         type: Number,
         required: true
     },
+    supliesProdBuc: Number,
+    supliesMfBuc: Number,
+    supliesProdBar: Number,
+    supliesMfBar: Number,
     serviceValue: {
         type: Number
     },
@@ -108,6 +112,13 @@ const reportSchema = new Schema({
             total: Number,
             procent: Number,
             name: String,
+            dep: [
+                {
+                    name: String,
+                    total: Number,
+                    procent: Number
+                }
+            ],
             products: [
                 {
                     name: String,

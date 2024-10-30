@@ -30,7 +30,7 @@ module.exports.saveIng = async(req, res, next) => {
         const items = await Ingredient.find({locatie: loc}).skip(skip).limit(limit)
           .select([ '-unloadLog -uploadLog -inventary'])
           .populate({path: 'ings.ing', select: '-unloadLog -uploadLog -inventary'});
-        const totalItems = 1000
+        const totalItems = 1100
         console.log(totalItems)
         const totalPages = Math.ceil(totalItems / limit);
         res.status(200).json({

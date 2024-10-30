@@ -71,68 +71,12 @@ module.exports.deleteReport = async(req, res, next) => {
 
 
 
-
-
-
-
-module.exports.updateRap = async(req, res, next) => {
-    try{    
-
-        // const cursor = await Ingredient.find({locatie: '655e2e7c5a3d53943c6b7c53'})
-        // console.log(cursor.length)
-        // let index = 1
-        // for (let doc of cursor){
-        //     const updatedLogs = doc.uploadLog.map(log => {
-        //         if (log.uploadPrice === undefined || log.uploadPrice === null) {
-        //             log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
-        //             index ++
-        //             console.log(log)
-        //         }
-        //         return log;
-        //     });
-        //     await Ingredient.updateOne(
-        //         { _id: doc._id },
-        //         { $set: { uploadLog: updatedLogs } }
-        //     );
-
-        // }
-        // console.log(index)
-
-        // while (await cursor.hasNext()) {
-        //     const doc = await cursor.next();
-
-        //     // Loop through each uploadLog entry and update it if uploadPrice is missing
-        //     const updatedLogs = doc.uploadLog.map(log => {
-        //         if (log.uploadPrice === undefined || log.uploadPrice === null) {
-        //             log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
-        //             index ++
-        //             console.log(log)
-        //         }
-        //         return log;
-        //     });
-
-        //     // Update the document with the modified uploadLog array
-        //     await Ingredient.updateOne(
-        //         { _id: doc._id },
-        //         { $set: { uploadLog: updatedLogs } }
-        //     );
-        // }
-        // console.log(index)
-
-        res.send('all good')
-    } catch(err){   
-        console.log(err)
-    }
-}
-
-
 async function createReport(reports){
-    const lastDay = new Date(reports[reports.length -1].day).getDate()
     const start = formatedDateToShow(reports[0].day).split('ora')[0]
     const end = formatedDateToShow(reports[reports.length -1].day).split('ora')[0]
     let period = ''
     reports.length === 1 ? period = start : period = `${start} -- ${end}`
-
+    const lastReport = reports[reports.length -1]
     const report = {
         period: period,
         cashIn: 0,
@@ -153,14 +97,18 @@ async function createReport(reports){
             tax: 0,
             users: []
         },
-        supliesValue: reports[reports.length -1].supliesValue,
-        serviceValue: reports[reports.length -1].serviceValue ? reports[reports.length -1].serviceValue : 0,
-        marketingValue: reports[reports.length -1].marketingValue ? reports[reports.length -1].marketingValue : 0,
-        inventarySpendings: reports[reports.length -1].inventarySpendings ? reports[reports.length -1].inventarySpendings : 0,
-        gasValue: reports[reports.length -1].gasValue ? reports[reports.length -1].gasValue : 0,
-        constructionsValue: reports[reports.length -1].constructionsValue ? reports[reports.length -1].constructionsValue : 0,
-        rent: reports[reports.length -1].rent ? reports[reports.length -1].rent : 0,
-        utilities: reports[reports.length -1].utilities ? reports[reports.length -1].utilities : 0,
+        supliesProdBuc: lastReport.supliesProdBuc ? lastReport.supliesProdBuc : 0,
+        supliesMfBuc: lastReport.supliesMfBuc ? lastReport.supliesMfBuc : 0,
+        supliesProdBar: lastReport.supliesProdBar ? lastReport.supliesProdBar : 0,
+        supliesMfBar: lastReport.supliesMfBar ? lastReport.supliesMfBar : 0,
+        supliesValue: lastReport.supliesValue,
+        serviceValue: lastReport.serviceValue ? lastReport.serviceValue : 0,
+        marketingValue: lastReport.marketingValue ? lastReport.marketingValue : 0,
+        inventarySpendings: lastReport.inventarySpendings ? lastReport.inventarySpendings : 0,
+        gasValue: lastReport.gasValue ? reports[reports.length -1].gasValue : 0,
+        constructionsValue: lastReport.constructionsValue ? lastReport.constructionsValue : 0,
+        rent: lastReport.rent ? lastReport.rent : 0,
+        utilities: lastReport.utilities ? lastReport.utilities : 0,
         departaments: [],
         paymentMethods: [],
         hours: [],
@@ -193,6 +141,18 @@ async function createReport(reports){
             if(existingDep){
                 existingDep.total = round(existingDep.total + dep.total)
                 existingDep.procent = round(existingDep.total * 100 / report.cashIn)
+
+                dep._doc.dep.forEach(dep => {
+                    const index = existingDep.dep.findIndex(d=> d.name === dep.name)
+                    if(index !== -1){
+                        existingDep.dep[index].total += +dep.total
+                        existingDep.dep[index].procent = round(existingDep.dep[index].total * 100 / +dep.total)
+                    } else{
+                        const dept = dep._doc
+                        existingDep.dep.push(dept)
+                    }
+                })
+
                 dep._doc.products.forEach(prod => {
                     let index = existingDep.products.findIndex(p => p.name === prod.name)
                     if(index !== -1 ){
@@ -258,4 +218,57 @@ async function createReport(reports){
 
     }
     return report
+}
+
+
+
+
+module.exports.updateRap = async(req, res, next) => {
+    try{    
+
+        // const cursor = await Ingredient.find({locatie: '655e2e7c5a3d53943c6b7c53'})
+        // console.log(cursor.length)
+        // let index = 1
+        // for (let doc of cursor){
+        //     const updatedLogs = doc.uploadLog.map(log => {
+        //         if (log.uploadPrice === undefined || log.uploadPrice === null) {
+        //             log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
+        //             index ++
+        //             console.log(log)
+        //         }
+        //         return log;
+        //     });
+        //     await Ingredient.updateOne(
+        //         { _id: doc._id },
+        //         { $set: { uploadLog: updatedLogs } }
+        //     );
+
+        // }
+        // console.log(index)
+
+        // while (await cursor.hasNext()) {
+        //     const doc = await cursor.next();
+
+        //     // Loop through each uploadLog entry and update it if uploadPrice is missing
+        //     const updatedLogs = doc.uploadLog.map(log => {
+        //         if (log.uploadPrice === undefined || log.uploadPrice === null) {
+        //             log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
+        //             index ++
+        //             console.log(log)
+        //         }
+        //         return log;
+        //     });
+
+        //     // Update the document with the modified uploadLog array
+        //     await Ingredient.updateOne(
+        //         { _id: doc._id },
+        //         { $set: { uploadLog: updatedLogs } }
+        //     );
+        // }
+        // console.log(index)
+
+        res.send('all good')
+    } catch(err){   
+        console.log(err)
+    }
 }

@@ -219,21 +219,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     const pontaj = await Pontaj.findOne({locatie: loc, month: pontMonth}).populate('days.users.employee')
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
     const dbUsers = await User.find({locatie: loc, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
-    const allIngs = await Ingredient.find({
-        locatie: loc,
-        productIngredient: false, 
-        dep: {$in: [
-            'consumabil', 
-            'servicii', 
-            'ob-inventar', 
-            'marketing', 
-            'amenajari', 
-            'combustibil',
-            'chirie',
-            'utilitati',
-        ]
-    }})
-        .select(['uploadLog', 'tvaPrice', 'dep', 'name'])
+    const allIngs = await Ingredient.find({locatie: loc, productIngredient: false}).select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune'])
     console.log('entries' , entries.length)
     const values = {
         workValueTotal: 0,
@@ -260,6 +246,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         payOnline: 0,
         tips: 0,
         card: 0,
+        inIngsProdBuc: 0,
+        inIngsMfBuc: 0,
+        inIngsProdBar: 0,
+        inIngsMfBar: 0, 
     }
 
     let workDays = []
@@ -374,11 +364,11 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 bills: cashBackBills,
             })
         }
-        if(values.totalBills > 0 && values.online > 0){
+        if(values.totalBills > 0 && values.payOnline > 0){
             paymentMethods.push({
                 name: 'Online',
-                value: round(values.online),
-                procent: round(values.online * 100 / values.totalBills),
+                value: round(values.payOnline),
+                procent: round(values.payOnline * 100 / values.totalBills),
                 bills: []
             })
         }
@@ -405,7 +395,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     function createDepartaments(billProducts){
         let departaments = []
         for(let prod of billProducts){
-            const price = prod.price*prod.quantity
+            const price = (prod.price*prod.quantity) - prod.discount
             if(!prod.mainCat){
                 prod.mainCat = 'Nedefinit'
             }
@@ -414,27 +404,56 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 const existingProduct = existingDep.products.find(p => p.name === prod.name)
                 if(existingProduct){
                     existingProduct.qty = existingProduct.qty + prod.quantity
-                    existingDep.total += prod.price * prod.quantity
+                    existingDep.total += price
+                    const existingType = existingDep.dep.find(p => (p.name === prod.dep))
+                    if(existingType) {
+                        existingType.total = existingType.total + round(price)
+                      } else {
+                        existingDep.dep.push(
+                          {
+                            name: prod.dep,
+                            total: price,
+                          }
+                           )
+                      }
                 } else {
                     const product = {
                         name: prod.name,
                         dep: prod.dep,
                         qty: prod.quantity,
-                        price: prod.price
+                        price: prod.price - prod.discount
                       }
                       existingDep.total += round(product.price * product.qty)
                       existingDep.products.push(product)
+                      const existingType = existingDep.dep.find(p => (p.name === prod.dep))
+                      if(existingType) {
+                        existingType.total = existingType.total + round(price)
+                      } else {
+                        existingDep.dep.push(
+                          {
+                            name: prod.dep,
+                            total: price,
+                          }
+                          )
+                      }
                 }
             } else {
                 const dep = {
                     total: price,
+                    showType: false,
                     name: prod.mainCat,
+                    dep: [
+                        {
+                          name: prod.dep,
+                          total: price,
+                        }
+                      ],
                     products: [
                       {
                         name: prod.name,
                         dep: prod.dep,
                         qty: prod.quantity,
-                        price: prod.price
+                        price: prod.price - prod.discount
                       }
                     ]
                   }
@@ -683,7 +702,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                         switch (ing.dep) {
                             case 'consumabil':                       
                                 if(!log.uploadPrice){
-                                    // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                     values.totalSuplies += (ing.tvaPrice * log.qty) 
                                 } else {
                                     values.totalSuplies += (log.uploadPrice * log.qty) 
@@ -692,17 +710,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                             case 'servicii':
                                                       
                                 if(!log.uploadPrice){
-                                    // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                     values.serviceValue += (ing.tvaPrice * log.qty) 
                                 } else {
-
                                     values.serviceValue += (log.uploadPrice * log.qty) 
                                 }
                               break;
                             case 'ob-inventar':
                                                       
                                 if(!log.uploadPrice){
-                                    // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                     values.inventarySpendings += (ing.tvaPrice * log.qty)
                                 } else {
 
@@ -712,7 +727,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                             case 'marketing':
                                                       
                                 if(!log.uploadPrice){
-                                    // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                     values.marketingValue += (ing.tvaPrice * log.qty)
                                 } else {
                                     values.marketingValue += (log.uploadPrice * log.qty)
@@ -720,7 +734,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                               break;
                             case 'amenajari':                
                                 if(!log.uploadPrice){
-                                    // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                     values.constructionsValue += (ing.tvaPrice * log.qty)
                                 } else {
                                     values.constructionsValue += (log.uploadPrice * log.qty)
@@ -728,7 +741,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                               break;
                             case 'combustibil':                  
                                 if(!log.uploadPrice){
-                                    // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                     values.gasValue += (ing.tvaPrice * log.qty)
                                 } else {
                                     values.gasValue += (log.uploadPrice * log.qty)
@@ -736,7 +748,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                               break;
                             case 'chirie':             
                                 if(!log.uploadPrice){
-                                    // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                     values.rentValue += (ing.tvaPrice * log.qty)
                                 } else {
                                     values.rentValue += (log.uploadPrice * log.qty)
@@ -744,15 +755,46 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                               break;
                             case 'utilitati':        
                                 if(!log.uploadPrice){
-                                    // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                     values.utilitiesValue += (ing.tvaPrice * log.qty)
                                 } else {
                                     values.utilitiesValue += (log.uploadPrice * log.qty)
                                 }
+
+                            case 'materie':
+                                    if(ing.gestiune === 'bucatarie'){
+                                        if(!log.uploadPrice){
+                                            values.inIngsProdBuc += (ing.tvaPrice * log.qty)
+                                        } else {
+                                            values.inIngsProdBuc += (log.uploadPrice * log.qty)
+                                        }
+                                    }
+                                    if(ing.gestiune === 'bar'){
+                                        if(!log.uploadPrice){
+                                        values.inIngsProdBar += (ing.tvaPrice * log.qty)
+                                    } else {
+                                        values.inIngsProdBar += (log.uploadPrice * log.qty)
+                                    }
+                                    }
+                                break
+                            case 'marfa': 
+                                    if(ing.gestiune === 'bucatarie'){
+                                        if(!log.uploadPrice){
+                                            values.inIngsMfBuc += (ing.tvaPrice * log.qty)
+                                        } else {
+                                            values.inIngsMfBuc += (log.uploadPrice * log.qty)
+                                        }
+                                    }
+                                    if(ing.gestiune === 'bar'){
+                                        if(!log.uploadPrice){
+                                        values.inIngsMfBar += (ing.tvaPrice * log.qty)
+                                    } else {
+                                        values.inIngsMfBar += (log.uploadPrice * log.qty)
+                                    }
+                                    }
+                                break
                             default:                    
                                 if(ing.dep === 'utilitati'){
                                     if(!log.uploadPrice){
-                                        // console.log('log:', ing.name, 'price', ing.tvaPrice)
                                         values.utilitiesValue += (ing.tvaPrice * log.qty)
                                     } else {
                                         values.utilitiesValue += (log.uploadPrice * log.qty)
@@ -791,6 +833,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             users: users
         },
         supliesValue: round(values.totalSuplies), 
+        supliesProdBuc: round(values.inIngsProdBuc),
+        supliesMfBuc: round(values.inIngsMfBuc),
+        supliesProdBar: round(values.inIngsProdBar),
+        supliesMfBar: round(values.inIngsMfBar),
         serviceValue: round(values.serviceValue),
         marketingValue: round(values.marketingValue),
         inventarySpendings: round(values.inventarySpendings),
@@ -805,18 +851,20 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     })
     const newRep = await report.save()
     // console.log('dep', report.impairment)
-    console.log(newRep.day)
-    console.log(newRep.index)
-    console.log('suplies',newRep.supliesValue)
-    console.log('service',newRep.serviceValue)
-    console.log('marketing',newRep.marketingValue)
-    console.log('ob-inventar', newRep.inventarySpendings)
-    console.log('gas',newRep.gasValue)
-    console.log('constrictii', newRep.constructionsValue)
-    console.log('chirie', newRep.rent)
-    console.log('utilitati', newRep.utilities)
-    console.log('deprecieri', newRep.impairment.total, 'produse', newRep.impairment.products.length) 
-    console.log('diverse total', newRep.diverse.total, 'intrari' , newRep.diverse.entry.length)
+    // console.log(newRep.day)
+    // console.log(newRep.index)
+    // console.log('suplies',newRep.supliesValue)
+    // console.log('service',newRep.serviceValue)
+    // console.log('marketing',newRep.marketingValue)
+    // console.log('ob-inventar', newRep.inventarySpendings)
+    // console.log('gas',newRep.gasValue)
+    // console.log('constrictii', newRep.constructionsValue)
+    // console.log('chirie', newRep.rent)
+    // console.log('utilitati', newRep.utilities)
+    // console.log('deprecieri', newRep.impairment.total, 'produse', newRep.impairment.products.length) 
+    // console.log('diverse total', newRep.diverse.total, 'intrari' , newRep.diverse.entry.length)
+    console.log('departaments', newRep.departaments[1].dep)
+    console.log(values)
 
     return newRep
 }

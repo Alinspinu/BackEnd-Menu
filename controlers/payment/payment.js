@@ -242,7 +242,9 @@ module.exports.printBill = async (req, res, next) => {
 
          update = {
             status: 'done',
-            pending: false
+            pending: false,
+            payment: bill.payment,
+            clientInfo: bill.clientInfo
         }
 
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
