@@ -262,20 +262,21 @@ orderTrueSchema.pre("save", async function (next) {
 orderTrueSchema.post('save', async function (doc, next) {
     console.log('HIT THE POST SAVE FUNCTION')
     try {
-      // Find all documents with the same soketId
-      const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId, socketId: { $exists: true }  });
-      
-      if (duplicates.length > 1) {
-      
-        // Keep the oldest document and remove the others
-        const idsToDelete = duplicates.slice(1).map(d => d._id); // Get all but the first one (oldest)
-        
-        // Delete the rest of the duplicates
-        await mongoose.model('Order').deleteMany({ _id: { $in: idsToDelete } });
-        console.log(`Deleted ${idsToDelete.length} duplicate document(s) for soketId: ${doc.soketId}`);
-      }
-  
-      next(); // Proceed to the next middleware or end the function
+        if(doc.soketId){
+            // Find all documents with the same soketId
+            const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId });
+            console.log('duplicate orders', duplicates.length)
+            if (duplicates.length > 1) {
+            
+              // Keep the oldest document and remove the others
+              const idsToDelete = duplicates.slice(1).map(d => d._id); // Get all but the first one (oldest)
+              
+              // Delete the rest of the duplicates
+              await mongoose.model('Order').deleteMany({ _id: { $in: idsToDelete } });
+              console.log(`Deleted ${idsToDelete.length} duplicate document(s) for soketId: ${doc.soketId}`);
+            }
+        }
+        next(); 
   
     } catch (err) {
       console.error('Error in post save hook:', err);

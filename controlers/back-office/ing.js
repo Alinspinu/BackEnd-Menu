@@ -293,12 +293,35 @@ module.exports.compareScriptic = async (req, res, next) => {
         })
       } 
 
+      lastInventary.ingredients.forEach(ing => {
+        const compareIng = {
+          name: ing.name,
+          um: ing.um,
+          first: 0,
+          second: ing.faptic,
+          scripticUnload: 0,
+          saleUnload: 0,
+          gestiune: ing.gestiune,
+          dep: ing.dep,
+          upload: {
+            value: 0,
+            entries: []
+          },
+        }
+        const existingIng = ingredients.find(ingr => ingr.name === ing.name )
+        if(existingIng){
+          existingIng.second += ing.faptic
+        } else {
+          ingredients.push(compareIng)
+        }
+      })
+
   
     firstInventary.ingredients.forEach(ing => {
       const compareIng = {
         name: ing.name,
         um: ing.um,
-        first: ing.scriptic,
+        first: ing.faptic,
         second: 0,
         scripticUnload: 0,
         saleUnload: 0,
@@ -312,34 +335,13 @@ module.exports.compareScriptic = async (req, res, next) => {
       }
       const existingIng = ingredients.find(ingr => ingr.name === ing.name )
       if(existingIng){
-        existingIng.first += ing.scriptic
+        existingIng.first += ing.faptic
       } else {
         ingredients.push(compareIng)
       }
     })
 
-    lastInventary.ingredients.forEach(ing => {
-      const compareIng = {
-        name: ing.name,
-        um: ing.um,
-        first: 0,
-        second: ing.scriptic,
-        scripticUnload: 0,
-        saleUnload: 0,
-        gestiune: ing.gestiune,
-        dep: ing.dep,
-        upload: {
-          value: 0,
-          entries: []
-        },
-      }
-      const existingIng = ingredients.find(ingr => ingr.name === ing.name )
-      if(existingIng){
-        existingIng.second += ing.scriptic
-      } else {
-        ingredients.push(compareIng)
-      }
-    })
+
 
     ings.forEach(ing => {
       ing.uploadLog.forEach(log => {
@@ -357,7 +359,7 @@ module.exports.compareScriptic = async (req, res, next) => {
     consIngs.forEach(ing => {
       const compareIng = {
         name: ing.ing.name,
-        um: ing.ing.um,
+        um: ing.um,
         first: 0,
         second: 0,
         scripticUnload: 0,

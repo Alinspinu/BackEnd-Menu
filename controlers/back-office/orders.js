@@ -275,6 +275,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(bill){
                 res.status(200).json({bill: bill})
             } else {
+                console.log('hit the first cloud save')
                 delete parsedBill._id
                 delete parsedBill.index
                 const nBill = new Order(parsedBill)
