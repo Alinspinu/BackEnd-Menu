@@ -14,8 +14,10 @@ const reportSchema = new Schema({
         type: Number,
         index: true
     },
-    day: Date,
-
+    day: {
+        type: Date,
+        index: true
+    },
     cashIn: {
         type: Number,
         required: true
@@ -35,6 +37,9 @@ const reportSchema = new Schema({
     rentValue: {
         type: Number,
         required: true 
+    },
+    rent: {
+        type: Number
     },
     diverse:{
         total: Number,

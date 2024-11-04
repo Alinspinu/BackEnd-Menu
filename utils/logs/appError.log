@@ -310,3 +310,32 @@ Cannot read properties of undefined (reading 'name')
 2:56:55 PM - ERROR - request aborted
 8:53:16 PM - ERROR - request aborted
 8:54:59 PM - ERROR - request aborted
+6:35:49 PM - ERROR - Cast to embedded failed for value "{
+  date: 2024-10-15T21:05:00.000Z,
+  qty: 1,
+  operation: { name: 'intrare', details: 'PALAS CAMPUS S.R.L. Nr  Doc - 1756' },
+  uploadPrice: 1239.9086,
+  id: '41ec394cf4eeb5c166eabae288fd12f8'
+}" (type Object) at path "uploadLog" because of "CastError"
+6:41:17 PM - ERROR - Cast to embedded failed for value "{
+  date: 2024-11-15T16:40:00.000Z,
+  qty: '1',
+  operation: { name: 'intrare', details: 'PALAS CAMPUS S.R.L. Nr  Doc - 1576' },
+  uploadPrice: 1239.9086,
+  id: 'a23c24d9d662403fcde37328e313778b'
+}" (type Object) at path "uploadLog" because of "CastError"
+6:45:16 PM - ERROR - Cast to embedded failed for value "{
+  date: 2024-10-15T15:44:00.000Z,
+  qty: '1',
+  operation: { name: 'intrare', details: 'PALAS CAMPUS S.R.L. Nr  Doc - 1756' },
+  uploadPrice: 1239.9086,
+  id: 'c6c394084fc1164e099ea9d40c41152d'
+}" (type Object) at path "uploadLog" because of "CastError"
+6:48:02 PM - ERROR - Cast to embedded failed for value "{
+  date: 2024-10-15T15:47:00.000Z,
+  qty: 1,
+  operation: { name: 'intrare', details: 'PALAS CAMPUS S.R.L. Nr  Doc - 1756' },
+  uploadPrice: 1239.9086,
+  id: 'f341ec3626c064c28163a380716afc3b'
+}" (type Object) at path "uploadLog" because of "CastError"
+7:13:31 PM - ERROR - Cannot read properties of null (reading 'uploadLog')

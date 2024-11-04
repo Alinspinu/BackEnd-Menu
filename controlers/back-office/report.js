@@ -1,10 +1,7 @@
 
-const { createDayReport } = require('../../utils/reports')
 const Report = require('./../../models/office/report')
-const Order = require('./../../models/office/product/order')
 const {round, formatedDateToShow} = require('./../../utils/functions')
-const User = require('./../../models/users/user')
-const Ingredient = require('../../models/office/inv-ingredient')
+
 
 
 
@@ -55,7 +52,6 @@ module.exports.deleteReport = async(req, res, next) => {
     try{
         const {id} = req.query
         if(id){
-            console.log(id)
             const report = await Report.findByIdAndDelete(id)
             if(report){
                 res.status(200).json({message: 'Raportul a fost ștes cu success'})
@@ -65,6 +61,28 @@ module.exports.deleteReport = async(req, res, next) => {
         }
     } catch(err){
         console.elog(err)
+        res.status(500).json(err)
+    }
+}
+
+module.exports.deleteReports = async(req, res) => {
+    try{
+        const {loc, start, end} = req.query;
+        const startDate = new Date(start).getTime()
+        const endDate = new Date(end).getTime()
+        Report.deleteMany({locatie: loc, day: {$gte: startDate, $lte: endDate}})
+            .then(result => {
+                console.log(result)
+                res.status(200).json({message: `${result.deletedCount} Rapoarte au fost sterse!`})
+        })
+            .catch(error => {
+                console.log(error)
+                res.status(500).json(error)
+            })
+        
+
+    } catch(err){
+        consol.elog(err)
         res.status(500).json(err)
     }
 }
@@ -224,51 +242,51 @@ async function createReport(reports){
 
 
 module.exports.updateRap = async(req, res, next) => {
-    try{    
+    // try{    
 
-        // const cursor = await Ingredient.find({locatie: '655e2e7c5a3d53943c6b7c53'})
-        // console.log(cursor.length)
-        // let index = 1
-        // for (let doc of cursor){
-        //     const updatedLogs = doc.uploadLog.map(log => {
-        //         if (log.uploadPrice === undefined || log.uploadPrice === null) {
-        //             log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
-        //             index ++
-        //             console.log(log)
-        //         }
-        //         return log;
-        //     });
-        //     await Ingredient.updateOne(
-        //         { _id: doc._id },
-        //         { $set: { uploadLog: updatedLogs } }
-        //     );
+    //     const cursor = await Ingredient.find({locatie: '655e2e7c5a3d53943c6b7c53'})
+    //     console.log(cursor.length)
+    //     let index = 1
+    //     for (let doc of cursor){
+    //         const updatedLogs = doc.uploadLog.map(log => {
+    //             if (log.uploadPrice === undefined || log.uploadPrice === null) {
+    //                 log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
+    //                 index ++
+    //                 console.log(log)
+    //             }
+    //             return log;
+    //         });
+    //         await Ingredient.updateOne(
+    //             { _id: doc._id },
+    //             { $set: { uploadLog: updatedLogs } }
+    //         );
 
-        // }
-        // console.log(index)
+    //     }
+    //     console.log(index)
 
-        // while (await cursor.hasNext()) {
-        //     const doc = await cursor.next();
+    //     while (await cursor.hasNext()) {
+    //         const doc = await cursor.next();
 
-        //     // Loop through each uploadLog entry and update it if uploadPrice is missing
-        //     const updatedLogs = doc.uploadLog.map(log => {
-        //         if (log.uploadPrice === undefined || log.uploadPrice === null) {
-        //             log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
-        //             index ++
-        //             console.log(log)
-        //         }
-        //         return log;
-        //     });
+    //         // Loop through each uploadLog entry and update it if uploadPrice is missing
+    //         const updatedLogs = doc.uploadLog.map(log => {
+    //             if (log.uploadPrice === undefined || log.uploadPrice === null) {
+    //                 log.uploadPrice = doc.tvaPrice; // Set uploadPrice to tvaPrice
+    //                 index ++
+    //                 console.log(log)
+    //             }
+    //             return log;
+    //         });
 
-        //     // Update the document with the modified uploadLog array
-        //     await Ingredient.updateOne(
-        //         { _id: doc._id },
-        //         { $set: { uploadLog: updatedLogs } }
-        //     );
-        // }
-        // console.log(index)
+    //         // Update the document with the modified uploadLog array
+    //         await Ingredient.updateOne(
+    //             { _id: doc._id },
+    //             { $set: { uploadLog: updatedLogs } }
+    //         );
+    //     }
+    //     console.log(index)
 
-        res.send('all good')
-    } catch(err){   
-        console.log(err)
-    }
+    //     res.send('all good')
+    // } catch(err){   
+    //     console.log(err)
+    // }
 }

@@ -47,15 +47,27 @@ const suplierSchema = new Schema({
         },
         amount: {
           type: Number
-        }
-      },
-      description: {
-        type: String
+        },
+        asociat: {
+          type: Boolean,
+          default: false
+        },
+        docRecords: [
+          { 
+            docNumber: String,
+            docTotal: Number,
+           
+          }
+        ]
       },
       nir: {
         type: Schema.Types.ObjectId,
         ref: 'Nir'
       },
+      description: {
+        type: String
+      },
+   
       date: {
         type: Date
       }

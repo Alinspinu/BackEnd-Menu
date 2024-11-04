@@ -23,4 +23,6 @@ router.route('/compare-inv').post(ingRoutes.compareScriptic)
 
 router.route('/update').get(ingRoutes.updateStoc)
 
+// router.route('/update-log').get(ingRoutes.updateUploadLog)
+
 module.exports = router

@@ -220,7 +220,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
     const dbUsers = await User.find({locatie: loc, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
     const allIngs = await Ingredient.find({locatie: loc, productIngredient: false}).select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune'])
-    console.log('entries' , entries.length)
     const values = {
         workValueTotal: 0,
         dayRent: 60000 / daysNumber,
@@ -246,6 +245,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         payOnline: 0,
         tips: 0,
         card: 0,
+        rent: 0,
         inIngsProdBuc: 0,
         inIngsMfBuc: 0,
         inIngsProdBar: 0,
@@ -556,6 +556,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 const cass = (onPaper * 0.25) + (onPaper * 0.1)
                 const tax = (onPaper - cass) * 0.1
                 const employeerTax = onPaper * 0.0225
+                const baseTax = (cass + tax + employeerTax)
                 const employee = {
                     name: user.employee.employee.fullName,
                     hours: user.hours,
@@ -563,10 +564,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     monthHours: 176,
                     baseIncome: inHeand,
                     hourIncome: inHeand / 176,
-                    totalIncome: (inHeand / 176) * user.hours,
+                    totalIncome: user.employee.employee.salary.fix ? round(inHeand/daysNumber) : round((inHeand / 176) * user.hours),
                     bonus: 0,
-                    baseTax: (cass + tax + employeerTax),
-                    taxValue: (cass + tax + employeerTax) / 176 * user.hours,
+                    baseTax: baseTax,
+                    taxValue: user.employee.employee.salary.fix ? round(baseTax / daysNumber) : round(baseTax / 176 * user.hours),
                     user: user.employee._id,
                 }
                 values.workValueTotal += employee.totalIncome
@@ -587,8 +588,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 const existingUser = users.find(u => u.name === employee.name)
                 if(existingUser){
                     existingUser.hours += employee.hours
-                    existingUser.totalIncome = round(existingUser.totalIncome + employee.totalIncome)
-                    existingUser.bonus = round(existingUser.bonus + employee.bonus)
+                    existingUser.totalIncome = existingUser.employee.salary.fix ? 0 : round(existingUser.totalIncome + employee.totalIncome)
+                    existingUser.bonus = existingUser.employee.salary.fix ? 0 : round(existingUser.bonus + employee.bonus)
                 } else {
                     users.push(employee)
                 }
@@ -602,6 +603,11 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     for(let dbUser of dbUsers){
         const dbEmployee = dbUser.employee
         if(dbEmployee.salary.fix && dbEmployee.salary.inHeand){
+            const onPaper = dbEmployee.salary.onPaper.salary
+            const cass = (onPaper * 0.25) + (onPaper * 0.1)
+            const tax = (onPaper - cass) * 0.1
+            const employeerTax = onPaper * 0.0225
+            const baseTax = (cass + tax + employeerTax)
             const dbEmpl = {
                 name: dbEmployee.fullName,
                 hours: 0,
@@ -611,8 +617,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 hourIncome: round(dbEmployee.salary.inHeand / 176),
                 totalIncome:  round(dbEmployee.salary.inHeand / daysNumber),
                 bonus: 0,
-                baseTax: 0,
-                taxValue: 0,
+                baseTax: baseTax,
+                taxValue: round(baseTax / daysNumber),
                 user: dbUser._id,
             }
             const existingUser = users.find(u => u.name === dbEmpl.name)
@@ -751,6 +757,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     values.rentValue += (ing.tvaPrice * log.qty)
                                 } else {
                                     values.rentValue += (log.uploadPrice * log.qty)
+                                    console.log(log.uploadPrice)
                                 }
                               break;
                             case 'utilitati':        
@@ -800,7 +807,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                         values.utilitiesValue += (log.uploadPrice * log.qty)
                                     }
                                 } else {
-                                    console.log('default' ,ing.dep)
+                                    // console.log('default' ,ing.dep)
                                     
                                 }
                                  
@@ -850,21 +857,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         paymentMethods: createPaymentMethods(values),
     })
     const newRep = await report.save()
-    // console.log('dep', report.impairment)
-    // console.log(newRep.day)
-    // console.log(newRep.index)
-    // console.log('suplies',newRep.supliesValue)
-    // console.log('service',newRep.serviceValue)
-    // console.log('marketing',newRep.marketingValue)
-    // console.log('ob-inventar', newRep.inventarySpendings)
-    // console.log('gas',newRep.gasValue)
-    // console.log('constrictii', newRep.constructionsValue)
-    // console.log('chirie', newRep.rent)
-    // console.log('utilitati', newRep.utilities)
-    // console.log('deprecieri', newRep.impairment.total, 'produse', newRep.impairment.products.length) 
-    // console.log('diverse total', newRep.diverse.total, 'intrari' , newRep.diverse.entry.length)
-    console.log('departaments', newRep.departaments[1].dep)
-    console.log(values)
+    // console.log(values)
 
     return newRep
 }

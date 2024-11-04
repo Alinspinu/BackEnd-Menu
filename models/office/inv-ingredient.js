@@ -35,6 +35,10 @@ const invIngSchema = new Schema({
           type: String,
         },
         details: String,
+      },
+      logId: {
+        type: String,
+        index: true
       }
     }
   ],

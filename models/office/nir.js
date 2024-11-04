@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Counter = require("../utils/counter");
+const Ingredient = require('../office/inv-ingredient')
+const Suplier = require('../office/suplier')
+const {roundd } = require('../../utils/functions')
 
 const nirSchema = new Schema({
-  suplier: {
+  suplier: { 
     type: Schema.Types.ObjectId,
     ref: "Suplier",
   },
@@ -32,6 +35,15 @@ const nirSchema = new Schema({
   payd: {
     type: Boolean,
     default: false
+  },
+  val: {
+    type: Number
+  },
+  valTva: {
+    type: Number
+  },
+  valVanzare: {
+    type: Number
   },
   type: {
     type: String,
@@ -94,27 +106,132 @@ const nirSchema = new Schema({
         type: Number,
         default: 0,
       },
+      logId: String,
+      ing: {
+        type: Schema.Types.ObjectId,
+        ref: 'IngredientInv'
+      }
     },
   ],
 }, { timestamps: true, });
 
-nirSchema.pre("save", async function (next) {
-  try {
-    const doc = this;
-    if(doc.index > 0){
 
-    } else {
-      const counter = await Counter.findOneAndUpdate(
-        { locatie: this.locatie, model: "Nir" },
-        { $inc: { value: 1 } },
-        { upsert: true, new: true }
-      );
-      doc.index = counter.value;
+
+nirSchema.pre('save', async function (next){
+  try{
+    const doc = this
+
+    const record = {
+      typeOf: 'intrare',
+      document: {
+        typeOf: doc.document,
+        docId: doc.nrDoc,
+        amount: doc.totalDoc,
+      },
+      date: doc.documentDate,
+      nir: doc._id 
     }
-    next();
-  } catch (error) {
-    next(error);
+
+    const suplier = await Suplier.findByIdAndUpdate(
+      doc.suplier,  
+      { 
+          $push: { records: record },
+          $inc: { sold: doc.totalDoc } 
+      },
+      { new: true, useFindAndModify: false }
+    )
+
+    console.log("Supplier update:", suplier.name);
+
+    const counter = await Counter.findOneAndUpdate(
+      { locatie: doc.locatie, model: "Nir" },
+      { $inc: { value: 1 } },
+      { upsert: true, new: true }
+    );
+    doc.index = counter.value;
+
+
+    const operation = {
+      name: 'intrare', 
+      details: suplier.name +  " Nr  Doc - " + doc.nrDoc
+    };
+
+    const promises = doc.ingredients.map((el) => {
+      return Ingredient.findByIdAndUpdate(
+        el.ing,
+        {
+          $setOnInsert: {
+            um: el.um,
+            gestiune: el.gestiune,
+            locatie: doc.locatie,
+          },
+          $set: {
+            price: el.price,
+            tva: el.tva,
+            dep: el.dep,
+            tvaPrice: roundd(el.price * (1 + el.tva / 100)),
+            sellPrice: el.sellPrice
+          },
+          $inc: {qty: el.qty},
+          $push: {
+            uploadLog: {
+              date: doc.documentDate,
+              qty: el.qty,
+              operation: operation,
+              uploadPrice: roundd(el.price * (1 + el.tva / 100)),
+              logId: el.logId
+            }
+          }
+        },
+        { upsert: true, new: true }
+      ).exec();
+    });
+
+    const results = await Promise.all(promises)
+
+    next()
+  } catch(error){
+    next(error)
   }
-});
+})
+
+
+
+nirSchema.pre('deleteOne', { document: true, query: false }, async function(next){
+  try{
+    const doc = this
+
+    const promises = doc.ingredients.map(el => {
+      return Ingredient.findByIdAndUpdate(
+        el.ing,
+        {
+          $inc: {qty: -el.qty},
+          $pull: {
+            uploadLog: {
+              logId: el.logId,
+            }
+          }
+        },
+        {new: true}
+      ).exec()
+    })
+
+    const results = await Promise.all(promises)
+
+   const suplier =  await Suplier.findByIdAndUpdate(
+      doc.suplier,
+      { 
+          $pull: { records: { nir: doc._id } },
+          $inc: { sold: - doc.totalDoc }
+      },
+      { new: true, useFindAndModify: false }
+    )
+    console.log('furnizorul a fos actualizat', suplier.name)
+
+    next()
+  } catch(error){
+    next(error)
+  }
+})
 
 module.exports = mongoose.model("Nir", nirSchema);

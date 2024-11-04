@@ -84,6 +84,23 @@ module.exports.addSuplier = async (req, res, next) => {
    }
 
 
+   module.exports.updateSuplierRecords = async (req, res) => {
+    const {id, records} = req.body
+    try{
+       const suplier = await Suplier.findByIdAndUpdate(id, {$set: {records: records}}, {new: true})
+        if(!suplier){
+            res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
+        } else {
+            res.status(200).json({message: 'Inregistrare reusita!'})
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json(err)
+    }
+
+   }
+
+
    
    module.exports.removeRecord = async (req, res) => {
     const {suplierId, docId, amount} = req.body

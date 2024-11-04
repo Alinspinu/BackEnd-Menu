@@ -44,7 +44,7 @@ module.exports.creataDaty = async (req, res) => {
 
 
 module.exports.addEntry = async (req, res, next) => {
-    const { tip, date, typeOf, suplier, user, description, document, amount, locatie, month } = req.body
+    const { tip, date, typeOf, suplier, user, description, document, amount, locatie, month, asociat } = req.body
     createCashRegisterDay(locatie)
     if(tip && date && amount){
         const entryDate = new Date(date)
@@ -59,14 +59,17 @@ module.exports.addEntry = async (req, res, next) => {
             user: user,
             document: document
         })
-        if(typeOf === 'Plata furnizor'){
+        if(typeOf === 'Plata furnizor' && !asociat){
             const record = {
                 typeOf: 'iesire',
                 document: {
                     typeOf: document.tip,
                     docId: document.number,
-                    amount: amount
+                    amount: amount,
+                    asociat: false,
+                    docRecords: []
                 },
+                description: description,
                 date: entryDate
             }
             await Suplier.findByIdAndUpdate(

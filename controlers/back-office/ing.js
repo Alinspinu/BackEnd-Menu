@@ -445,6 +445,42 @@ const isEmpty = (obj) => {
 };
 
 
+module.exports.updateUploadLog = async(req, res) => {
+  try{
+    const loc = '655e2e7c5a3d53943c6b7c53'
+
+    const ings = await Ingredient.find({locatie: loc}).select('uploadLog')
+
+    ings.forEach(async (ing) => {
+      let newUpload =  []
+      let compareArr = []
+      ing.uploadLog.forEach(log => {
+        const date = new Date(log.date)
+        date.setUTCHours(0,0,0,0)
+        const logToComp = {
+          date: date,
+          qty: log.qty,
+          operation: log.operation.name,
+          details: log.operation.details
+        }
+        const stringLog = JSON.stringify(logToComp)
+        const duplicate = compareArr.find(l => l === stringLog)
+        if(!duplicate){
+          compareArr.push(stringLog)
+          newUpload.push(log)
+        } else {
+          console.log('Found Duplicates')
+        }
+      })
+      ing.uploadLog = newUpload
+      await ing.save()
+    })
+    res.status(200).json({message: 'All done'})
+  } catch(err){
+    console.log(err)
+  }
+}
+
 module.exports.updateStoc = async (req, res, next) => {
   //   const {loc} = req.query
   //   const ings = await Ingredient.find({locatie: loc, gestiune: 'bucatarie', productIngredient: false})
