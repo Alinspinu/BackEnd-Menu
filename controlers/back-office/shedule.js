@@ -95,10 +95,6 @@ module.exports.addPontaj = async (req, res, next) => {
 module.exports.getPontaj = async (req, res, next) => {
     const {loc, pont, month} = req.query
     try{    
-        // if(pont === 'last'){
-        //     const pontaj = await Pontaj.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
-        //     res.status(200).json(pontaj)
-        // }
         if(pont === 'last'){
             const pontajs = await Pontaj.find({locatie: loc})
                 .sort({_id: -1})
@@ -134,10 +130,6 @@ module.exports.getShedules = async (req, res, next) => {
             const shedule = getNowShedule(shedules)
             res.status(200).json(shedule)
         }
-        // if(shedule === 'last'){
-        //     const shedule = await Shedule.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
-        //     res.status(200).json(shedule)
-        // }
         if(shedule === 'all'){
             const shedules = await Shedule.find({locatie: loc})
             res.status(200).json(shedules)
@@ -167,13 +159,17 @@ module.exports.updateShedule = async (req, res, next) => {
             pontaj.days[pontDayIndex].users[dayPontUserIndex].hours = user.workPeriod.hours
             pontaj.days[pontDayIndex].users[dayPontUserIndex].value = dayValue
             pontaj.days[pontDayIndex].users[dayPontUserIndex].position = us.employee.position
+            pontaj.days[pontDayIndex].users[dayPontUserIndex].concediu = user.workPeriod.concediu
+            pontaj.days[pontDayIndex].users[dayPontUserIndex].medical = user.workPeriod.medical
             await pontaj.save()
         } else {
             const userToPush = {
                 hours: user.workPeriod.hours,
                 value: dayValue,
                 employee: user.employee,
-                position: us.employee.position
+                position: us.employee.position,
+                concediu: user.concediu,
+                medical: user.medical
             }
             const newPontaj =  await Pontaj.findOneAndUpdate({month: month, locatie: loc}, {$push: {[`days.${pontDayIndex}.users`]: userToPush}}, {new: true})
             console.log(newPontaj.days[pontDayIndex].users)
@@ -234,4 +230,14 @@ module.exports.deletePontaj = async (req, res, next) => {
         console.log(err)
         res.status(500).json({message: err.message})
     }
+}
+
+function getNowShedule(shedules){
+    const dateNow = new Date().getTime()
+    const shedule = shedules.find(s=> {
+        const startDate = new Date(s.days[0].date).getTime()
+        const endDate = new Date(s.days[s.days.length -1].date).getTime()
+        return dateNow <= endDate && dateNow >= startDate
+    })
+    return shedule
 }

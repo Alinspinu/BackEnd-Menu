@@ -14,6 +14,8 @@ const PontajSchema = new Schema({
                     hours: Number,
                     value: Number,
                     position: String,
+                    concediu: Boolean,
+                    medical: Boolean,
                     employee: {
                         type: Schema.Types.ObjectId,
                         ref: 'User'

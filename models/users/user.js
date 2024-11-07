@@ -58,6 +58,8 @@ const UserTrueSchema = new Schema({
         ]
     },
     employee: {
+        startDate: Date,
+        endDate: Date,
         active: Boolean,
         fullName: {
             type: String,
@@ -111,6 +113,7 @@ const UserTrueSchema = new Schema({
                 earnd: Number,
                 position: String,
                 concediu: Boolean,
+                medical: Boolean,
             }
         ],
     },
