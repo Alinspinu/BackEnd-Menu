@@ -95,8 +95,15 @@ module.exports.addPontaj = async (req, res, next) => {
 module.exports.getPontaj = async (req, res, next) => {
     const {loc, pont, month} = req.query
     try{    
+        // if(pont === 'last'){
+        //     const pontaj = await Pontaj.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
+        //     res.status(200).json(pontaj)
+        // }
         if(pont === 'last'){
-            const pontaj = await Pontaj.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
+            const pontajs = await Pontaj.find({locatie: loc})
+                .sort({_id: -1})
+                .limit(2)
+            const pontaj = getNowShedule(pontajs)    
             res.status(200).json(pontaj)
         }
         if(pont === 'all'){
@@ -120,9 +127,17 @@ module.exports.getShedules = async (req, res, next) => {
     const {loc, shedule} = req.query
     try{
         if(shedule === 'last'){
-            const shedule = await Shedule.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
+            const shedules = await Shedule.find({locatie: loc})
+            .sort({_id: -1})
+            .limit(3)
+            console.log(shedules)
+            const shedule = getNowShedule(shedules)
             res.status(200).json(shedule)
         }
+        // if(shedule === 'last'){
+        //     const shedule = await Shedule.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
+        //     res.status(200).json(shedule)
+        // }
         if(shedule === 'all'){
             const shedules = await Shedule.find({locatie: loc})
             res.status(200).json(shedules)

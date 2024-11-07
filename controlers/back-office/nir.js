@@ -1,9 +1,11 @@
 
 const Nir = require('../../models/office/nir')
+const ImpSheet = require('../../models/office/imp-sheet')
 
 
 module.exports.saveNir = async( req, res, next) => {
     const {nir, loc} = req.body;
+    delete nir._id
    if( nir.documentDate === null ) {
     nir.documentDate = new Date(Date.now())
    }
@@ -136,6 +138,51 @@ module.exports.paySuplierBill = async (req, res, next) => {
     res.status(500).json({message: err.message})
   }
 }
+
+
+
+module.exports.addImpScheet = async (req, res, next) => {
+  try{
+    const { sheet } = req.body
+    if(sheet){
+      const newSheet = new ImpSheet(sheet)
+      const savedSheet = newSheet.save()
+      res.status(200).json(savedSheet)
+    }else {
+      res.status(226).json({message: 'Fisa nu a ajuns la server!'})
+    }
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+module.exports.getSheet = async (req, res) => {
+  try{
+    const { date, loc } = req.query
+    const sheet = ImpSheet.findOne({date: date, locatie, loc})
+    res.status(200).json(sheet)
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+module.exports.getSheetsByPeriod = async (req, res) => {
+  try{
+    const {startDate, endDate, loc} = req.query
+    const startTime = new Date(startDate).getTime()
+    const endTime = new Date(endDate).getTime()
+    const sheets = ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}}) 
+    res.status(200).json(sheets)
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
+
 
 
 

@@ -22,6 +22,12 @@ router.route('/update')
     .get(nirRoutes.updateIngsLogs)
     .post(nirRoutes.paySuplierBill)
 
+router.route('/sheet')
+    .get(nirRoutes.getSheet)
+    .post(nirRoutes.addImpScheet)
+
+router.route('/shhet-period').get(nirRoutes.getSheetsByPeriod)
+
 module.exports = router
 
 
