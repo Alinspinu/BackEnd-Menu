@@ -1,5 +1,6 @@
 
 const mongoose = require('mongoose');
+const { release } = require('os');
 const Schema = mongoose.Schema;
 
 
@@ -73,6 +74,12 @@ const UserTrueSchema = new Schema({
         ciNumber: {
             type: Number,
         },
+        releaseId:{
+            type: String
+        },
+        releaseDate: {
+            type: Date
+        },
         address: {
             type: String,
         },
@@ -82,6 +89,13 @@ const UserTrueSchema = new Schema({
         access: {
             type: Number,
         },
+        docs: [
+            {
+                name: String,
+                filename: String,
+                url: String
+            }
+        ],
         salary: {
             inHeand: {
                 type: Number
