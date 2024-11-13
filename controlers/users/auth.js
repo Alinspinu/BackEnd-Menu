@@ -70,7 +70,64 @@ module.exports.register = async (req, res, next) => {
         res.status(500).json(error)
     }
 };
+const cloudinary = require('../../cloudinary/index')
 
+module.exports.registerIn = async (req, res) => {
+    try{
+
+        const {name, email, password, confirmPassword, telephone, ciSerial, ciNumber, releaseId, address, releaseDate, userId, cnp} = req.body
+     
+        if(userId && userId.length){
+            if (password === confirmPassword) {
+                const hashedPassword = hashPassword(password);
+                const update = {
+                    password: hashedPassword,
+                    telephone: telephone,
+                    name: name,
+                    email: email,
+                    employee: {
+                        fullName: name,
+                        cnp: cnp,
+                        ciSerial: ciSerial,
+                        ciNumber: ciNumber,
+                        releaseId: releaseId,
+                        releaseDate: releaseDate,
+                        address: address,
+                        docs: [],
+                    }
+                }
+                if (req.file) {
+                    const { path, filename } = req.file;
+                    const img = {
+                        name: 'ID',
+                        filename: filename,
+                        url: path
+                    }
+                    console.log(req.file)
+                    update.employee.docs.push(img)
+                }
+                const result = await cloudinary.uploader.upload(req.file.path , {
+                    folder:'True'
+                 });
+                 console.log(result)
+
+                console.log(update)
+                // const user = await User.findByIdAndUpdate(userId, update, {new: true})
+                
+                res.status(200).json({ message: "Datele au fost actualizate."});
+            } else {
+                return res.status(401).json({ message: "Passwords don't match!" });
+            };
+           }
+
+
+        res.status(200)
+
+    } catch(err){
+        console.error(JSON.stringify(err))
+        res.status(500).json({message: JSON.stringify(err)})
+    }
+}
 
 module.exports.registerEmployee = async (req, res, next) => {
     try{
@@ -135,10 +192,6 @@ module.exports.login = async (req, res, next) => {
             };
         });
     } else if (user.status === "active") {
-        // let time = '60m';
-        // if (user.employee.access > 1) {
-        //     time = '12h';
-        // };
         const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: '7d'});
         const sendData = {
             token: token,
@@ -214,6 +267,8 @@ module.exports.verifyToken = async (req, res, next) => {
 module.exports.sendEmailResetPassword = async (req, res, next) => {
     try {
         const { email, loc, url } = req.body;
+        console.log(loc)
+        console.log(email)
         console.log(url)
         const user = await User.findOne({ email: email, locatie: loc }).populate({path: 'locatie'});
         if (user) {

@@ -382,6 +382,7 @@ module.exports.unloadIngs = async (req, res, next) => {
 module.exports.saveOrder = async (req, res, next) => {
     try {
         const {order, adminEmail, loc} = req.body
+        order.soketId = generateSoketId(16)
         if (order.user !== 'john doe') {
             const newOrder = new Order(order) 
             const user = await User.findById(order.user);

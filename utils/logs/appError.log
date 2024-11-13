@@ -339,3 +339,28 @@ Cannot read properties of undefined (reading 'name')
   id: 'f341ec3626c064c28163a380716afc3b'
 }" (type Object) at path "uploadLog" because of "CastError"
 7:13:31 PM - ERROR - Cannot read properties of null (reading 'uploadLog')
+6:10:40 PM - ERROR - Invalid Signature 91f305f12045c25e851fad635d16418d5adda14f. String to sign - 'folder=True&timestamp=1731514239&transformation=c_fill,h_888,w_555'.
+6:10:58 PM - ERROR - Invalid Signature 2e599a585ca3e23fe7bc651720353a70be90199f. String to sign - 'folder=True&timestamp=1731514257&transformation=c_fill,h_888,w_555'.
+6:11:20 PM - ERROR - Invalid Signature b99603b7265815f8b8cdadd54824d078f681db9b. String to sign - 'folder=True&timestamp=1731514279&transformation=c_fill,h_888,w_555'.
+6:12:46 PM - ERROR - Invalid Signature 8b20d4a306d8d7c12fcf4f75e8d0b74da5397184. String to sign - 'folder=True&timestamp=1731514365&transformation=c_fill,h_888,w_555'.
+6:15:59 PM - ERROR - Invalid Signature 1ee4815050873814bc95bfae6aab6d1aeb91ff18. String to sign - 'folder=True&timestamp=1731514558&transformation=c_fill,h_888,w_555'.
+6:16:51 PM - ERROR - Invalid Signature cc6ce3f4d784be669acc0b0723d59c02e3a3856b. String to sign - 'folder=True&timestamp=1731514610&transformation=c_fill,h_888,w_555'.
+6:17:06 PM - ERROR - Invalid Signature ab8a1529dbe76202e704ee0226b66d0b10ccc21e. String to sign - 'folder=True&timestamp=1731514625&transformation=c_fill,h_888,w_555'.
+6:18:42 PM - ERROR - Invalid Signature bb4f3580d58af54a82056a84f7c73cecccca0968. String to sign - 'folder=True&timestamp=1731514721&transformation=c_fill,h_888,w_555'.
+6:18:55 PM - ERROR - Invalid Signature 3ddf9b292fabd57091b295a0e2aad562cebe90f9. String to sign - 'folder=True&timestamp=1731514733&transformation=c_fill,h_888,w_555'.
+6:21:01 PM - ERROR - Invalid Signature c4e25015cf7e6ff3c8418e204c26d7ebad0af862. String to sign - 'folder=True&timestamp=1731514860&transformation=c_fill,h_666,w_666'.
+6:37:16 PM - ERROR - Invalid Signature ffd5b853859ddf6c74f075576b3ecc55b1840a58. String to sign - 'folder=True&timestamp=1731515834&transformation=c_fill,h_666,w_666'.
+7:05:29 PM - ERROR - Invalid Signature a6a24451148d5e822eea37f27720b1f008404867. String to sign - 'folder=True&timestamp=1731517528&transformation=c_fill,h_666,w_666'.
+7:06:52 PM - ERROR - Invalid Signature d39eb7583decb0d75d8a1fa49725d5ce00554498. String to sign - 'folder=True&timestamp=1731517611&transformation=c_fill,h_666,w_666'.
+7:08:40 PM - ERROR - Invalid Signature a25050d425c765016bdb24a0d895bd7763ff6022. String to sign - 'folder=gossip&timestamp=1731517719&transformation=c_fill,h_333,w_444'.
+7:12:20 PM - ERROR - Invalid Signature f92165d1a77bc13f0268f453767c177de04b3546. String to sign - 'folder=gossip&timestamp=1731517939&transformation=c_fill,h_333,w_444'.
+7:14:31 PM - ERROR - Invalid Signature dfb1688c1febae2054d2c0d0ce2a501f3f3304ca. String to sign - 'folder=gossip&timestamp=1731518070&transformation=c_fill,h_333,w_444'.
+7:15:17 PM - ERROR - Invalid Signature 229f39f28e89f03886605d525f73898e441033c8. String to sign - 'folder=gossip&timestamp=1731518115&transformation=c_fill,h_333,w_444'.
+7:16:06 PM - ERROR - Invalid Signature c175cac4224f2b0fac66f939325092fe36b6f05e. String to sign - 'folder=gossip&timestamp=1731518164&transformation=c_fill,h_333,w_444'.
+7:21:52 PM - ERROR - Invalid Signature 48ce08b14c1d01b6887c8a8e87cc4f28dbd4ec0d. String to sign - 'folder=gossip&timestamp=1731518511&transformation=c_fill,h_333,w_444'.
+7:22:16 PM - ERROR - Invalid Signature 5533a0fe412bfd8c14e3c114532df55ab205bd80. String to sign - 'folder=True&timestamp=1731518534&transformation=c_fill,h_666,w_666'.
+7:25:29 PM - ERROR - Invalid Signature 197f402625b4ca92d35798d2778d7e23626c78fc. String to sign - 'folder=True&timestamp=1731518728&transformation=c_fill,h_666,w_666'.
+7:26:38 PM - ERROR - Invalid Signature 02a45bdfb5b3efa6409117b07094dfa6e03eb140. String to sign - 'folder=True&format=jpeg&timestamp=1731518797'.
+7:30:53 PM - ERROR - Invalid Signature 806df9ff7fb7f07adab305138d5cfce5c99ac451. String to sign - 'allowed_formats=jpeg,png&asset_folder=True&timestamp=1731519052'.
+7:31:36 PM - ERROR - Invalid Signature 03aa580e6565284b6664cb1ddf43754a3732c2c7. String to sign - 'allowed_formats=jpeg,png&asset_folder=True&timestamp=1731519094'.
+7:35:07 PM - ERROR - Invalid Signature cff2ed12922ea41e889d6305015bdd0fbeaf5dbe. String to sign - 'timestamp=1731519306'.

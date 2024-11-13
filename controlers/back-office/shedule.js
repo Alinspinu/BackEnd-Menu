@@ -126,8 +126,8 @@ module.exports.getShedules = async (req, res, next) => {
             const shedules = await Shedule.find({locatie: loc})
             .sort({_id: -1})
             .limit(3)
-            console.log(shedules)
             const shedule = getNowShedule(shedules)
+            console.log(shedule)
             res.status(200).json(shedule)
         }
         if(shedule === 'all'){
@@ -233,11 +233,12 @@ module.exports.deletePontaj = async (req, res, next) => {
 }
 
 function getNowShedule(shedules){
-    const dateNow = new Date().getTime()
+    const dateNow = new Date()
+    dateNow.setHours(0,0,0,0)
     const shedule = shedules.find(s=> {
         const startDate = new Date(s.days[0].date).getTime()
         const endDate = new Date(s.days[s.days.length -1].date).getTime()
-        return dateNow <= endDate && dateNow >= startDate
+        return dateNow.getTime() <= endDate && dateNow.getTime() >= startDate
     })
     return shedule
 }

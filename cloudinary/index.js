@@ -11,14 +11,18 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'True',
-        transformation: [
-            { width: 666, height: 666, crop: "fill" }
-        ],
-        allowedForms: ['jpeg', 'png', 'jpg', 'mp4'],
-        resource_type: 'auto'
-    }
+    params: async(req, file) =>{
+        // console.log(req)
+        console.log(file)
+        return {
+            folder: 'True',
+            transformation: [
+                { width: 555, height: 888, crop: "fill" }
+            ],
+            allowedForms: ['jpeg', 'png', 'jpg', 'mp4'],
+            resource_type: 'auto'
+        }
+    } 
 });
 
 
