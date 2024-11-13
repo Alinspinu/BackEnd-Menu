@@ -266,7 +266,7 @@ module.exports.saveBillInCloud = async (req, res, next) => {
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
-        await createProductSaleReport(bill.products)
+        // await createProductSaleReport(bill.products)
         if(email && email.length){
             const client = await User.findOne({email: email})
             if(client){
