@@ -10,7 +10,6 @@ const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sen
 
 
 module.exports.register = async (req, res, next) => {
-    // const loc = '655e2e7c5a3d53943c6b7c53'
     try{
         const { email, password, tel, confirmPassword, name, firstCart, survey, id, loc, url} = req.body;
        if(id && id.length){
@@ -81,12 +80,10 @@ module.exports.registerNewEmployee = async (req, res) => {
             if (check) {
                 return res.status(256).json({ message: 'This email allrady exist' });
             }
-            console.log(user)
             const newUser = new User(user)
             const savedUser = await newUser.save()
             const dbUser = await User.findById(savedUser._id).populate({path: 'locatie'})
             const response = await sendEmployeeEmail(dbUser, url)
-            console.log(response)
             res.status(200).json({message: 'Utilizatorul a fost salvat ' + response.message})
         }
 
@@ -99,9 +96,7 @@ module.exports.registerNewEmployee = async (req, res) => {
 
 module.exports.registerIn = async (req, res) => {
     try{
-
         const {name, password, confirmPassword, telephone, ciSerial, ciNumber, releaseId, address, releaseDate, userId, cnp, adminEmail} = req.body
-     
         if(userId && userId.length){
             if (password === confirmPassword) {
                 const hashedPassword = hashPassword(password);
@@ -146,8 +141,10 @@ module.exports.verifyEmployeeToken = async (req, res, next) => {
     const { token } = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
+        console.log(userId)
         if (userId) {
             const user = await User.findById(userId.userId).populate({path: 'locatie'});
+            console.log(user)
             if (user) {
                 res.status(200).json(user);
             } else {
@@ -171,13 +168,6 @@ module.exports.registerEmployee = async (req, res, next) => {
                 const newUser = new User(user);
                 newUser.password = hashedPassword
                 await newUser.save()
-                // await sendVerificationEmail(newUser).then(response => {
-                //     if (response.message === 'Email sent') {
-                //         res.status(200).json({ message: response.message, id: newUser._id });
-                //     } else {
-                //         res.status(256).json({ message: response.message, id: newUser._id });
-                //     };
-                // });
                 res.status(200).json({message: "Userul a fost Salvat cu success"})
             } else{
                 return res.status(401).json({ message: "Passwords don't match!" });
@@ -300,9 +290,6 @@ module.exports.verifyToken = async (req, res, next) => {
 module.exports.sendEmailResetPassword = async (req, res, next) => {
     try {
         const { email, loc, url } = req.body;
-        console.log(loc)
-        console.log(email)
-        console.log(url)
         const user = await User.findOne({ email: email, locatie: loc }).populate({path: 'locatie'});
         if (user) {
             return sendResetEmail(user, url).then(response => {
@@ -346,8 +333,10 @@ module.exports.resetPassword = async (req, res, next) => {
                     cashBack: user.cashBack,
                     email: user.email,
                     status: user.status,
+                    telephone: user.telephone,
                     employee: user.employee,
-                    locatie: user.locatie
+                    locatie: user.locatie,
+                    discount: user.discount,
                 };
                 const data = {name: user.name, action: 'și-a resetat parola'}
                 await sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)

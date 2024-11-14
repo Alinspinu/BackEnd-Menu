@@ -369,3 +369,4 @@ Cannot read properties of undefined (reading 'name')
 12:46:25 AM - ERROR - Invalid Signature de632882bacdea8cb22557180bc3d0010b553aaa. String to sign - 'folder=True&timestamp=1731537984&transformation=c_fill,h_666,w_666'.
 12:51:46 AM - ERROR - Invalid Signature 27bc027b5257329435931297c16749e7ec5890c0. String to sign - 'folder=True&timestamp=1731538304&transformation=c_fill,h_666,w_666'.
 12:54:15 AM - ERROR - Invalid Signature 93a032502c52db4a75346aa91e9e55896ef20c8c. String to sign - 'folder=True&timestamp=1731538454&transformation=c_fill,h_666,w_666'.
+12:31:01 AM - ERROR - Invalid Signature 2cb46342d5c54c0c2365b6ffbc01419bf68b83c8. String to sign - 'folder=True&timestamp=1731623460&transformation=c_fill,h_666,w_666'.
