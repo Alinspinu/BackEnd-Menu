@@ -83,6 +83,48 @@ async function sendVerificationEmail(newUser, baseUrlRedirect) {
 };
 
 
+async function sendEmployeeEmail(newUser, baseUrlRedirect) {
+    const token = jwt.sign({ userId: newUser._id}, process.env.AUTH_SECRET, { expiresIn: '24h' });
+    
+    const templateSource = fs.readFileSync('views/layouts/employee.ejs', 'utf-8');
+    const templateData = {
+        link: `${baseUrlRedirect}register?token=${token}`,
+        name: newUser.name,
+        message: 'Continuă procesul de înreistrare.',
+        locatie: newUser.locatie.name
+    };
+    const renderedTemplate = ejs.render(templateSource, templateData);
+    
+    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
+
+      if(appKey !== "0") {
+          const transporter = nodemailer.createTransport({
+              service: 'Gmail',
+              auth: {
+                  user: newUser.locatie.gmail.email,
+                  pass: appKey
+              }
+          });
+          const mailOptions = {
+              from: newUser.locatie.gmail.email,
+              to: newUser.email, // Assuming the email is present in the newUser object
+              subject: 'Bine ai venit',
+              html: renderedTemplate
+          };
+      
+          try {
+              const info = await transporter.sendMail(mailOptions);
+              console.log('Email sent:', info.response);
+              return { message: 'Email sent' };
+          } catch (error) {
+              console.error('Error sending email:', error);
+              return { message: 'Error sending email' };
+          };
+      }
+
+};
+
+
 
 async function sendResetEmail(newUser, baseUrlRedirect) {
     const token = jwt.sign({ userId: newUser._id }, process.env.AUTH_SECRET, { expiresIn: '15m' });
@@ -168,6 +210,7 @@ module.exports = {
     sendInfoAdminEmail,
     // sendMailToCake,
     sendMailToCustomer,
+    sendEmployeeEmail,
   };
 
 

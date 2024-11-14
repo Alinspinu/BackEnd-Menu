@@ -4,7 +4,7 @@ const User = require('../../models/users/user');
 const Locatie = require('../../models/office/locatie')
 
 const { comparePasswords, hashPassword } = require('../../utils/functions')
-const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, } = require('../../utils/mail')
+const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, sendEmployeeEmail } = require('../../utils/mail')
 
 
 
@@ -70,62 +70,95 @@ module.exports.register = async (req, res, next) => {
         res.status(500).json(error)
     }
 };
-const cloudinary = require('../../cloudinary/index')
+
+
+
+module.exports.registerNewEmployee = async (req, res) => {
+    try{
+        const {user, url} = req.body
+        if(user){
+            const check = await User.findOne({ email: user.email, locatie: user.locatie });
+            if (check) {
+                return res.status(256).json({ message: 'This email allrady exist' });
+            }
+            console.log(user)
+            const newUser = new User(user)
+            const savedUser = await newUser.save()
+            const dbUser = await User.findById(savedUser._id).populate({path: 'locatie'})
+            const response = await sendEmployeeEmail(dbUser, url)
+            console.log(response)
+            res.status(200).json({message: 'Utilizatorul a fost salvat ' + response.message})
+        }
+
+
+    } catch(error){
+        console.log(error)
+    }
+}
+
 
 module.exports.registerIn = async (req, res) => {
     try{
 
-        const {name, email, password, confirmPassword, telephone, ciSerial, ciNumber, releaseId, address, releaseDate, userId, cnp} = req.body
+        const {name, password, confirmPassword, telephone, ciSerial, ciNumber, releaseId, address, releaseDate, userId, cnp, adminEmail} = req.body
      
         if(userId && userId.length){
             if (password === confirmPassword) {
                 const hashedPassword = hashPassword(password);
-                const update = {
-                    password: hashedPassword,
-                    telephone: telephone,
-                    name: name,
-                    email: email,
-                    employee: {
-                        fullName: name,
-                        cnp: cnp,
-                        ciSerial: ciSerial,
-                        ciNumber: ciNumber,
-                        releaseId: releaseId,
-                        releaseDate: releaseDate,
-                        address: address,
-                        docs: [],
-                    }
-                }
-                if (req.file) {
+                const user = await User.findById(userId).populate({path: 'locatie'})
+                user.password = hashedPassword;
+                user.telephone = telephone;
+                user.status = 'active',
+                user.employee.fullName = name,
+                user.employee.cnp = cnp
+                user.employee.ciSerial = ciSerial;
+                user.employee.ciNumber = ciNumber;
+                user.employee.releaseId = releaseId;
+                user.employee.releaseDate = releaseDate;
+                user.employee.address = address;
+                if(req.file) {
                     const { path, filename } = req.file;
                     const img = {
                         name: 'ID',
                         filename: filename,
                         url: path
                     }
-                    console.log(req.file)
-                    update.employee.docs.push(img)
+                    user.employee.docs = [img]
                 }
-                const result = await cloudinary.uploader.upload(req.file.path , {
-                    folder:'True'
-                 });
-                 console.log(result)
-
-                console.log(update)
-                // const user = await User.findByIdAndUpdate(userId, update, {new: true})
-                
-                res.status(200).json({ message: "Datele au fost actualizate."});
+                await user.save()
+                const data = {name: user.name, action: 's-a inregistrat'}
+                const gmail = {app: user.locatie.gmail.app, email: user.locatie.gmail.email} 
+                await sendInfoAdminEmail(data, adminEmail ,gmail)
+                res.status(200).json({ message: "Datele au fost actualizate.", user: user});
             } else {
                 return res.status(401).json({ message: "Passwords don't match!" });
             };
            }
-
-
         res.status(200)
-
     } catch(err){
-        console.error(JSON.stringify(err))
-        res.status(500).json({message: JSON.stringify(err)})
+        console.error(err)
+        res.status(500).json(err)
+    }
+}
+
+
+module.exports.verifyEmployeeToken = async (req, res, next) => {
+    const { token } = req.body;
+    try {
+        const userId = jwt.decode(token, process.env.AUTH_SECRET);
+        if (userId) {
+            const user = await User.findById(userId.userId).populate({path: 'locatie'});
+            if (user) {
+                res.status(200).json(user);
+            } else {
+                res.status(404).json({ message: 'User not found' });
+            };
+        } else {
+            res.status(401).json({ message: 'Invalid token' });
+        };
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Server Error' });
     }
 }
 

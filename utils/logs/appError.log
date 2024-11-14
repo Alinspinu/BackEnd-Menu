@@ -364,3 +364,8 @@ Cannot read properties of undefined (reading 'name')
 7:30:53 PM - ERROR - Invalid Signature 806df9ff7fb7f07adab305138d5cfce5c99ac451. String to sign - 'allowed_formats=jpeg,png&asset_folder=True&timestamp=1731519052'.
 7:31:36 PM - ERROR - Invalid Signature 03aa580e6565284b6664cb1ddf43754a3732c2c7. String to sign - 'allowed_formats=jpeg,png&asset_folder=True&timestamp=1731519094'.
 7:35:07 PM - ERROR - Invalid Signature cff2ed12922ea41e889d6305015bdd0fbeaf5dbe. String to sign - 'timestamp=1731519306'.
+12:40:34 AM - ERROR - Invalid Signature 4978dc35c44688878cac68935f598727e7daf2a0. String to sign - 'folder=True&timestamp=1731537633&transformation=c_fill,h_666,w_666'.
+12:44:50 AM - ERROR - Invalid Signature 996b99bf3ef5301d474dd4b3d8beddabe2e24864. String to sign - 'folder=True&timestamp=1731537888&transformation=c_fill,h_666,w_666'.
+12:46:25 AM - ERROR - Invalid Signature de632882bacdea8cb22557180bc3d0010b553aaa. String to sign - 'folder=True&timestamp=1731537984&transformation=c_fill,h_666,w_666'.
+12:51:46 AM - ERROR - Invalid Signature 27bc027b5257329435931297c16749e7ec5890c0. String to sign - 'folder=True&timestamp=1731538304&transformation=c_fill,h_666,w_666'.
+12:54:15 AM - ERROR - Invalid Signature 93a032502c52db4a75346aa91e9e55896ef20c8c. String to sign - 'folder=True&timestamp=1731538454&transformation=c_fill,h_666,w_666'.

@@ -3,8 +3,8 @@ const router = express.Router();
 const authRoutes = require('../../controlers/users/auth');
 
 const multer = require('multer');
-const storage  = multer.memoryStorage();
-const upload = multer({storage: storage});
+const { storage } = require('../../cloudinary/index.js');
+const upload = multer({storage});
 
 router.route('/verify-token').post(authRoutes.verifyToken);
 router.route('/send-reset-email').post(authRoutes.sendEmailResetPassword);
@@ -15,6 +15,9 @@ router.route('/register-employee').post(authRoutes.registerEmployee)
 router.route('/loc').get(authRoutes.getLoc)
 
 router.route('/register-in').post(upload.single('image'), authRoutes.registerIn)
+router.route('/new-employee').post(authRoutes.registerNewEmployee)
+
+router.route('/verify-employee-token').post(authRoutes.verifyEmployeeToken)
 
 // router.route('/new-user').get(authRoutes.newUser)
 
