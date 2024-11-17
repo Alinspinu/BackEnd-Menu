@@ -48,7 +48,11 @@ const nirSchema = new Schema({
   type: {
     type: String,
     default: 'unpayd',
-    enum: ['bank', 'cash', 'unpayd'],
+  
+  },
+  selected: {
+    type: Boolean,
+    defaulr: false
   },
   document: {
     type: String

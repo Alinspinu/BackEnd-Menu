@@ -71,6 +71,24 @@ module.exports.deleteNir = async (req, res, next) => {
   }
 }
 
+
+module.exports.deleteNirs = async (req, res, next) => {
+  try{
+    const {ids} = req.body
+    const deletePromises = ids.map(id => {
+      return Nir.deleteOne({ _id: id }).exec(); 
+    });
+
+    const results = await Promise.all(deletePromises);
+    console.log('All documents deleted:', results);
+
+    res.status(200).json({message: 'Documentele au fost șterse!'})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
 module.exports.payBill = async (req, res, next) => {
   const {update, id, type} = req.body
   let tip = update ? 'Platită' : 'Neplătită'

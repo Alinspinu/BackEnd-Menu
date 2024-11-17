@@ -15,6 +15,8 @@ router.route('/nir')
     .delete(nirRoutes.deleteNir)
 router.route('/pay').post(nirRoutes.payBill)
 
+router.route('/delete-nirs').put(nirRoutes.deleteNirs)
+
 router.route('/get-nirs-by-date')
         .post(nirRoutes.getNirsByDate)
 
