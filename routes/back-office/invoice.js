@@ -3,8 +3,8 @@ const router = express.Router();
 const invoiceRoutes = require('../../controlers/back-office/invoice.js')
 
 
-router.route('/').get(invoiceRoutes.getTokenCallBack)
-router.route('/get-token').get(invoiceRoutes.getToken)
+router.route('/get-data').get(invoiceRoutes.getInvoices)
+
 
 
 

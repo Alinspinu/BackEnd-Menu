@@ -1,69 +1,182 @@
-if (process.env.NODE_ENV !== "production") {
-    require("dotenv").config();
-}
+const axios = require('axios')
+const https = require('https');
+const fs = require('fs')
 
-const Token = require('../../models/office/token')
-const axios = require('axios');
-const querystring = require('querystring');
+const AdmZip = require('adm-zip');
+const xml2js = require('xml2js');
 
-module.exports.getToken = async (req, res) => {
+
+
+const startDate = new Date('2024-11-10').getTime()
+const endDate = new Date('2024-11-16').getTime()
+
+const apiUrl = 'https://api.anaf.ro/prod/FCTEL/rest/listaMesajeFactura?zile=10&cif=44994432'
+
+const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=44994432&pagina=1`
+
+const downloadApi = 'https://api.anaf.ro/prod/FCTEL/rest/descarcare?id=3862015944'
+                 
+
+
+
+
+
+
+module.exports.getInvoices = async (req, res) => {
+
+
+    const config = {
+        // httpsAgent: agent,
+        headers: {
+          'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
+          'Content-Type': 'application/json',  // Optional: Set content type if needed
+        }
+      }
+
+
     try{
-        const authUrl = `${process.env.ANAF_AUTH_URL}?response_type=code&client_id=${process.env.ANAF_CLIENT_ID}&redirect_uri=${process.env.ANAF_REDIRECT_URI}`;
-        console.log(authUrl)
-        res.redirect(authUrl);
+       const result = await downloadZipFile()
 
-    } catch(error){
+        // axios.get(apiUrl, config)
+        //     .then(response => {
+        //         res.status(200).json(response.data)
+        //         console.log(response.data)
+        //     })
+        //     .catch(error => {
+        //         console.log(error);
+        //         // console.log(error.toJSON());
+        //     }) 
+
+    res.status(200)
+
+    }catch(error){
         console.log(error)
+        res.status(500).json(error)
     }
 }
 
-
-
-module.exports.getTokenCallBack = async (req, res) => {
-    const code = req.query.code;
-    console.log(req.query)
-    if (!code) {
-        console.log('no-code')
-        return res.status(400).send('Authorization code not found');
-    }
-
+async function downloadZipFile() {
     try {
-        const response = await axios.post(
-            process.env.ANAF_TOKEN_URL,
-            querystring.stringify({
-                grant_type: 'authorization_code',
-                code: code,
-                redirect_uri: process.env.ANAF_REDIRECT_URI,
-                client_id: process.env.ANAF_CLIENT_ID,
-                client_secret: process.env.ANAF_CLIENT_SECRET,
-            }),
-            {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                auth: {
-                    username: process.env.ANAF_CLIENT_ID,
-                    password: process.env.ANAF_CLIENT_SECRET,
-                },
+      const response = await axios.get(downloadApi, {
+        responseType: 'arraybuffer', // Treat the response as binary data
+        headers: {
+          // Include any required headers here, like authorization if needed
+          'Authorization': `Bearer ${token}`, // Optional if you have a token
+          'Accept': 'application/zip',
+        },
+      });
+  
+      // Use AdmZip to extract the contents directly from the buffer (in memory)
+      const zip = new AdmZip(response.data);
+  
+      // Extract files to memory
+      const zipEntries = zip.getEntries(); // Array of entries in the zip file
+
+      // Loop through each entry in the zip file and save them locally
+    //   let resultt
+      zipEntries.forEach(entry => {
+        if (!entry.entryName.includes('semnatura')) {
+          const xmlData = entry.getData().toString('utf8'); 
+          // Parse the XML to a JS object
+          xml2js.parseString(xmlData, (err, result) => {
+            if (err) {
+              console.error(`Error parsing XML:`, err);
+              return;
             }
-        );
-
-        const accessToken = response.data.access_token;
-        const expiresIn = response.data.expires_in; // If available, to calculate expiration time
-
-        // Save the token to MongoDB
-        const tokenDocument = new Token({
-            service: 'e-factura',
-            token: accessToken,
-            expiresAt: new Date(Date.now() + expiresIn * 1000) // Optional: Save expiration time
-        });
-        console.log(response)
-        console.log(tokenDocument)
-        // await tokenDocument.save();
-
-        res.status(200).json({message: 'token recived'})
+  
+            // Process the parsed XML as needed
+            // console.log(JSON.stringify(result, null, 2))
+            parseInvoiceData(result);
+          });
+        }
+      });
+    //   return resultt
+  
     } catch (error) {
-        console.error('Error retrieving access token:', error);
-        res.status(500).send('Failed to retrieve access token');
+      console.error('Error downloading or processing the ZIP file:', error);
     }
-}
+  }
+
+
+
+
+
+// async function downloadZipFile() {
+//     try {
+//     //   const response = await axios.get(downloadApi, {
+//     //     responseType: 'arraybuffer', // Treat the response as binary data
+//     //     headers: {
+//     //       'Authorization': `Bearer ${token}`, // Optional if you have a token
+//     //        'Accept': 'application/zip'
+//     //     },
+//     //   });
+  
+//     //
+//     //   const filePath = './downloaded_file.zip';
+//     //   fs.writeFileSync(filePath, response.data);
+//       const outputDir = './unzipped_files';
+
+//     //   const zip = new AdmZip(filePath);
+//     //   zip.extractAllTo(outputDir, true);
+      
+      
+//       const xmlFiles = fs.readdirSync(outputDir).filter(file => !file.includes('semnatura'));
+
+//       xmlFiles.forEach(file => {
+//         const xmlData = fs.readFileSync(`${outputDir}/${file}`, 'utf8');
+
+        
+//         xml2js.parseString(xmlData, (err, result) => {
+//             if (err) {
+//                 console.error(`Error parsing XML in file ${file}:`, err);
+//                 return;
+//             }
+          
+            
+//               parseInvoiceData(result)
+//             //   console.log(result)
+//           console.log(`Parsed XML from ${file}:`);
+//         //   console.log(result)
+//         //   console.log(JSON.stringify(result)); 
+//         });
+//       });
+  
+//     } catch (error) {
+//         console.log(error)
+//     }
+//   }
+
+
+
+const parseInvoiceData = (invoiceData) => {
+    const invoiceSummary = {
+        invoiceNumber: invoiceData.Invoice["cbc:ID"][0], // Invoice ID
+        issueDate: invoiceData.Invoice["cbc:IssueDate"][0], // Issue Date
+        dueDate: invoiceData.Invoice["cbc:DueDate"] ? invoiceData.Invoice["cbc:DueDate"][0] : invoiceData.Invoice["cbc:IssueDate"][0], 
+        supplier: {
+          name: invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0], // Supplier Name
+          vatNumber: invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0], // Supplier VAT
+        },
+        customer: {
+          name: invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0], // Customer Name
+          vatNumber: invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0], // Customer VAT
+        },
+        products: invoiceData.Invoice["cac:InvoiceLine"].map(item => ({
+          name: item["cac:Item"][0]["cbc:Name"][0], // Product Name
+          quantity: item["cbc:InvoicedQuantity"][0]["_"], // Quantity
+          price: item["cac:Price"][0]["cbc:PriceAmount"][0]["_"], // Price per unit
+          totalNoVat: item["cbc:LineExtensionAmount"][0]["_"], // Line total
+          vatPrecent: item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]
+        })),
+        vatAmount: invoiceData.Invoice["cac:TaxTotal"][0]["cbc:TaxAmount"][0]["_"], // VAT amount
+        taxExclusiveAmount: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxExclusiveAmount"][0]["_"],
+        taxInclusiveAmount: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxInclusiveAmount"][0]["_"],
+        prePaydAmount: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"] ? invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"][0]["_"] : 0,
+        payableAmont: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["_"], // Total amount (Payable)
+      };
+      console.log(invoiceSummary)
+};
+
+// Call the function with your XML data
+
+
