@@ -76,7 +76,8 @@ module.exports.getInvoice = async (req, res) => {
           const xmlData = entry.getData().toString('utf8'); 
           try {
             const result = await parseXml(xmlData); 
-            invoice = parseInvoiceData(result);
+            console.log(JSON.stringify(result, null, 2))
+            invoice = parseInvoiceData(result, id);
             break; 
           } catch (err) {
             console.error(`Error parsing XML:`, err);
@@ -104,7 +105,7 @@ module.exports.getInvoice = async (req, res) => {
   }
 
 
-  const parseInvoiceData = (invoiceData) => {
+  const parseInvoiceData = (invoiceData, id) => {
     const invoiceSummary = {
         invoiceNumber: invoiceData.Invoice["cbc:ID"][0], // Invoice ID
         issueDate: invoiceData.Invoice["cbc:IssueDate"][0], // Issue Date
@@ -118,9 +119,10 @@ module.exports.getInvoice = async (req, res) => {
           vatNumber: invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0], // Customer VAT
         },
         products: invoiceData.Invoice["cac:InvoiceLine"].map(item => ({
-          name: item["cac:Item"][0]["cbc:Name"][0], // Product Name
-          quantity: +item["cbc:InvoicedQuantity"][0]["_"], // Quantity
-          price: +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"], // Price per unit
+          name: item["cac:Item"][0]["cbc:Name"][0], 
+          quantity: +item["cbc:InvoicedQuantity"][0]["_"], 
+          unitCode: item["cbc:InvoicedQuantity"][0]["$"].unitCode,
+          price: +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"], 
           totalNoVat: +item["cbc:LineExtensionAmount"][0]["_"], // Line total
           vatPrecent: +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]
         })),
@@ -128,7 +130,9 @@ module.exports.getInvoice = async (req, res) => {
         taxExclusiveAmount: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxExclusiveAmount"][0]["_"],
         taxInclusiveAmount: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxInclusiveAmount"][0]["_"],
         prePaydAmount: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"] ? invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"][0]["_"] : 0,
-        payableAmont: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["_"], // Total amount (Payable)
+        payableAmont: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["_"], 
+        currencyId: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["$"].currencyID,
+        id: id
       };
       console.log(invoiceSummary)
       return invoiceSummary
