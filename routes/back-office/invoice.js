@@ -3,7 +3,8 @@ const router = express.Router();
 const invoiceRoutes = require('../../controlers/back-office/invoice.js')
 
 
-router.route('/get-data').get(invoiceRoutes.getInvoices)
+router.route('/get-msg').get(invoiceRoutes.getMessages)
+router.route('/get-invoice').get(invoiceRoutes.getInvoice)
 
 
 

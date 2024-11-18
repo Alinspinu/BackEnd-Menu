@@ -48,7 +48,10 @@ module.exports.updateIngsLogs = async (req, res) => {
 module.exports.getNirsBySuplier = async (req, res, next) => {
   try{
     const {id} = req.query
-    const nirs = await Nir.find({suplier: id}).populate({path: 'suplier'})
+    const nirs = await Nir.find({suplier: id})
+        .sort({ createdAt: -1 })
+        .limit(30)
+        .populate({path: 'suplier'})
     res.status(200).json(nirs)
   } catch(error){
     console.log(error)
@@ -93,10 +96,14 @@ module.exports.payBill = async (req, res, next) => {
   const {update, id, type} = req.body
   let tip = update ? 'Platită' : 'Neplătită'
   let method = update ? type : ''
- 
+  const up = { payd: update, type: type };
   try{
-   const nir = await Nir.findByIdAndUpdate(id , {payd: update, type: type}, {new: true}).populate({path: 'suplier'})
-    res.status(200).json({message: `Factura la fost marcata ${tip}  ${method}`, nir: nir })
+    const updatedNirs = await Promise.all(
+      id.map(id => Nir.findByIdAndUpdate(id, up, { new: true }).populate({ path: 'suplier' }))
+    );
+  //  const nir = await Nir.findByIdAndUpdate(id , {payd: update, type: type}, {new: true}).populate({path: 'suplier'})
+    res.status(200).json({message: `Factura / facturile la fost marcata ${tip}  ${method}`, nirs: updatedNirs })
+  res.status(200)
   } catch (err) {
     console.log(err)
     res.status(500).json({message: err.message})
@@ -108,7 +115,7 @@ module.exports.getNirs = async(req, res, next) => {
   const loc = req.body.loc
   try{
     const nirs = await Nir.find({locatie: loc})
-          .sort({ createdAt: -1 }) // Assuming you have a 'createdAt' field for timestamp
+          .sort({ createdAt: -1 })
           .limit(20)
           .populate({path: 'suplier'})
     res.status(200).json(nirs)

@@ -104,6 +104,10 @@ const UserTrueSchema = new Schema({
                 salary: Number,
                 tax: Number,
             },
+            norm:{
+                type: Number,
+                default: 176
+            },
             fix: Boolean,
         },
         payments: [

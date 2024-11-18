@@ -91,7 +91,7 @@ module.exports.addSuplier = async (req, res, next) => {
         if(!suplier){
             res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
         } else {
-            res.status(200).json({message: 'Inregistrare reusita!'})
+            res.status(200).json({message: 'Inregistrare reusita!', suplier: suplier})
         }
     } catch(err){
         console.log(err)

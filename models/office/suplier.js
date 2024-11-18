@@ -60,10 +60,12 @@ const suplierSchema = new Schema({
           }
         ]
       },
-      nir: {
-        type: Schema.Types.ObjectId,
-        ref: 'Nir'
-      },
+      nir: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Nir'
+        }
+      ],
       description: {
         type: String
       },

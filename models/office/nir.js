@@ -64,6 +64,7 @@ const nirSchema = new Schema({
       procent: Number,
     }
   ],
+  eFacturaId: String,
   ingredients: [
     {
       name: {
