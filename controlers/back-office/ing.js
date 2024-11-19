@@ -144,10 +144,14 @@ module.exports.saveInv = async (req, res, next) => {
     const invDate = new Date(date).setUTCHours(0,0,0,0)
     const ings = await Ingredient.find({locatie: loc, productIngredient: false, dep: { $in: ['marfa', 'materie'] }}).select('inventary name gestiune dep um')
     const ingredients = ings.map(ing => {
+
+      let foundFirstMatch = false;
+
       let newIng = {}
       for(let inv of ing.inventary){
+        if (foundFirstMatch) break;
         const day = new Date(inv.day).setUTCHours(0,0,0,0)
-        if(day === invDate){
+          if(day === invDate){
           newIng.faptic = inv.faptic
           newIng.scriptic = inv.qty
           newIng.name = ing.name
@@ -155,6 +159,9 @@ module.exports.saveInv = async (req, res, next) => {
           newIng.gestiune = ing.gestiune
           newIng.dep = ing.dep
           newIng.um = ing.um
+
+          foundFirstMatch = true;
+          
         }
       }
       return newIng
@@ -218,9 +225,6 @@ module.exports.compareScriptic = async (req, res, next) => {
              
               if(ing.ings && ing.ings.length){
                 ing.ings.forEach(ig => {
-                  // if(ig.ing.name === "Lapte Vegetal"){
-                  //   console.log(ig.ing.qty)
-                  // }
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
                     const updatedIng = {
@@ -242,13 +246,11 @@ module.exports.compareScriptic = async (req, res, next) => {
                       ing: existingIngredient.ing
                     }
                     consIngs = consIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-                    // existingIngredient.qty += ing.qty
                   } else {
                     consIngs.push(ing);
                   }
                 }
                 else {
-                  // console.log(ing)
                 }
               }
             })
