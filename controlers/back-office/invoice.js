@@ -35,7 +35,6 @@ module.exports.getMessages = async (req, res) => {
     const response = await axios.get(`${process.env.ANAF_DAYS_BASE_API_URL}?zile=${days}&cif=${cif}&filtru=P`, config)
     if(response){
         res.status(200).json(response.data)
-        console.log(response.data)
     }
 
     }catch(error){
@@ -66,26 +65,27 @@ module.exports.getInvoice = async (req, res) => {
           'Accept': 'application/zip',
         },
       });
-  
-      const zip = new AdmZip(response.data);
-      const zipEntries = zip.getEntries(); 
-      let invoice;
-  
-      for (const entry of zipEntries) {
-        if (!entry.entryName.includes('semnatura')) {
-          const xmlData = entry.getData().toString('utf8'); 
-          try {
-            const result = await parseXml(xmlData); 
-            console.log(JSON.stringify(result, null, 2))
-            invoice = parseInvoiceData(result, id);
-            break; 
-          } catch (err) {
-            console.error(`Error parsing XML:`, err);
-          }
+
+        const zip = new AdmZip(response.data);
+        const zipEntries = zip.getEntries(); 
+        let invoice;
+    
+        for (const entry of zipEntries) {
+            if (!entry.entryName.includes('semnatura')) {
+            const xmlData = entry.getData().toString('utf8'); 
+            try {
+                const result = await parseXml(xmlData); 
+            //   console.log(JSON.stringify(result, null, 2))
+                invoice = parseInvoiceData(result, id);
+                break; 
+            } catch (err) {
+                console.error(`Error parsing XML:`, err);
+            }
+            }
         }
-      }
-  
-      return invoice;
+    
+        return invoice;
+     
   
     } catch (error) {
       console.error('Error downloading or processing the ZIP file:', error);
@@ -124,12 +124,12 @@ module.exports.getInvoice = async (req, res) => {
           unitCode: item["cbc:InvoicedQuantity"][0]["$"].unitCode,
           price: +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"], 
           totalNoVat: +item["cbc:LineExtensionAmount"][0]["_"], // Line total
-          vatPrecent: +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]
+          vatPrecent: +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"] ? item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0] : 0
         })),
         vatAmount: +invoiceData.Invoice["cac:TaxTotal"][0]["cbc:TaxAmount"][0]["_"], // VAT amount
         taxExclusiveAmount: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxExclusiveAmount"][0]["_"],
         taxInclusiveAmount: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxInclusiveAmount"][0]["_"],
-        prePaydAmount: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"] ? invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"][0]["_"] : 0,
+        prePaydAmount: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"] ? +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"][0]["_"] : 0,
         payableAmont: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["_"], 
         currencyId: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["$"].currencyID,
         id: id
@@ -137,86 +137,5 @@ module.exports.getInvoice = async (req, res) => {
       console.log(invoiceSummary)
       return invoiceSummary
 };
-
-
-// async function downloadZipFile() {
-//     try {
-//     //   const response = await axios.get(downloadApi, {
-//     //     responseType: 'arraybuffer', // Treat the response as binary data
-//     //     headers: {
-//     //       'Authorization': `Bearer ${token}`, // Optional if you have a token
-//     //        'Accept': 'application/zip'
-//     //     },
-//     //   });
-  
-//     //
-//     //   const filePath = './downloaded_file.zip';
-//     //   fs.writeFileSync(filePath, response.data);
-//       const outputDir = './unzipped_files';
-
-//     //   const zip = new AdmZip(filePath);
-//     //   zip.extractAllTo(outputDir, true);
-      
-      
-//       const xmlFiles = fs.readdirSync(outputDir).filter(file => !file.includes('semnatura'));
-
-//       xmlFiles.forEach(file => {
-//         const xmlData = fs.readFileSync(`${outputDir}/${file}`, 'utf8');
-
-        
-//         xml2js.parseString(xmlData, (err, result) => {
-//             if (err) {
-//                 console.error(`Error parsing XML in file ${file}:`, err);
-//                 return;
-//             }
-          
-            
-//               parseInvoiceData(result)
-//             //   console.log(result)
-//           console.log(`Parsed XML from ${file}:`);
-//         //   console.log(result)
-//         //   console.log(JSON.stringify(result)); 
-//         });
-//       });
-  
-//     } catch (error) {
-//         console.log(error)
-//     }
-//   }
-
-
-// async function downloadZipFile(id) {
-//     try {
-//       const response = await axios.get(`${process.env.ANAF_DOWNLOAD_BASE_URL}?id=${id}`, {
-//         responseType: 'arraybuffer', // Treat the response as binary data
-//         headers: {
-//           'Authorization': `Bearer ${preocess.env.TOKEN_ANAF}`, 
-//           'Accept': 'application/zip',
-//         },
-//       });
-//       const zip = new AdmZip(response.data);
-//       const zipEntries = zip.getEntries(); 
-//       let invoice
-//       zipEntries.forEach(entry => {
-//         if (!entry.entryName.includes('semnatura')) {
-//           const xmlData = entry.getData().toString('utf8'); 
-//           xml2js.parseString(xmlData, (err, result) => {
-//             if (err) {
-//               console.error(`Error parsing XML:`, err);
-//               return;
-//             }
-//           invoice = parseInvoiceData(result);
-//           });
-//         }
-//       });
-//       return invoice
-  
-//     } catch (error) {
-//       console.error('Error downloading or processing the ZIP file:', error);
-//     }
-//   }
-
-
-// Call the function with your XML data
 
 

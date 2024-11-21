@@ -75,6 +75,13 @@ const invIngSchema = new Schema({
       
     }
   ],
+  eFactura: [
+    {
+      suplier: String,
+      name: String,
+      qtyCorector: Number
+    }
+  ],
   price: {
     type: Number,
     default: 0
