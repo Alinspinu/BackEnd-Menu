@@ -1,10 +1,8 @@
 const axios = require('axios')
-const https = require('https');
-const fs = require('fs')
 
 const AdmZip = require('adm-zip');
 const xml2js = require('xml2js');
-
+const Nir = require('../../models/office/nir')
 
 
 const startDate = new Date('2024-11-10').getTime()
@@ -54,6 +52,22 @@ module.exports.getInvoice = async (req, res) => {
         res.status(500).josn(err)
     }
 }
+
+
+
+  module.exports.checkInvoceStatus = async (req, res) => {
+    const {ids} = req.body;
+
+    try{
+      const nirs = await Nir.find({eFacturaId:{$in: ids}})
+      const nirsIds = nirs.map(n => n.eFacturaId)
+      res.status(200).json(nirsIds)
+    } catch(error) {
+      console.log(error)
+      rse.status(500).json(error)
+    }
+
+  }
 
 
   async function downloadZipFile(id) {

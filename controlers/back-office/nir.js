@@ -10,11 +10,18 @@ module.exports.saveNir = async( req, res, next) => {
     nir.documentDate = new Date(Date.now())
    }
    try{
+    // if(nir.eFacturaId){
+    //   const updatedNir = await Nir.findOneAndUpdate({totalDoc: {$gte: nir.totalDoc - 1, $lte: nir.totalDoc +1} , suplier: nir.suplier._id}, {$set: {eFacturaId: nir.eFacturaId}}, {new: true})
+    //   console.log(updatedNir.eFacturaId)
+    //   res.status(200).json(updatedNir)
+    // } else {
       const newNir = new Nir(nir)
       newNir.suplier = nir.suplier._id
       newNir.locatie = loc
       const savedNir = await newNir.save()
       res.status(200).json({ message: "Documentul a fost salvat cu success!", nir: savedNir });
+    // }
+    
     } catch (err) {
       console.log(err)
       res.status(500).json({message: err.message})
