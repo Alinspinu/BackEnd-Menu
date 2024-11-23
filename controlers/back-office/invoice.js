@@ -89,7 +89,7 @@ module.exports.getInvoice = async (req, res) => {
             const xmlData = entry.getData().toString('utf8'); 
             try {
                 const result = await parseXml(xmlData); 
-            //   console.log(JSON.stringify(result, null, 2))
+              console.log(JSON.stringify(result, null, 2))
                 invoice = parseInvoiceData(result, id);
                 break; 
             } catch (err) {
@@ -120,33 +120,106 @@ module.exports.getInvoice = async (req, res) => {
 
 
   const parseInvoiceData = (invoiceData, id) => {
+   const invoiceNumber = Array.isArray(invoiceData.Invoice["cbc:ID"]) 
+    ? (invoiceData.Invoice["cbc:ID"][0]["_"] || invoiceData.Invoice["cbc:ID"][0]) 
+    : invoiceData.Invoice["cbc:ID"] || 'Unknown';
+
+   const issueDate = Array.isArray(invoiceData.Invoice["cbc:IssueDate"]) 
+    ? (invoiceData.Invoice["cbc:IssueDate"][0]["_"] || invoiceData.Invoice["cbc:IssueDate"][0]) 
+    : invoiceData.Invoice["cbc:IssueDate"] || 'Unknown';
+
+   const dueDate = Array.isArray(invoiceData.Invoice["cbc:DueDate"]) 
+    ? (invoiceData.Invoice["cbc:DueDate"][0]["_"] || invoiceData.Invoice["cbc:DueDate"][0]) 
+    : (Array.isArray(invoiceData.Invoice["cbc:IssueDate"]) 
+        ? (invoiceData.Invoice["cbc:IssueDate"][0]["_"] || invoiceData.Invoice["cbc:IssueDate"][0]) 
+        : invoiceData.Invoice["cbc:IssueDate"]) || 'Unknown';
+
+   const supplier = {
+    name: Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"]) && 
+            Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"]) && 
+            Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"]) 
+        ? (invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]["_"] || 
+        invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]) 
+        : 'Unknown Supplier',
+    vatNumber: Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"]) && 
+                Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"]) && 
+                Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"]) 
+        ? (invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]["_"] || 
+        invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]) 
+        : 'Unknown VAT Number'
+    };
+
+   const customer = {
+    name: Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"]) && 
+            Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"]) && 
+            Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"]) 
+        ? (invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]["_"] || 
+        invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]) 
+        : 'Unknown Customer',
+    vatNumber: Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"]) && 
+                Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"]) && 
+                Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"]) 
+        ? (invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]["_"] || 
+        invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]) 
+        : 'Unknown VAT Number'
+    };
+    const products = invoiceData.Invoice["cac:InvoiceLine"].map(item => {
+        // Extract the name of the item
+        const itemName = Array.isArray(item["cac:Item"][0]["cbc:Name"]) 
+          ? item["cac:Item"][0]["cbc:Name"][0]["_"] || item["cac:Item"][0]["cbc:Name"][0] 
+          : item["cac:Item"][0]["cbc:Name"];
+      
+        // Extract the VAT percent
+        const vatPercent = Array.isArray(item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"]) 
+          ? +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]["_"] || +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0] 
+          : 0;
+      
+        // Extract price amount
+        const price = item["cac:Price"] && item["cac:Price"][0]["cbc:PriceAmount"]
+          ? +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"] || +item["cac:Price"][0]["cbc:PriceAmount"][0]
+          : 0;
+      
+        // Extract quantity and unit code
+        const invoicedQuantity = item["cbc:InvoicedQuantity"] && item["cbc:InvoicedQuantity"][0];
+        const quantity = invoicedQuantity ? +invoicedQuantity["_"] : 0;
+        const unitCode = invoicedQuantity && invoicedQuantity["$"] ? invoicedQuantity["$"].unitCode : 'N/A';
+      
+        // Extract total amount excluding VAT
+        const totalNoVat = item["cbc:LineExtensionAmount"] 
+          ? +item["cbc:LineExtensionAmount"][0]["_"] || +item["cbc:LineExtensionAmount"][0] 
+          : 0;
+      
+        return {
+          name: itemName,
+          quantity: quantity,
+          unitCode: unitCode,
+          price: price,
+          totalNoVat: totalNoVat,
+          vatPrecent: vatPercent
+        };
+      })
+
+      const vatAmount = +invoiceData.Invoice["cac:TaxTotal"][0]["cbc:TaxAmount"][0]["_"];
+      const  taxExclusiveAmount = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxExclusiveAmount"][0]["_"];
+      const  taxInclusiveAmount = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxInclusiveAmount"][0]["_"];
+      const  prePaydAmount = invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"] ? +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"][0]["_"] : 0;
+      const  payableAmont = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["_"]; 
+      const  currencyId = invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["$"].currencyID;
+
     const invoiceSummary = {
-        invoiceNumber: invoiceData.Invoice["cbc:ID"][0], // Invoice ID
-        issueDate: invoiceData.Invoice["cbc:IssueDate"][0], // Issue Date
-        dueDate: invoiceData.Invoice["cbc:DueDate"] ? invoiceData.Invoice["cbc:DueDate"][0] : invoiceData.Invoice["cbc:IssueDate"][0], 
-        supplier: {
-          name: invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0], // Supplier Name
-          vatNumber: invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0], // Supplier VAT
-        },
-        customer: {
-          name: invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0], // Customer Name
-          vatNumber: invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0], // Customer VAT
-        },
-        products: invoiceData.Invoice["cac:InvoiceLine"].map(item => ({
-          name: item["cac:Item"][0]["cbc:Name"][0], 
-          quantity: +item["cbc:InvoicedQuantity"][0]["_"], 
-          unitCode: item["cbc:InvoicedQuantity"][0]["$"].unitCode,
-          price: +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"], 
-          totalNoVat: +item["cbc:LineExtensionAmount"][0]["_"], // Line total
-          vatPrecent: +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"] ? item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0] : 0
-        })),
-        vatAmount: +invoiceData.Invoice["cac:TaxTotal"][0]["cbc:TaxAmount"][0]["_"], // VAT amount
-        taxExclusiveAmount: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxExclusiveAmount"][0]["_"],
-        taxInclusiveAmount: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxInclusiveAmount"][0]["_"],
-        prePaydAmount: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"] ? +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"][0]["_"] : 0,
-        payableAmont: +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["_"], 
-        currencyId: invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["$"].currencyID,
-        id: id
+        invoiceNumber, 
+        issueDate, 
+        dueDate, 
+        supplier,
+        customer,
+        products,
+        vatAmount, 
+        taxExclusiveAmount,
+        taxInclusiveAmount,
+        prePaydAmount,
+        payableAmont, 
+        currencyId,
+        id
       };
       console.log(invoiceSummary)
       return invoiceSummary
