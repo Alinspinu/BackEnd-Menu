@@ -107,7 +107,6 @@ module.exports.getPontaj = async (req, res, next) => {
             res.status(200).json(ponts)
         }
         if(month){
-            console.log(month)
             const pont = await Pontaj.findOne({locatie: loc, month: month})
             res.status(200).json(pont)
         }
@@ -153,7 +152,6 @@ module.exports.updateShedule = async (req, res, next) => {
             inputDay.setHours(0, 0, 0, 0);
             return objDay.getTime() === inputDay.getTime();
         })
-        console.log(pontaj.days)
         const dayPontUserIndex = pontaj.days[pontDayIndex].users.findIndex(obj => obj.employee.toString() === user.employee)
         if(dayPontUserIndex !== -1){
             pontaj.days[pontDayIndex].users[dayPontUserIndex].hours = user.workPeriod.hours
@@ -169,15 +167,15 @@ module.exports.updateShedule = async (req, res, next) => {
                 employee: user.employee,
                 position: us.employee.position,
                 concediu: user.concediu,
-                medical: user.medical
+                medical: user.medical,
             }
             const newPontaj =  await Pontaj.findOneAndUpdate({month: month, locatie: loc}, {$push: {[`days.${pontDayIndex}.users`]: userToPush}}, {new: true})
-            console.log(newPontaj.days[pontDayIndex].users)
         }
 
         const dayUserIndex = shedule.days[dayIndex].users.findIndex(obj => obj.employee.toString() === user.employee)
         if(dayUserIndex !== -1){
            shedule.days[dayIndex].users[dayUserIndex].workPeriod = user.workPeriod
+           shedule.days[dayIndex].users[dayUserIndex].checkIn = user.checkIn
             const newShedule = await shedule.save() 
            res.status(200).json(newShedule)
         } else {

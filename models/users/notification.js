@@ -3,12 +3,13 @@ const Schema = mongoose.Schema;
 
 
 const notificationSchema = new Schema({
-
-    sender: {
+    sender: String,
+    user: {
            type: Schema.Types.ObjectId,
            ref: 'User'
        },
     status: [String],
+    reciver: String,
     type: {
         name: String,
         data: Schema.Types.Mixed

@@ -3,7 +3,7 @@ const router = express.Router();
 const notificationCtrl = require('../controlers/notification')
 
 
-router.route('/notification')
+router.route('/')
     .get(notificationCtrl.getNotifications)
     .post(notificationCtrl.addNotification)
     .put(notificationCtrl.updateNotification)
