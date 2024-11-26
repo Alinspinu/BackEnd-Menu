@@ -23,6 +23,10 @@ const SheduleSchema = new Schema({
                     employee: {
                         type: Schema.Types.ObjectId,
                         ref: 'User'
+                    },
+                    checkIn: {
+                        type: Boolean,
+                        default: false
                     }
                 }
             ],

@@ -127,7 +127,6 @@ module.exports.getShedules = async (req, res, next) => {
             .sort({_id: -1})
             .limit(3)
             const shedule = getNowShedule(shedules)
-            console.log(shedule)
             res.status(200).json(shedule)
         }
         if(shedule === 'all'){
@@ -154,6 +153,7 @@ module.exports.updateShedule = async (req, res, next) => {
             inputDay.setHours(0, 0, 0, 0);
             return objDay.getTime() === inputDay.getTime();
         })
+        console.log(pontaj.days)
         const dayPontUserIndex = pontaj.days[pontDayIndex].users.findIndex(obj => obj.employee.toString() === user.employee)
         if(dayPontUserIndex !== -1){
             pontaj.days[pontDayIndex].users[dayPontUserIndex].hours = user.workPeriod.hours
@@ -236,9 +236,11 @@ function getNowShedule(shedules){
     const dateNow = new Date()
     dateNow.setHours(0,0,0,0)
     const shedule = shedules.find(s=> {
-        const startDate = new Date(s.days[0].date).getTime()
-        const endDate = new Date(s.days[s.days.length -1].date).getTime()
-        return dateNow.getTime() <= endDate && dateNow.getTime() >= startDate
+        const startDate = new Date(s.days[0].date)
+        const endDate = new Date(s.days[s.days.length -1].date)
+        endDate.setHours(0,0,0,0)
+        startDate.setHours(0,0,0,0)
+        return dateNow.getTime() <= endDate.getTime() && dateNow.getTime() >= startDate.getTime()
     })
     return shedule
 }

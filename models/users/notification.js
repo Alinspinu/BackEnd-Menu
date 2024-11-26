@@ -3,25 +3,24 @@ const Schema = mongoose.Schema;
 
 
 const notificationSchema = new Schema({
-    reciver: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    sender: [
-        {
+
+    sender: {
            type: Schema.Types.ObjectId,
            ref: 'User'
        },
-    ],
-    status: {
-        type: String,
-        enum: ['seen', 'unseen', 'new'],
-        default: 'new'
+    status: [String],
+    type: {
+        name: String,
+        data: Schema.Types.Mixed
     },
     eventId: String,
     event: String,
     redirectLink: String,
     message: String,
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    }
     
 },{timestamps: true})
 
