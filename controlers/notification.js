@@ -1,19 +1,25 @@
 const Notification = require('../models/users/notification');
+const Locatie = require('../models/office/locatie')
 
 
-const io = require('socket.io-client')
+const io = require('socket.io-client');
+const { sendInfoAdminEmail } = require('../utils/mail');
 const socket = io("https://live669-0bac3349fa62.herokuapp.com")
 
 module.exports.addNotification = async(req, res) => {
     const {notification} = req.body
-    console.log(notification)
     try{
         const newNot = new Notification(notification)
         const savedNot = await newNot.save()
-        console.log(savedNot)
         socket.emit('notification', JSON.stringify(savedNot))
+        if(savedNot.type.name === 'invoire' || savedNot.type.name === 'rezervare'){
+            const loc = await Locatie.findById(savedNot.locatie)
+            const data = {name: savedNot.sender, action: savedNot.message}
+            const adminEmail = 'alinz.spinu@gmail.com'
+            await sendInfoAdminEmail(data, adminEmail, loc.gmail)
+        }
         res.status(200).json(savedNot)  
-    } catch(error){
+    } catch(error){ 
         console.log(error)
         res.status(500).json(error)
     }

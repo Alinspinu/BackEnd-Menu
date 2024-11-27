@@ -89,7 +89,7 @@ module.exports.getInvoice = async (req, res) => {
             const xmlData = entry.getData().toString('utf8'); 
             try {
                 const result = await parseXml(xmlData); 
-              console.log(JSON.stringify(result, null, 2))
+              // console.log(JSON.stringify(result, null, 2))
                 invoice = parseInvoiceData(result, id);
                 break; 
             } catch (err) {

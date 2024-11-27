@@ -231,8 +231,6 @@ module.exports.login = async (req, res, next) => {
             hobbies: user.hobbies,
             description: user.description,
         };
-        const data = {name: user.name, action: 's-a conectat'}
-         sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
         res.status(200).json(sendData);
     };
 
@@ -269,9 +267,6 @@ module.exports.verifyToken = async (req, res, next) => {
                     employee: user.employee,
                     locatie: user.locatie._id
                 };
-                const data = {name: user.name, action: 's-a inregistrat'}
-                const gmail = {app: user.locatie.gmail.app, email: user.locatie.gmail.email} 
-                await sendInfoAdminEmail(data, adminEmail ,gmail)
                 res.status(200).json(userData);
             } else {
                 res.status(404).json({ message: 'User not found' });

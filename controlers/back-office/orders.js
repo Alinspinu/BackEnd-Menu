@@ -14,7 +14,7 @@ const {getIngredients, getBillProducts, createDayReport} = require('../../utils/
 const {print} = require('../../utils/print/printOrders')
 const {printBill, posPayment} = require('../../utils/print/printFiscal')
 
-const io = require('socket.io-client')
+const io = require('socket.io-client');
 const socket = io("https://live669-0bac3349fa62.herokuapp.com")
 // const socket = io("http://localhost:8090")
 
