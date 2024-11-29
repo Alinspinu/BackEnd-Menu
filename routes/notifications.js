@@ -8,6 +8,8 @@ router.route('/')
     .post(notificationCtrl.addNotification)
     .put(notificationCtrl.updateNotification)
 
+router.route('/sub').post(notificationCtrl.subscription)
+
 
 
 module.exports = router

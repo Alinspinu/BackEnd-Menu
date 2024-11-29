@@ -12,6 +12,7 @@ const path = require("path");
 const session = require("express-session");
 const helmet = require('helmet');
 
+
 const helmetConfig = require('./config/helmet');
 
 const methodOverride = require("method-override");
@@ -38,13 +39,20 @@ const sheduleRoutes = require('./routes/back-office/shedule')
 const repRoutes = require('./routes/back-office/report.js')
 const invoiceRoutes = require('./routes/back-office/invoice.js')
 const gbtRoutes = require('./routes/gbt.js')
+const reservationRoutes = require('./routes/reservation.js')
+const cron = require('node-cron');
 
 const auth = require('./auth/auth')
 
 const compression = require('compression');
 
+const {checkAndNotifyReservations} = require('./controlers/notification.js')
 
 
+
+cron.schedule('*/5 8-20 * * *', async () => {
+    await checkAndNotifyReservations();
+  });
 
 
 
@@ -94,6 +102,7 @@ mongoose.connect(dbUrl);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
+    checkAndNotifyReservations()
     console.log("Database connected");
 });
 
@@ -140,6 +149,7 @@ app.use('/shedule', sheduleRoutes);
 app.use('/report', repRoutes);
 app.use('/invoice', invoiceRoutes)
 app.use('/gbt', gbtRoutes)
+app.use('/reservation', reservationRoutes)
 
 
 

@@ -61,7 +61,10 @@ const UserTrueSchema = new Schema({
     employee: {
         startDate: Date,
         endDate: Date,
-        active: Boolean,
+        active: {
+            type: Boolean,
+            index: true
+        },
         fullName: {
             type: String,
         },
