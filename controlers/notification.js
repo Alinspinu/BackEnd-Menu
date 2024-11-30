@@ -90,15 +90,15 @@ module.exports.subscription = async (req, res) => {
 
 module.exports.checkAndNotifyReservations = async () => {
     try {
-      const now = new Date();
+     const now = new Date()
       const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
-       const  userIds = (await User.find({'employee.active': true}).select('_id')).map(u => u._id)
       const reservations = await Reservation.find({
         date: { $gte: now, $lte: oneHourLater },
         notified: false,
       });
   
       if (reservations.length > 0) {
+        const  userIds = (await User.find({'employee.active': true}).select('_id')).map(u => u._id)
         const notificationPromises = reservations.map(async (reservation) => {
             const notif = {
               sender: 'Bighiu Sergiu',
