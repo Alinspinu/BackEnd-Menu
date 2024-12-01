@@ -47,11 +47,12 @@ async function checkTopping(toppings, res, loc) {
     }
 }
 
-function formatedDateToShow(date){
+function formatedDateToShow(date, timeDifferece = 0){
     if(date){
       const inputDate = new Date(date);
-      const hours = inputDate.getHours();
-      const minutes = inputDate.getMinutes();
+      inputDate.setHours(inputDate.getHours() + timeDifferece)
+      const hours = inputDate.getHours().toLocaleString();
+      const minutes = inputDate.getMinutes().toLocaleString();
       const hour = hours.toString().padStart(2, "0") + ":" + minutes.toString().padStart(2, "0");
       const monthNames = [
         "Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",
@@ -172,6 +173,20 @@ function generateSoketId(length) {
   return crypto.randomBytes(length).toString('hex').slice(0, length);
 }
 
+
+
+function getNowShedule(shedules){
+  const dateNow = new Date()
+  dateNow.setHours(0,0,0,0)
+  const shedule = shedules.find(s=> {
+      const startDate = new Date(s.days[0].date)
+      const endDate = new Date(s.days[s.days.length -1].date)
+      endDate.setHours(0,0,0,0)
+      startDate.setHours(0,0,0,0)
+      return dateNow.getTime() <= endDate.getTime() && dateNow.getTime() >= startDate.getTime()
+  })
+  return shedule
+}
 module.exports = {
     comparePasswords, 
     hashPassword, 
@@ -185,7 +200,8 @@ module.exports = {
     sendToPrint,
     handleError,
     convertToDateISOString,
-    generateSoketId
+    generateSoketId,
+    getNowShedule
 }
 
 

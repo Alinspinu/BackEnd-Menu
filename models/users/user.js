@@ -13,6 +13,13 @@ const UserTrueSchema = new Schema({
     password: {
         type: String,
     },
+    checkIn: {
+       value: {
+        type: Boolean,
+        defauld: false
+       },
+        date: Date
+    },
     email: {
         type: String,
         required: true
@@ -61,6 +68,7 @@ const UserTrueSchema = new Schema({
     employee: {
         startDate: Date,
         endDate: Date,
+        birthDate: Date,
         active: {
             type: Boolean,
             index: true
@@ -92,6 +100,7 @@ const UserTrueSchema = new Schema({
         access: {
             type: Number,
         },
+        zodie: String,
         docs: [
             {
                 name: String,

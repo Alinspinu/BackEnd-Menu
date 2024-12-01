@@ -3,13 +3,13 @@ const Shedule = require('../../models/users/shedule')
 const Pontaj = require('../../models/users/pontaj')
 const User = require('../../models/users/user')
 const mongoose = require('mongoose');
+const {getNowShedule} = require('../../utils/functions')
 
 
 
 module.exports.addShedule = async (req, res, next) => {
     const {loc} = req.body
     try{   
-        // const date = new Date('Sept 2, 2024')
         const lastShedule = await Shedule.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
         const date = new Date(lastShedule.days[6].date)
         
@@ -171,7 +171,6 @@ module.exports.updateShedule = async (req, res, next) => {
             }
             const newPontaj =  await Pontaj.findOneAndUpdate({month: month, locatie: loc}, {$push: {[`days.${pontDayIndex}.users`]: userToPush}}, {new: true})
         }
-
         const dayUserIndex = shedule.days[dayIndex].users.findIndex(obj => obj.employee.toString() === user.employee)
         if(dayUserIndex !== -1){
            shedule.days[dayIndex].users[dayUserIndex].workPeriod = user.workPeriod
@@ -230,15 +229,3 @@ module.exports.deletePontaj = async (req, res, next) => {
     }
 }
 
-function getNowShedule(shedules){
-    const dateNow = new Date()
-    dateNow.setHours(0,0,0,0)
-    const shedule = shedules.find(s=> {
-        const startDate = new Date(s.days[0].date)
-        const endDate = new Date(s.days[s.days.length -1].date)
-        endDate.setHours(0,0,0,0)
-        startDate.setHours(0,0,0,0)
-        return dateNow.getTime() <= endDate.getTime() && dateNow.getTime() >= startDate.getTime()
-    })
-    return shedule
-}

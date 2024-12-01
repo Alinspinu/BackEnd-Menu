@@ -71,6 +71,19 @@ module.exports.register = async (req, res, next) => {
 };
 
 
+module.exports.checkInOrOut = async (req, res) => {
+    const {userId, checkIn} = req.body
+    try{
+        const user = await User.findByIdAndUpdate(userId, {checkIn: checkIn}, {new: true})
+        res.status(200).json({message: 'utilizatorul a fost actualizat', user: user})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
+
 
 module.exports.registerNewEmployee = async (req, res) => {
     try{
@@ -215,7 +228,7 @@ module.exports.login = async (req, res, next) => {
             };
         });
     } else if (user.status === "active") {
-        const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: '7d'});
+        const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: '1d'});
         const sendData = {
             token: token,
             name: user.name,
@@ -230,6 +243,7 @@ module.exports.login = async (req, res, next) => {
             profilePic: user.profilePic,
             hobbies: user.hobbies,
             description: user.description,
+            checkIn: user.checkIn,
         };
         res.status(200).json(sendData);
     };

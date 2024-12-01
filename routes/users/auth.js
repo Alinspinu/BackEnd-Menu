@@ -19,6 +19,8 @@ router.route('/new-employee').post(authRoutes.registerNewEmployee)
 
 router.route('/verify-employee-token').post(authRoutes.verifyEmployeeToken)
 
+router.route('/checkIn').post(authRoutes.checkInOrOut)
+
 
 // router.route('/new-user').get(authRoutes.newUser)
 

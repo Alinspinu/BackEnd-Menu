@@ -12,34 +12,13 @@ const Cookie = require('../models/utils/cookie')
     apiKey: process.env.GBT_APY_KEY
   });
   
-  async function generateResponse(prompt) {
-    try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini', 
-        messages: [
-          { role: 'user',
-           content: prompt,
-           },
-           {
-           role: 'system',
-           content: `Ești un terapeut drăguț care vrea să ajute oamenii să-si depasească condiția. Verifică și corectează textul de greseli gramaticale și de exprimare înaite de a-l trimite.`
-           } 
-          ],
-        temperature: 0.8,
-        top_p: 1
-      });
-      return response.choices[0].message.content
-    } catch (error) {
-      console.error('Error generating response:', error);
-      throw(error)
-    }
-  }
+
 
 
 module.exports.getMessage = async (req, res, next) => {
     try{
         const {request, data} = req.body
-        const response = await generateResponse(request)
+        const response = await generateMood(request)
 
         const dataa = {
           name: 'Mood On', 
@@ -55,13 +34,17 @@ module.exports.getMessage = async (req, res, next) => {
             secret: process.env.CAFETISH_SECRET + '=' 
           }
         }
-        sendInfoAdminEmail(dataa, adminEmail, gmail)
+        // sendInfoAdminEmail(dataa, adminEmail, gmail)
         res.status(200).json({message: response})
     } catch(err){
         console.log(err)
         res.status(500).json(err)
     }
 }
+
+
+
+
 
 
 module.exports.saveCookie = async (req, res) => {
@@ -94,5 +77,57 @@ module.exports.getCookie = async (req, res) => {
   } catch(err){
     console.log(err)
     res.status(500).json(err)
+  }
+}
+
+
+
+module.exports.get
+
+
+
+
+async function generateResponse(prompt) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', 
+      messages: [
+        { role: 'user',
+         content: prompt,
+         },
+         {
+         role: 'system',
+         content: `Ești un terapeut drăguț care vrea să ajute oamenii să-si depasească condiția. Verifică și corectează textul de greseli gramaticale și de exprimare înaite de a-l trimite.`
+         } 
+        ],
+      temperature: 0.8,
+      top_p: 1
+    });
+    return response.choices[0].message.content
+  } catch (error) {
+    console.error('Error generating response:', error);
+    throw(error)
+  }
+}
+async function generateMood(prompt, system) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', 
+      messages: [
+        { role: 'user',
+         content: 'Abia m-am trezit și trebuie sa merg serviciu sunt asistent manager. Fa-ma sa ma simt bine in 50 de cuvine folosindu-te de un banc.',
+         },
+         {
+         role: 'system',
+         content: `Ești un terapeut glumet. Este vorba de spre barbat de 22  de ani pe nume Ana. Nu mentiona varsta.`
+         } 
+        ],
+      temperature: 0.8,
+      top_p: 1
+    });
+    return response.choices[0].message.content
+  } catch (error) {
+    console.error('Error generating response:', error);
+    throw(error)
   }
 }

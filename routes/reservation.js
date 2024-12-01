@@ -8,5 +8,7 @@ router.route('/')
     .put(resControlers.updateReservation)
     .delete(resControlers.deleteReservation)
 
+router.route('/id').get(resControlers.getReservationById)
+
 
 module.exports = router

@@ -36,6 +36,17 @@ module.exports.addReservation = async(req, res)  => {
     }
 }
 
+module.exports.getReservationById = async(req, res) => {
+    const {id} = req.query
+    try{
+        const reservation = await Reservation.findById(id)
+        res.status(200).json(reservation)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 module.exports.updateReservation = async(req, res) => {
     const {update, id} = req.body
     try{

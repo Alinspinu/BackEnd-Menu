@@ -47,6 +47,7 @@ const auth = require('./auth/auth')
 const compression = require('compression');
 
 const {checkAndNotifyReservations} = require('./controlers/notification.js')
+const {sendGreating} = require('./controlers/notification.js')
 
 
 
@@ -102,7 +103,7 @@ mongoose.connect(dbUrl);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
-    checkAndNotifyReservations()
+   sendGreating()
     console.log("Database connected");
 });
 

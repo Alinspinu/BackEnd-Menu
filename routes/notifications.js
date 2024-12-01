@@ -10,6 +10,8 @@ router.route('/')
 
 router.route('/sub').post(notificationCtrl.subscription)
 
+router.route('/id').get(notificationCtrl.getNotificationById)
+
 
 
 module.exports = router

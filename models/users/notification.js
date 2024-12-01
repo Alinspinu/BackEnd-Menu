@@ -9,7 +9,7 @@ const notificationSchema = new Schema({
            ref: 'User'
        },
     status: [String],
-    reciver: String,
+    reciver: [String],
     type: {
         name: String,
         data: Schema.Types.Mixed
