@@ -2,18 +2,16 @@ if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
 }
 const axios = require('axios');
-const querystring = require('querystring');
-const { json } = require('body-parser');
+const mongoose = require('mongoose')
 
 const User = require('../../models/users/user');
 const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
-const Locatie = require('../../models/office/locatie')
+const Table = require('../../models/utils/table')
 
 const { round, sendToPrint, handleError } = require('../../utils/functions')
 const {reports, inAndOut, printBill, posPayment, printNefiscal} = require('../../utils/print/printFiscal')
 const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
-const https = require('https');
 
 
 const io = require('socket.io-client')
@@ -248,9 +246,12 @@ module.exports.printBill = async (req, res, next) => {
         }
 
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
+        const billId = new mongoose.Types.ObjectId(bill._id);
+        await Table.findOneAndUpdate({bills: billId}, {$pull: {bills: billId}}) 
         socket.emit('billl', JSON.stringify(savedBill))
         if(savedBill){
         res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+        res.status(200)
         } else {
             throw new Error('Nota de plată nu a putut fi salvată!')
         }
@@ -278,42 +279,42 @@ module.exports.saveBillInCloud = async (req, res, next) => {
     
         const billl = await Order.findOne({soketId: bill.soketId})
     
-        if(!billl){
-            // console.log('bill not found')
-            delete bill._id
-            const order = new Order(bill);
-            const savedBill = await order.save()
-            if(savedBill){
-                savedBill.products.map(async (el) => {
-                if (el.toppings.length) {
-                  await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-                if (el.ings.length) {
-                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-            });
-            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-            } else {
-                throw new Error('Nota de plată nu a putut fi salvată!')
-            }
-        } else {
-            billl.status = 'done'
-            billl.pending = false
-            billl.tips = bill.tips
-            billl.total = bill.total
-            billl.payment = bill.payment
-            const savedBill = await billl.save()
-            console.log('saved bill in cloud-- STATUS-', savedBill.status, 'payment---', savedBill.payment )
-            billl.products.map(async (el) => {
-                if (el.toppings.length) {
-                  await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-                if (el.ings.length) {
-                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-            });
-            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-        }
+        // if(!billl){
+        //     // console.log('bill not found')
+        //     delete bill._id
+        //     const order = new Order(bill);
+        //     const savedBill = await order.save()
+        //     if(savedBill){
+        //         savedBill.products.map(async (el) => {
+        //         if (el.toppings.length) {
+        //           await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+        //         }
+        //         if (el.ings.length) {
+        //            await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+        //         }
+        //     });
+        //     res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+        //     } else {
+        //         throw new Error('Nota de plată nu a putut fi salvată!')
+        //     }
+        // } else {
+        //     billl.status = 'done'
+        //     billl.pending = false
+        //     billl.tips = bill.tips
+        //     billl.total = bill.total
+        //     billl.payment = bill.payment
+        //     const savedBill = await billl.save()
+        //     console.log('saved bill in cloud-- STATUS-', savedBill.status, 'payment---', savedBill.payment )
+        //     billl.products.map(async (el) => {
+        //         if (el.toppings.length) {
+        //           await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+        //         }
+        //         if (el.ings.length) {
+        //            await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+        //         }
+        //     });
+        //     res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+        // }
     } catch(err) {
         console.log(err)
         res.status(500).json(err)

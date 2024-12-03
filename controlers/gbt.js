@@ -18,7 +18,7 @@ const Cookie = require('../models/utils/cookie')
 module.exports.getMessage = async (req, res, next) => {
     try{
         const {request, data} = req.body
-        const response = await generateMood(request)
+        const response = await generateResponse(request)
 
         const dataa = {
           name: 'Mood On', 
@@ -34,7 +34,7 @@ module.exports.getMessage = async (req, res, next) => {
             secret: process.env.CAFETISH_SECRET + '=' 
           }
         }
-        // sendInfoAdminEmail(dataa, adminEmail, gmail)
+        sendInfoAdminEmail(dataa, adminEmail, gmail)
         res.status(200).json({message: response})
     } catch(err){
         console.log(err)
@@ -82,7 +82,6 @@ module.exports.getCookie = async (req, res) => {
 
 
 
-module.exports.get
 
 
 
@@ -109,17 +108,21 @@ async function generateResponse(prompt) {
     throw(error)
   }
 }
-async function generateMood(prompt, system) {
+
+
+module.exports.generateMood = async (messageData) => {
+  const prompt = `${messageData.status}. Folosindu-te de un banc si un citatat (sa fie cat mai unice). maxim 100 de cuvinte`
+  const system = `Ești un terapeut glumet. Este vorba de spre ${messageData.gender} de ${messageData.age} de ani pe nume ${messageData.name}, este in zodia ${messageData.zodie} și are functia de ${messageData.position} într-o cafenea restaurant. Nu mentiona varsta, zodia sau functia.`
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini', 
       messages: [
         { role: 'user',
-         content: 'Abia m-am trezit și trebuie sa merg serviciu sunt asistent manager. Fa-ma sa ma simt bine in 50 de cuvine folosindu-te de un banc.',
+         content: prompt,
          },
          {
          role: 'system',
-         content: `Ești un terapeut glumet. Este vorba de spre barbat de 22  de ani pe nume Ana. Nu mentiona varsta.`
+         content: system
          } 
         ],
       temperature: 0.8,
