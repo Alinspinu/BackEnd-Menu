@@ -2,6 +2,7 @@ const Ingredient = require('../../models/office/inv-ingredient')
 const {round} = require('./../../utils/functions')
 const Inventary = require('../../models/office/inventary')
 const Order = require('../../models/office/product/order')
+const DelProd = require('../../models/office/product/deletetProduct')
 
 
 
@@ -28,8 +29,8 @@ module.exports.saveIng = async(req, res, next) => {
       console.log('page', page)
       try{  
         const items = await Ingredient.find({locatie: loc}).skip(skip).limit(limit)
-          .select([ '-unloadLog', '-uploadLog', '-inventary'])
-          .populate({path: 'ings.ing', select: '-unloadLog -uploadLog -inventary'});
+          .select([ '-unloadLog', '-uploadLog'])
+          .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'});
         const totalItems = 1100
         console.log(totalItems)
         const totalPages = Math.ceil(totalItems / limit);
@@ -105,7 +106,6 @@ module.exports.saveIng = async(req, res, next) => {
             day: formattedDate,
             qty: ing.qty
           };
-          console.log(entry);
     
           // Use updateOne to update the inventory field only
           return Ingredient.updateOne(
@@ -130,6 +130,7 @@ module.exports.saveManualInventary = async (req, res, next) => {
     ing.inventary.forEach(inv => {
       if(inv.index === data.invIndex){
         inv.faptic = data.qtyInv
+        inv.qty = data.scriptic
       }
     })
     const newIng = await ing.save()
@@ -139,6 +140,18 @@ module.exports.saveManualInventary = async (req, res, next) => {
     res.status(500).json({message: err.message})
   }
 }
+
+module.exports.getIng = async (req, res) => {
+  const {id} = req.query
+  try{
+    const ing = await Ingredient.findById(id).populate({path: 'ings.ing', select: 'name um'})
+    res.status(200).json(ing)
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
 
 module.exports.saveInv = async (req, res, next) => {
   try{
@@ -161,7 +174,6 @@ module.exports.saveInv = async (req, res, next) => {
           newIng.gestiune = ing.gestiune
           newIng.dep = ing.dep
           newIng.um = ing.um
-
           foundFirstMatch = true;
           
         }
@@ -203,10 +215,14 @@ module.exports.compareScriptic = async (req, res, next) => {
   try{
     let ingredients = []
     let consIngs = []
+    let delIngs = []
     const {start, end, loc} = req.body
     const startTime = new Date(start).setUTCHours(0,0,0,0)
     const endTime = new Date(end).setUTCHours(0,0,0,0)
     const ings = await Ingredient.find({locatie: loc,  productIngredient: false, dep: { $in: ['marfa', 'materie']}}).select('name uploadLog um')
+    const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'})
+          .populate({path: 'billProduct.ings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
+          .populate({path: 'billProduct.toppings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
     const firstInventary = await Inventary.findOne({date: startTime, locatie: loc})
     const lastInventary = await Inventary.findOne({date: endTime, locatie: loc})
     const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}}).populate([
@@ -219,12 +235,75 @@ module.exports.compareScriptic = async (req, res, next) => {
         populate: {path: 'ings.ing'}
       }
     ])
+
+    if(delProds){
+      delProds.forEach(delProduct => {
+        const product = delProduct.billProduct
+        product.ings.forEach(ing => {
+          if(ing.ings && ing.ings.length){
+            ing.ings.forEach(ig => {
+              const existingIng = delIngs.find(i => i.ing.name === ig.ing.name)
+              if(existingIng){
+                const updatedIng = {
+                  qty: existingIng.qty + ig.qty,
+                  ing: existingIng.ing
+                }
+                delIngs = delIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+              } else{
+                delIngs.push(ig)
+              }
+            })
+          } else{
+            if(ing && ing.ing){
+              const existingIngredient = delIngs.find(p =>p.ing.name === ing.ing.name);
+              if (existingIngredient) {
+                const updatedIng = {
+                  qty: existingIngredient.qty + ing.qty,
+                  ing: existingIngredient.ing
+                }
+                delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+              } else {
+                delIngs.push(ing);
+              }
+            }
+          }
+        })
+        product.toppings.forEach(ing => {
+          if(ing.ing.ings && ing.ing.ings.length){
+            ing.ing.ings.forEach(ig => {
+              const existingIng = delIngs.find(i => i.ing.name === ig.ing.name)
+              if(existingIng){
+                const updatedIng = {
+                  qty: existingIng.qty + ig.qty,
+                  ing: existingIng.ing
+                }
+                delIngs = delIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+              } else{
+                delIngs.push(ig)
+              }
+            })
+          } else{
+            if(ing && ing.ing){
+              const existingIngredient = delIngs.find(p =>p.ing.name === ing.ing.name);
+              if (existingIngredient) {
+                const updatedIng = {
+                  qty: existingIngredient.qty + ing.qty,
+                  ing: existingIngredient.ing
+                }
+                delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+              } else {
+                delIngs.push(ing);
+              }
+            }
+          }
+        })
+      })
+    }
       if(orders){
-        console.log('comenzi', orders.length)
         orders.forEach(order=> {
           order.products.forEach(product => {
             product.ings.forEach(ing => {
-             
+          
               if(ing.ings && ing.ings.length){
                 ing.ings.forEach(ig => {
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
@@ -306,6 +385,7 @@ module.exports.compareScriptic = async (req, res, next) => {
           scripticUnload: 0,
           saleUnload: 0,
           gestiune: ing.gestiune,
+          depVal: 0,
           dep: ing.dep,
           upload: {
             value: 0,
@@ -330,6 +410,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         scripticUnload: 0,
         saleUnload: 0,
         gestiune: ing.gestiune,
+        depVal: 0,
         dep: ing.dep,
         upload: {
           value: 0,
@@ -360,15 +441,41 @@ module.exports.compareScriptic = async (req, res, next) => {
       })
     })
 
+    delIngs.forEach(ing => {
+      const compareIng = {
+        name: ing.ing.name,
+        um: ing.ing.um,
+        first: 0,
+        second: 0,
+        scripticUnload: 0,
+        saleUnload: 0,
+        gestiune: ing.gestiune,
+        depVal: ing.qty,
+        dep: ing.dep,
+        upload: {
+          value: 0,
+          entries: []
+        },
+      }
+      const existingIng = ingredients.find(ingd => ingd.name === compareIng.name)
+      if(existingIng){
+        existingIng.depVal += compareIng.depVal
+      } else {
+        ingredients.push(compareIng)
+      }
+    })
+    console.log(delIngs)
+
     consIngs.forEach(ing => {
       const compareIng = {
         name: ing.ing.name,
-        um: ing.um,
+        um: ing.ing.um,
         first: 0,
         second: 0,
         scripticUnload: 0,
         saleUnload: ing.qty,
         gestiune: ing.gestiune,
+        depVal: 0,
         dep: ing.dep,
         upload: {
           value: 0,
@@ -523,4 +630,29 @@ module.exports.updateStoc = async (req, res, next) => {
   }
 
 
+
+  module.exports.fixbuBulealaOvi = async(req, res) => {
+    const {loc} = req.query
+    try{
+      // const firstDate = new Date('2024-12-02')
+      // const fuckDate = new Date('2024-12-03')
+      // firstDate.setUTCHours(23, 0, 0, 0, 0);
+      // fuckDate.setUTCHours(23, 0, 0, 0, 0);
+      // const ings = await Ingredient.find({locatie: loc, gestiune: 'bar'}).select('inventary name')
+  
+  
+      // for(let ing of ings){
+      //   const firstInv = ing.inventary.find(i => new Date(i.day).getTime() === firstDate.getTime())
+      //   ing.inventary[ing.inventary.length - 1].faptic = firstInv.faptic
+      //   const savedIng = await ing.save()
+      //   console.log('inventar salvat pentru ingredientul--', savedIng.name)
+      // }
+  
+      res.status(200).json({message: 'all done'})
+  
+    } catch(error) {
+      console.log(error)
+    }
+  }
+  
 

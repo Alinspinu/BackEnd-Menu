@@ -103,6 +103,7 @@ const invIngSchema = new Schema({
     default: 'magazie',
     index: true
   },
+  recipe: String,
   dep: {
     type: String,
   },

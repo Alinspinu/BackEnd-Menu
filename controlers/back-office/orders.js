@@ -202,6 +202,10 @@ module.exports.getAllOrders = async (req, res, next) => {
 }
 
 
+
+// c
+
+
 module.exports.orderDone = async (req, res, next) => {
     try{
         const { cmdId } = req.query
@@ -338,7 +342,6 @@ module.exports.deleteOrder = async (req, res, next) => {
 
 
 
-
 module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     const {product} = req.body
     const { ['_id']:_, ...newProduct } = product;
@@ -386,6 +389,7 @@ module.exports.saveOrder = async (req, res, next) => {
         if (order.user !== 'john doe') {
             const newOrder = new Order(order) 
             const user = await User.findById(order.user);
+            console.log(user)
             if (user) {
                 newOrder.clientInfo.email = user.email
                 newOrder.clientInfo.discount = user.discount
@@ -410,6 +414,7 @@ module.exports.saveOrder = async (req, res, next) => {
                 if(order.payOnline){
                     action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
+
                 socket.emit('orderId', JSON.stringify(savedOrder))
                 sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
                 res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate });
@@ -419,7 +424,7 @@ module.exports.saveOrder = async (req, res, next) => {
             delete order.user
             const newOrder = new Order(order) 
             const savedOrder = await newOrder.save();
-
+            console.log(savedOrder)
             socket.emit('orderId', JSON.stringify(savedOrder))
 
             const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})

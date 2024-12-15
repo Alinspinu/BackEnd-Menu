@@ -1,8 +1,56 @@
 
 const Report = require('./../../models/office/report')
+const Survey = require('../../models/office/survey')
 const {round, formatedDateToShow} = require('./../../utils/functions')
 
 
+
+
+
+module.exports.addSurvey = async (req, res) => {
+    const {survey} = req.body
+    try{
+        const newSurvey = new Survey(survey)
+        const savedSurvey = await newSurvey.save()
+        res.status(200).json(savedSurvey)
+    }catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.editSurvey = async (req, res) => {
+    const {survey} = req.body
+    try{
+        const updatedSurvey = await Survey.findByIdAndUpdate(survey._id, survey, {new: true})
+        res.status(200).json(updatedSurvey)
+    }catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.getSurveys = async (req, res) => {
+    const {loc} = req.query
+    try{
+        const surveys = await Survey.find({locatie: loc})
+        res.status(200).json(surveys)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.getSurvey = async (req, res) => {
+    const {id} = req.query
+    try{
+        const survey = await Survey.findById(id)
+        res.status(200).json(survey)
+    }catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
 
 
 module.exports.getReports = async(req, res, next) => {
@@ -22,7 +70,6 @@ module.exports.getReports = async(req, res, next) => {
 
 module.exports.getReportsDates = async (req, res) => {
     try{
-        console.log('hit the function')
         const {loc} = req.query
         const firstRep = await Report.find({locatie: loc}).sort({day: 1}).limit(1)
         const lastRep = await Report.find({locatie: loc}).sort({day: -1}).limit(1)

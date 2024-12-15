@@ -279,42 +279,42 @@ module.exports.saveBillInCloud = async (req, res, next) => {
     
         const billl = await Order.findOne({soketId: bill.soketId})
     
-        // if(!billl){
-        //     // console.log('bill not found')
-        //     delete bill._id
-        //     const order = new Order(bill);
-        //     const savedBill = await order.save()
-        //     if(savedBill){
-        //         savedBill.products.map(async (el) => {
-        //         if (el.toppings.length) {
-        //           await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-        //         }
-        //         if (el.ings.length) {
-        //            await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-        //         }
-        //     });
-        //     res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-        //     } else {
-        //         throw new Error('Nota de plată nu a putut fi salvată!')
-        //     }
-        // } else {
-        //     billl.status = 'done'
-        //     billl.pending = false
-        //     billl.tips = bill.tips
-        //     billl.total = bill.total
-        //     billl.payment = bill.payment
-        //     const savedBill = await billl.save()
-        //     console.log('saved bill in cloud-- STATUS-', savedBill.status, 'payment---', savedBill.payment )
-        //     billl.products.map(async (el) => {
-        //         if (el.toppings.length) {
-        //           await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-        //         }
-        //         if (el.ings.length) {
-        //            await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-        //         }
-        //     });
-        //     res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-        // }
+        if(!billl){
+            // console.log('bill not found')
+            delete bill._id
+            const order = new Order(bill);
+            const savedBill = await order.save()
+            if(savedBill){
+                savedBill.products.map(async (el) => {
+                if (el.toppings.length) {
+                  await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+                if (el.ings.length) {
+                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+            });
+            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+            } else {
+                throw new Error('Nota de plată nu a putut fi salvată!')
+            }
+        } else {
+            billl.status = 'done'
+            billl.pending = false
+            billl.tips = bill.tips
+            billl.total = bill.total
+            billl.payment = bill.payment
+            const savedBill = await billl.save()
+            console.log('saved bill in cloud-- STATUS-', savedBill.status, 'payment---', savedBill.payment )
+            billl.products.map(async (el) => {
+                if (el.toppings.length) {
+                  await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+                if (el.ings.length) {
+                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+            });
+            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+        }
     } catch(err) {
         console.log(err)
         res.status(500).json(err)

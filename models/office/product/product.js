@@ -46,6 +46,7 @@ const productTrueSchema = new Schema({
             
     ],
     price: Number,
+    recipe: String,
     description: String,
     longDescription: String,
     tva: Number,

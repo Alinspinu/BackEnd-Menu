@@ -586,7 +586,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     }
                 })
                 const existingUser = users.find(u => u.name === employee.name)
-                if(existingUser){
+                if(existingUser && existingUser.employee){
                     existingUser.hours += employee.hours
                     existingUser.totalIncome = existingUser.employee.salary.fix ? 0 : round(existingUser.totalIncome + employee.totalIncome)
                     existingUser.bonus = existingUser.employee.salary.fix ? 0 : round(existingUser.bonus + employee.bonus)

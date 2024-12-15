@@ -12,5 +12,12 @@ router.route('/all')
 router.route('/update').get(repCont.updateRap)
 router.route('/delete').delete(repCont.deleteReport)
 
+router.route('/survey')
+    .get(repCont.getSurveys)
+    .post(repCont.addSurvey)
+    .put(repCont.editSurvey)
+
+router.route('/get-survey').get(repCont.getSurvey)
+
 
 module.exports = router

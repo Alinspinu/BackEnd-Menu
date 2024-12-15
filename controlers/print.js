@@ -541,6 +541,10 @@ module.exports.printNir = async (req, res, next) => {
           if(filter && filter.dep.length){
             filterTo.dep = filter.dep
           }
+          // filterTo.gestiune = 'bucatarie'
+          // filterTo.ings = { $eq: [] }
+          // filter.dep = 'marfa'
+
           filterTo.locatie = loc
     try{
         const workbook = new exceljs.Workbook();

@@ -124,8 +124,9 @@ module.exports.getNirs = async(req, res, next) => {
   try{
     const nirs = await Nir.find({locatie: loc})
           .sort({ createdAt: -1 })
-          .limit(40)
+          .limit(100)
           .populate({path: 'suplier'})
+          
     res.status(200).json(nirs)
   } catch(err) {
     console.log(err)

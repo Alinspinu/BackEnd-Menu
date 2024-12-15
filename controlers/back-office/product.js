@@ -13,8 +13,8 @@ const {checkTopping, round} = require('../../utils/functions')
       const {loc} = req.body
       const products = await Product.find({locatie: loc}).populate([
         {path: 'category', select: 'name'}, 
-        {path: 'subProducts', populate: {path: 'ings.ing', select: 'price name'}},
-        {path: 'ings.ing', select: 'price name'}
+        {path: 'subProducts', populate: {path: 'ings.ing', select: 'price name um productIngredient'}},
+        {path: 'ings.ing', select: 'price name um productIngredient'}
     ])
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
@@ -110,7 +110,7 @@ const {checkTopping, round} = require('../../utils/functions')
 }
 
 module.exports.editProduct = async (req, res, next) => {
-    const { category, name, price, qty, description, order, longDescription, printer, tva, dep, sgrTax, printOut } = req.body
+    const { category, name, price, qty, description, order, longDescription, printer, tva, dep, sgrTax, printOut, recipe } = req.body
     const { id } = req.query
     try{
         if(req.body.sub){
@@ -135,6 +135,7 @@ module.exports.editProduct = async (req, res, next) => {
                     oldProduct.toppings = toppings;
                 }
                 oldProduct.sgrTax = sgrTax;
+                oldProduct.recipe = recipe
                 oldProduct.name = name;
                 oldProduct.price = price;
                 oldProduct.qty = qty;
@@ -264,7 +265,6 @@ module.exports.delProduct = async (req, res, next) => {
     try {
         const { id } = req.query
         const product = await Product.findById(id)
-        console.log(product)
         if (!product.subProducts.length) {
             if (!product.image.filename === 'no_image_dreptunghi_ktwclc') {
                 await cloudinary.uploader.destroy(product.image.filename)

@@ -98,8 +98,9 @@ module.exports.getPontaj = async (req, res, next) => {
         if(pont === 'last'){
             const pontajs = await Pontaj.find({locatie: loc})
                 .sort({_id: -1})
-                .limit(2)
+                .limit(3)
             const pontaj = getNowShedule(pontajs)    
+            console.log(pontaj)
             res.status(200).json(pontaj)
         }
         if(pont === 'all'){
@@ -125,11 +126,12 @@ module.exports.getShedules = async (req, res, next) => {
             const shedules = await Shedule.find({locatie: loc})
             .sort({_id: -1})
             .limit(3)
+            .populate({path: 'days.users.employee', select: 'employee.fullName'})
             const shedule = getNowShedule(shedules)
             res.status(200).json(shedule)
         }
         if(shedule === 'all'){
-            const shedules = await Shedule.find({locatie: loc})
+            const shedules = await Shedule.find({locatie: loc}).populate({path: 'days.users.employee', select: 'employee.fullName'})
             res.status(200).json(shedules)
         }
     } catch(err){
@@ -142,7 +144,7 @@ module.exports.updateShedule = async (req, res, next) => {
     const {sheduleId, day, user, month, dayValue, loc} = req.body
     try{
         const pontaj = await Pontaj.findOne({month: month, locatie: loc})
-        const shedule = await Shedule.findById(sheduleId)
+        const shedule = await Shedule.findById(sheduleId).populate({path: 'days.users.employee', select: 'employee.fullName'})
         const us = await User.findById(user.employee).select('employee').populate({path: 'employee',select: 'position' })
         const dayIndex = shedule.days.findIndex(obj => obj.day === day.day)
         const pontDayIndex = pontaj.days.findIndex(obj => {
@@ -171,14 +173,16 @@ module.exports.updateShedule = async (req, res, next) => {
             }
             const newPontaj =  await Pontaj.findOneAndUpdate({month: month, locatie: loc}, {$push: {[`days.${pontDayIndex}.users`]: userToPush}}, {new: true})
         }
-        const dayUserIndex = shedule.days[dayIndex].users.findIndex(obj => obj.employee.toString() === user.employee)
+
+        const dayUserIndex = shedule.days[dayIndex].users.findIndex(obj => obj.employee._id.toString() === user.employee);
         if(dayUserIndex !== -1){
            shedule.days[dayIndex].users[dayUserIndex].workPeriod = user.workPeriod
            shedule.days[dayIndex].users[dayUserIndex].checkIn = user.checkIn
-            const newShedule = await shedule.save() 
+            const savedShedule =  await shedule.save() 
+             const newShedule = await Shedule.findById(savedShedule._id).populate({path: 'days.users.employee', select: 'employee.fullName'})
            res.status(200).json(newShedule)
         } else {
-          const newShedule = await Shedule.findOneAndUpdate({_id: sheduleId}, {$push: {[`days.${dayIndex}.users`]: user}}, {new: true})
+          const newShedule = await Shedule.findOneAndUpdate({_id: sheduleId}, {$push: {[`days.${dayIndex}.users`]: user}}, {new: true}).populate({path: 'days.users.employee', select: 'employee.fullName'})
           res.status(200).json(newShedule)
         }  
     } catch(err){
@@ -208,8 +212,8 @@ module.exports.deletEntry = async (req, res, next) => {
         const newShedule = await Shedule.findOneAndUpdate(
             {_id: sheduleId}, 
             {$pull: {[`days.${dayIndex}.users`]: {employee: userId}}}, 
-            {new: true})
-            console.log(newShedule.days[dayIndex])
+            {new: true}).populate({path: 'days.users.employee', select: 'employee.fullName'})
+         
         res.status(200).json(newShedule)
     } catch(err){
         console.log(err)

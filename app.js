@@ -9,7 +9,6 @@ const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const path = require("path");
-const session = require("express-session");
 const helmet = require('helmet');
 
 
@@ -42,12 +41,12 @@ const gbtRoutes = require('./routes/gbt.js')
 const reservationRoutes = require('./routes/reservation.js')
 const cron = require('node-cron');
 
-const auth = require('./auth/auth')
+const {authApi} = require('./auth/auth')
 
 const compression = require('compression');
 
 const {checkAndNotifyReservations} = require('./controlers/notification.js')
-const {sendGreating} = require('./controlers/notification.js')
+
 
 
 
@@ -103,7 +102,6 @@ mongoose.connect(dbUrl);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
-//    sendGreating()
     console.log("Database connected");
 });
 
@@ -131,26 +129,26 @@ app.use("/orders", ordersTrueRoutes);
 app.use('/pay', payRoutes);
 app.use('/auth', authRoutes);
 app.use('/nutrition', nutritionRoutes);
-app.use('/register', registerRoutes);
-app.use('/table',tableRoutes);
-app.use('/users', auth.basicAuth, usersRoutes);
+app.use('/register', authApi, registerRoutes);
+app.use('/table', authApi, tableRoutes);
+app.use('/users', authApi, usersRoutes);
 // app.use('/message', messRoutes);
-app.use('/notification', notifRoutes)
+app.use('/notification', authApi, notifRoutes)
 app.use("/top", toppingRoutes);
-app.use('/suplier', suplierRoutes);
-app.use('/nir', nirRoutes);
+app.use('/suplier', authApi, suplierRoutes);
+app.use('/nir', authApi, nirRoutes);
 app.use('/product', productRoutes);
-app.use('/ing', ingRoutes);
-app.use('/sub', subRoutes);
+app.use('/ing', authApi, ingRoutes);
+app.use('/sub', authApi, subRoutes);
 app.use('/cat', catRoutes);
-app.use('/gossips', gossipsRoutes);
-app.use('/print', printRoutes);
-app.use("/recipes", recipesRoutes);
-app.use('/shedule', sheduleRoutes);
-app.use('/report', repRoutes);
-app.use('/invoice', invoiceRoutes)
-app.use('/gbt', gbtRoutes)
-app.use('/reservation', reservationRoutes)
+app.use('/gossips', authApi, gossipsRoutes);
+app.use('/print', authApi, printRoutes);
+app.use("/recipes", authApi, recipesRoutes);
+app.use('/shedule', authApi, sheduleRoutes);
+app.use('/report', authApi, repRoutes);
+app.use('/invoice', authApi, invoiceRoutes)
+app.use('/gbt', authApi, gbtRoutes)
+app.use('/reservation', authApi, reservationRoutes)
 
 
 
@@ -172,7 +170,6 @@ const options = {
         next(err);
     });
 
-const subdomain = 'flow-app-now-cash-true-mobile1'    
 const server = https.createServer(options, app);
 const port = process.env.PORT || 8080;
 app.listen(port, async () => {

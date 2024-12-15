@@ -13,6 +13,7 @@ const subProductSchema = new Schema({
         default: 0
     },
     qty: String,
+    recipe: String,
     description: {
         type: String
     },
