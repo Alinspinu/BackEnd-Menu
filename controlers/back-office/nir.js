@@ -19,7 +19,8 @@ module.exports.saveNir = async( req, res, next) => {
       newNir.suplier = nir.suplier._id
       newNir.locatie = loc
       const savedNir = await newNir.save()
-      res.status(200).json({ message: "Documentul a fost salvat cu success!", nir: savedNir });
+      const dbNir = await Nir.findById(savedNir._id).populate({path: 'suplier', select: 'name'})
+      res.status(200).json({ message: "Documentul a fost salvat cu success!", nir: dbNir });
     // }
     
     } catch (err) {

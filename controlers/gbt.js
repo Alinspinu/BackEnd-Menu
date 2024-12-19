@@ -47,6 +47,7 @@ module.exports.getMessage = async (req, res, next) => {
 
 
 
+
 module.exports.saveCookie = async (req, res) => {
 
   try{
@@ -110,8 +111,33 @@ async function generateResponse(prompt) {
 }
 
 
+module.exports.horoscop = async (messageData) => {
+  const prompt = `Zi-mi hoscopul pentru astăzi ${new Date()}. sunt un ${messageData.gender} de ${messageData.age} de ani pe nume ${messageData.name} nascut in zodia ${messageData.zodie} pe data de ${messageData.birth} in 300 de cuvinte`
+  const system = `Ești un astrog glumet. Este vorba de spre ${messageData.gender} de ${messageData.age} de ani pe nume ${messageData.name}, este in zodia ${messageData.zodie} și are functia de ${messageData.position} într-o cafenea.`
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', 
+      messages: [
+        { role: 'user',
+         content: prompt,
+         },
+         {
+         role: 'system',
+         content: system
+         } 
+        ],
+      temperature: 0.8,
+      top_p: 1
+    });
+    return response.choices[0].message.content
+  } catch (error) {
+    console.error('Error generating response:', error);
+    throw(error)
+  }
+}
+
 module.exports.generateMood = async (messageData) => {
-  const prompt = `${messageData.status}. Folosindu-te de un banc si un citatat (sa fie cat mai unice). maxim 100 de cuvinte`
+  const prompt = `${messageData.status}. in maxim 100 de cuvinte`
   const system = `Ești un terapeut glumet. Este vorba de spre ${messageData.gender} de ${messageData.age} de ani pe nume ${messageData.name}, este in zodia ${messageData.zodie} și are functia de ${messageData.position} într-o cafenea restaurant. Nu mentiona varsta, zodia sau functia.`
   try {
     const response = await openai.chat.completions.create({

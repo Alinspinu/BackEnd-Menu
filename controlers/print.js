@@ -7,6 +7,7 @@ const Order = require('../models/office/product/order')
 const Bill = require('../models/office/bill')
 const User = require('../models/users/user')
 const Inventary = require('../models/office/inventary')
+const Product = require('../models/office/product/product')
 const PDFDocument = require("pdfkit");
 const { getProducts } = require('./back-office/product');
 const { saveProductIngredient } = require('./nutrition');
@@ -336,9 +337,6 @@ module.exports.printNir = async (req, res, next) => {
       });
     });
   };
-
-
-
 
 
 
@@ -1423,6 +1421,10 @@ module.exports.factura = async (req, res, next) => {
 
 
 
+
+
+
+
 module.exports.saleProducts = async (req, res, next) => {
   const {products, startDay, endDay} = req.body
   const parsedProducts = JSON.parse(products)
@@ -1652,6 +1654,219 @@ module.exports.printConsumption = async (req, res, next) => {
   } catch(err){
   console.log(err)
 }
+}
+
+
+module.exports.printProductRecipes = async (req, res, next) => {
+
+  const {filter, ing = false, im = true, d = true } = req.body
+  try{
+    const products = await Product.find(filter)
+        .select('name description ings image toppings category mainCat subProducts qty price')
+        .populate({path: 'ings.ing', select: 'name price um tvaPrice'})
+        .populate({path: 'toppings.ing', select: 'name price um tvaPrice'})
+        .populate({path: 'locatie', select: 'bussinessName'})
+        .populate({path: 'category', select: 'name'})
+        .populate({path: 'subProducts', select: 'name price qty description ings', populate: {path: 'ings.ing', select: 'name price tvaPrice um'}})
+        console.log('product', products[0])
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet('Produse');
+        const docTitle =  [
+          `${products[0].locatie.bussinessName}`,
+           '',
+           '',
+           `Produse`,
+           '',
+           '',
+           '',
+           '',
+           '',
+           '']
+           const header = [
+            'Nr',
+            `Denumire Produs / Ingredient`,
+            `${ing ? '(Rețetă)': ''}`,
+            `Cost productie`, 
+            `Pret Vanzare`, 
+            'Adaos',
+          ]
+          worksheet.addRow(docTitle)
+          worksheet.addRow()
+          products.forEach((product, i) => {
+            const ings =  product.ings
+            const rT = ings.reduce((sum, ingredient) => {
+              return sum + Math.round(ingredient.qty * ingredient.ing.tvaPrice);
+            }, 0);
+            worksheet.addRow(header)
+            worksheet.addRow(
+              [ 
+                `${i+1}`,
+                `${product.name}`,
+                '',
+                `${round(rT)} Lei`,
+                `${product.price} Lei`,
+                `${round((product.price-rT)/rT * 100)} %`,
+                '',
+              ]
+              )
+              const rowCount = worksheet.rowCount
+              worksheet.getRow(rowCount).eachCell((cell)=>{
+              cell.font = {
+                  bold: true,
+              }
+          })
+          if(product.subProducts.length){
+            worksheet.addRow()
+            worksheet.addRow([
+              ``,
+              `Opțiune obligatorie (max 1)`,
+            ])
+            const row = worksheet.rowCount
+            worksheet.getRow(row).eachCell((cell)=>{
+            cell.font = {
+                bold: true,
+            }
+          })
+            product.subProducts.forEach(sub => {
+              const ings =  sub.ings
+              const rT = ings.reduce((sum, ingredient) => {
+                return sum + Math.round(ingredient.qty * ingredient.ing.tvaPrice);
+              }, 0);
+
+              worksheet.addRow(
+                [ 
+                  ``,
+                  `${sub.name}`,
+                  ``,
+                  `${round(rT)} Lei`,
+                  `${sub.price} Lei`,
+                  `${round((sub.price-rT)/rT * 100)} %`,
+                  '',
+                ]
+                )
+               
+            })
+            worksheet.addRow()
+          }
+          if(product.toppings.length){
+           const toppings = product.toppings.filter(t => !t.name.includes('To Go'))
+           if(toppings.length){
+            if(!product.subProducts.length) worksheet.addRow()
+             worksheet.addRow([
+               ``,
+               `Topinguri la alegere`,
+             ])
+             const rowT = worksheet.rowCount
+             worksheet.getRow(rowT).eachCell((cell)=>{
+             cell.font = {
+                 bold: true,
+             }
+           })
+             toppings.forEach(top => {   
+              const ingPrice = round(top.ing.tvaPrice * top.qty)        
+                 worksheet.addRow(
+                   [ 
+                     ``,
+                     `${top.name}`,
+                     ``,
+                     `${ingPrice} Lei`,
+                     `${top.price} Lei`,
+                     `${round((top.price-ingPrice)/ingPrice * 100)} %`,
+                     '',
+                   ]
+                   )
+             })
+             worksheet.addRow()
+           }
+          }
+          worksheet.addRow(
+            [
+              '',
+              `Categorie Principală`,
+              `${product.mainCat}`,
+            ]
+          )
+          worksheet.addRow(
+            [
+              '',
+              `Categorie`,
+              `${product.category ? product.category.name : ''}`,
+            ]
+          )
+          if(im){
+            worksheet.addRow(
+             [
+              '',
+               'Image URL',
+               `${product.image.path}`,
+               ``,
+               '',
+               '',
+               ``,
+               '',
+               '',
+             ]
+           )
+           const row = worksheet.rowCount
+           worksheet.mergeCells(`C${row}:I${row}`)
+          } 
+          if(d) {
+            worksheet.addRow(
+              [
+                '',
+                'Descriere',
+                `${product.description}`,
+                ``,
+                '',
+                '',
+                ``,
+                '',
+                '',
+              ]
+            )
+            const ro = worksheet.rowCount
+            worksheet.mergeCells(`C${ro}:I${ro}`)
+        }
+        if(ing) ings.forEach((ing, i) => {
+          const tot = round(ing.qty * ing.ing.tvaPrice)
+          worksheet.addRow(
+            [
+              'Ing',
+              `${ing.ing.name}`,
+              `${round(ing.qty)} ${ing.ing.um}`,
+              '',
+              '',
+              `${tot} Lei`,
+              '',
+              '',
+            ]
+            )
+        })
+        worksheet.addRow()
+        })
+        worksheet.getColumn(1).width = 5;
+        worksheet.getColumn(2).width = 25;
+        worksheet.getColumn(3).width = 13; 
+        worksheet.getColumn(4).width = 18; 
+        worksheet.getColumn(5).width = 18; 
+        worksheet.getColumn(6).width = 10; 
+        worksheet.getColumn(7).width = 10; 
+        worksheet.getColumn(8).width = 10; 
+        worksheet.getColumn(9).width = 15; 
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+        workbook.xlsx.write(res)
+        .then(() => {
+          res.end();
+        })
+        .catch((error) => {
+          console.error('Error writing Excel file:', error);
+          res.status(500).send('Internal Server Error');
+        });
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
 }
 
 

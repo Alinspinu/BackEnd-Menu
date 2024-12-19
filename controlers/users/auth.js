@@ -5,7 +5,7 @@ const Locatie = require('../../models/office/locatie')
 
 const { comparePasswords, hashPassword, round } = require('../../utils/functions')
 const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, sendEmployeeEmail } = require('../../utils/mail')
-const {generateMood} = require('../../controlers/gbt')
+const {generateMood, horoscop} = require('../../controlers/gbt')
 
 
 
@@ -86,14 +86,6 @@ module.exports.checkInOrOut = async (req, res) => {
             status: checkIn.value ? 'abia ce am intrat in tură la serviciu si vreau să am stare buna pentru ziua de lucru' : 'tocmai ce am ieșit din tură de lucru si vreau sa am o stare buna ca sa ma pot bucura de restul zilei',
             gender: getGenderFromCNP(user.employee.cnp)
         }
-        // const messageData = {
-        //     name: 'Valentin',
-        //     position: 'casier',
-        //     zodie: 'sagetator',
-        //     age: 22,
-        //     status: checkIn.value ? 'abia ce am intrat in tură la serviciu si vreau să am stare buna pentru ziua de lucru' : 'tocmai ce am ieșit din tură de la serviciu si vreau sa am o stare buna ca sa ma pot bucura de restul zilei',
-        //     gender: 'un barbat'
-        // }
         const message = await generateMood(messageData)
         res.status(200).json({message: 'utilizatorul a fost actualizat', mood: message, user: user})
     } catch(error){
@@ -102,7 +94,34 @@ module.exports.checkInOrOut = async (req, res) => {
     }
 }
 
-function getGenderFromCNP(cnp) {
+
+
+
+
+module.exports.getHoroscop = async (req, res, next) => {
+    const { id } = req.query
+    try{
+        const user = await User.findById(id)
+        console.log(id)
+        const userAge = (new Date().getTime() - new Date(user.employee.birthDate).getTime()) /1000/60/60/24/365
+        const messageData = {
+            name: user.employee.fullName.split(' ')[0],
+            position: user.employee.position,
+            zodie: user.employee.zodie,
+            age: round(userAge),
+            birth: user.employee.birthDate,
+            gender: getGenderFromCNP(user.employee.cnp)
+        }
+      const response = await horoscop(messageData)
+      res.status(200).json(response)
+    } catch(error){
+      console.log(error)
+      res.status(500).json(error)
+    }
+  }
+
+
+function getGenderFromCNP(cnp = 1234567890234) {
     const firstDigit = parseInt(cnp[0], 10);
     switch (firstDigit) {
       case 1:
@@ -190,10 +209,8 @@ module.exports.verifyEmployeeToken = async (req, res, next) => {
     const { token } = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
-        console.log(userId)
         if (userId) {
             const user = await User.findById(userId.userId).populate({path: 'locatie'});
-            console.log(user)
             if (user) {
                 res.status(200).json(user);
             } else {

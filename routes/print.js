@@ -10,5 +10,7 @@ router.route('/production').post(printRoutes.printProduction)
 router.route('/inventary').get(printRoutes.printInventary)
 router.route('/report').post(printRoutes.report)
 
+router.route('/products-recipes').post(printRoutes.printProductRecipes)
+
 
 module.exports = router

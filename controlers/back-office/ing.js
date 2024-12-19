@@ -24,7 +24,7 @@ module.exports.saveIng = async(req, res, next) => {
     module.exports.searchIng = async (req, res, next) => {
       const loc = req.query.loc
       const page = parseInt(req.query.page) || 1; // Get page from request, default to 1
-      const limit = 400; // Items per page
+      const limit = 600; // Items per page
       const skip = (page - 1) * limit;
       console.log('page', page)
       try{  
@@ -32,7 +32,7 @@ module.exports.saveIng = async(req, res, next) => {
           .select([ '-unloadLog', '-uploadLog'])
           .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'});
         const totalItems = 1100
-        console.log(totalItems)
+        console.log(limit)
         const totalPages = Math.ceil(totalItems / limit);
         res.status(200).json({
           items,

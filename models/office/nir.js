@@ -223,15 +223,19 @@ nirSchema.pre('deleteOne', { document: true, query: false }, async function(next
 
     const results = await Promise.all(promises)
 
-   const suplier =  await Suplier.findByIdAndUpdate(
-      doc.suplier,
-      { 
-          $pull: { records: { nir: doc._id } },
-          $inc: { sold: - doc.totalDoc }
-      },
-      { new: true, useFindAndModify: false }
-    )
-    console.log('furnizorul a fos actualizat', suplier.name)
+    // if(doc.suplier){
+
+      const suplier =  await Suplier.findByIdAndUpdate(
+         doc.suplier,
+         { 
+             $pull: { records: { nir: doc._id } },
+             $inc: { sold: - doc.totalDoc }
+         },
+         { new: true, useFindAndModify: false }
+       )
+       console.log('furnizorul a fos actualizat', suplier.name)
+    // }
+
 
     next()
   } catch(error){
