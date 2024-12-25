@@ -15,7 +15,7 @@ const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
 
 
 const io = require('socket.io-client')
-const socket = io("https://live669-0bac3349fa62.herokuapp.com")
+const socket = io("https://socket.flowmanager.ro")
 // const socket = io("http://localhost:8090")
 
 module.exports.getToken = async (req, res, next) => {
@@ -38,7 +38,7 @@ module.exports.getToken = async (req, res, next) => {
                 fullName: '',
                 phone: '',
                 countryCode: 'RO',
-                requestLang: 'ro-RO'
+            requestLang: 'ro-RO'
             },
             paymentTimeout: 300,
             preauth: false,

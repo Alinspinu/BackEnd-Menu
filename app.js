@@ -147,7 +147,7 @@ app.use("/recipes", authApi, recipesRoutes);
 app.use('/shedule', authApi, sheduleRoutes);
 app.use('/report', authApi, repRoutes);
 app.use('/invoice', authApi, invoiceRoutes)
-app.use('/gbt', authApi, gbtRoutes)
+app.use('/gbt', gbtRoutes)
 app.use('/reservation', authApi, reservationRoutes)
 
 

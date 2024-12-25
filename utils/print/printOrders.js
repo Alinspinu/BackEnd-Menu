@@ -9,7 +9,7 @@ const { connectToPrinter } = require("../connectToPrinter")
 const{ log } = require('../functions')
 
 const io = require('socket.io-client')
-const socket = io("https://live669-0bac3349fa62.herokuapp.com")
+const socket = io("https://socket.flowmanager.ro")
 // const socket = io("http://localhost:8090")
 
 const templatePath = './utils/print/input.ejs';

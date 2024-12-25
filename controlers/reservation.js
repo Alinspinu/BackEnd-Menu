@@ -3,7 +3,7 @@ const User = require('../models/users/user')
 
 
 const io = require('socket.io-client')
-const socket = io("https://live669-0bac3349fa62.herokuapp.com")
+const socket = io("https://socket.flowmanager.ro")
 
 
 module.exports.getReservations = async(req, res) => {

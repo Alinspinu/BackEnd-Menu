@@ -8,7 +8,7 @@ const Shedule = require('../models/users/shedule')
 const webPush = require('web-push');
 
 const io = require('socket.io-client');
-const socket = io("https://live669-0bac3349fa62.herokuapp.com")
+const socket = io("https://socket.flowmanager.ro")
 
 
 webPush.setVapidDetails(

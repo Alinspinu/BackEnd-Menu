@@ -196,8 +196,9 @@ module.exports.registerIn = async (req, res) => {
             } else {
                 return res.status(401).json({ message: "Passwords don't match!" });
             };
+           } else{
+            res.status(404).json({message: 'Utilizarorul nu a fost gasit'})
            }
-        res.status(200)
     } catch(err){
         console.error(err)
         res.status(500).json(err)
