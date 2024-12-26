@@ -11,7 +11,7 @@ module.exports.sendEntry = async (req, res, next) => {
         createCashRegisterDay(loc)
         const data = req.query.date
         const page = req.query.page || 1;
-        const limit = 3
+        const limit = 30
             try{
                 const documents = await Day.find({locatie: loc}).populate({path: "entry"})
                 .skip((page - 1) * limit)
