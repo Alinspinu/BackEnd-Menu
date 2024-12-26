@@ -36,7 +36,7 @@ const https = require('https');
 
 const {logMiddleware } = require('./utils/middleware')
 
-const dbUrl = process.env.DB_URL
+const dbUrl = process.env.LOCAL
 
 mongoose.connect(dbUrl);
 
@@ -97,7 +97,7 @@ const options = {
     });
     
 const server = https.createServer(options, app);
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8070;
 app.listen(port,() => {
     console.log(`App running on port ${port}`);
 });

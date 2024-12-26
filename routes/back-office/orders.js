@@ -22,6 +22,8 @@ router.route('/upload-ings').post(orderRoutes.uploadIngs)
 
 router.route('/invoice').post(printRoutes.factura)
 
+router.route('/all-orders').get(orderRoutes.getAllOrders)
+
 
 
 module.exports = router  

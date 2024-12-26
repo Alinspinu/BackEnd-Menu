@@ -238,6 +238,20 @@ module.exports.saveOrder = async (req, res, next) => {
 //************************UPDATE ORDERS********************** */
 
 
+module.exports.getAllOrders = async (req, res, next) => {
+    try{
+        const date = new Date()
+        const start = new Date(date).setHours(0,0,0,0)
+        const end = new Date(date).setHours(23, 59, 59, 999)
+        const {loc} = req.query;
+        const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} }) 
+            res.status(200).json(orders)         
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
 
 module.exports.setOrderTime = async (req, res, next) => {   
     try {
