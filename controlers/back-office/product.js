@@ -8,32 +8,16 @@ const cloudinary = require('cloudinary').v2;
 
 const {checkTopping, round} = require('../../utils/functions')
 
- module.exports.getProducts = async (req, res, next) => {
+module.exports.getProducts = async (req, res, next) => {
     try{
-      let filterTo = {}
-      const {filter} = req.body;
-      if(filter && filter.mainCat && filter.mainCat.length){
-        filterTo.mainCat = filter.mainCat
-      }
-      if(filter && filter.cat && filter.cat.length){
-        filterTo.category = new mongoose.Types.ObjectId(filter.cat);
-      } 
-      filterTo.locatie = filter.locatie
-      const products = await Product.find(filterTo).populate([
+      const {loc} = req.body
+      const products = await Product.find({locatie: loc}).populate([
         {path: 'category', select: 'name'}, 
-        {path: 'subProducts', populate: {path: 'ings.ing', select: 'price'}},
-        {path: 'ings.ing', select: 'price'}
+        {path: 'subProducts', populate: {path: 'ings.ing', select: 'price name um productIngredient'}},
+        {path: 'ings.ing', select: 'price name um productIngredient'}
     ])
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
-      let filterProducts = []
-      if(req.query.search.length){
-        filterProducts = sortedProducts.filter((object) =>
-        object.name.toLocaleLowerCase().includes(req.query.search.toLocaleLowerCase())
-        );
-      } else {
-        filterProducts = sortedProducts
-      }
-      res.status(200).json(filterProducts)
+      res.status(200).json(sortedProducts)
     } catch(error) {
       console.log(error);
       res.status(500).json({message: error})
