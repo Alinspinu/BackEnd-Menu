@@ -23,27 +23,10 @@ module.exports.saveIng = async(req, res, next) => {
       const loc = req.body.loc
       try{  
         let filterTo = {}
-        const filter = req.body.filter
-        if(filter && filter.gestiune.length){
-          filterTo.gestiune = filter.gestiune
-        }
-        if(filter && filter.type.length){
-          if(filter.type === "compus"){
-            filterTo.ings = { $exists: true, $ne: [] }
-          } else {
-            filterTo.ings = { $eq: [] }
-          }
-        }
-        if(filter && filter.dep.length){
-          filterTo.dep = filter.dep
-        }
-        const userData = req.body.search;
         filterTo.locatie = loc
         const ings = await Ingredient.find(filterTo).populate({path: 'ings.ing'});
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
-        let filterData = sortedIngs.filter((object) =>
-        object.name.toLocaleLowerCase().includes(userData.toLocaleLowerCase()))
-        res.status(200).json(filterData)
+        res.status(200).json(sortedIngs)
       }catch (err) {
         console.log(err)
         res.status(500).json({message: err})
