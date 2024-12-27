@@ -79,6 +79,7 @@ module.exports.deleteEntry = async (req, res, next) => {
 
 
 
+
 module.exports.createXcel = async (req, res, next) => {
     const {startDate, endDate, loc} = req.body
     const start = new Date(startDate).setUTCHours(0,0,0,0)
