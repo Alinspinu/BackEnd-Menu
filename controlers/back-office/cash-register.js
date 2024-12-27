@@ -43,6 +43,18 @@ module.exports.creataDaty = async (req, res) => {
 }
 
 
+module.exports.deleteDay = async (req, res, next) => {
+    const {id} = req.query
+    try{
+        await Day.findByIdAndDelete(id)
+        res.status(200).json({message: 'Ziua a fost ștearsă cu success!'})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+  }
+
+
 module.exports.addEntry = async (req, res, next) => {
     const { tip, date, typeOf, suplier, user, description, document, amount, locatie, month, asociat } = req.body
     createCashRegisterDay(locatie)
