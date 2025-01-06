@@ -10,6 +10,7 @@ const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
 const { round, log } = require('../../utils/functions')
 const {reports, inAndOut, printBill, posPayment} = require('../../utils/print/printFiscal')
+const {unloadIngs} = require('../../utils/inventary')
 
 module.exports.getToken = async (req, res, next) => {
     try {
@@ -221,7 +222,6 @@ module.exports.printBill = async (req, res, next) => {
             cif: bill.cif
         }
        const savedBill = await Order.findByIdAndUpdate(bill._id, update, {new: true})
-        console.log(savedBill)
         if(savedBill){
             if(savedBill.total > 0 && !savedBill.dont) {
                 printBill(savedBill)
@@ -236,6 +236,29 @@ module.exports.printBill = async (req, res, next) => {
     } catch(err) {
         console.log(err)
         res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.saveBillInCloud = async (req, res, next) => {
+    try{
+        const {bill} = req.body
+        bill.status = 'done'
+        bill.pending = false
+        const billl = new Order(bill) 
+            const savedBill = await billl.save()
+            billl.products.map(async (el) => {
+                if (el.toppings.length) {
+                  await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+                if (el.ings.length) {
+                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+                }
+            });
+            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+        
+    } catch(err) {
+        console.log(err)
+        res.status(500).json(err)
     }
 }
 
