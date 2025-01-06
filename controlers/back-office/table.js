@@ -5,39 +5,15 @@ const User = require('../../models/users/user')
 
 module.exports.sendTables = async (req, res, next) => {
     const {loc} = req.query
-    const {user} = req.query
     try{
-        const userDb = await User.findById(user)
-        let tables
-        if(userDb && userDb.employee.access > 1){
-            tables = await Table.find({locatie: loc, index: { $ne: 54 }}).populate({
-             path: 'bills', 
-             model: "Order", 
-             match: {status: "open", locatie: loc}, 
-             populate: {path: 'masaRest', select: 'index'}
-         })
-        } 
-        if(userDb &&  userDb.employee.access === 1){
-            tables = await Table.find({locatie: loc, index: { $ne: 54 }}).populate({
-                path: 'bills', 
-                model: "Order", 
-                match: {status: "open", "employee.user": user}, 
-                populate: {path: 'masaRest', select: 'index'}
-            })
-        }
-        const onlineTable = await Table.findOne({locatie: loc, index: 54}).populate({
+         const tables = await Table.find({locatie: loc}).populate({
             path: 'bills', 
             model: "Order", 
-            match: {status: 'open', locatie: loc}, 
+            match: {status: "open", locatie: loc}, 
             populate: {path: 'masaRest', select: 'index'}
         })
-        if(onlineTable){
-            const sortedTables = [onlineTable, ...tables].sort((a,b) => a.index - b.index)
-            res.status(200).json(sortedTables)
-        } else {
-            const sortedTables = tables.sort((a,b) => a.index - b.index)
-            res.status(200).json(sortedTables)
-        }
+        const sortedTables = tables.sort((a,b) => a.index - b.index)
+        res.status(200).json(sortedTables)
     } catch(err){
         console.log(err)
         res.status(500).json({message: err})

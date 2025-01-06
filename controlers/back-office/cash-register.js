@@ -105,8 +105,8 @@ module.exports.addEntry = async (req, res, next) => {
             const payment = {
                 amount: amount,
                 tip: typeOf,
-                date: entryDate,
-                workMonth: month
+                date: new Date('2024-12-31'),
+                workMonth: 'Decembrie'
             }
            await User.findOneAndUpdate({_id: user[0]}, {$push: {'employee.payments': payment}})
         }
@@ -148,6 +148,7 @@ module.exports.deleteEntry = async (req, res, next) => {
             const payment = {
                 amount: Math.abs(entry.amount / entry.user.length),
                 tip: entry.typeOf,
+                date: entry.date
             }
             for(let id of entry.user){
                 const query = {
@@ -160,6 +161,7 @@ module.exports.deleteEntry = async (req, res, next) => {
             const payment = {
                 amount: Math.abs(entry.amount),
                 tip: entry.typeOf,
+                date: entry.date
             }
             const query = {
                 _id: entry.user[0],

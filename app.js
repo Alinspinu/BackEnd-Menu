@@ -56,11 +56,6 @@ cron.schedule('*/5 8-20 * * *', async () => {
 
 
 
- 
-const fs = require('fs');
-const https = require('https');
-
-
 const dbUrl = process.env.LOCAL
 // const dbUrl = process.env.LOCAL
 
@@ -132,7 +127,6 @@ app.use('/nutrition', nutritionRoutes);
 app.use('/register', authApi, registerRoutes);
 app.use('/table', authApi, tableRoutes);
 app.use('/users', authApi, usersRoutes);
-// app.use('/message', messRoutes);
 app.use('/notification', authApi, notifRoutes)
 app.use("/top", toppingRoutes);
 app.use('/suplier', authApi, suplierRoutes);
@@ -152,25 +146,8 @@ app.use('/reservation', authApi, reservationRoutes)
 
 
 
-const options = {
-    key: fs.readFileSync('private.key'),
-    cert: fs.readFileSync('certificate.crt')
-  };
-  
 
 
-  app.use((err, req, res, next) => {
-      const logInfo = `${new Date().toLocaleTimeString()} - ERROR - ${err.message}\n`;
-      const logFilePath = path.join(__dirname, 'utils/logs', 'appError.log');
-      fs.appendFile(logFilePath, logInfo, (error) => {
-          if (error) {
-              console.error('Error writing to log file:', error);
-            }
-        });
-        next(err);
-    });
-
-const server = https.createServer(options, app);
 const port = process.env.PORT || 8080;
 app.listen(port, async () => {
     console.log(`App running on port ${port}`);

@@ -261,6 +261,48 @@ module.exports.printBill = async (req, res, next) => {
     }
 }
 
+module.exports.fixBul = async (req, res, next) => {
+    try{
+        const startD = new Date('2024-01-05')
+        startD.setHours(0,0,0,0)
+        const orders = Order.find({createdAt: {$gte: startD} })
+       const response = await axios.post('https://flowmanager.ro/pay/fix', {orders}, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        console.log(response)
+        res.status(200)
+    } catch(err){
+        console.log(err)
+    }
+
+}
+
+// module.exports.fixBul = async (req, res, next) => {
+//     try{
+//           const {orders} = req.body
+          
+//           const pOrders = JSON.parse(orders)
+//           for( const o of pOrders){
+//             const ord = Order.findOne({soketId: o.soketId})
+//             if(!ord){
+//                 const or = new Order(o)
+//                 await or.save()
+//                 console.log('order saved', o.soketId)
+//             } else {
+//                 console.log('order found', ord.soketId)
+//             }
+//           }
+        
+//         res.status(200)
+//     } catch(err){
+//         console.log(err)
+//     }
+// }
+
+
+
 module.exports.saveBillInCloud = async (req, res, next) => {
     try{
         const {bill} = req.body
@@ -360,5 +402,8 @@ module.exports.posPaymentCheck = async (req, res, next) => {
       handleError(err, res)
     }   
 }
+
+
+
 
 

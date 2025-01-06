@@ -45,6 +45,17 @@ module.exports.getMessage = async (req, res, next) => {
 
 
 
+module.exports.image = async(req, res, next) => {
+  try{
+    const {prompt, size = '1792x1024'} = req.body
+    const imageUrl = await generateImage(prompt, size)
+    res.status(200).json({imageUrl: imageUrl})
+  } catch(error){
+    console.log(error)
+  }
+}
+
+
 
 
 
@@ -83,7 +94,23 @@ module.exports.getCookie = async (req, res) => {
 
 
 
-
+async function generateImage(prompt, size) {
+  try {
+    const response = await openai.images.generate({
+      model:"dall-e-3",
+      prompt: prompt,
+      n: 1, 
+      size: size, 
+      quality:"hd"
+    });
+    
+    console.log('Generated Image URL:', response.data[0].url);
+    return response.data[0].url;
+  } catch (error) {
+    console.error('Error generating image:', error);
+    throw error;
+  }
+}
 
 
 
