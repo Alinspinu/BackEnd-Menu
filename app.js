@@ -13,7 +13,6 @@ const session = require("express-session");
 const helmet = require('helmet');
 
 const helmetConfig = require('./config/helmet');
-const sessionConfig = require('./config/session');
 
 const toppingRoutes = require('./routes/back-office/topping');
 const ordersTrueRoutes = require('./routes/back-office/orders');
