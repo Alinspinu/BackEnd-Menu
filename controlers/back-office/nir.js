@@ -12,7 +12,7 @@ module.exports.addImpSheet = async (req, res) => {
       const {sheet} = req.body
       const newSheet = new ImpSheet(sheet)
       const savedSheet = newSheet.save()
-      const dbSheet = ImpSheet.findById(savedSheet._id)
+      const dbSheet = await ImpSheet.findById(savedSheet._id)
             .populate({path: 'ings.ing', select: 'productIngredient ings'})
       if(dbSheet){
         const ingsPromises = dbSheet.ings.flatMap(ing => {
@@ -28,8 +28,10 @@ module.exports.addImpSheet = async (req, res) => {
             return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: -ing.qty}}, {new: true }).exec()
           }
         })
-        await Promise.all(ingsPromises)
+       const response =  await Promise.all(ingsPromises)
+       console.log(response)
       }
+      res.status(200).json(dbSheet)
     } catch(error){
       console.log(error)
       res.status(500).json(error)
