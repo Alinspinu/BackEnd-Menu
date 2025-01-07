@@ -16,7 +16,7 @@ module.exports.addImpSheet = async (req, res) => {
       const dbSheet = ImpSheet.findById(savedSheet._id)
             .populate({path: 'ings.ing', select: 'productIngredient ings'})
       if(dbSheet){
-        const ingsPromises = dbSheet.ings.fatMap(ing => {
+        const ingsPromises = dbSheet.ings.flatMap(ing => {
           if(ing.ing.productIngredient){
             return ing.ing.ings.map(ingg =>
               Ingredient.findByIdAndUpdate(
@@ -44,6 +44,7 @@ module.exports.getSheets = async (req, res) => {
         .sort({ date: -1 })
         .limit(30)
         .populate({path: 'ings.ing', select: 'name price um'})
+        .populate({path: 'user', select: 'employee.fullName'})
     res.status(200).json(sheets)
     } catch(error){
       console.log(error)
