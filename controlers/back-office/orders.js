@@ -203,7 +203,7 @@ module.exports.getAllOrders = async (req, res, next) => {
 
 
 
-// c
+
 
 
 module.exports.orderDone = async (req, res, next) => {
@@ -370,7 +370,6 @@ module.exports.uploadIngs = async (req, res, next) => {
 module.exports.unloadIngs = async (req, res, next) => {
     try{
         const {ings, quantity, operation} = req.body;
-        console.log(req.body)
         if(ings && quantity){
         await  unloadIngs(ings, quantity, operation)
         res.status(200).json({message: 'Success, stocul a fost actualizat!'})

@@ -26,11 +26,11 @@ router.route('/update')
     .put(nirRoutes.addEFacturaID)
 
 router.route('/sheet')
-    .get(nirRoutes.getSheet)
-    .post(nirRoutes.addImpScheet)
+    .get(nirRoutes.getSheets)
+    .post(nirRoutes.addImpSheet)
     
 
-router.route('/shhet-period').get(nirRoutes.getSheetsByPeriod)
+router.route('/sheet-period').get(nirRoutes.getSheetsByPeriod)
 
 module.exports = router
 

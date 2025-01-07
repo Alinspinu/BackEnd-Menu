@@ -88,8 +88,6 @@ module.exports.saveIng = async(req, res, next) => {
 
     module.exports.saveInventary = async (req, res, next) => {
       try {
-        const { loc } = req.query;
-        const ings = await Ingredient.find({ locatie: loc }).select('inventary qty');
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
         const formattedDate = date.toISOString();

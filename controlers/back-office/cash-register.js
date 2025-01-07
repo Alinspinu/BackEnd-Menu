@@ -11,7 +11,6 @@ const Suplier = require('../../models/office/suplier')
 module.exports.sendEntry = async (req, res, next) => {
     const{loc} = req.query
         createCashRegisterDay(loc)
-        createCashRegisterDay('65c221374c46336d1e6ac423')
             try{
                 const documents = await Day.find({locatie: loc}).populate({path: "entry"})
                 .limit(40)

@@ -1,6 +1,79 @@
 
 const Nir = require('../../models/office/nir')
 const ImpSheet = require('../../models/office/imp-sheet')
+const Report = require('../../models/office/report');
+const ImpSheet = require('../../models/office/imp-sheet')
+const Ingredient = require('../../models/office/inv-ingredient')
+
+
+
+
+module.exports.addImpSheet = async (req, res) => {
+    try{
+      const {sheet} = req.body
+      const newSheet = new ImpSheet(sheet)
+      const savedSheet = newSheet.save()
+      const dbSheet = ImpSheet.findById(savedSheet._id)
+            .populate({path: 'ings.ing', select: 'productIngredient ings'})
+      if(dbSheet){
+        const ingsPromises = dbSheet.ings.fatMap(ing => {
+          if(ing.ing.productIngredient){
+            return ing.ing.ings.map(ingg =>
+              Ingredient.findByIdAndUpdate(
+                ingg.ing,
+                { $inc: { qty: -ingg.qty } },
+                { new: true }
+              ).exec()
+            );
+          } else {
+            return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: -ing.qty}}, {new: true }).exec()
+          }
+        })
+        await Promise.all(ingsPromises)
+      }
+    } catch(error){
+      console.log(error)
+      res.status(500).json(error)
+    }
+}
+
+module.exports.getSheets = async (req, res) => {
+    try{
+        const {loc} = req.query
+        const sheets = await ImpSheet.find({locatie: loc})
+        .sort({ date: -1 })
+        .limit(30)
+        .populate({path: 'ings.ing', select: 'name price um'})
+    res.status(200).json(sheets)
+    } catch(error){
+      console.log(error)
+    }
+}
+
+
+// module.exports.getSheet = async (req, res) => {
+//   try{
+//     const { date, loc } = req.query
+//     const sheet = ImpSheet.findOne({date: date, locatie, loc})
+//     res.status(200).json(sheet)
+//   } catch(error) {
+//     console.log(error)
+//     res.status(500).json(error)
+//   }
+// }
+
+module.exports.getSheetsByPeriod = async (req, res) => {
+  try{
+    const {startDate, endDate, loc} = req.query
+    const startTime = new Date(startDate).getTime()
+    const endTime = new Date(endDate).getTime()
+    const sheets = ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}}) 
+    res.status(200).json(sheets)
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
 
 
 module.exports.saveNir = async( req, res, next) => {
@@ -29,9 +102,6 @@ module.exports.saveNir = async( req, res, next) => {
     }       
 }
 
-const Report = require('../../models/office/report');
-const nir = require('../../models/office/nir');
-
 
 module.exports.updateIngsLogs = async (req, res) => {
   try{
@@ -44,8 +114,6 @@ module.exports.updateIngsLogs = async (req, res) => {
         .catch(error => {
           console.error('Error deleting documents:', error);
         });
-      
-   
   }catch(error) {
     console.log(error)
     res.status(500).json(error)
@@ -110,7 +178,6 @@ module.exports.payBill = async (req, res, next) => {
     const updatedNirs = await Promise.all(
       id.map(id => Nir.findByIdAndUpdate(id, up, { new: true }).populate({ path: 'suplier' }))
     );
-  //  const nir = await Nir.findByIdAndUpdate(id , {payd: update, type: type}, {new: true}).populate({path: 'suplier'})
     res.status(200).json({message: `Factura / facturile la fost marcata ${tip}  ${method}`, nirs: updatedNirs })
   res.status(200)
   } catch (err) {
@@ -187,45 +254,11 @@ module.exports.addEFacturaID = async (req, res, next) => {
 
 
 
-module.exports.addImpScheet = async (req, res, next) => {
-  try{
-    const { sheet } = req.body
-    if(sheet){
-      const newSheet = new ImpSheet(sheet)
-      const savedSheet = newSheet.save()
-      res.status(200).json(savedSheet)
-    }else {
-      res.status(226).json({message: 'Fisa nu a ajuns la server!'})
-    }
-  } catch(error){
-    console.log(error)
-    res.status(500).json(error)
-  }
-}
 
-module.exports.getSheet = async (req, res) => {
-  try{
-    const { date, loc } = req.query
-    const sheet = ImpSheet.findOne({date: date, locatie, loc})
-    res.status(200).json(sheet)
-  } catch(error) {
-    console.log(error)
-    res.status(500).json(error)
-  }
-}
 
-module.exports.getSheetsByPeriod = async (req, res) => {
-  try{
-    const {startDate, endDate, loc} = req.query
-    const startTime = new Date(startDate).getTime()
-    const endTime = new Date(endDate).getTime()
-    const sheets = ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}}) 
-    res.status(200).json(sheets)
-  } catch(error){
-    console.log(error)
-    res.status(500).json(error)
-  }
-}
+
+
+
 
 
 
