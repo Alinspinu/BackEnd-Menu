@@ -13,7 +13,8 @@ module.exports.addImpSheet = async (req, res) => {
       const newSheet = new ImpSheet(sheet)
       const savedSheet = newSheet.save()
       const dbSheet = await ImpSheet.findById(savedSheet._id)
-            .populate({path: 'ings.ing', select: 'productIngredient ings'})
+            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
+            .populate({path: 'user', select: 'employee.fullName'})
       if(dbSheet){
         const ingsPromises = dbSheet.ings.flatMap(ing => {
           if(ing.ing.productIngredient){
@@ -42,11 +43,15 @@ module.exports.getSheets = async (req, res) => {
     try{
         const {loc} = req.query
         const sheets = await ImpSheet.find({locatie: loc})
-        .sort({ date: -1 })
         .limit(30)
-        .populate({path: 'ings.ing', select: 'name price um'})
+        .populate({path: 'ings.ing', select: 'name price um tva'})
         .populate({path: 'user', select: 'employee.fullName'})
-    res.status(200).json(sheets)
+        const sortedSheets = sheets.sort((a,b) => {
+          const aDate = new Date(a.date).getTime()
+          const bDate = new Date(b.date).getTime()
+          return bDate- aDate
+        })
+    res.status(200).json(sortedSheets)
     } catch(error){
       console.log(error)
     }

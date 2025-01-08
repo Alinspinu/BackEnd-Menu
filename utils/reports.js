@@ -6,6 +6,7 @@ const DelProd = require('./../models/office/product/deletetProduct')
 const Ingredient = require('./../models/office/inv-ingredient')
 const User = require('./../models/users/user')
 const Entry = require('../models/office/cash-register/entry')
+const ImpSheet = require('../models/office/imp-sheet')
 
 
 async function getBillProducts(orders, filter) {
@@ -220,6 +221,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
     const dbUsers = await User.find({locatie: loc, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
     const allIngs = await Ingredient.find({locatie: loc, productIngredient: false}).select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune'])
+    const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}})
+                                .populate({path: 'ings.ing', select: 'name um ings tvaPrice productIngredient', populate: {path: 'ings.ing', select: 'name um tvaPrice' }})
     const values = {
         workValueTotal: 0,
         dayRent: 60000 / daysNumber,
@@ -262,6 +265,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     let depProducts = []
     let entryy = []
  
+
 
     //CALC DEIVERSE
 
@@ -632,6 +636,46 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     }
 
     //CALC IMPAIRMENTS
+    
+
+
+    for(const sheet of impSheets){
+        for(let ing of sheet.ings){
+            if(ing.ing.productIngredient){
+                for(let ingg of ing.ing.ings){
+                    const index = depProducts.findIndex(i => i.name === ingg.ing.name)
+                    if(index !== -1){
+                        depProducts[index].qty = round(depProducts[index].qty + ingg.qty)
+                        values.totalDep += (ingg.qty * ingg.ing.tvaPrice)
+                    } else {
+                        const ing = {
+                            qty: ingg.qty,
+                            cost: round(ingg.ing.tvaPrice * ingg.qty),
+                            name: ingg.ing.name
+                        }
+                        depProducts.push(ing)
+                        values.totalDep += ing.cost
+                    }
+                }
+            } else {
+                const index = depProducts.findIndex(i => i.name === ing.ing.name)
+                if(index !== -1){
+                    depProducts[index].qty = round(depProducts[index].qty + ing.qty)
+                    values.totalDep += (ing.qty * ing.ing.tvaPrice)
+                } else {
+                    const ingg = {
+                        qty: ing.qty,
+                        cost: round(ing.ing.tvaPrice * ing.qty),
+                        name: ing.ing.name
+                    }
+                    depProducts.push(ingg)
+                    values.totalDep += ingg.cost
+                }
+            }
+        }
+    }
+
+
     for(const prod of delProds){
         let cost = 0
         for(const ing of prod.billProduct.ings){
@@ -832,7 +876,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         },
         impairment: {
             total: round(values.totalDep),
-            products: depProducts
+            products: depProducts,
+            ings: depIngs
         },
         workValue: {
             total: round(values.workValueTotal),
