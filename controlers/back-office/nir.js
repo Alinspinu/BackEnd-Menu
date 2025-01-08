@@ -15,28 +15,22 @@ module.exports.addImpSheet = async (req, res) => {
       const dbSheet = await ImpSheet.findById(savedSheet._id)
             .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
             .populate({path: 'user', select: 'employee.fullName'})
-      if(dbSheet){
-        const ingsPromises = dbSheet.ings.flatMap(ing => {
-          if(ing.ing.productIngredient){
-            return ing.ing.ings.map(ingg =>
-              Ingredient.findByIdAndUpdate(
-                ingg.ing,
-                { $inc: { qty: -ingg.qty } },
-                { new: true }
-              ).exec()
-            );
-          } else {
-            return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: -ing.qty}}, {new: true }).exec()
-          }
-        })
-       const response =  await Promise.all(ingsPromises)
-       console.log(response)
-      }
       res.status(200).json(dbSheet)
     } catch(error){
       console.log(error)
       res.status(500).json(error)
     }
+}
+
+module.exports.deleteSheet = async (req, res) => {
+  try{
+    const {id} = req.query;
+    await ImpSheet.deleteOne({_id: id})
+    res.status(200).json({message: 'Fișa a fost ștearsă cu success!'})
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
 }
 
 module.exports.getSheets = async (req, res) => {

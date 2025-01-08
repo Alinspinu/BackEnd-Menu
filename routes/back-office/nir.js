@@ -28,6 +28,7 @@ router.route('/update')
 router.route('/sheet')
     .get(nirRoutes.getSheets)
     .post(nirRoutes.addImpSheet)
+    .delete(nirRoutes.deleteSheet)
     
 
 router.route('/sheet-period').get(nirRoutes.getSheetsByPeriod)

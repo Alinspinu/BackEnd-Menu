@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Ingredient = require('./inv-ingredient')
 
 
 
@@ -9,7 +10,7 @@ const imparimentSheetSchema = new Schema({
         index: true
     },
     ings: [
-        {
+        {   
             qty: Number,
             ing: {
                 type: Schema.Types.ObjectId,
@@ -26,6 +27,65 @@ const imparimentSheetSchema = new Schema({
         ref: 'Locatie'
     }
 });
+
+
+
+
+imparimentSheetSchema.pre('deleteOne', { document: true }, async function (next) {
+        try{
+            const dbSheet = await this.model.findOne(this.getQuery())
+                    .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
+                if(dbSheet){
+                const ingsPromises = dbSheet.ings.flatMap(ing => {
+                    if(ing.ing.productIngredient){
+                    return ing.ing.ings.map(ingg =>
+                        Ingredient.findByIdAndUpdate(
+                        ingg.ing,
+                        { $inc: { qty: ingg.qty } },
+                        { new: true }
+                        ).exec()
+                    );
+                    } else {
+                    return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: ing.qty}}, {new: true }).exec()
+                    }
+                })
+                 await Promise.all(ingsPromises)
+                } else{
+                    console.warn('No dbSheet found for query:', this.getQuery());
+                }
+            next()
+        } catch(error) {
+            console.error('Error in pre deleteOne hook:', error);
+            next(error)
+        }
+})
+
+
+
+imparimentSheetSchema.post('save', async function (doc, next) {
+    try{
+        await doc.populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
+        const ingsPromises = doc.ings.flatMap(ing => {
+            if(ing.ing.productIngredient){
+            return ing.ing.ings.map(ingg =>
+                Ingredient.findByIdAndUpdate(
+                ingg.ing,
+                { $inc: { qty: -ingg.qty } },
+                { new: true }
+                ).exec()
+            );
+            } else {
+            return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: -ing.qty}}, {new: true }).exec()
+            }
+        })
+        await Promise.all(ingsPromises)
+
+     next()
+    } catch(error) {
+        console.error('Error in post save hook:', error);
+        next(error)
+    }
+})
 
 
 module.exports = mongoose.model("ImpSheet", imparimentSheetSchema);
