@@ -12,6 +12,7 @@ module.exports.addImpSheet = async (req, res) => {
       const {sheet} = req.body
       const newSheet = new ImpSheet(sheet)
       const savedSheet = newSheet.save()
+      console.log(savedSheet._id)
       const dbSheet = await ImpSheet.findById(savedSheet._id)
             .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
             .populate({path: 'user', select: 'employee.fullName'})
