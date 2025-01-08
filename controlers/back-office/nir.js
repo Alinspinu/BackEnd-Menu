@@ -25,8 +25,13 @@ module.exports.addImpSheet = async (req, res) => {
 module.exports.deleteSheet = async (req, res) => {
   try{
     const {id} = req.query;
-    await ImpSheet.deleteOne({_id: id})
-    res.status(200).json({message: 'Fișa a fost ștearsă cu success!'})
+    const sheet = await ImpSheet.findById(id) 
+    if(sheet){
+      await sheet.deleteOne()
+      res.status(200).json({message: 'Fișa a fost ștearsă cu success!'})
+    } else {
+      res.status(226).json({message: 'Fișa nu a fost găsită!'})
+    }
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
