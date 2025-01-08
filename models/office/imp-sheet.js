@@ -32,7 +32,7 @@ const imparimentSheetSchema = new Schema({
 const ImpSheet = mongoose.model('ImpSheet', imparimentSheetSchema);
 
 imparimentSheetSchema.pre('deleteOne', { document: true }, async function (next) {
-    console.log('hit the delete one pre')
+    console.warn('hit the delete one pre')
         try{
             const query = {_id: this._id}
             const dbSheet = await ImpSheet.findOne(query)
