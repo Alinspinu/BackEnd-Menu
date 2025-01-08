@@ -29,12 +29,8 @@ const imparimentSheetSchema = new Schema({
 });
 
 
-// const ImpSheet = mongoose.model('ImpSheet', imparimentSheetSchema);
-
 imparimentSheetSchema.pre('deleteOne', { document: false, query: true }, async function (next) {
-    console.log('hit the delete one pre')
         try{
-            console.log('hi the delete one pre')
             const query = this.getQuery()
             const dbSheet = await this.model.findOne(query)
                     .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
@@ -67,6 +63,7 @@ imparimentSheetSchema.pre('deleteOne', { document: false, query: true }, async f
 
 
 imparimentSheetSchema.post('save', async function (doc, next) {
+    console.log('hit the pre save')
     try{
         await doc.populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
         const ingsPromises = doc.ings.flatMap(ing => {
