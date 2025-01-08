@@ -29,7 +29,7 @@ const imparimentSheetSchema = new Schema({
 });
 
 
-
+const ImpSheet = mongoose.model('ImpSheet', imparimentSheetSchema);
 
 imparimentSheetSchema.pre('deleteOne', { document: true }, async function (next) {
     console.log('hit the delete one pre')
