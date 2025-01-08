@@ -45,12 +45,12 @@ imparimentSheetSchema.pre('deleteOne', { document: false, query: true }, async f
                     return ing.ing.ings.map(ingg =>
                         Ingredient.findByIdAndUpdate(
                         ingg.ing,
-                        { $inc: { qty: ingg.qty } },
+                        { $inc: { qty: ingg.qty ? ingg.qty : 0 } },
                         { new: true }
                         ).exec()
                     );
                     } else {
-                    return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: ing.qty}}, {new: true }).exec()
+                    return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: ing.qty ? ing.qty : 0}}, {new: true }).exec()
                     }
                 })
                  await Promise.all(ingsPromises)
