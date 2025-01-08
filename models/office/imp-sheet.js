@@ -36,7 +36,7 @@ imparimentSheetSchema.pre('deleteOne', { document: false, query: true }, async f
         try{
             console.log('hi the delete one pre')
             const query = this.getQuery()
-            const dbSheet = await ImpSheet.findOne(query)
+            const dbSheet = await this.model.findOne(query)
                     .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
                 if(dbSheet){
                 const ingsPromises = dbSheet.ings.flatMap(ing => {
