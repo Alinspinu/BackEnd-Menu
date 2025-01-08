@@ -31,7 +31,7 @@ const imparimentSheetSchema = new Schema({
 
 
 
-imparimentSheetSchema.pre('deleteOne', { document: true }, async function (next) {
+imparimentSheetSchema.pre('deleteOne', { query: true }, async function (next) {
     console.log('hit the delete one pre')
         try{
             const dbSheet = await this.model.findOne(this.getQuery())
