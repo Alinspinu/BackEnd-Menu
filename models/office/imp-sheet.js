@@ -62,32 +62,35 @@ imparimentSheetSchema.pre('deleteOne', { document: true, query: false }, async f
         }
 })
 
+imparimentSheetSchema.post('deleteOne', { document: true, query: false }, function () {
+    console.log('Post deleteOne document hook triggered');
+});
 
 
-imparimentSheetSchema.post('save', async function (doc, next) {
-    try{
-        await doc.populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
-        const ingsPromises = doc.ings.flatMap(ing => {
-            if(ing.ing.productIngredient){
-            return ing.ing.ings.map(ingg =>
-                Ingredient.findByIdAndUpdate(
-                ingg.ing,
-                { $inc: { qty: -ingg.qty } },
-                { new: true }
-                ).exec()
-            );
-            } else {
-            return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: -ing.qty}}, {new: true }).exec()
-            }
-        })
-        await Promise.all(ingsPromises)
+// imparimentSheetSchema.post('save', async function (doc, next) {
+//     try{
+//         await doc.populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
+//         const ingsPromises = doc.ings.flatMap(ing => {
+//             if(ing.ing.productIngredient){
+//             return ing.ing.ings.map(ingg =>
+//                 Ingredient.findByIdAndUpdate(
+//                 ingg.ing,
+//                 { $inc: { qty: -ingg.qty } },
+//                 { new: true }
+//                 ).exec()
+//             );
+//             } else {
+//             return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: -ing.qty}}, {new: true }).exec()
+//             }
+//         })
+//         await Promise.all(ingsPromises)
 
-     next()
-    } catch(error) {
-        console.error('Error in post save hook:', error);
-        next(error)
-    }
-})
+//      next()
+//     } catch(error) {
+//         console.error('Error in post save hook:', error);
+//         next(error)
+//     }
+// })
 
 
 module.exports = mongoose.model("ImpSheet", imparimentSheetSchema);
