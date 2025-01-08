@@ -218,13 +218,14 @@ module.exports.compareScriptic = async (req, res, next) => {
     const {start, end, loc} = req.body
     const startTime = new Date(start).setUTCHours(0,0,0,0)
     const endTime = new Date(end).setUTCHours(0,0,0,0)
+    const eTime = new Date(end).setUTCHours(23,0,0,0)
     const ings = await Ingredient.find({locatie: loc,  productIngredient: false, dep: { $in: ['marfa', 'materie']}}).select('name uploadLog um')
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'})
           .populate({path: 'billProduct.ings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
           .populate({path: 'billProduct.toppings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
     const firstInventary = await Inventary.findOne({date: startTime, locatie: loc})
     const lastInventary = await Inventary.findOne({date: endTime, locatie: loc})
-    const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime.setUTCHours(23,59,59,99)}})
+    const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: eTime}})
                               .populate({path: 'ings.ing', select: 'name um ings productIngredient', populate: {path: 'ings.ing', select: 'name um' }})
     const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}}).populate([
       {
