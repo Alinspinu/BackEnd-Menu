@@ -31,7 +31,7 @@ const imparimentSheetSchema = new Schema({
 
 const ImpSheet = mongoose.model('ImpSheet', imparimentSheetSchema);
 
-imparimentSheetSchema.pre('deleteOne', { document: true }, async function (next) {
+imparimentSheetSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
     console.warn('hit the delete one pre')
         try{
             const query = {_id: this._id}
@@ -53,7 +53,7 @@ imparimentSheetSchema.pre('deleteOne', { document: true }, async function (next)
                 })
                  await Promise.all(ingsPromises)
                 } else{
-                    console.warn('No dbSheet found for query:', this.getQuery());
+                    console.warn('No dbSheet found for query:');
                 }
             next()
         } catch(error) {
