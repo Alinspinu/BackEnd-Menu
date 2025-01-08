@@ -31,10 +31,11 @@ const imparimentSheetSchema = new Schema({
 
 
 
-imparimentSheetSchema.pre('deleteOne', { query: true }, async function (next) {
+imparimentSheetSchema.pre('deleteOne', { document: true }, async function (next) {
     console.log('hit the delete one pre')
         try{
-            const dbSheet = await this.model.findOne(this.getQuery())
+            const query = {_id: this._id}
+            const dbSheet = await this.model.findOne(query)
                     .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
                 if(dbSheet){
                 const ingsPromises = dbSheet.ings.flatMap(ing => {
