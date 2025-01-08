@@ -31,10 +31,11 @@ const imparimentSheetSchema = new Schema({
 
 const ImpSheet = mongoose.model('ImpSheet', imparimentSheetSchema);
 
-imparimentSheetSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
-    consol.log('hit the delete one pre')
+imparimentSheetSchema.pre('deleteOne', { document: false, query: true }, async function (next) {
+    console.log('hit the delete one pre')
         try{
-            const query = {_id: this._id}
+            console.log('hi the delete one pre')
+            const query = this.getQuery()
             const dbSheet = await ImpSheet.findOne(query)
                     .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
                 if(dbSheet){
