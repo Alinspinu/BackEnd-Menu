@@ -15,7 +15,11 @@ module.exports.addImpSheet = async (req, res) => {
       const dbSheet = await ImpSheet.findById(savedSheet._id)
             .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
             .populate({path: 'user', select: 'employee.fullName'})
-      res.status(200).json(dbSheet)
+      if(dbSheet){
+        res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: dbSheet})
+      } else{
+        res.status(200).json({message: 'Fișa nu a fost găsită în baza de date dupa salvare!'})
+      }
     } catch(error){
       console.log(error)
       res.status(500).json(error)
@@ -26,11 +30,6 @@ module.exports.deleteSheet = async (req, res) => {
   try{
     const {id} = req.query;
      await ImpSheet.deleteOne({_id: id}) 
-    // if(sheet){
-    //   // await sheet.deleteOne()
-    // } else {
-    //   res.status(226).json({message: 'Fișa nu a fost găsită!'})
-    // }
     res.status(200).json({message: 'Fișa a fost ștearsă cu success!'})
   } catch(error) {
     console.log(error)
