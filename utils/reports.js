@@ -877,7 +877,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         impairment: {
             total: round(values.totalDep),
             products: depProducts,
-            ings: depIngs
         },
         workValue: {
             total: round(values.workValueTotal),

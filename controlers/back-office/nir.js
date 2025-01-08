@@ -49,7 +49,7 @@ module.exports.getSheets = async (req, res) => {
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
           const bDate = new Date(b.date).getTime()
-          return bDate- aDate
+          return bDate - aDate
         })
     res.status(200).json(sortedSheets)
     } catch(error){

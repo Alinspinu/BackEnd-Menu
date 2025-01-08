@@ -3,6 +3,7 @@ const {round} = require('./../../utils/functions')
 const Inventary = require('../../models/office/inventary')
 const Order = require('../../models/office/product/order')
 const DelProd = require('../../models/office/product/deletetProduct')
+const ImpSheet = require('../models/office/imp-sheet')
 
 
 
@@ -223,6 +224,8 @@ module.exports.compareScriptic = async (req, res, next) => {
           .populate({path: 'billProduct.toppings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
     const firstInventary = await Inventary.findOne({date: startTime, locatie: loc})
     const lastInventary = await Inventary.findOne({date: endTime, locatie: loc})
+    const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime.setUTCHours(23,59,59,99)}})
+                              .populate({path: 'ings.ing', select: 'name um ings productIngredient', populate: {path: 'ings.ing', select: 'name um' }})
     const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}}).populate([
       {
         path: 'products.ings.ing', 
@@ -233,6 +236,30 @@ module.exports.compareScriptic = async (req, res, next) => {
         populate: {path: 'ings.ing'}
       }
     ])
+
+
+
+    for(const sheet of impSheets){
+      for(let ing of sheet.ings){
+          if(ing.ing.productIngredient){
+              for(let ingg of ing.ing.ings){
+                  const index = delIngs.findIndex(i => i.name === ingg.ing.name)
+                  if(index !== -1){
+                      delIngs[index].qty = round(delIngs[index].qty + ingg.qty)
+                  } else {
+                      delIngs.push(ingg)
+                  }
+              }
+          } else {
+              const index = delIngs.findIndex(i => i.name === ing.ing.name)
+              if(index !== -1){
+                  delIngs[index].qty = round(delIngs[index].qty + ing.qty)
+              } else {
+                  delIngs.push(ing)
+              }
+          }
+      }
+  }
 
     if(delProds){
       delProds.forEach(delProduct => {
