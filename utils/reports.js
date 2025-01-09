@@ -568,10 +568,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     monthHours: user.employee.employee.salary.norm,
                     baseIncome: inHeand,
                     hourIncome: inHeand / user.employee.employee.salary.norm,
-                    totalIncome: user.employee.employee.salary.fix ? 0 : round((inHeand / user.employee.salary.norm) * user.hours),
+                    totalIncome: user.employee.employee.salary.fix ? 0 : round((inHeand / user.employee.employee.salary.norm) * user.hours),
                     bonus: 0,
                     baseTax: baseTax,
-                    taxValue: user.employee.employee.salary.fix ? 0 : round(baseTax / user.employee.salary.norm * user.hours),
+                    taxValue: user.employee.employee.salary.fix ? 0 : round(baseTax / user.employee.employee.salary.norm * user.hours),
                     user: user.employee._id,
                 }
                 values.workValueTotal += employee.totalIncome
