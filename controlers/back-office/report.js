@@ -162,18 +162,42 @@ async function createReport(reports){
             tax: 0,
             users: []
         },
-        supliesProdBuc: lastReport.supliesProdBuc ? lastReport.supliesProdBuc : 0,
-        supliesMfBuc: lastReport.supliesMfBuc ? lastReport.supliesMfBuc : 0,
-        supliesProdBar: lastReport.supliesProdBar ? lastReport.supliesProdBar : 0,
-        supliesMfBar: lastReport.supliesMfBar ? lastReport.supliesMfBar : 0,
-        supliesValue: lastReport.supliesValue,
-        serviceValue: lastReport.serviceValue ? lastReport.serviceValue : 0,
-        marketingValue: lastReport.marketingValue ? lastReport.marketingValue : 0,
-        inventarySpendings: lastReport.inventarySpendings ? lastReport.inventarySpendings : 0,
-        gasValue: lastReport.gasValue ? reports[reports.length -1].gasValue : 0,
-        constructionsValue: lastReport.constructionsValue ? lastReport.constructionsValue : 0,
-        rent: lastReport.rent ? lastReport.rent : 0,
-        utilities: lastReport.utilities ? lastReport.utilities : 0,
+        supliesProdBuc: 0,
+        supliesMfBuc: 0,
+        supliesProdBar: 0,
+        supliesMfBar: 0,
+        supliesValue: {
+            total: 0,
+            entries: []
+        },
+        serviceValue: {
+            total: 0,
+            entries: []
+        },
+        marketingValue: {
+            total: 0,
+            entries: []
+        },
+        inventarySpendings: {
+            total: 0,
+            entries: []
+        },
+        gasValue: {
+            total: 0,
+            entries: []
+        },
+        constructionsValue: {
+            total: 0,
+            entries: []
+        },
+        rent: {
+            total: 0,
+            entries: [],
+        },
+        utilities: {
+            total: 0,
+            entries: []
+        },
         departaments: [],
         paymentMethods: [],
         hours: [],
@@ -188,7 +212,40 @@ async function createReport(reports){
         report.impairment.total = round(report.impairment.total + rep.impairment.total)
         report.workValue.total = round(report.workValue.total + rep.workValue.total)
         report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
-        
+        report.supliesProdBuc = round(report.supliesProdBuc + rep.supliesProdBuc)
+        report.supliesMfBuc = round(report.supliesMfBuc + rep.supliesMfBuc)
+        report.supliesProdBar = round(report.supliesProdBar + rep.supliesProdBar)
+        report.supliesMfBar = round(report.supliesMfBar + rep.supliesMfBar)
+        report.supliesValue = {
+            total: round(report.supliesValue.total + rep.supliesValue.total),
+            entries: [...report.supliesValue.entries, ...rep.supliesValue.entries]
+        }
+        report.serviceValue = {
+            total: round(report.serviceValue.total + rep.serviceValue.total),
+            entries: [...report.serviceValue.entries, ...rep.serviceValue.entries]
+        }
+        report.marketingValue = {
+            total: round(report.marketingValue.total + rep.marketingValue.total),
+            entries: [...report.marketingValue.entries, ...rep.marketingValue.entries]
+        }
+        report.inventarySpendings = {
+            total: round(report.inventarySpendings.total + rep.inventarySpendings.total),
+            entries: [...report.inventarySpendings.entries, ...rep.inventarySpendings.entries]
+        }
+        report.gasValue = {
+            total: round(report.gasValue.total + rep.gasValue.total),
+            entries: [...report.gasValue.entries, ...rep,gasValue.entries]
+        }
+        report.rent = {
+            total: round(report.rent.total + rep.rent.total),
+            entries: [...report.rent.entries, ...rep.rent.entries]
+        }
+        report.utilities = {
+            total: round(report.utilities.total + rep.rent.total),
+            entries: [...report.utilities.entries, ...rep.utilities.entries]
+        }
+
+
         for (let user of rep.workValue.users){
             const existingUser = report.workValue.users.find(usr => usr.name === user.name)
             if(existingUser){

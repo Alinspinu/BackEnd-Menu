@@ -264,6 +264,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     let oldProd = []
     let depProducts = []
     let entryy = []
+    let servEntryes = []
+    let obInvEntryes = []
+    let marketingEntryes = []
+    let consEntryes = []
+    let amenajariEntryes = []
+    let utilitiesEntryes = []
+    let combsEntryes = []
+    let rentEntryes = []
  
 
 
@@ -747,8 +755,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     for(const ing of allIngs){
         if(ing.uploadLog){
             for(const log of ing.uploadLog) {
-                    const uploadMonth = new Date(log.date).getUTCMonth()
-                    if(uploadMonth === month) {
+                    const logDate = new Date(log.date).getTime()
+                    if(startTime < logDate && logDate > endTime) {
                         switch (ing.dep) {
                             case 'consumabil':                       
                                 if(!log.uploadPrice){
@@ -756,31 +764,59 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 } else {
                                     values.totalSuplies += (log.uploadPrice * log.qty) 
                                 }
+                                const cObject = {
+                                  date: log.date,
+                                  name: ing.name,
+                                  price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                  qty: log.qty,
+                                  suplier: log.operation.details
+                              }
+                              consEntryes.push(cObject)
                               break;
-                            case 'servicii':
-                                                      
+                            case 'servicii':                        
                                 if(!log.uploadPrice){
                                     values.serviceValue += (ing.tvaPrice * log.qty) 
                                 } else {
                                     values.serviceValue += (log.uploadPrice * log.qty) 
                                 }
+                                const sObject = {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details
+                                }
+                                servEntryes.push(sObject)
                               break;
-                            case 'ob-inventar':
-                                                      
+                            case 'ob-inventar':                 
                                 if(!log.uploadPrice){
                                     values.inventarySpendings += (ing.tvaPrice * log.qty)
                                 } else {
-
                                     values.inventarySpendings += (log.uploadPrice * log.qty)
                                 }
+                                const oObject = {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details
+                                }
+                                obInvEntryes.push(oObject)
                               break;
-                            case 'marketing':
-                                                      
+                            case 'marketing':                    
                                 if(!log.uploadPrice){
                                     values.marketingValue += (ing.tvaPrice * log.qty)
                                 } else {
                                     values.marketingValue += (log.uploadPrice * log.qty)
                                 }
+                                const mObject = {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details
+                                }
+                                marketingEntryes.push(mObject)
                               break;
                             case 'amenajari':                
                                 if(!log.uploadPrice){
@@ -788,6 +824,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 } else {
                                     values.constructionsValue += (log.uploadPrice * log.qty)
                                 }
+                                const aObject = {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details
+                                }
+                                amenajariEntryes.push(aObject)
                               break;
                             case 'combustibil':                  
                                 if(!log.uploadPrice){
@@ -795,14 +839,29 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 } else {
                                     values.gasValue += (log.uploadPrice * log.qty)
                                 }
+                                const bObject = {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details
+                                }
+                                combsEntryes.push(bObject)
                               break;
                             case 'chirie':             
                                 if(!log.uploadPrice){
                                     values.rentValue += (ing.tvaPrice * log.qty)
                                 } else {
                                     values.rentValue += (log.uploadPrice * log.qty)
-                                    console.log(log.uploadPrice)
                                 }
+                                const rObject = {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details
+                                }
+                                rentEntryes.push(rObject)
                               break;
                             case 'utilitati':        
                                 if(!log.uploadPrice){
@@ -810,7 +869,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 } else {
                                     values.utilitiesValue += (log.uploadPrice * log.qty)
                                 }
-
+                                const uObject = {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details
+                                }
+                                utilitiesEntryes.push(uObject)
                             case 'materie':
                                     if(ing.gestiune === 'bucatarie'){
                                         if(!log.uploadPrice){
@@ -844,16 +910,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     }
                                 break
                             default:                    
-                                if(ing.dep === 'utilitati'){
-                                    if(!log.uploadPrice){
-                                        values.utilitiesValue += (ing.tvaPrice * log.qty)
-                                    } else {
-                                        values.utilitiesValue += (log.uploadPrice * log.qty)
-                                    }
-                                } else {
-                                    // console.log('default' ,ing.dep)
+                                console.log('default' ,ing.dep)
                                     
-                                }
                                  
                         }
                                  
@@ -883,18 +941,43 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             tax: round(values.taxValue),
             users: users
         },
-        supliesValue: round(values.totalSuplies), 
+        supliesValue: { 
+            total: round(values.totalSuplies),
+            entries: consEntryes
+        }, 
         supliesProdBuc: round(values.inIngsProdBuc),
         supliesMfBuc: round(values.inIngsMfBuc),
         supliesProdBar: round(values.inIngsProdBar),
         supliesMfBar: round(values.inIngsMfBar),
-        serviceValue: round(values.serviceValue),
-        marketingValue: round(values.marketingValue),
-        inventarySpendings: round(values.inventarySpendings),
-        gasValue: round(values.gasValue),
-        constructionsValue: round(values.constructionsValue),
-        rent: round(values.rentValue),
-        utilities: round(values.utilitiesValue),
+
+        serviceValue: {
+            total: round(values.serviceValue),
+            entries: servEntryes
+        },
+        marketingValue: {
+            total: round(values.marketingValue),
+            entries: marketingEntryes
+        },
+        inventarySpendings: {
+            total: round(values.inventarySpendings),
+            entries: obInvEntryes
+        },
+        gasValue: {
+            total: round(values.gasValue),
+            entries: combsEntryes
+        },
+        constructionsValue: {
+            total: round(values.constructionsValue),
+            entries: amenajariEntryes
+        },
+        rent: {
+            total: round(values.rentValue),
+            entries: rentEntryes
+        },
+        utilities: {
+            total: round(values.utilitiesValue),
+            entries: utilitiesEntryes
+        },
         departaments: createDepartaments(billProducts),
         hours: calcIncomeHours(bills),
         users: usersShow(bills),

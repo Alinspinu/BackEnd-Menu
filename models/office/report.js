@@ -88,30 +88,105 @@ const reportSchema = new Schema({
             ]
         },
     supliesValue: {
-        type: Number,
-        required: true
+        total: Number,
+        entries: [
+            {
+                date: Date,
+                name: String,
+                qty: Number,
+                price: Number,
+                suplier: String,
+            }
+        ]
     },
     supliesProdBuc: Number,
     supliesMfBuc: Number,
     supliesProdBar: Number,
     supliesMfBar: Number,
     serviceValue: {
-        type: Number
+        total: Number,
+        entries: [
+            {
+                date: Date,
+                name: String,
+                qty: Number,
+                price: Number,
+                suplier: String,
+            }
+        ]
     },
     marketingValue: {
-        type: Number
+        total: Number,
+        entries: [
+            {
+                date: Date,
+                name: String,
+                qty: Number,
+                price: Number,
+                suplier: String,
+            }
+        ]
     },
     inventarySpendings: {
-        type: Number
+        total: Number,
+        entries: [
+            {
+                date: Date,
+                name: String,
+                qty: Number,
+                price: Number,
+                suplier: String,
+            }
+        ]
     },
     gasValue:{
-        type: Number
+        total: Number,
+        entries: [
+            {
+                date: Date,
+                name: String,
+                qty: Number,
+                price: Number,
+                suplier: String,
+            }
+        ]
     },
     constructionsValue: {
-        type: Number
+        total: Number,
+        entries: [
+            {
+                date: Date,
+                name: String,
+                qty: Number,
+                price: Number,
+                suplier: String,
+            }
+        ]
     },
-    rent: Number,
-    utilities: Number,
+    rent: {
+        total: Number,
+        entries: [
+            {
+                date: Date,
+                name: String,
+                qty: Number,
+                price: Number,
+                suplier: String,
+            }
+        ]
+    },
+    utilities: {
+        total: Number,
+        entries: [
+            {
+                date: Date,
+                name: String,
+                qty: Number,
+                price: Number,
+                suplier: String,
+            }
+        ]
+    },
     departaments: [
         {
             total: Number,
