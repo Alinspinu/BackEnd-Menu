@@ -234,7 +234,7 @@ async function createReport(reports){
         }
         report.gasValue = {
             total: round(report.gasValue.total + rep.gasValue.total),
-            entries: [...report.gasValue.entries, ...rep,gasValue.entries]
+            entries: [...report.gasValue.entries, ...rep.gasValue.entries]
         }
         report.rent = {
             total: round(report.rent.total + rep.rent.total),
