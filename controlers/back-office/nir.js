@@ -56,17 +56,6 @@ module.exports.getSheets = async (req, res) => {
 }
 
 
-// module.exports.getSheet = async (req, res) => {
-//   try{
-//     const { date, loc } = req.query
-//     const sheet = ImpSheet.findOne({date: date, locatie, loc})
-//     res.status(200).json(sheet)
-//   } catch(error) {
-//     console.log(error)
-//     res.status(500).json(error)
-//   }
-// }
-
 module.exports.getSheetsByPeriod = async (req, res) => {
   try{
     const {startDate, endDate, loc} = req.query
@@ -88,11 +77,6 @@ module.exports.saveNir = async( req, res, next) => {
     nir.documentDate = new Date(Date.now())
    }
    try{
-    // if(nir.eFacturaId){
-    //   const updatedNir = await Nir.findOneAndUpdate({totalDoc: {$gte: nir.totalDoc - 1, $lte: nir.totalDoc +1} , suplier: nir.suplier._id}, {$set: {eFacturaId: nir.eFacturaId}}, {new: true})
-    //   console.log(updatedNir.eFacturaId)
-    //   res.status(200).json(updatedNir)
-    // } else {
       const newNir = new Nir(nir)
       newNir.suplier = nir.suplier._id
       newNir.locatie = loc
@@ -160,10 +144,15 @@ module.exports.deleteNir = async (req, res, next) => {
 module.exports.deleteNirs = async (req, res, next) => {
   try{
     const {ids} = req.body
-    const deletePromises = ids.map(id => {
-      return Nir.deleteOne({ _id: id }).exec(); 
-    });
 
+    const deletePromises = ids.map(async id => {
+      const doc = await Nir.findById(id);
+      if (doc) {
+        return doc.deleteOne();
+      }
+      return null;
+    });
+    
     const results = await Promise.all(deletePromises);
     console.log('All documents deleted:', results);
 
@@ -258,6 +247,41 @@ module.exports.addEFacturaID = async (req, res, next) => {
 }
 
 
+module.exports.fixBuleala = async (req, res) => {
+  const names = [
+    'Croissant cu unt', 
+    'Croissant cu fistic', 
+    'Croissant cheesecake', 
+    'Croissant cu ciocolata', 
+    'Croissant cu vanilie', 
+    'Croissant tiramisu',
+    'Croissnat cu unt productie',
+    'Croissant sacher',
+    'Croissant foret noir'
+  ]
+  try{
+    const ingredients = await Ingredient.find({locatie: '655e2e7c5a3d53943c6b7c53', name: {$in: names}})
+
+    for (let ing of ingredients) {
+      for (let i = 0; i < ing.uploadLog.length; i++) {
+        const log = ing.uploadLog[i];
+        if (!log.operation?.details) continue; 
+    
+        const marker = log.operation.details.slice(-7, -6); 
+        if (marker === '2' && log.operation.name === 'intrare') {
+          ing.uploadLog.splice(i, 1);
+          i--; 
+        }
+      }
+    
+      await ing.save(); // Save the modified ingredient
+    }
+    res.status(200).json({message: 'all done :)'})
+
+  } catch(error){
+    console.log(error)
+  }
+}
 
 
 
@@ -265,6 +289,17 @@ module.exports.addEFacturaID = async (req, res, next) => {
 
 
 
+
+// module.exports.getSheet = async (req, res) => {
+//   try{
+//     const { date, loc } = req.query
+//     const sheet = ImpSheet.findOne({date: date, locatie, loc})
+//     res.status(200).json(sheet)
+//   } catch(error) {
+//     console.log(error)
+//     res.status(500).json(error)
+//   }
+// }
 
 
 
