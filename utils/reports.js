@@ -544,7 +544,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
       }
     })
 
-    //CALC WORK VALUE
+    //CALC WORK VALUE`
 
     workDays = pontaj.days.filter(day => {
         const dayDate = new Date(date.setUTCHours(0,0,0,0))
@@ -565,13 +565,13 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     name: user.employee.employee.fullName,
                     hours: user.hours,
                     position: user.position,
-                    monthHours: 176,
+                    monthHours: user.employee.employee.salary.norm,
                     baseIncome: inHeand,
-                    hourIncome: inHeand / 176,
-                    totalIncome: user.employee.employee.salary.fix ? round(inHeand/daysNumber) : round((inHeand / 176) * user.hours),
+                    hourIncome: inHeand / user.employee.employee.salary.norm,
+                    totalIncome: user.employee.employee.salary.fix ? 0 : round((inHeand / user.employee.salary.norm) * user.hours),
                     bonus: 0,
                     baseTax: baseTax,
-                    taxValue: user.employee.employee.salary.fix ? round(baseTax / daysNumber) : round(baseTax / 176 * user.hours),
+                    taxValue: user.employee.employee.salary.fix ? 0 : round(baseTax / user.employee.salary.norm * user.hours),
                     user: user.employee._id,
                 }
                 values.workValueTotal += employee.totalIncome
@@ -592,8 +592,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 const existingUser = users.find(u => u.name === employee.name)
                 if(existingUser && existingUser.employee){
                     existingUser.hours += employee.hours
-                    existingUser.totalIncome = existingUser.employee.salary.fix ? 0 : round(existingUser.totalIncome + employee.totalIncome)
-                    existingUser.bonus = existingUser.employee.salary.fix ? 0 : round(existingUser.bonus + employee.bonus)
+                    existingUser.totalIncome =  round(existingUser.totalIncome + employee.totalIncome)
+                    existingUser.bonus = round(existingUser.bonus + employee.bonus)
                 } else {
                     users.push(employee)
                 }
@@ -616,9 +616,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 name: dbEmployee.fullName,
                 hours: 0,
                 position: dbEmployee.position,
-                monthHours: 176,
+                monthHours: dbEmployee.salary.norm,
                 baseIncome: dbEmployee.salary.inHeand,
-                hourIncome: round(dbEmployee.salary.inHeand / 176),
+                hourIncome: round(dbEmployee.salary.inHeand / dbEmployee.salary.norm),
                 totalIncome:  round(dbEmployee.salary.inHeand / daysNumber),
                 bonus: 0,
                 baseTax: baseTax,
