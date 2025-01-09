@@ -490,7 +490,6 @@ module.exports.compareScriptic = async (req, res, next) => {
         ingredients.push(compareIng)
       }
     })
-    console.log(delIngs)
 
     consIngs.forEach(ing => {
       const compareIng = {
