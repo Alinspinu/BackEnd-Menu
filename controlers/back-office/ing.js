@@ -47,6 +47,18 @@ module.exports.saveIng = async(req, res, next) => {
     };
 
 
+    module.exports.getIngUploadLog = async (req, res) => {
+      try{ 
+        const {id} = req.query
+        const ing = await Ingredient.findById(id).select('name um uploadLog')
+        res.status(200).json(ing)
+      } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+      }
+    }
+
+
     module.exports.getIngConsumabil = async (req, res, next) => {
       const loc = req.query.loc
       try{

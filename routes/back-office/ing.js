@@ -24,7 +24,9 @@ router.route('/compare-inv').post(ingRoutes.compareScriptic)
 router.route('/update').get(ingRoutes.updateStoc)
 router.route('/ing').get(ingRoutes.getIng)
 
-router.route('/fix').get(ingRoutes.fixbuBulealaOvi)
+router.route('/log').get(ingRoutes.getIngUploadLog)
+
+// router.route('/fix').get(ingRoutes.fixbuBulealaOvi)
 
 // router.route('/update-log').get(ingRoutes.updateUploadLog)
 
