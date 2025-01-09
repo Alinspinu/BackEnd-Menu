@@ -145,6 +145,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
             const result = await getBillProducts(orders, filter)
             const ingredients = await getIngredients(result.allProd)
             if(report === 'report'){
+                console.log('orders', new Date(startTime))
                const report = await createDayReport(result.allProd, ingredients, loc, orders, startTime)
                res.status(200).json(report)
             } else {
