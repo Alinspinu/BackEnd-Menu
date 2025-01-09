@@ -216,6 +216,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
 
+    console.log(date)
+
     const entries = await Entry.find({typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'})
     const pontaj = await Pontaj.findOne({locatie: loc, month: pontMonth}).populate('days.users.employee')
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
@@ -757,6 +759,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             for(const log of ing.uploadLog) {
                     const logDate = new Date(log.date).getTime()
                     if(startTime < logDate && logDate > endTime) {
+                        console.log(new Date(logDate))
                         switch (ing.dep) {
                             case 'consumabil':                       
                                 if(!log.uploadPrice){
