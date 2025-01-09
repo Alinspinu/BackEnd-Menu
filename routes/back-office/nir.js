@@ -30,7 +30,7 @@ router.route('/sheet')
     .post(nirRoutes.addImpSheet)
     .delete(nirRoutes.deleteSheet)
 
-router.route('/fix').get(nirRoutes.fixBuleala)
+// router.route('/fix').get(nirRoutes.fixBuleala)
     
 
 router.route('/sheet-period').get(nirRoutes.getSheetsByPeriod)

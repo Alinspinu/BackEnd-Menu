@@ -130,7 +130,7 @@ app.use('/users', authApi, usersRoutes);
 app.use('/notification', authApi, notifRoutes)
 app.use("/top", toppingRoutes);
 app.use('/suplier', authApi, suplierRoutes);
-app.use('/nir', nirRoutes);
+app.use('/nir', authApi, nirRoutes);
 app.use('/product', productRoutes);
 app.use('/ing', authApi, ingRoutes);
 app.use('/sub', authApi, subRoutes);

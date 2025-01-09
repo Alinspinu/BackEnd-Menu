@@ -247,41 +247,41 @@ module.exports.addEFacturaID = async (req, res, next) => {
 }
 
 
-module.exports.fixBuleala = async (req, res) => {
-  const names = [
-    'Croissant cu unt', 
-    'Croissant cu fistic', 
-    'Croissant cheesecake', 
-    'Croissant cu ciocolata', 
-    'Croissant cu vanilie', 
-    'Croissant tiramisu',
-    'Croissnat cu unt productie',
-    'Croissant sacher',
-    'Croissant foret noir'
-  ]
-  try{
-    const ingredients = await Ingredient.find({locatie: '655e2e7c5a3d53943c6b7c53', name: {$in: names}})
+// module.exports.fixBuleala = async (req, res) => {
+//   const names = [
+//     'Croissant cu unt', 
+//     'Croissant cu fistic', 
+//     'Croissant cheesecake', 
+//     'Croissant cu ciocolata', 
+//     'Croissant cu vanilie', 
+//     'Croissant tiramisu',
+//     'Croissnat cu unt productie',
+//     'Croissant sacher',
+//     'Croissant foret noir'
+//   ]
+//   try{
+//     const ingredients = await Ingredient.find({locatie: '655e2e7c5a3d53943c6b7c53', name: {$in: names}})
 
-    for (let ing of ingredients) {
-      for (let i = 0; i < ing.uploadLog.length; i++) {
-        const log = ing.uploadLog[i];
-        if (!log.operation?.details) continue; 
+//     for (let ing of ingredients) {
+//       for (let i = 0; i < ing.uploadLog.length; i++) {
+//         const log = ing.uploadLog[i];
+//         if (!log.operation?.details) continue; 
     
-        const marker = log.operation.details.slice(-7, -6); 
-        if (marker === '2' && log.operation.name === 'intrare') {
-          ing.uploadLog.splice(i, 1);
-          i--; 
-        }
-      }
+//         const marker = log.operation.details.slice(-7, -6); 
+//         if (marker === '2' && log.operation.name === 'intrare') {
+//           ing.uploadLog.splice(i, 1);
+//           i--; 
+//         }
+//       }
     
-      await ing.save(); // Save the modified ingredient
-    }
-    res.status(200).json({message: 'all done :)'})
+//       await ing.save(); // Save the modified ingredient
+//     }
+//     res.status(200).json({message: 'all done :)'})
 
-  } catch(error){
-    console.log(error)
-  }
-}
+//   } catch(error){
+//     console.log(error)
+//   }
+// }
 
 
 
