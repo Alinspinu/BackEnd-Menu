@@ -232,26 +232,46 @@ module.exports.reprinFiscal = async (req, res, next) => {
 
 module.exports.printBill = async (req, res, next) => {
     try{
-        const {bill} = req.body
+        const {bill, mode} = req.body
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
-        socket.emit('printBill', JSON.stringify(bill))
-
-         update = {
+        if(mode){
+           socket.emit('printBill', JSON.stringify(bill))
+        } 
+        if(email && email.length){
+            const client = await User.findOne({email: email})
+            if(client){
+                client.orders.push(bill)
+                client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
+            }
+            await client.save()
+        }
+        update = {
             status: 'done',
             pending: false,
             payment: bill.payment,
+            tips: bill.tips,
+            total: bill.total,
             clientInfo: bill.clientInfo
         }
 
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
+
+        savedBill.products.map(async (el) => {
+            if (el.toppings.length) {
+              await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+            }
+            if (el.ings.length) {
+               await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+            }
+          });
+
         const billId = new mongoose.Types.ObjectId(bill._id);
         await Table.findOneAndUpdate({bills: billId}, {$pull: {bills: billId}}) 
         socket.emit('billl', JSON.stringify(savedBill))
         if(savedBill){
         res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-        res.status(200)
         } else {
             throw new Error('Nota de plată nu a putut fi salvată!')
         }
@@ -260,47 +280,6 @@ module.exports.printBill = async (req, res, next) => {
         res.status(500).json(err)
     }
 }
-
-module.exports.fixBul = async (req, res, next) => {
-    try{
-        const startD = new Date('2024-01-05')
-        startD.setHours(0,0,0,0)
-        const orders = Order.find({createdAt: {$gte: startD} })
-       const response = await axios.post('https://flowmanager.ro/pay/fix', {orders}, {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        console.log(response)
-        res.status(200)
-    } catch(err){
-        console.log(err)
-    }
-
-}
-
-// module.exports.fixBul = async (req, res, next) => {
-//     try{
-//           const {orders} = req.body
-          
-//           const pOrders = JSON.parse(orders)
-//           for( const o of pOrders){
-//             const ord = Order.findOne({soketId: o.soketId})
-//             if(!ord){
-//                 const or = new Order(o)
-//                 await or.save()
-//                 console.log('order saved', o.soketId)
-//             } else {
-//                 console.log('order found', ord.soketId)
-//             }
-//           }
-        
-//         res.status(200)
-//     } catch(err){
-//         console.log(err)
-//     }
-// }
-
 
 
 module.exports.saveBillInCloud = async (req, res, next) => {
@@ -405,5 +384,43 @@ module.exports.posPaymentCheck = async (req, res, next) => {
 
 
 
+module.exports.fixBul = async (req, res, next) => {
+    try{
+        const startD = new Date('2024-01-05')
+        startD.setHours(0,0,0,0)
+        const orders = Order.find({createdAt: {$gte: startD} })
+       const response = await axios.post('https://flowmanager.ro/pay/fix', {orders}, {
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        console.log(response)
+        res.status(200)
+    } catch(err){
+        console.log(err)
+    }
+
+}
 
 
+// module.exports.fixBul = async (req, res, next) => {
+//     try{
+//           const {orders} = req.body
+          
+//           const pOrders = JSON.parse(orders)
+//           for( const o of pOrders){
+//             const ord = Order.findOne({soketId: o.soketId})
+//             if(!ord){
+//                 const or = new Order(o)
+//                 await or.save()
+//                 console.log('order saved', o.soketId)
+//             } else {
+//                 console.log('order found', ord.soketId)
+//             }
+//           }
+        
+//         res.status(200)
+//     } catch(err){
+//         console.log(err)
+//     }
+// }
