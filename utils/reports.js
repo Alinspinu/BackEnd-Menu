@@ -864,6 +864,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     suplier: log.operation.details
                                 }
                                 rentEntryes.push(rObject)
+                                console.log(rObject)
                               break;
                             case 'utilitati':        
                                 if(!log.uploadPrice){
