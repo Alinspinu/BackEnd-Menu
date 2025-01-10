@@ -249,7 +249,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 newBill.user = parsedBill.clientInfo._id
             }
             if(mode) socket.emit('printOrder', JSON.stringify(newBill))   
-                   
+
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
                     el.sentToPrint = false
@@ -298,46 +298,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
     }
 }
 
-module.exports.deleteOrder = async (req, res, next) => {
-    try {
-        const { data } = req.body;
-        console.log('data', data);
 
-        if (data && data.length) {
-            const orderIds = data.map(obj => obj.id);
-
-            // Find all orders that match the given socketIds
-            const orders = await Order.find({ soketId: { $in: orderIds } });
-            console.log('Found orders:', orders.length);
-
-            if (orders.length) {
-                const deletePromises = orders.map(order => {
-                    if (!data.stopSend) {
-                        setTimeout(() => {
-                            socket.emit('tableBillId', JSON.stringify({ number: order.masa, id: order.soketId }));
-                        }, 500);
-                    }
-
-                    // Return the deletion promise
-                    return order.deleteOne()
-                        .then(() => console.log(`Order with socketId ${order.soketId} deleted.`))
-                        .catch(err => console.error(`Failed to delete order with socketId ${order.soketId}:`, err));
-                });
-
-                // Wait for all delete operations to complete
-                await Promise.all(deletePromises);
-                res.status(200).json({ message: 'Comenzile au fost sterse!' });
-            } else {
-                res.status(404).json({ message: 'No orders found to delete.' });
-            }
-        } else {
-            res.status(400).json({ message: 'Invalid data provided.' });
-        }
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: err.message });
-    }
-};
 
 
 
@@ -496,6 +457,48 @@ module.exports.endPending = async (req, res, next) => {
     }
 }
 
+
+
+module.exports.deleteOrder = async (req, res, next) => {
+    try {
+        const { data } = req.body;
+        console.log('data', data);
+
+        if (data && data.length) {
+            const orderIds = data.map(obj => obj.id);
+
+            // Find all orders that match the given socketIds
+            const orders = await Order.find({ soketId: { $in: orderIds } });
+            console.log('Found orders:', orders.length);
+
+            if (orders.length) {
+                const deletePromises = orders.map(order => {
+                    if (!data.stopSend) {
+                        setTimeout(() => {
+                            socket.emit('tableBillId', JSON.stringify({ number: order.masa, id: order.soketId }));
+                        }, 500);
+                    }
+
+                    // Return the deletion promise
+                    return order.deleteOne()
+                        .then(() => console.log(`Order with socketId ${order.soketId} deleted.`))
+                        .catch(err => console.error(`Failed to delete order with socketId ${order.soketId}:`, err));
+                });
+
+                // Wait for all delete operations to complete
+                await Promise.all(deletePromises);
+                res.status(200).json({ message: 'Comenzile au fost sterse!' });
+            } else {
+                res.status(404).json({ message: 'No orders found to delete.' });
+            }
+        } else {
+            res.status(400).json({ message: 'Invalid data provided.' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
 
 
 

@@ -236,14 +236,11 @@ module.exports.printBill = async (req, res, next) => {
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
-        console.log('mode', mode)
         if(mode){
            socket.emit('printBill', JSON.stringify(bill))
         } 
-        console.log(email)
         if(email && email.length){
             const client = await User.findOne({email: email})
-            console.log(client)
             if(client){
                 client.orders.push(bill)
                 client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
