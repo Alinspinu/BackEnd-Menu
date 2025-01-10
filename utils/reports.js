@@ -863,9 +863,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
-                                rentEntryes.push('object',rObject)
-                                rentEntryes.push('log',log)
-                                console.log(rObject)
+                                rentEntryes.push(rObject)
+                                console.log('OBJECT***', rObject)
+                                console.log('LOG****',log)
                               break;
                             case 'utilitati':        
                                 if(!log.uploadPrice){
