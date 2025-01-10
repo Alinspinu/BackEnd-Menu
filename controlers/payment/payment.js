@@ -236,6 +236,7 @@ module.exports.printBill = async (req, res, next) => {
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
+        console.log('mode', mode)
         if(mode){
            socket.emit('printBill', JSON.stringify(bill))
         } 
