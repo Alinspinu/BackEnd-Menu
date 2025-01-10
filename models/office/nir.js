@@ -205,7 +205,7 @@ nirSchema.pre('save', async function (next){
 nirSchema.pre('deleteOne', { document: true, query: false }, async function(next){
   try{
     const doc = this
-    const details = 'PK CASHMERE S.R.L. Nr  Doc - 20240036'
+    const details = 'PK CASHMERE S.R.L. Nr  Doc - 20240035'
     const promises = doc.ingredients.map(el => {
       return Ingredient.findByIdAndUpdate(
         el.ing,
