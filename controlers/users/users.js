@@ -1,6 +1,7 @@
 const User = require('../../models/users/user')
 const Locatie = require('../../models/office/locatie')
 const QRCode = require('qrcode');
+const SalePoint = require('../../models/utils/sale-point')
 
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
@@ -301,5 +302,40 @@ module.exports.deleteWorkEntry = async (req, res, next) => {
     }catch(err){
         console.log(err)
         res.status(500).json({message: err.messsage})
+    }
+}
+
+
+module.exports.addSalePoint = async (req, res) => {
+    try{
+        const {salePoint} = req.body
+        const newPoint = new SalePoint(salePoint)
+        const savedPoint = await newPoint.save()
+        res.status(200).json(savedPoint)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.deleteSalePoint = async (req, res) => {
+    try{
+        const {id} = req.query
+        await SalePoint.findByIdAndDelete(id)
+        res.status(200).json({message: 'Punctul de lucru a fost sters cu success!'})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.getSalePoints = async (req, res) => {
+    try{
+        const {loc} = req.query
+        const points = await SalePoint.find({locatie: loc})
+        res.status(200).json(points)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
     }
 }

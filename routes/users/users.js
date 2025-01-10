@@ -40,5 +40,10 @@ router.route('/work-log')
 
 router.route('/find').get(users.detectPaymentError)
 
+router.route('/sale-point')
+    .get(users.getSalePoints)
+    .post(users.addSalePoint)
+    .delete(users.deleteSalePoint)
+
 
 module.exports = router  
