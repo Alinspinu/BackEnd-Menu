@@ -769,7 +769,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 const cObject = {
                                   date: log.date,
                                   name: ing.name,
-                                  price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                  price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                   qty: log.qty,
                                   suplier: log.operation.details
                               }
@@ -784,7 +784,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 const sObject = {
                                     date: log.date,
                                     name: ing.name,
-                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
@@ -799,7 +799,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 const oObject = {
                                     date: log.date,
                                     name: ing.name,
-                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
@@ -814,7 +814,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 const mObject = {
                                     date: log.date,
                                     name: ing.name,
-                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
@@ -829,7 +829,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 const aObject = {
                                     date: log.date,
                                     name: ing.name,
-                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
@@ -844,7 +844,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 const bObject = {
                                     date: log.date,
                                     name: ing.name,
-                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
@@ -859,11 +859,12 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 const rObject = {
                                     date: log.date,
                                     name: ing.name,
-                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
-                                rentEntryes.push(rObject)
+                                rentEntryes.push('object',rObject)
+                                rentEntryes.push('log',log)
                                 console.log(rObject)
                               break;
                             case 'utilitati':        
@@ -875,7 +876,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 const uObject = {
                                     date: log.date,
                                     name: ing.name,
-                                    price: ing.uploadPrice ? ing.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
