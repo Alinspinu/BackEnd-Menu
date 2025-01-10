@@ -235,7 +235,11 @@ const orderTrueSchema = new Schema({
                 comment: String,
                 tva: Number,
             }
-        ]
+        ],
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+        }
 
 
 }, { timestamps: true, })

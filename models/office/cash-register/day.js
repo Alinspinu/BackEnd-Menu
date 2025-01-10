@@ -28,7 +28,11 @@ const daySchema = new Schema({
     cashOut: {
         type: Number,
         default: 0
-    }
+    },
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      }
 
 })
 

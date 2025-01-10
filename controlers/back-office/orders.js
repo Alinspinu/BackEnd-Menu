@@ -235,7 +235,7 @@ module.exports.sendOrderTime = async (req, res, next) => {
 
 
 module.exports.saveOrEditBill = async (req, res, next) => {
-    const {bill} = req.body;
+    const {bill, mode} = req.body;
     const parsedBill = JSON.parse(bill)
     const {index, billId} = req.query;
     const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
@@ -248,8 +248,8 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             }
-            // print(newBill)
-            socket.emit('printOrder', JSON.stringify(newBill))         
+            if(mode) socket.emit('printOrder', JSON.stringify(newBill))   
+                   
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
                     el.sentToPrint = false
@@ -262,9 +262,10 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             await table.save();
             socket.emit('billl', JSON.stringify(savedBill))
             res.status(200).json({bill: savedBill})
+
         } else {
-            // print(parsedBill)
-            socket.emit('printOrder', JSON.stringify(parsedBill))  
+
+           if(mode) socket.emit('printOrder', JSON.stringify(parsedBill))  
             let productsToPrint = false
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint){
@@ -281,14 +282,14 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 res.status(200).json({bill: bill})
             } else {
                 console.log('hit the first cloud save')
-                delete parsedBill._id
-                delete parsedBill.index
-                const nBill = new Order(parsedBill)
-                const newBill = await nBill.save()
-                table.bills.push(nBill)
-                await table.save()
-                const billToSend = await Order.findById(newBill._id).populate({path: 'masaRest', select: 'index'})
-                res.status(200).json({bill:billToSend})
+                // delete parsedBill._id
+                // delete parsedBill.index
+                // const nBill = new Order(parsedBill)
+                // const newBill = await nBill.save()
+                // table.bills.push(nBill)
+                // await table.save()
+                // const billToSend = await Order.findById(newBill._id).populate({path: 'masaRest', select: 'index'})
+                res.status(200).json({message: "NASOL"})
             }
         }
     } catch(err){

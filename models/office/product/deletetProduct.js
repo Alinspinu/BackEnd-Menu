@@ -82,6 +82,10 @@ const deletetProductSchema = new Schema ({
                   },
             ]
         },
+        salePoint: {
+            type: Schema.Types.ObjectId,
+            ref: 'SalePoint'
+          }
 }, { timestamps: true, })
 
 module.exports = mongoose.model('DeletetProduct', deletetProductSchema)

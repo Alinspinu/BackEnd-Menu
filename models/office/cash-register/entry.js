@@ -64,6 +64,10 @@ const entrySchema = new Schema({
     index: {
         type: Number,
         index: true
+    },
+    salePoint: {
+      type: Schema.Types.ObjectId,
+      ref: 'SalePoint'
     }
 })
 

@@ -17,13 +17,16 @@ const tableSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "Order"
         }
-    ]    
+    ],
+    salePoint: {
+      type: Schema.Types.ObjectId,
+      ref: 'SalePoint'
+    }    
 })
 
 tableSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
     // Get the index of the document being deleted
     const deletedIndex = this.index;
-    console.log('hit something')
   
     // Recalculate indexes for remaining documents
     try {

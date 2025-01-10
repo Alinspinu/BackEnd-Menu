@@ -300,6 +300,10 @@ const reportSchema = new Schema({
             }
         }
     ],
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      }
 })
 
 

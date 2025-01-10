@@ -72,7 +72,12 @@ const subProductSchema = new Schema({
     product: {
         type: Schema.Types.ObjectId,
         ref: 'Product'
-    }
+    },
+    
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      }
 })
 
 subProductSchema.pre('deleteOne', { document: true }, async function (next) {

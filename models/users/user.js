@@ -146,6 +146,10 @@ const UserTrueSchema = new Schema({
                 medical: Boolean,
             }
         ],
+        salePoint: {
+            type: Schema.Types.ObjectId,
+            ref: 'SalePoint'
+          }
     },
     status: {
         type: String,

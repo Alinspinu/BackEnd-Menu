@@ -11,7 +11,7 @@ const surveySchema = new Schema({
                     check: String,
                 }
             ],
-            obs: String, 
+            obs: [String], 
         }
     ],
     generalObs: [String],
@@ -35,7 +35,11 @@ const surveySchema = new Schema({
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
-    }
+    },
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      }
 
 }, {timestamps: true})
 

@@ -118,6 +118,10 @@ const nirSchema = new Schema({
       }
     },
   ],
+  salePoint: {
+    type: Schema.Types.ObjectId,
+    ref: 'SalePoint'
+  }
 }, { timestamps: true, });
 
 
@@ -199,6 +203,8 @@ nirSchema.pre('save', async function (next){
     next(error)
   }
 })
+
+
 
 
 

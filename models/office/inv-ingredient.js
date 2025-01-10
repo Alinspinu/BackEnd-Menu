@@ -124,6 +124,10 @@ const invIngSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Locatie',
     index: true
+  },
+  salePoint: {
+    type: Schema.Types.ObjectId,
+    ref: 'SalePoint'
   }
 });
 
