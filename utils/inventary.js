@@ -20,7 +20,7 @@ async function unloadIngs (ings, qtyProdus) {
             ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
 
             await ingredientInv.save();
-            // console.log(`Success!! unload-ingredient: Nume - ${ingredientInv.name} - ${cantFinal} / stoc: ${ingredientInv.qty}`)
+            console.log(`Success!! unload-ingredient: Nume - ${ingredientInv.name} - ${cantFinal} / stoc: ${ingredientInv.qty}`)
           }
             if(ingredientInv.name === "Lapte Vegetal"){
               const lapte = await IngInv.findOne({name: "Lapte"})
@@ -54,7 +54,7 @@ async function uploadIngs (ings, qtyProdus) {
               ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
 
               await ingredientInv.save();
-              // console.log(`Success!! upload-ingredient: Nume - ${ingredientInv.name} + ${cantFinal} / stoc: ${ingredientInv.qty}`)
+              console.log(`Success!! upload-ingredient: Nume - ${ingredientInv.name} + ${cantFinal} / stoc: ${ingredientInv.qty}`)
             }
             if(ingredientInv.name === "Lapte Vegetal"){
               const lapte = await IngInv.findOne({name: "Lapte"})
