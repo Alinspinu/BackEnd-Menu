@@ -58,6 +58,17 @@ module.exports.saveIng = async(req, res, next) => {
       }
     }
 
+    module.exports.deleteIngUpLog = async (req, res) => {
+      try{
+        const {logID, ingID} = req.query
+        await Ingredient.findByIdAndUpdate(ingID, {$pull: {uploadLog: {_id: logID}}})
+        res.status(200).json({message: 'Logul a șters!'})
+      } catch(error){
+        console.log(error)
+        re.status(500).json(error)
+      }
+    }
+
 
     module.exports.getIngConsumabil = async (req, res, next) => {
       const loc = req.query.loc
