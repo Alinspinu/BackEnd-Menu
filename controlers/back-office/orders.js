@@ -36,7 +36,7 @@ module.exports.getOrder = async (req, res, next) => {
         const start = new Date(day).setHours(0,0,0,0)
         const end = new Date(day).setHours(23,59,59,9999)
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: start, $lt: end}, status: 'done'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
@@ -44,6 +44,14 @@ module.exports.getOrder = async (req, res, next) => {
         const today = new Date(Date.now()).setHours(0,0,0,0)
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done'})
         const openOrders = await Order.find({ locatie: loc, status: 'open'})
+        for(let order of openOrders) {
+            const table = await Table.findOne({index: order.masa})
+            if(table){
+                order.masaRest = table._id
+                await order.save()
+                console.log('order nr ', order.index, ' saved!')
+            }
+        }
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
