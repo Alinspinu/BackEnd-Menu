@@ -228,15 +228,13 @@ module.exports.reprinFiscal = async (req, res, next) => {
 }
 
 
-
-
 module.exports.printBill = async (req, res, next) => {
     try{
         const {bill, mode} = req.body
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
-        if(mode){
+        if(mode && bill.total > 0){
            socket.emit('printBill', JSON.stringify(bill))
         } 
         if(email && email.length){
@@ -280,68 +278,6 @@ module.exports.printBill = async (req, res, next) => {
         res.status(500).json(err)
     }
 }
-
-
-module.exports.saveBillInCloud = async (req, res, next) => {
-    try{
-        const {bill} = req.body
-        bill.status = 'done'
-        bill.pending = false
-        const email = bill.clientInfo.email
-        // await createProductSaleReport(bill.products)
-        if(email && email.length){
-            const client = await User.findOne({email: email})
-            if(client){
-                client.orders.push(bill)
-                client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
-            }
-            await client.save()
-        }
-    
-        const billl = await Order.findOne({soketId: bill.soketId})
-    
-        if(!billl){
-            // console.log('bill not found')
-            delete bill._id
-            const order = new Order(bill);
-            const savedBill = await order.save()
-            if(savedBill){
-                savedBill.products.map(async (el) => {
-                if (el.toppings.length) {
-                  await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-                if (el.ings.length) {
-                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-            });
-            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-            } else {
-                throw new Error('Nota de plată nu a putut fi salvată!')
-            }
-        } else {
-            billl.status = 'done'
-            billl.pending = false
-            billl.tips = bill.tips
-            billl.total = bill.total
-            billl.payment = bill.payment
-            const savedBill = await billl.save()
-            console.log('saved bill in cloud-- STATUS-', savedBill.status, 'payment---', savedBill.payment )
-            billl.products.map(async (el) => {
-                if (el.toppings.length) {
-                  await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-                if (el.ings.length) {
-                   await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-                }
-            });
-            res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-        }
-    } catch(err) {
-        console.log(err)
-        res.status(500).json(err)
-    }
-}
-
 
 
 
@@ -422,5 +358,68 @@ module.exports.fixBul = async (req, res, next) => {
 //         res.status(200)
 //     } catch(err){
 //         console.log(err)
+//     }
+// }
+
+
+
+
+// module.exports.saveBillInCloud = async (req, res, next) => {
+//     try{
+//         const {bill} = req.body
+//         bill.status = 'done'
+//         bill.pending = false
+//         const email = bill.clientInfo.email
+//         // await createProductSaleReport(bill.products)
+//         if(email && email.length){
+//             const client = await User.findOne({email: email})
+//             if(client){
+//                 client.orders.push(bill)
+//                 client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
+//             }
+//             await client.save()
+//         }
+    
+//         const billl = await Order.findOne({soketId: bill.soketId})
+    
+//         if(!billl){
+//             // console.log('bill not found')
+//             delete bill._id
+//             const order = new Order(bill);
+//             const savedBill = await order.save()
+//             if(savedBill){
+//                 savedBill.products.map(async (el) => {
+//                 if (el.toppings.length) {
+//                   await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+//                 }
+//                 if (el.ings.length) {
+//                    await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+//                 }
+//             });
+//             res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+//             } else {
+//                 throw new Error('Nota de plată nu a putut fi salvată!')
+//             }
+//         } else {
+//             billl.status = 'done'
+//             billl.pending = false
+//             billl.tips = bill.tips
+//             billl.total = bill.total
+//             billl.payment = bill.payment
+//             const savedBill = await billl.save()
+//             console.log('saved bill in cloud-- STATUS-', savedBill.status, 'payment---', savedBill.payment )
+//             billl.products.map(async (el) => {
+//                 if (el.toppings.length) {
+//                   await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
+//                 }
+//                 if (el.ings.length) {
+//                    await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
+//                 }
+//             });
+//             res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
+//         }
+//     } catch(err) {
+//         console.log(err)
+//         res.status(500).json(err)
 //     }
 // }
