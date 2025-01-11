@@ -33,7 +33,7 @@ module.exports.editSurvey = async (req, res) => {
 module.exports.getSurveys = async (req, res) => {
     const {loc} = req.query
     try{
-        const surveys = await Survey.find({locatie: loc})
+        const surveys = await Survey.find({locatie: loc}).sort({createdAt: -1})
         res.status(200).json(surveys)
     } catch(error){
         console.log(error)

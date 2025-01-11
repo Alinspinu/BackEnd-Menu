@@ -53,14 +53,6 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
-// for(let order of openOrders) {
-//     const table = await Table.findOne({index: order.masa})
-    // if(table){
-    //     order.masaRest = table._id
-    //     await order.save()
-    //     console.log('order nr ', order.index, ' saved!')
-    // }
-// }
 
 module.exports.calcDep = async (req, res, next) => {
     const {start, end, loc} = req.query
