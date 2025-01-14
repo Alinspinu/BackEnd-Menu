@@ -236,7 +236,10 @@ module.exports.updateVivaData = async (req, res, next) => {
 module.exports.deletePaymentEntry = async (req, res) => {
     try{
         const {payID, userID} = req.query
+        console.log(userID, payID)
         const user = await User.findByIdAndUpdate(userID, { $pull: { 'employee.payments': payID }}, {new: true})
+        console.log(user.name)
+        console.log(user.payments)
         res.status(200).json({message: 'Logul a fost stres cu success!'})
     } catch(error){
         console.log(error)
