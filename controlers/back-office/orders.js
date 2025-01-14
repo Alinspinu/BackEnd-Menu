@@ -284,14 +284,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(bill){
                 res.status(200).json({bill: bill})
             } else {
-                console.log('hit the first cloud save')
-                // delete parsedBill._id
-                // delete parsedBill.index
-                // const nBill = new Order(parsedBill)
-                // const newBill = await nBill.save()
-                // table.bills.push(nBill)
-                // await table.save()
-                // const billToSend = await Order.findById(newBill._id).populate({path: 'masaRest', select: 'index'})
                 res.status(200).json({message: "NASOL"})
             }
         }
@@ -304,16 +296,13 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 
 
 
-
-
-
-
 module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     const {product} = req.body
     const { ['_id']:_, ...newProduct } = product;
     const delProd = new DelProd(newProduct)
     delProd.employee.name = product.employee.fullName
-    await delProd.save()
+    const savedProd = await delProd.save()
+    socket.emit('delProduct', JSON.stringify(savedProd))
     res.status(200).json({message: 'The product was registred as deleted!'})
 }
 
