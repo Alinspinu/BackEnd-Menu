@@ -37,6 +37,7 @@ router.route('/get-cash').get(users.sendUserCashback)
 router.route('/work-log')
 .put(users.updateWorkLog)
 .post(users.deleteWorkEntry)
+.delete(users.deletePaymentEntry)
 
 router.route('/find').get(users.detectPaymentError)
 
