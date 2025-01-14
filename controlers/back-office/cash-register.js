@@ -104,7 +104,7 @@ module.exports.addEntry = async (req, res, next) => {
             const payment = {
                 amount: amount,
                 tip: typeOf,
-                date: new Date('2024-12-31'),
+                date: entryDate,
                 workMonth: month
             }
            await User.findOneAndUpdate({_id: user[0]}, {$push: {'employee.payments': payment}})
