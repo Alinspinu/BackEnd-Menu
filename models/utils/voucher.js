@@ -21,6 +21,10 @@ const voucherSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
     },
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      }
 })
 
 

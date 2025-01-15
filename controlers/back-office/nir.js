@@ -126,8 +126,6 @@ module.exports.getNirsBySuplier = async (req, res, next) => {
 }
 
 
-
-
 module.exports.deleteNir = async (req, res, next) => {
   try{
     const {id} = req.query

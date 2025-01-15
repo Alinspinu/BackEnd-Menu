@@ -65,7 +65,7 @@ module.exports.saveIng = async(req, res, next) => {
         res.status(200).json({message: 'Logul a șters!'})
       } catch(error){
         console.log(error)
-        re.status(500).json(error)
+        res.status(500).json(error)
       }
     }
 
