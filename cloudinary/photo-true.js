@@ -30,7 +30,8 @@ const storage = new CloudinaryStorage({
         const paramsToSign = {
             folder: 'uploads', // The folder name
             timestamp: timestamp,
-            transformation: [{ width: 555, height: 888, crop: "fill" }]
+            transformation: [{ width: 555, height: 888, crop: "fill" }],
+            public_id: (req, file) => 'sadkjh342aiweqqwe',
         };
         const signature = generateSignature(paramsToSign);
 
@@ -41,7 +42,7 @@ const storage = new CloudinaryStorage({
             resource_type: 'auto',
             timestamp: timestamp,
             signature: signature,
-            public_id: (req, file) => generateSoketId(12),
+            public_id: (req, file) => 'sadkjh342aiweqqwe',
         };
     }
 });
