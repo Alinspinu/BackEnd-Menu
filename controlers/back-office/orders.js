@@ -193,7 +193,7 @@ module.exports.getOrderByUser = async (req, res, nex) => {
 
 module.exports.getAllOrders = async (req, res, next) => {
     try{
-        const date = new Date('2025-01-14')
+        const date = new Date('2025-01-13')
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const {loc} = req.query;
