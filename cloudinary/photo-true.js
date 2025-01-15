@@ -28,7 +28,7 @@ const storage = new CloudinaryStorage({
     params: async (req, file) => {
         const timestamp = Math.floor(Date.now() / 1000); // Current Unix timestamp
         const paramsToSign = {
-            folder: 'uploads', // The folder name
+            folder: 'True', // The folder name
             timestamp: timestamp,
             transformation: [{ width: 555, height: 888, crop: "fill" }],
             public_id: (req, file) => 'sadkjh342aiweqqwe',
@@ -36,7 +36,7 @@ const storage = new CloudinaryStorage({
         const signature = generateSignature(paramsToSign);
 
         return {
-            folder: 'uploads',
+            folder: 'True',
             transformation: [{ width: 555, height: 888, crop: "fill" }],
             allowed_formats: ['jpeg', 'png', 'jpg', 'mp4'],
             resource_type: 'auto',
