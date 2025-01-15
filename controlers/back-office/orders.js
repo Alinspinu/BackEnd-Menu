@@ -25,7 +25,7 @@ const socket = io("https://socket.flowmanager.ro")
 module.exports.getOrder = async (req, res, next) => {
     const {start, end, day, loc} = req.body
     if(start && end){
-        const startTime = new Date(start).setUTcHours(0,0,0,0)
+        const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
