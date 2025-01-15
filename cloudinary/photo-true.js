@@ -1,5 +1,18 @@
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const crypto = require('crypto');
+
+function generateSignature(paramsToSign) {
+    const cloudinarySecret = process.env.CLOUDINARY_SECRET;
+    const stringToSign = Object.keys(paramsToSign)
+        .sort()
+        .map(key => `${key}=${paramsToSign[key]}`)
+        .join('&');
+    return crypto
+        .createHash('sha1')
+        .update(stringToSign + cloudinarySecret)
+        .digest('hex');
+}
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,18 +21,42 @@ cloudinary.config({
 });
 
 
-
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'True',
-        transformation: [
-            { width: 555, height: 888, crop: "fill" }
-        ],
-        allowedForms: ['jpeg', 'png', 'jpg', 'mp4'],
-        resource_type: 'auto'
+    params: async (req, file) => {
+        const timestamp = Math.floor(Date.now() / 1000); // Current Unix timestamp
+        const paramsToSign = {
+            folder: 'uploads', // The folder name
+            timestamp: timestamp,
+            transformation: [{ width: 555, height: 888, crop: "fill" }]
+        };
+        const signature = generateSignature(paramsToSign);
+
+        return {
+            folder: 'uploads',
+            transformation: [{ width: 555, height: 888, crop: "fill" }],
+            allowed_formats: ['jpeg', 'png', 'jpg', 'mp4'],
+            resource_type: 'auto',
+            api_key: process.env.CLOUDINARY_KEY,
+            timestamp: timestamp,
+            signature: signature
+        };
     }
 });
+
+
+
+// const storage = new CloudinaryStorage({
+//     cloudinary: cloudinary,
+//     params: {
+//         folder: 'True',
+//         transformation: [
+//             { width: 555, height: 888, crop: "fill" }
+//         ],
+//         allowedForms: ['jpeg', 'png', 'jpg', 'mp4'],
+//         resource_type: 'auto'
+//     }
+// });
 
 
 module.exports = { cloudinary, storage };
