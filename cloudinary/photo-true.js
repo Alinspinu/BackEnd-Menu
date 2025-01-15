@@ -57,7 +57,7 @@ const storage = new CloudinaryStorage({
         ],
         allowedForms: ['jpeg', 'png', 'jpg', 'mp4'],
         resource_type: 'auto',
-        public_id: generateSoketId(16),
+        public_id: (req, file) => generateSoketId(12),
     }
 });
 
