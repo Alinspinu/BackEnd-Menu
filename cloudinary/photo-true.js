@@ -51,7 +51,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'True',
+        folder: 'uploads',
         transformation: [
             { width: 555, height: 888, crop: "fill" }
         ],
