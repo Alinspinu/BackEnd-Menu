@@ -25,23 +25,23 @@ const socket = io("https://socket.flowmanager.ro")
 module.exports.getOrder = async (req, res, next) => {
     const {start, end, day, loc} = req.body
     if(start && end){
-        const startTime = new Date(start).setHours(0,0,0,0)
-        const endTime = new Date(end).setHours(23, 59, 59, 9999)
+        const startTime = new Date(start).setUTcHours(0,0,0,0)
+        const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
         res.status(200).json({orders: orders, delProducts: delProds})
     }
 
     if(day && !end && !start) {
-        const start = new Date(day).setHours(0,0,0,0)
-        const end = new Date(day).setHours(23,59,59,9999)
+        const start = new Date(day).setUTCHours(0,0,0,0)
+        const end = new Date(day).setUTCHours(23,59,59,9999)
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: start, $lt: end}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     if(!day && !end && !start) {
-        const today = new Date(Date.now()).setHours(0,0,0,0)
+        const today = new Date('2025-01-14').setUTCHours(0,0,0,0)
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}})
@@ -193,7 +193,7 @@ module.exports.getOrderByUser = async (req, res, nex) => {
 
 module.exports.getAllOrders = async (req, res, next) => {
     try{
-        const date = new Date('2025-01-13')
+        const date = new Date()
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const {loc} = req.query;
