@@ -34,12 +34,13 @@ const storage = new CloudinaryStorage({
             public_id: (req, file) => 'sadkjh342aiweqqwe',
         };
         const signature = generateSignature(paramsToSign);
-
+        console.log('Cloudinary Params:', { ...paramsToSign, api_key: process.env.CLOUDINARY_KEY, signature });
         return {
             folder: 'True',
             transformation: [{ width: 555, height: 888, crop: "fill" }],
             allowed_formats: ['jpeg', 'png', 'jpg', 'mp4'],
             resource_type: 'auto',
+            api_key: process.env.CLOUDINARY_KEY,
             timestamp: timestamp,
             signature: signature,
             public_id: (req, file) => 'sadkjh342aiweqqwe',
