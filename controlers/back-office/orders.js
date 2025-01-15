@@ -41,7 +41,7 @@ module.exports.getOrder = async (req, res, next) => {
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     if(!day && !end && !start) {
-        const today = new Date('2025-01-14').setUTCHours(0,0,0,0)
+        const today = new Date().setUTCHours(0,0,0,0)
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}})
