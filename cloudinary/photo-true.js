@@ -31,7 +31,7 @@ const storage = new CloudinaryStorage({
             folder: 'uploads', // The folder name
             timestamp: timestamp,
             transformation: [{ width: 555, height: 888, crop: "fill" }],
-            public_id: (req, file) => 'sadkjh342aiweqqwe',
+            public_id: (req, file) => `user-${req.user.id}-${Date.now()}`,
         };
         const signature = generateSignature(paramsToSign);
         console.log('Cloudinary Params:', { ...paramsToSign, api_key: process.env.CLOUDINARY_KEY, signature });
@@ -43,7 +43,7 @@ const storage = new CloudinaryStorage({
             api_key: process.env.CLOUDINARY_KEY,
             timestamp: timestamp,
             signature: signature,
-            public_id: (req, file) => 'sadkjh342aiweqqwe',
+            public_id: (req, file) => `user-${req.user.id}-${Date.now()}`,
         };
     }
 });
