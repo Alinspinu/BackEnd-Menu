@@ -39,7 +39,6 @@ const storage = new CloudinaryStorage({
             transformation: [{ width: 555, height: 888, crop: "fill" }],
             allowed_formats: ['jpeg', 'png', 'jpg', 'mp4'],
             resource_type: 'auto',
-            api_key: process.env.CLOUDINARY_KEY,
             timestamp: timestamp,
             signature: signature,
             public_id: (req, file) => generateSoketId(12),
