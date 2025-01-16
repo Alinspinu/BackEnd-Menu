@@ -23,44 +23,44 @@ cloudinary.config({
 });
 
 
-// const storage = new CloudinaryStorage({
-//     cloudinary: cloudinary,
-//     params: async (req, file) => {
-//         const timestamp = Math.floor(Date.now() / 1000); // Current Unix timestamp
-//         const paramsToSign = {
-//             folder: 'uploads', // The folder name
-//             timestamp: timestamp,
-//             transformation: [{ width: 555, height: 888, crop: "fill" }],
-//             public_id: (req, file) => `user-${req.user.id}-${Date.now()}`,
-//         };
-//         const signature = generateSignature(paramsToSign);
-//         console.log('Cloudinary Params:', { ...paramsToSign, api_key: process.env.CLOUDINARY_KEY, signature });
-//         return {
-//             folder: 'uploads',
-//             transformation: [{ width: 555, height: 888, crop: "fill" }],
-//             allowed_formats: ['jpeg', 'png', 'jpg', 'mp4'],
-//             resource_type: 'auto',
-//             public_id: (req, file) => `user-${req.user.id}-${Date.now()}`,
-//             api_key: process.env.CLOUDINARY_KEY,
-//             timestamp: timestamp,
-//             signature: signature,
-//         };
-//     }
-// });
-
-
-
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'uploads',
-        transformation: [
-            { width: 333, height: 333, crop: "fill" }
-        ],
-        allowedForms: ['jpeg', 'png', 'jpg', 'mp4'],
-        resource_type: 'auto',
+    params: async (req, file) => {
+        const timestamp = Math.floor(Date.now() / 1000); // Current Unix timestamp
+        const paramsToSign = {
+            folder: 'uploads', // The folder name
+            timestamp: timestamp,
+            transformation: [{ width: 555, height: 888, crop: "fill" }],
+            public_id: (req, file) => `user-${req.user.id}-${Date.now()}`,
+        };
+        const signature = generateSignature(paramsToSign);
+        console.log('Cloudinary Params:', { ...paramsToSign, api_key: process.env.CLOUDINARY_KEY, signature });
+        return {
+            folder: 'uploads',
+            transformation: [{ width: 555, height: 888, crop: "fill" }],
+            allowed_formats: ['jpeg', 'png', 'jpg', 'mp4'],
+            resource_type: 'auto',
+            public_id: (req, file) => `user-${req.user.id}-${Date.now()}`,
+            api_key: process.env.CLOUDINARY_KEY,
+            timestamp: timestamp,
+            signature: signature,
+        };
     }
 });
+
+
+
+// const storage = new CloudinaryStorage({
+//     cloudinary: cloudinary,
+//     params: {
+//         folder: 'uploads',
+//         transformation: [
+//             { width: 333, height: 333, crop: "fill" }
+//         ],
+//         allowedForms: ['jpeg', 'png', 'jpg', 'mp4'],
+//         resource_type: 'auto',
+//     }
+// });
 
 
 module.exports = { cloudinary, storage };
