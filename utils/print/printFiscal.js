@@ -167,7 +167,7 @@ async function reports(report){
     }
     console.log(reportLine)
     let message = report === 'x' ? `Raportul X a fost printat!` : `Raportul Z a fost printat!`
-    sendToPrint(reportLine)
+    // sendToPrint(reportLine)
     return {message: message}
 }
 
@@ -183,7 +183,7 @@ async function inAndOut(mode, sum){
         inAndOutLine.push(outLine)
     }
     let message = mode === 'in' ? `${sum} de lei au fost adăugați în casă!` : `${sum} de lei au fost scoși din casă!`
-    sendToPrint(inAndOutLine)
+    // sendToPrint(inAndOutLine)
     return {message: message}
 }
 
