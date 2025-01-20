@@ -13,8 +13,9 @@ const {checkTopping, round} = require('../../utils/functions')
       const {loc} = req.body
       const products = await Product.find({locatie: loc}).populate([
         {path: 'category', select: 'name'}, 
-        {path: 'subProducts', populate: {path: 'ings.ing', select: 'price name um productIngredient'}},
-        {path: 'ings.ing', select: 'price name um productIngredient'}
+        {path: 'subProducts', populate: {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'}},
+        {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+        {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
     ])
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)

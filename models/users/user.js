@@ -1,6 +1,5 @@
 
 const mongoose = require('mongoose');
-const { release } = require('os');
 const Schema = mongoose.Schema;
 
 
@@ -16,7 +15,8 @@ const UserTrueSchema = new Schema({
     checkIn: {
        value: {
         type: Boolean,
-        defauld: false
+        defauld: false,
+        required: true,
        },
         date: Date
     },
