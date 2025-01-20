@@ -144,6 +144,11 @@ app.use('/invoice', authApi, invoiceRoutes)
 app.use('/gbt', gbtRoutes)
 app.use('/reservation', authApi, reservationRoutes)
 
+app.get('/rew', (req, res) => {
+    const googleReviewUrl = 'https://search.google.com/local/writereview?placeid=ChIJ96oXXor7ykARXU3JtcikJjs';
+    res.redirect(googleReviewUrl);
+})
+
 
 
 
