@@ -201,4 +201,22 @@ module.exports.saveIng = async(req, res, next) => {
     }
 
 
-
+    module.exports.updateIngredientQuantity = async (req, res, next) => {
+      try{
+        const {inventaryId} = req.body
+        const inventary = await Inventary.findById(inventaryId).populate({path: 'ingredients.ing', select: 'qty'})
+        const updatePromises = inventary.ingredients.map(ing => {
+          return Ingredient.updateOne(
+            { _id: ing.ing._id },
+            { qty: round(ing.faptic - (ing.scriptic - ing.ing.qty))}
+          );
+        });
+          await Promise.all(updatePromises);
+          inventary.updated = true
+          const updatedInventary = await inventary.save()
+          res.status(200).json({ message: "Ingredients Updated", inv: updatedInventary});
+      }catch(error){
+        console.log(error)
+        res.status(500).json(error)
+      }
+    }
