@@ -15,7 +15,7 @@ const UserTrueSchema = new Schema({
     checkIn: {
        value: {
         type: Boolean,
-        defauld: false,
+        default: false,
        },
         date: Date
     },
