@@ -123,12 +123,7 @@ module.exports.saveIng = async(req, res, next) => {
         const ings = await Ingredient.find({locatie: loc})
         console.log(ings.length)
         const updatePromises = ings.map(ing => {
-          let index = 1;
-          if (ing.inventary && ing.inventary.length) {
-            index += ing.inventary.length;
-          } else {
-            index = 1;
-          }
+          const index = ing.inventary && ing.inventary.length ? ing.inventary.length + 1 : 1;
     
           const entry = {
             index: index,
