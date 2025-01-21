@@ -123,8 +123,6 @@ module.exports.saveIng = async(req, res, next) => {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0);
         const ings = await Ingredient.find({locatie: loc})
-        console.log(ings.length)
-        // console.log(ings[23])
         const updatePromises = ings.map(ing => {
           const index = ing.inventary && ing.inventary.length ? ing.inventary.length + 1 : 1;
     
@@ -134,24 +132,15 @@ module.exports.saveIng = async(req, res, next) => {
             qty: ing.qty
           };
     
-          // Use updateOne to update the inventory field only
           return Ingredient.updateOne(
             { _id: ing._id },
             {
-              $push: { inventary: entry }, // Add the entry
+              $push: { inventary: entry },
             }
           ).exec();
         });
-
-        // for (const ing of ings) {
-  
-        //    const ingg = await Ingredient.findOneAndUpdate({_id: ing._id} , { $push: { inventary: {qty: ing.qty, date: date, index: 333} } }, {new: true});
-        //    console.log(ingg.inventary.find(i => i.index === 333))
-          
-        // }
     
-       const response = await Promise.all(updatePromises);
-        // console.log(response)
+         await Promise.all(updatePromises);
         res.status(200).json({ message: "inventary saved" });
       } catch (err) {
         console.log(err);
