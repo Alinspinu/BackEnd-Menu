@@ -140,9 +140,16 @@ module.exports.saveIng = async(req, res, next) => {
             }
           ).exec();
         });
+
+        for (const ing of ings) {
+          if (!Array.isArray(ing.inventary)) {
+           const ingg = await Ingredient.updateOne({ _id: ing._id }, { $push: { inventary: {qty: ing.qty, date: date, index: 333} } }, {new: true});
+           console.log(ingg.inventary.find(i = i.index === 333))
+          }
+        }
     
-       const response = await Promise.all(updatePromises);
-        console.log(response)
+      //  const response = await Promise.all(updatePromises);
+        // console.log(response)
         res.status(200).json({ message: "inventary saved" });
       } catch (err) {
         console.log(err);
