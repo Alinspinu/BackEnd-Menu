@@ -143,7 +143,7 @@ module.exports.saveIng = async(req, res, next) => {
 
         for (const ing of ings) {
           if (!Array.isArray(ing.inventary)) {
-           const ingg = await Ingredient.updateOne({ _id: ing._id }, { $push: { inventary: {qty: ing.qty, date: date, index: 333} } }, {new: true});
+           const ingg = await Ingredient.findByIdAndUpdate(ing._id , { $push: { inventary: {qty: ing.qty, date: date, index: 333} } }, {new: true});
            console.log(ingg.inventary.find(i = i.index === 333))
           }
         }
