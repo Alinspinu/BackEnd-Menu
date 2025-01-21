@@ -179,8 +179,9 @@ module.exports.useVoucher = async (req, res, next) => {
 module.exports.reports = async (req, res, next) => {
     try{
         const {value} = req.query;
-        const response = await reports(value)
-        res.status(200).json({message: response.message})
+        // const response = await reports(value)
+        // res.status(200).json({message: response.message})
+        res.status(200).json({message: 'all good'})
     } catch(err) {
         console.log(err)
         res.status(500).json({message: err.message})
@@ -204,7 +205,6 @@ module.exports.printBill = async (req, res, next) => {
         // bill.status = 'done'
         // bill.pending = false
         const id = bill.clientInfo._id
-        console.log(id)
         if(id && id.length){
             const client = await User.findById(id)
             if(client){
