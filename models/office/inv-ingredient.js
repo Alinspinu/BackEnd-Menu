@@ -1,20 +1,92 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Product = require('../office/product/product')
+const SubProduct = require('../office/product/sub-product')
 
 const invIngSchema = new Schema({
   name: {
     type: String,
     required: true,
+    index: true,
   },
   um: {
     type: String,
-    required: true,
   },
   qty: {
     type: Number,
     default: 0
   },
+  uploadLog: [
+    {
+      date: {
+        type: Date,
+        index: true
+      },
+      qty:  {
+        type: Number,
+        required: true
+      },
+      uploadPrice: {
+        type: Number,
+        required: true
+      },
+      operation: {
+        name: {
+          type: String,
+        },
+        details: String,
+      },
+      logId: {
+        type: String,
+        index: true
+      }
+    }
+  ],
+  unloadLog: [
+    {
+      date: {
+        type: Date,
+        index: true
+      },
+      qty: Number,
+      operation: {
+        name: {
+          type: String,
+        },
+        details: String,
+      }
+    }
+  ],
+  inventary: [
+    {
+      index: {
+        type: Number,
+        index: true
+      },
+      day: {
+        type: Date,
+        index: true
+      },
+      qty: Number,
+      faptic: {
+        type: Number,
+        default: 0
+      }
+      
+    }
+  ],
+  eFactura: [
+    {
+      suplier: String,
+      name: String,
+      qtyCorector: Number
+    }
+  ],
   price: {
+    type: Number,
+    default: 0
+  },
+  sellPrice: {
     type: Number,
     default: 0
   },
@@ -28,14 +100,16 @@ const invIngSchema = new Schema({
   },
   gestiune: {
     type: String,
-    default: 'magazie'
+    default: 'magazie',
+    index: true
   },
+  recipe: String,
   dep: {
     type: String,
   },
   productIngredient: {
     type: Boolean, 
-    default: false
+    default: false,
   },
   ings: [
     {
@@ -48,15 +122,27 @@ const invIngSchema = new Schema({
   ],
   locatie: {
     type: Schema.Types.ObjectId,
-    ref: 'Locatie'
+    ref: 'Locatie',
+    index: true
+  },
+  salePoint: {
+    type: Schema.Types.ObjectId,
+    ref: 'SalePoint'
   }
 });
 
 invIngSchema.pre('deleteOne', { document: true }, async function (next) {
   await this.constructor.updateMany({ 'ings.ing': this._id }, { $pull: { ings: {ing: this._id} } }).exec()
-  // await this.updateMany({ paring: this._id }, { $pull: { paring: this._id } }).exec()
+  await Product.updateMany({ 'ings.ing': this._id }, { $pull: { ings: {ing: this._id} } }).exec()
+  await Product.updateMany({ 'toppings.ing': this._id }, { $pull: { toppings: {ing: this._id} } }).exec()
+  await SubProduct.updateMany({ 'ings.ing': this._id }, { $pull: { ings: {ing: this._id} } }).exec()
   next()
 })
 
 
+
+
 module.exports = mongoose.model("IngredientInv", invIngSchema);
+
+
+
