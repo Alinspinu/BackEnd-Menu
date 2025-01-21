@@ -122,7 +122,7 @@ module.exports.saveIng = async(req, res, next) => {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0);
         const ings = await Ingredient.find({locatie: loc})
-        console.log(ings.length)
+        console.log(ings[23])
         // const updatePromises = ings.map(ing => {
         //   // const index = ing.inventary && ing.inventary.length ? ing.inventary.length + 1 : 1;
     
