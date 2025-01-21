@@ -117,8 +117,9 @@ module.exports.saveIng = async(req, res, next) => {
     
     
     module.exports.saveInventary = async (req, res, next) => {
-      const {loc} = req.body
+      const {loc} = req.query
       try {
+        console.log(loc)
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0);
         const ings = await Ingredient.find({locatie: loc})

@@ -9,7 +9,6 @@ module.exports.saveNir = async( req, res, next) => {
       const newNir = new Nir(nir)
       newNir.locatie = loc
       const savedNir = await newNir.save()
-      console.log(savedNir)
       const promises = nir.ingredients.map((el) => {
         return Ingredient.updateOne(
           { name: el.name, gestiune: el.gestiune, locatie: loc },
