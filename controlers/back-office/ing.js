@@ -176,4 +176,29 @@ module.exports.saveIng = async(req, res, next) => {
     }
 
 
+    module.exports.getInventary = async (req, res, next) =>{
+      try{
+        const {inventaryId, loc} = req.query;
+        if(inventaryId === 'last'){
+          const inventary = await Inventary.findOne({locatie: loc}).sort({ _id: -1 })
+            .populate({path: 'ingredients.ing', select: 'price um'})
+          res.status(200).json(inventary)
+        } else if(inventaryId === "all"){
+        
+          const inventaries = await Inventary.find({locatie: loc})
+            .populate({path: 'ingredients.ing', select: 'price um'})
+          res.status(200).json(inventaries)
+        } else {
+    
+          const inventary = await Inventary.findById(inventaryId)
+              .populate({path: 'ingredients.ing', select: 'price um'})
+          res.status(200).json(inventary)
+        }
+      } catch(err){
+        console.log(err)
+        res.status(500).json(err)
+      }
+    }
+
+
 

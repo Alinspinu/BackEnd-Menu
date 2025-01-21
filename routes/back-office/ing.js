@@ -11,15 +11,15 @@ router.route('/ingredient')
 
 router.route('/print-consum').post(printRoutes.printConsum)
 
-// router.route('/print-ing-list').post(printRoutes.createIngredientsInvXcel)
-// router.route('/print-consum').post(printRoutes.printConsum)
+router.route('/print-ing-list').post(printRoutes.createIngredientsInvXcel)
+router.route('/print-consum').post(printRoutes.printConsum)
 router.route('/save-inventary').get(ingRoutes.saveInventary)
 router.route('/save-faptic').post(ingRoutes.saveManualInventary)
 router.route('/save-inv').post(ingRoutes.saveInv)
-// router.route('/update-ingredient-quantity').post(ingRoutes.updateIngredientQuantity)
+router.route('/update-ingredient-quantity').post(ingRoutes.updateIngredientQuantity)
 
 // router.route('/get-consumabil').get(ingRoutes.getIngConsumabil)
-// router.route('/get-inventary').get(ingRoutes.getInventary)
+router.route('/get-inventary').get(ingRoutes.getInventary)
 
 
 
