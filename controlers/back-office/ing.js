@@ -120,7 +120,6 @@ module.exports.saveIng = async(req, res, next) => {
       try {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
-        const formattedDate = date.toISOString();
         const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune dep um')
         console.log(ings.length)
         const updatePromises = ings.map(ing => {
@@ -133,7 +132,7 @@ module.exports.saveIng = async(req, res, next) => {
     
           const entry = {
             index: index,
-            day: formattedDate,
+            day: date,
             qty: ing.qty
           };
     
