@@ -140,7 +140,7 @@ module.exports.saveIng = async(req, res, next) => {
           return Ingredient.updateOne(
             { _id: ing._id },
             { $push: { inventary: entry } }
-          );
+          ).exec();
         });
     
        const response = await Promise.all(updatePromises);
