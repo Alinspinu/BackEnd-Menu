@@ -119,7 +119,7 @@ module.exports.saveIng = async(req, res, next) => {
       const {loc} = req.body
       try {
         const date = new Date();
-        date.setUTCHours(23, 0, 0, 0, 0);
+        date.setUTCHours(23, 0, 0, 0);
         const ings = await Ingredient.find({locatie: loc})
         console.log(ings.length)
         const updatePromises = ings.map(ing => {
