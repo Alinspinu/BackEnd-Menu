@@ -120,7 +120,7 @@ module.exports.saveIng = async(req, res, next) => {
       try {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
-        const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune dep um')
+        const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary qty')
         console.log(ings.length)
         const updatePromises = ings.map(ing => {
           let index = 1;
@@ -143,8 +143,8 @@ module.exports.saveIng = async(req, res, next) => {
           );
         });
     
-        await Promise.all(updatePromises);
-    
+       const response = await Promise.all(updatePromises);
+        console.log(response)
         res.status(200).json({ message: "inventary saved" });
       } catch (err) {
         console.log(err);
