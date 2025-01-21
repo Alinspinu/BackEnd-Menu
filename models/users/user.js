@@ -16,7 +16,6 @@ const UserTrueSchema = new Schema({
        value: {
         type: Boolean,
         defauld: false,
-        required: true,
        },
         date: Date
     },
