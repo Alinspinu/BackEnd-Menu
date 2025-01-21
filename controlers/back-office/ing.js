@@ -57,7 +57,116 @@ module.exports.saveIng = async(req, res, next) => {
     }
 
 
-  
+    module.exports.saveInv = async (req, res, next) => {
+      try{
+        const {date, loc} = req.body
+        const invDate = new Date(date).setUTCHours(0,0,0,0)
+        const ings = await Ingredient.find({locatie: loc, productIngredient: false, dep: { $in: ['marfa', 'materie'] }}).select('inventary name gestiune dep um')
+        const ingredients = ings.map(ing => {
+    
+          let foundFirstMatch = false;
+    
+          let newIng = {}
+          for(let inv of ing.inventary){
+            if (foundFirstMatch) break;
+            const day = new Date(inv.day).setUTCHours(0,0,0,0)
+              if(day === invDate){
+              newIng.faptic = inv.faptic
+              newIng.scriptic = inv.qty
+              newIng.name = ing.name
+              newIng.ing = ing._id
+              newIng.gestiune = ing.gestiune
+              newIng.dep = ing.dep
+              newIng.um = ing.um
+              foundFirstMatch = true;
+              
+            }
+          }
+          return newIng
+        })
+        const filtredIngredients = ingredients.filter(ing => ing.name)
+        const savedInventary = await Inventary.findOne({date: invDate, locatie: loc})
+        if(savedInventary) {
+          const update = {
+            locatie: loc,
+            date: invDate,
+            ingredients: filtredIngredients
+          }
+          const modifiedInv = await Inventary.findOneAndUpdate({_id: savedInventary._id}, update, {new: true}).populate({path: 'ingredients.ing', select: 'price um'})
+          res.status(200).json({message: 'Inventarul a fost actualizat!', inv: modifiedInv})
+        } else {
+          if(isEmpty(ingredients[0])){
+            res.status(226).json({message: 'Erorare, nu a fost salavat invetarul scriptic!'})
+          } else {
+            const inv = new Inventary({
+              locatie: loc,
+              date: invDate,
+              ingredients: filtredIngredients
+            })
+            const savedInv = await inv.save()
+            await savedInv.populate({ path: 'ingredients.ing', select: 'price um' })
+            res.status(200).json({message: 'Inventarul a fost salvat!', inv: savedInv})
+          }
+        }
+      } catch(err){
+        console.log(err)
+        res.status(500).json(err)
+      }
+    }
+    
+    
+    module.exports.saveInventary = async (req, res, next) => {
+      try {
+        const date = new Date();
+        date.setUTCHours(23, 0, 0, 0, 0);
+        const formattedDate = date.toISOString();
+        const updatePromises = ings.map(ing => {
+          let index = 1;
+          if (ing.inventary && ing.inventary.length) {
+            index += ing.inventary.length;
+          } else {
+            index = 1;
+          }
+    
+          const entry = {
+            index: index,
+            day: formattedDate,
+            qty: ing.qty
+          };
+    
+          // Use updateOne to update the inventory field only
+          return Ingredient.updateOne(
+            { _id: ing._id },
+            { $push: { inventary: entry } }
+          );
+        });
+    
+        await Promise.all(updatePromises);
+    
+        res.status(200).json({ message: "inventary saved" });
+      } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message });
+      }
+    };
+    
+    module.exports.saveManualInventary = async (req, res, next) => {
+    try{
+    const {data} = req.body
+    const ing  = await Ingredient.findById(data.ingId)
+    ing.inventary.forEach(inv => {
+      if(inv.index === data.invIndex){
+        inv.faptic = data.qtyInv
+        inv.qty = data.scriptic
+      }
+    })
+    const newIng = await ing.save()
+    res.status(200).json({message: 'Inventarul a fost actualizat', ing: newIng})
+    } catch(err){
+    console.log(err)
+    res.status(500).json({message: err.message})
+    }
+    }
 
 
 

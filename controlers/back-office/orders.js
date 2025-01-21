@@ -71,6 +71,53 @@ module.exports.getOrderByUser = async (req, res, nex) => {
     }
 }
 
+module.exports.getHavyOrders = async (req, res, next) => {
+    try{
+        const {start, end, day, loc, filter, report} = req.body
+        if(start && end){
+            const startTime = new Date(start).setUTCHours(0,0,0,0)
+            const endTime = new Date(end).setUTCHours(23,59,59,9999)
+            const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
+                                    .populate({
+                                        path: 'products.ings.ing',
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
+                                        populate: {
+                                            path: 'ings.ing', 
+                                            select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog', 
+                                            populate: { 
+                                                path:'ings.ing',
+                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog"
+                                            }
+                                        }
+                                    })
+                                    .populate({
+                                        path: 'products.toppings.ing', 
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
+                                        populate: {
+                                            path: 'ings.ing',
+                                             select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog',
+                                             populate: {
+                                                path: 'ings.ing',
+                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog", 
+                                                }
+                                            }
+                                        })    
+             console.log('comenzi', orders.length)                                   
+            const result = await getBillProducts(orders, filter)
+            const ingredients = await getIngredients(result.allProd)
+            if(report === 'report'){
+               const report = await createDayReport(result.allProd, ingredients, loc, orders, startTime)
+               res.status(200).json(report)
+            } else {
+                res.status(200).json({result: result, ingredients: ingredients})
+            }
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json({message: err})
+    }
+  }
+
 
 module.exports.orderDone = async (req, res, next) => {
     try{
