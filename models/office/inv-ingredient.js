@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Product = require('../office/product/product')
-const SubProduct = require('../office/product/sub-product')
+const Product = require('./product/product')
+const SubProduct = require('./product/sub-product')
 
 const invIngSchema = new Schema({
   name: {

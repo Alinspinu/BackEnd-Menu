@@ -5,7 +5,10 @@ const Category = require('./cat');
 
 
 const productTrueSchema = new Schema({
-    name: String,
+    name: {
+        type: String,
+        index: true 
+    },
     image:
     {
         path: {
@@ -25,6 +28,9 @@ const productTrueSchema = new Schema({
         type: String,
         default: 'barista'
     },
+    printOut:{
+        type: Boolean,
+    },
     toppings:[
             {
                 name: String,
@@ -40,6 +46,7 @@ const productTrueSchema = new Schema({
             
     ],
     price: Number,
+    recipe: String,
     description: String,
     longDescription: String,
     tva: Number,
@@ -144,11 +151,38 @@ const productTrueSchema = new Schema({
     total: {
         type: Number,
     },
+    sgrTax: {
+        type: Boolean,
+        default: false
+    },
     mainCat: String,
     discount: {
         type: Number,
         default: 0
     },
+    saleLog: [
+        {
+            date: {
+                type: Date,
+                index: true,
+            },
+            qty: {
+                type: Number,
+            },
+            hours: [
+                {
+                    date: {
+                        type: Date,
+                        index: true
+                    },
+                    qty: {
+                        type: Number,
+                    }
+                }
+            ]
+        }
+    ],
+
     category:
     {
         type: Schema.Types.ObjectId,
@@ -156,7 +190,8 @@ const productTrueSchema = new Schema({
     },
     locatie: {
         type: Schema.Types.ObjectId,
-        ref: 'Locatie'
+        ref: 'Locatie',
+        index: true
     },
     subProducts:
         [
@@ -164,7 +199,11 @@ const productTrueSchema = new Schema({
                 type: Schema.Types.ObjectId,
                 ref: 'SubProduct'
             }
-        ]
+        ],
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+        }
 
 })
 
@@ -176,3 +215,6 @@ productTrueSchema.pre('deleteOne', { document: true }, async function (next) {
 
 
 module.exports = mongoose.model('Product', productTrueSchema)
+
+
+

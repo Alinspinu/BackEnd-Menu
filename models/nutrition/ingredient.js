@@ -9,6 +9,10 @@ const ingredientSchema = new Schema({
         type: String,
         required: true
     },
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    },
     labelInfo: {
         type: String,
     },

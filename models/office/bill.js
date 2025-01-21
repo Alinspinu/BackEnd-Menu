@@ -19,10 +19,6 @@ const billSchema = new Schema({
         type: Number,
         index: true
     },
-    discount: {
-        type: Number,
-        default: 0
-    },
     products: [
         {
             name: {
@@ -95,7 +91,11 @@ const billSchema = new Schema({
             comment: String,
             tva: Number,
         }
-    ]
+    ],
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      }
 
 
 },{ timestamps: true, })

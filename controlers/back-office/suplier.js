@@ -27,10 +27,8 @@ module.exports.addSuplier = async (req, res, next) => {
         if(check){
            return res.status(200).json({message: `Furnizorul ${check.name} a fost gasit in basa de date!`, suplier: check})
         } else {
-            const loc = req.body.loc
              const newSuplier = new Suplier(suplier);
              newSuplier.name = suplier.bussinessName
-             newSuplier.locatie = loc
              await newSuplier.save();
              res.status(200).json({message: `Furnizorul ${newSuplier.name} a fost salvat cu success!`, suplier: newSuplier})
         }

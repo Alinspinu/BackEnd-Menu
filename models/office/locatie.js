@@ -31,7 +31,26 @@ const locatieSchema = new Schema({
       VAT: {
         type: Boolean,
         required: true
+      },
+      gmail: {
+       email: String,
+       app: {
+        iv: {
+          type: String,
+        },
+        key: {
+          type: String
+        },
+        secret: String,
+       }
+      },
+      pos: {
+        vivaWalletLocal: {
+          ip: String,
+          port: String
+        }
       }
+    
 })
 
 

@@ -13,6 +13,7 @@ const subProductSchema = new Schema({
         default: 0
     },
     qty: String,
+    recipe: String,
     description: {
         type: String
     },
@@ -30,6 +31,31 @@ const subProductSchema = new Schema({
     tva: {
         type: Number
     },
+    printOut:{
+        type: Boolean,
+    },
+    saleLog: [
+        {
+            date: {
+                type: Date,
+                index: true,
+            },
+            qty: {
+                type: Number
+            },
+            hours: [
+                {
+                    date: {
+                        type: Date,
+                        index: true
+                    },
+                    qty: {
+                        type: Number,
+                    }
+                }
+            ]
+        }
+    ],
     ings: [
         {
        
@@ -46,7 +72,12 @@ const subProductSchema = new Schema({
     product: {
         type: Schema.Types.ObjectId,
         ref: 'Product'
-    }
+    },
+    
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      }
 })
 
 subProductSchema.pre('deleteOne', { document: true }, async function (next) {

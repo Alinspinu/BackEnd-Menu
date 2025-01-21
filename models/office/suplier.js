@@ -28,6 +28,53 @@ const suplierSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Locatie'
   },
+  sold: {
+    type: Number,
+    default: 0
+  },
+  records: [
+    {
+      typeOf: {
+        type: String,
+        enum: ['intrare', 'iesire']
+      },
+      document: {
+        typeOf: {
+          type: String,
+        },
+        docId: {
+          type: String,
+        },
+        amount: {
+          type: Number
+        },
+        asociat: {
+          type: Boolean,
+          default: false
+        },
+        docRecords: [
+          { 
+            docNumber: String,
+            docTotal: Number,
+           
+          }
+        ]
+      },
+      nir: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Nir'
+        }
+      ],
+      description: {
+        type: String
+      },
+   
+      date: {
+        type: Date
+      }
+    }
+  ]
 
 });
 

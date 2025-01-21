@@ -37,6 +37,10 @@ const categoryTrueSchema = new Schema({
                 ref: 'Product'
             },
         ],
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+        }
 })
 
 module.exports = mongoose.model('Category', categoryTrueSchema)

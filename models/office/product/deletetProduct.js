@@ -21,8 +21,9 @@ const deletetProductSchema = new Schema ({
             type: String,
             required: true,
             enum: ['in', 'out']
-        },
+    },
         reason: String,
+        admin: String,
         billProduct: {
             name: {
                 type: String,
@@ -63,25 +64,28 @@ const deletetProductSchema = new Schema ({
                     qty: Number,
                     um: String,
                     ingPrice: Number,
+                    ing: {
+                        type: Schema.Types.ObjectId,
+                        ref: "IngredientInv"
+                        }
                 }
             ],
             ings: [
                 {
-                    name: {
-                      type: String,
+                    ing: {
+                        type: Schema.Types.ObjectId,
+                        ref: 'IngredientInv'
                     },
                     qty: {
                       type: Number,
-                    },
-                    price: {
-                      type: Number,
-                    },
-                    um: {
-                        type: String,
                     }
                   },
             ]
         },
+        salePoint: {
+            type: Schema.Types.ObjectId,
+            ref: 'SalePoint'
+          }
 }, { timestamps: true, })
 
 module.exports = mongoose.model('DeletetProduct', deletetProductSchema)

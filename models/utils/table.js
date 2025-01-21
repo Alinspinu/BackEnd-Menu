@@ -17,17 +17,20 @@ const tableSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "Order"
         }
-    ]    
+    ],
+    salePoint: {
+      type: Schema.Types.ObjectId,
+      ref: 'SalePoint'
+    }    
 })
 
 tableSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
     // Get the index of the document being deleted
     const deletedIndex = this.index;
-    console.log('hit something')
   
     // Recalculate indexes for remaining documents
     try {
-      const documentsToUpdate = await this.constructor.find({ index: { $gt: deletedIndex } });
+      const documentsToUpdate = await this.constructor.find({ index: { $gt: deletedIndex } , locatie: this.locatie});
       for (const doc of documentsToUpdate) {
         doc.index -= 1;
         await doc.save();
@@ -50,7 +53,7 @@ tableSchema.pre('deleteOne', { document: true, query: false }, async function (n
   
     try {
       // Find the highest index in the collection
-      const highestIndex = await this.constructor.findOne().sort({ index: -1 }).select('index');
+      const highestIndex = await this.constructor.findOne({locatie: this.locatie}).sort({ index: -1 }).select('index');
   
       // Set the index for the new document
       this.index = highestIndex ? highestIndex.index + 1 : 1;

@@ -10,7 +10,6 @@ const entrySchema = new Schema({
     },
     description: {
         type: String,
-        required: true
     },
     date: {
         type: Date,
@@ -29,11 +28,50 @@ const entrySchema = new Schema({
         enum: ['income', 'expense'],
         required: true
     },
+    typeOf: {
+      type: String,
+      enum: [
+        'Incasare raport Z',
+        'Incasare din banca',
+        'Incasare de la administrator',
+        'Altele',
+        'Plata furnizor',
+        'Plata catre administrator',
+        'Avans',
+        'Salariu',
+        'Bonus vanzari',
+        'Bonus excelenta',
+        'Tips Card'
+      ],
+      requred: true
+    },
+    document: {
+        tip: {
+          type: String
+        },
+        number: String
+    },
+    suplier: {
+      type: Schema.Types.ObjectId,
+      ref: 'Suplier'
+    },
+    user: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      }
+    ],
     index: {
         type: Number,
         index: true
+    },
+    salePoint: {
+      type: Schema.Types.ObjectId,
+      ref: 'SalePoint'
     }
 })
+
+
 
 
 entrySchema.pre('deleteOne', { document: true, query: false }, async function (next) {
@@ -43,7 +81,7 @@ entrySchema.pre('deleteOne', { document: true, query: false }, async function (n
   
     // Recalculate indexes for remaining documents
     try {
-      const documentsToUpdate = await this.constructor.find({ index: { $gt: deletedIndex } });
+      const documentsToUpdate = await this.constructor.find({ index: { $gt: deletedIndex }, locatie: this.locatie });
       for (const doc of documentsToUpdate) {
         doc.index -= 1;
         await doc.save();
@@ -55,7 +93,7 @@ entrySchema.pre('deleteOne', { document: true, query: false }, async function (n
       return next(error);
     }
   
-    next();
+    next(); 
   });
   
   entrySchema.pre('save', async function (next) {
@@ -66,7 +104,7 @@ entrySchema.pre('deleteOne', { document: true, query: false }, async function (n
   
     try {
       // Find the highest index in the collection
-      const highestIndex = await this.constructor.findOne().sort({ index: -1 }).select('index');
+      const highestIndex = await this.constructor.findOne({locatie: this.locatie}).sort({ index: -1 }).select('index');
   
       // Set the index for the new document
       this.index = highestIndex ? highestIndex.index + 1 : 1;

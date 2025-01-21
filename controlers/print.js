@@ -4,7 +4,6 @@ const Ingredient = require('../models/office/inv-ingredient')
 const Locatie = require('../models/office/locatie')
 const Order = require('../models/office/product/order')
 const Suplier = require('../models/office/suplier')
-const Bill = require('../models/office/bills')
 const User = require('../models/users/user')
 const Inventary = require('../models/office/inventary')
 const PDFDocument = require("pdfkit");

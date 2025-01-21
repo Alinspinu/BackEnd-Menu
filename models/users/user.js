@@ -12,6 +12,13 @@ const UserTrueSchema = new Schema({
     password: {
         type: String,
     },
+    checkIn: {
+       value: {
+        type: Boolean,
+        default: false,
+       },
+        date: Date
+    },
     email: {
         type: String,
         required: true
@@ -36,6 +43,7 @@ const UserTrueSchema = new Schema({
         ref: 'Locatie'
     },
     cardIndex: Number,
+    cardName: String,
     discount: {
         general: {
             type: Number,
@@ -57,6 +65,13 @@ const UserTrueSchema = new Schema({
         ]
     },
     employee: {
+        startDate: Date,
+        endDate: Date,
+        birthDate: Date,
+        active: {
+            type: Boolean,
+            index: true
+        },
         fullName: {
             type: String,
         },
@@ -69,6 +84,12 @@ const UserTrueSchema = new Schema({
         ciNumber: {
             type: Number,
         },
+        releaseId:{
+            type: String
+        },
+        releaseDate: {
+            type: Date
+        },
         address: {
             type: String,
         },
@@ -77,13 +98,93 @@ const UserTrueSchema = new Schema({
         },
         access: {
             type: Number,
-        }
+        },
+        zodie: String,
+        docs: [
+            {
+                name: String,
+                filename: String,
+                url: String
+            }
+        ],
+        salary: {
+            inHeand: {
+                type: Number
+            },
+            onPaper: {
+                salary: Number,
+                tax: Number,
+            },
+            norm:{
+                type: Number,
+                default: 176
+            },
+            fix: Boolean,
+        },
+        payments: [
+            {
+                date: Date,
+                amount: Number,
+                tip: {
+                        type: String,
+                        enum: ['Avans', 'Salariu', 'Bonus vanzari', 'Bonus excelenta', 'Plata catre administrator', `Incasare de la administrator`]
+                    },
+                workMonth: Number
+            
+            }
+        ], 
+        workLog: [
+            {
+                day: Date,
+                checkIn: Date,
+                checkOut: Date,
+                hours: Number,
+                earnd: Number,
+                position: String,
+                concediu: Boolean,
+                medical: Boolean,
+            }
+        ],
+        salePoint: {
+            type: Schema.Types.ObjectId,
+            ref: 'SalePoint'
+          }
     },
     status: {
         type: String,
         enum: ['active', 'inactive'],
         default: 'inactive'
     },
+    hobbies: {
+        type: String,
+        default: ''
+    },
+    description: {
+        type: String,
+        default: ''
+    },
+    admin: {
+        type: Number,
+        default: 0
+    },
+    profilePic: {
+        type: String,
+        default: 'https://res.cloudinary.com/dhetxk68c/image/upload/v1681544380/gossips/jee-75-512_msbpdw.webp'
+    },
+    gossips:
+        [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Gossip'
+            }
+        ],
+    comments:
+        [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Comment'
+            }
+        ],
     survey: String,
     firstCart: String,
     orders:
@@ -92,7 +193,7 @@ const UserTrueSchema = new Schema({
                 type: Schema.Types.ObjectId,
                 ref: 'Order'
             }
-        ]
+        ],
 });
 
 

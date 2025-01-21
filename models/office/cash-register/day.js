@@ -28,7 +28,11 @@ const daySchema = new Schema({
     cashOut: {
         type: Number,
         default: 0
-    }
+    },
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      }
 
 })
 
@@ -43,8 +47,11 @@ daySchema.pre('save', async function (next) {
             const originalDocument = await this.constructor.findById(this._id);
             cashOutDifference = this.cashOut - originalDocument.cashOut;
         }
-        const nextDocument = await this.constructor.findOne({locatie: '655e2e7c5a3d53943c6b7c53' , date: { $gt: this.date } });
-
+        const nextDocument = await this.constructor.findOne(
+            {locatie: this.locatie , date: { $gt: this.date.getTime() } },
+            null,
+            { sort: { date: 1 } }
+            );
         if (nextDocument) {
             nextDocument.cashIn += cashOutDifference;
             await nextDocument.save();
@@ -52,6 +59,7 @@ daySchema.pre('save', async function (next) {
     }
 
     if (this.isModified('cashIn')) {
+     
         let cashInDifference;
 
         if (this.isNew) {
@@ -61,8 +69,11 @@ daySchema.pre('save', async function (next) {
             cashInDifference = this.cashIn - originalDocument.cashIn;
         }
         this.cashOut += cashInDifference;
-
-        const nextDoc = await this.constructor.findOne({locatie: '655e2e7c5a3d53943c6b7c53',  date: { $gt: this.date } });
+        const nextDoc = await this.constructor.findOne(
+            {locatie: this.locatie,  date: { $gt: this.date.getTime() } },
+            null,
+            { sort: { date: 1 } }
+            );
         if (nextDoc) {
             nextDoc.cashIn += cashInDifference;
             await nextDoc.save();
