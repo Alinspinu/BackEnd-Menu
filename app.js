@@ -30,6 +30,7 @@ const productRoutes = require('./routes/back-office/product')
 const ingRoutes = require('./routes/back-office/ing')
 const subRoutes = require('./routes/back-office/subProduct')
 const catRoutes = require('./routes/back-office/cats')
+const printRoutes = require('./routes/print')
 const fs = require('fs');
 const https = require('https');
 
@@ -65,6 +66,7 @@ app.use('/nutrition', nutritionRoutes);
 app.use('/register', registerRoutes);
 app.use('/table',tableRoutes);
 app.use('/users', usersRoutes);
+app.use('/print', printRoutes)
 // app.use('/message', messRoutes);
 
 app.use("/top", toppingRoutes);
