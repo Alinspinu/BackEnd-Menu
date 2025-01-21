@@ -23,7 +23,7 @@ router.route('/upload-ings').post(orderRoutes.uploadIngs)
 router.route('/invoice').post(printRoutes.factura)
 
 router.route('/all-orders').get(orderRoutes.getAllOrders)
-
+router.route('/get-havy-orders').post(orderRoutes.getHavyOrders)
 
 
 module.exports = router  

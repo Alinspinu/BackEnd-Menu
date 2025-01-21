@@ -6,6 +6,8 @@ const DelProd = require('../../models/office/product/deletetProduct')
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
 const {formatedDateToShow, round} = require('../../utils/functions')
 
+const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
+
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 
 const {print} = require('../../utils/print/printOrders')
@@ -80,25 +82,25 @@ module.exports.getHavyOrders = async (req, res, next) => {
             const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
                                     .populate({
                                         path: 'products.ings.ing',
-                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient', 
                                         populate: {
                                             path: 'ings.ing', 
-                                            select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog', 
+                                            select: 'name price qty tva tvaPrice sellPrice um productIngredient ings', 
                                             populate: { 
                                                 path:'ings.ing',
-                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog"
+                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings"
                                             }
                                         }
                                     })
                                     .populate({
                                         path: 'products.toppings.ing', 
-                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient', 
                                         populate: {
                                             path: 'ings.ing',
-                                             select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog',
+                                             select: 'name price qty tva tvaPrice sellPrice um productIngredient ings',
                                              populate: {
                                                 path: 'ings.ing',
-                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog", 
+                                                select: "name price qty tva tvaPrice sellPrice um productIngredient ings", 
                                                 }
                                             }
                                         })    
