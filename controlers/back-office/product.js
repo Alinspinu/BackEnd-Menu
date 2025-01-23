@@ -150,7 +150,7 @@ module.exports.editProduct = async (req, res, next) => {
                 oldProduct.dep = dep;
                 oldProduct.mainCat = mainCat
                 oldProduct.printOut = printOut
-                oldProduct.image = images
+                oldProduct.image = JSON.parse(images)
                 oldProduct.order = parseFloat(order);
                 if (oldProduct.category._id.toString() !== category) {
                     try {
