@@ -110,8 +110,11 @@ const {checkTopping, round} = require('../../utils/functions')
     }
 }
 
+
+
+
 module.exports.editProduct = async (req, res, next) => {
-    const { category, name, price, qty, description, order, longDescription, printer, tva, dep, sgrTax, printOut, recipe, mainCat } = req.body
+    const { category, name, price, qty, description, order, longDescription, printer, tva, dep, sgrTax, printOut, recipe, mainCat, images } = req.body
     const { id } = req.query
     try{
         if(req.body.sub){
@@ -147,6 +150,7 @@ module.exports.editProduct = async (req, res, next) => {
                 oldProduct.dep = dep;
                 oldProduct.mainCat = mainCat
                 oldProduct.printOut = printOut
+                oldProduct.image = images
                 oldProduct.order = parseFloat(order);
                 if (oldProduct.category._id.toString() !== category) {
                     try {
