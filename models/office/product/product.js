@@ -9,17 +9,18 @@ const productTrueSchema = new Schema({
         type: String,
         index: true 
     },
-    image:
-    {
-        path: {
-            type: String,
-            default: 'https://res.cloudinary.com/dhetxk68c/image/upload/v1692369732/True/no_image_dreptunghi_ktwclc.png'
-        },
-        filename: {
-            type: String,
-            default: 'no_image_dreptunghi_ktwclc'
-        },
-    },
+    image: [
+        {
+            path: {
+                type: String,
+                default: 'https://res.cloudinary.com/dhetxk68c/image/upload/v1692369732/True/no_image_dreptunghi_ktwclc.png'
+            },
+            filename: {
+                type: String,
+                default: 'no_image_dreptunghi_ktwclc'
+            },
+        }
+    ],
     order: {
         type: Number,
         required: true
