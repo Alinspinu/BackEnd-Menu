@@ -63,53 +63,90 @@ const {checkTopping, round} = require('../../utils/functions')
   }
 
 
-  module.exports.addProd = async (req, res, next) => {
+//   module.exports.addProd = async (req, res, next) => {
+//     try {
+//         const {loc} = req.query
+//         const { category } = req.body;
+//         const cat = await Cat.findById(category);
+//         const product = new Product(req.body);
+//         if(req.body.ings === '[]'){
+//             product.ings = []
+//         } else {
+//             if(req.body.ings){
+//                 const ings = JSON.parse(req.body.ings)
+//                 product.ings = ings;
+//             }
+//         }
+//         if(req.body.toppings && req.body.toppings === '[]'){
+//             product.toppings = []
+//         } else {
+//             if(req.body.toppings){
+//                 const toppings = JSON.parse(req.body.toppings)
+//                 product.toppings = toppings;
+//             }
+//         }
+//         product.order = parseFloat(req.body.order);
+//         product.price = parseFloat(req.body.price);
+//         product.locatie = loc;
+//         if (req.file) {
+//             const { path, filename } = req.file;
+//             product.image.filename = filename;
+//             product.image.path = path;
+//         }
+//         cat.product.push(product);
+//         await product.save();
+//         await cat.save();
+//         const productToSend = await Product.findById(product._id).populate([
+//             {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
+//             {path: "category", select: 'name'},
+//             {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+//             {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
+//         ]);
+//         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
+//         res.status(200)
+//     } catch (err) {
+//         console.log(err);
+//         res.status(500).json({ err });
+//     }
+// }
+
+
+module.exports.addProd = async (req, res, next) => {
     try {
-        const {loc} = req.query
-        const { category } = req.body;
-        const cat = await Cat.findById(category);
-        const product = new Product(req.body);
-        if(req.body.ings === '[]'){
-            product.ings = []
-        } else {
-            if(req.body.ings){
-                const ings = JSON.parse(req.body.ings)
-                product.ings = ings;
+  
+        const data = req.body
+        const product = JSON.parse(data)
+        const cat = await Cat.findById(product.category);
+        const subProducts = JSON.stringify(JSON.parse(product.subProducts)) 
+        product.subProducts = []
+        const newProduct = new Product(product)
+        const savedProduct = await newProduct.save()
+        cat.product.push(savedProduct._id);
+        const savedCat = await cat.save()
+        console.log(savedCat)
+        console.log(savedProduct)
+        if(subProducts.length){
+            for(let sub of subProducts){
+                sub.product = savedProduct._id
+                console.log(sub)
+                // const newSubProduct = new SubProduct(sub)
+                // const savedSubProduct = await newSubProduct.save()
+                // console.log(savedSubProduct)
             }
         }
-        if(req.body.toppings && req.body.toppings === '[]'){
-            product.toppings = []
-        } else {
-            if(req.body.toppings){
-                const toppings = JSON.parse(req.body.toppings)
-                product.toppings = toppings;
-            }
-        }
-        product.order = parseFloat(req.body.order);
-        product.price = parseFloat(req.body.price);
-        product.locatie = loc;
-        if (req.file) {
-            const { path, filename } = req.file;
-            product.image.filename = filename;
-            product.image.path = path;
-        }
-        cat.product.push(product);
-        await product.save();
-        await cat.save();
-        const productToSend = await Product.findById(product._id).populate([
+  
+        const productToSend = await Product.findById(savedProduct._id).populate([
             {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
             {path: "category", select: 'name'},
             {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
             {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
         ]);
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
-        res.status(200)
     } catch (err) {
         console.log(err);
-        res.status(500).json({ err });
+        res.status(500).json(err);
     }
-}
-
+  }
 
 
 
