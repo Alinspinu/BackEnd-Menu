@@ -46,11 +46,12 @@ module.exports.searchCats = async (req, res, next) => {
 
 
 module.exports.addCat = async (req, res, next) => {
-    const {loc} = req.query
+    const {loc} = req.query 
+    const {category} = req.body
 
     try {
-        console.log(req.body)
-        const cat = new Cat(req.body)
+        console.log(category)
+        const cat = new Cat(category)
         cat.locatie = loc
         await cat.save()
         const catToSend = await Cat.findById(cat._id)
