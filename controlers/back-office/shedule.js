@@ -100,7 +100,6 @@ module.exports.getPontaj = async (req, res, next) => {
                 .sort({_id: -1})
                 .limit(3)
             const pontaj = getNowShedule(pontajs)    
-            console.log(pontaj)
             res.status(200).json(pontaj)
         }
         if(pont === 'all'){

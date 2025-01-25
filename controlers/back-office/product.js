@@ -123,15 +123,13 @@ module.exports.addProd = async (req, res, next) => {
         const savedProduct = await newProduct.save()
         cat.product.push(savedProduct._id);
         const savedCat = await cat.save()
-        console.log(savedCat)
-        console.log(savedProduct)
         if(subProducts.length){
             for(let sub of subProducts){
                 sub.product = savedProduct._id
-                console.log(sub)
-                // const newSubProduct = new SubProduct(sub)
-                // const savedSubProduct = await newSubProduct.save()
-                // console.log(savedSubProduct)
+                const newSubProduct = new SubProduct(sub)
+                const savedSubProduct = await newSubProduct.save()
+                savedProduct.subProducts.push(savedSubProduct._id)
+                await savedProduct.save()
             }
         }
   
@@ -141,6 +139,7 @@ module.exports.addProd = async (req, res, next) => {
             {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
             {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
         ]);
+        console.log(productToSend)
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
     } catch (err) {
         console.log(err);
