@@ -50,14 +50,8 @@ module.exports.addCat = async (req, res, next) => {
 
     try {
         console.log(req.body)
-        console.log(req.file)
         const cat = new Cat(req.body)
         cat.locatie = loc
-        if (req.file) {
-            const { path, filename } = req.file
-            cat.image.filename = filename
-            cat.image.path = path
-        }
         await cat.save()
         const catToSend = await Cat.findById(cat._id)
         res.status(200).json({ message: `Category ${cat.name} was created!`, cat: catToSend })

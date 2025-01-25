@@ -11,13 +11,13 @@ router.route('/get-cats').get(catRoutes.sendCats);
 
 
 router.route('/cat-add')
-    .post(upload.single('image'), catRoutes.addCat);
+    .post(catRoutes.addCat);
 
 router.route('/search-cat').get(catRoutes.searchCats)
 
 
 router.route('/cat')
-    .put(upload.single('image'), catRoutes.editCategory)
+    .put(catRoutes.editCategory)
     .delete(catRoutes.delCategory);
 
 
