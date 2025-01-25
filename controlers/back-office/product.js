@@ -114,7 +114,7 @@ const {checkTopping, round} = require('../../utils/functions')
 module.exports.addProd = async (req, res, next) => {
     try {
   
-        const data = req.body
+        const {data} = req.body
         const product = JSON.parse(data)
         const cat = await Cat.findById(product.category);
         const subProducts = JSON.stringify(JSON.parse(product.subProducts)) 
