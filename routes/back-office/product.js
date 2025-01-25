@@ -15,9 +15,9 @@ const productRoutes = require('../../controlers/back-office/product')
 router.route('/get-products').post(productRoutes.getProducts)
 router.route('/get-product').get(productRoutes.getProduct)
 router.route('/prod-add', authApi)
-    .post(upload.single('image'), productRoutes.addProd);
+    .post(productRoutes.addProd);
 router.route('/product', authApi)
-    .put(upload.single('image'), productRoutes.editProduct)
+    .put(productRoutes.editProduct)
     .delete(productRoutes.delProduct);
 router.route('/check-product').post(productRoutes.checkProduct);
 
