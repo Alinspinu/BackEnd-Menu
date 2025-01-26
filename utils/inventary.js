@@ -131,7 +131,7 @@ async function createProductSaleReport(billProducts, date){
             }
             dbProduct.saleLog = saleLog
             const savedProd = await dbProduct.save()
-            console.log('Logul de vanzare  a fost salvat pentru produsul',savedProd.name , savedProd._id, ' la data de ', date.toString())
+            console.log('Logul de vanzare  a fost salvat pentru produsul',savedProd.name , savedProd._id, ' la data de ', hourDate.toString())
           }
 
           if(product.subProductId.length > 6) {
@@ -183,7 +183,7 @@ async function createProductSaleReport(billProducts, date){
                 saleLog.push(newDay)
               }
               const savedSubProd = await subProduct.save()
-              console.log('Logul de vanzare  a fost salvat pentru sub produsul', savedSubProd.name, savedSubProd._id, ' la data de ', date.toString() )
+              console.log('Logul de vanzare  a fost salvat pentru sub produsul', savedSubProd.name, savedSubProd._id )
             }
           }
 
