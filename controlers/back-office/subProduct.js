@@ -17,6 +17,7 @@ module.exports.saveSubProd = async (req, res, next) => {
             ings: ings,
             locatie: loc,
             tva: tva,
+            toppings: toppings,
             description: description,
             printOut: printOut,
         });
@@ -32,35 +33,15 @@ module.exports.saveSubProd = async (req, res, next) => {
 };
 
 module.exports.editSubproduct = async (req, res, next) => {
-    const { id, prodId, name, price, order, printOut} = req.body;
-    console.log('hit the sub save function')
-    if (id) {
-        const oldSub = await SubProduct.findById(id).populate({ path: 'product', select: ['name', 'category'] });
-        if (oldSub) {
-            oldSub.name = name;
-            oldSub.price = price;
-            oldSub.order = order;
-            oldSub.printOut = printOut;
-            if (oldSub.product._id.toString() !== prodId) {
-                try {
-                    await Product.updateOne({ _id: oldSub.product._id }, { $pull: { subProducts: oldSub._id } })
-                    await Product.updateOne({ _id: prodId }, { $push: { subProducts: oldSub._id } })
-                    oldSub.product = prodId
-                } catch (err) {
-                    console.log(err)
-                    return res.status(404).json({ message: 'Ceva nu a mers bine' })
-                }
-            }
-            console.log(printOut, oldSub)
-            await oldSub.save()
-            const productToSend = await SubProduct.findById(id).populate({ path: 'product', select: 'category' })
-            res.status(200).json({ message: 'Sub Produsl a fost modificat cu succes', subProd: productToSend })
-        } else {
-            res.status(404).json({ message: 'Sub Produsul nu a fost găsit in baza de date!' })
-        }
-    } else {
-        res.status(404).json({ message: 'Lipsă ID  sub produs!!' })
+    const { sub } = req.body;
+    console.log(sub)
+    try{
+        const productToSend = await SubProduct.findByIdAndUpdate(sub._id, sub, {new: true}).populate({ path: 'product', select: 'category' })
+        res.status(200).json({ message: 'Sub Produsl a fost modificat cu succes', subProd: productToSend })
+    } catch(error) {
+        res.status(500).json(error)
     }
+
 }
 
 
