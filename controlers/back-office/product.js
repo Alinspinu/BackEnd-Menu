@@ -113,7 +113,6 @@ const {checkTopping, round} = require('../../utils/functions')
 
 module.exports.addProd = async (req, res, next) => {
     try {
-  
         const {data} = req.body
         const product = JSON.parse(data)
         const cat = await Cat.findById(product.category);
@@ -154,7 +153,6 @@ module.exports.addProd = async (req, res, next) => {
 module.exports.editProduct = async (req, res, next) => {
     const { product } = req.body
     const parsedProduct = JSON.parse(product)
-    console.log(parsedProduct)
     try{
             const oldProduct = await Product.findById(parsedProduct._id)
             if (oldProduct.category.toString() !== parsedProduct.category) {
@@ -279,8 +277,19 @@ module.exports.delProduct = async (req, res, next) => {
         const { id } = req.query
         const product = await Product.findById(id)
         if (!product.subProducts.length) {
-            if (!product.image.filename === 'no_image_dreptunghi_ktwclc') {
-                await cloudinary.uploader.destroy(product.image.filename)
+            if (product.image.length) {
+                for(let image of product.image){
+                    if(image.filename){
+                        try{
+                            await cloudinary.uploader.destroy(image.filename)
+                            console.log(`imaginea produsului a fost stearsa cu succes! ${image.filename}`)
+                        } catch(error){
+                            console.warn(`A aparut o erorare la stergerea imaginii ${error.message}`)
+                        }
+                    } else {
+                        console.warn('Imaginea nu apre public_id!')
+                    }
+                }
             }
             await product.deleteOne()
             res.status(200).json({ message: 'Produsul a fost șters cu succes' })
