@@ -74,17 +74,17 @@ async function uploadIngs (ings, qtyProdus) {
 
 
 
-async function createProductSaleReport(billProducts){
+async function createProductSaleReport(billProducts, date){
     try{
-      const dayDate = new Date()
-      const hourDate = new Date()
+      const dayDate = new Date(date)
+      const hourDate = new Date(date)
       hourDate.setMinutes(0,0,0)
       dayDate.setHours(0,0,0,0)
 
       for(let product of billProducts){
         const dbProduct = await Product.findById(product.productId)
           if(!dbProduct){
-            console.log('Eroare! Produsul nu a fost gasit iun baza de date la crearea raportului!')
+            console.log('Eroare! Produsul nu a fost gasit in baza de date la crearea raportului!')
           } else {
             let saleLog = dbProduct.saleLog 
             if(saleLog.length) {
@@ -131,7 +131,7 @@ async function createProductSaleReport(billProducts){
             }
             dbProduct.saleLog = saleLog
             const savedProd = await dbProduct.save()
-            console.log('Logul de vanzare  a fost salvat pentru produsul',savedProd.name , savedProd._id)
+            console.log('Logul de vanzare  a fost salvat pentru produsul',savedProd.name , savedProd._id, ' la data de ', date.toString())
           }
 
           if(product.subProductId.length > 6) {
@@ -183,7 +183,7 @@ async function createProductSaleReport(billProducts){
                 saleLog.push(newDay)
               }
               const savedSubProd = await subProduct.save()
-              console.log('Logul de vanzare  a fost salvat pentru sub produsul', savedSubProd.name, savedSubProd._id )
+              console.log('Logul de vanzare  a fost salvat pentru sub produsul', savedSubProd.name, savedSubProd._id, ' la data de ', date.toString() )
             }
           }
 
