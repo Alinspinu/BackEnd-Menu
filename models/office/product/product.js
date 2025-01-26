@@ -176,6 +176,7 @@ const productTrueSchema = new Schema({
                         type: Date,
                         index: true
                     },
+                    label: String,
                     qty: {
                         type: Number,
                     }

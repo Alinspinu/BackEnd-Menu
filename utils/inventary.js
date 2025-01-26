@@ -80,6 +80,7 @@ async function createProductSaleReport(billProducts, date){
       const hourDate = new Date(date)
       hourDate.setMinutes(0,0,0)
       dayDate.setHours(0,0,0,0)
+      const h = dayDate.getHours()
 
       for(let product of billProducts){
         const dbProduct = await Product.findById(product.productId)
@@ -99,6 +100,7 @@ async function createProductSaleReport(billProducts, date){
                 } else {
                   const newHour = {
                     date: hourDate,
+                    label: `${h}:01 - ${h +1}:00`,
                     qty: product.quantity
                   }
                   saleLog[dayIndex].hours.push(newHour)
@@ -111,6 +113,7 @@ async function createProductSaleReport(billProducts, date){
                   hours: [
                     {
                       date: hourDate,
+                      label: `${h}:01 - ${h +1}:00`,
                       qty: product.quantity
                     }
                   ]
@@ -124,6 +127,7 @@ async function createProductSaleReport(billProducts, date){
                 hours: [
                   {
                     date: hourDate,
+                    label: `${h}:01 - ${h +1}:00`,
                     qty: product.quantity
                   }
                 ]
@@ -152,6 +156,7 @@ async function createProductSaleReport(billProducts, date){
                   } else {
                     const newHour = {
                       date: hourDate,
+                      label: `${h}:01 - ${h +1}:00`,
                       qty: product.quantity
                     }
                     saleLog[dayIndex].hours.push(newHour)
@@ -164,6 +169,7 @@ async function createProductSaleReport(billProducts, date){
                     hours: [
                       {
                         date: hourDate,
+                        label: `${h}:01 - ${h +1}:00`,
                         qty: product.quantity
                       }
                     ]
@@ -177,6 +183,7 @@ async function createProductSaleReport(billProducts, date){
                   hours: [
                     {
                       date: hourDate,
+                      label: `${h}:01 - ${h +1}:00`,
                       qty: product.quantity
                     }
                   ]
