@@ -40,6 +40,8 @@ const subProductSchema = new Schema({
                 type: Date,
                 index: true,
             },
+            total: Number,
+            discount: Number,
             qty: {
                 type: Number
             },
