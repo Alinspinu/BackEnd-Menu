@@ -167,7 +167,7 @@ const productTrueSchema = new Schema({
                 type: Date,
                 index: true,
             },
-            price: Number,
+            total: Number,
             discount: Number,
             qty: {
                 type: Number,
