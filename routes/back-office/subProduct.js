@@ -7,8 +7,8 @@ const upload = multer({ storage });
 
 const subRoutes = require('../../controlers/back-office/subProduct')
 
-router.route('/sub-prod-add').post(subRoutes.saveSubProd);
 router.route('/sub-product')
+    .post(subRoutes.saveSubProd)
     .put(subRoutes.editSubproduct)
     .delete(subRoutes.delSubProduct)
 

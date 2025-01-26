@@ -122,10 +122,12 @@ module.exports.addProd = async (req, res, next) => {
         const newProduct = new Product(product)
         const savedProduct = await newProduct.save()
         cat.product.push(savedProduct._id);
-        const savedCat = await cat.save()
+        await cat.save()
         if(subProducts.length){
             for(let sub of subProducts){
                 sub.product = savedProduct._id
+                const ingredients = sub.ins.map(i => ({qty: i.qty, ing: i.ing._id}))
+                sub.ings = ingredients
                 const newSubProduct = new SubProduct(sub)
                 const savedSubProduct = await newSubProduct.save()
                 savedProduct.subProducts.push(savedSubProduct._id)
@@ -150,74 +152,42 @@ module.exports.addProd = async (req, res, next) => {
 
 
 module.exports.editProduct = async (req, res, next) => {
-    const { category, name, price, qty, description, order, longDescription, printer, tva, dep, sgrTax, printOut, recipe, mainCat, images } = req.body
-    const { id } = req.query
+    const { product } = req.body
+    const parsedProduct = JSON.parse(product)
     try{
-        if(req.body.sub){
-            const subs = JSON.parse(req.body.sub);
-            if(subs){
-                for(let el of subs){
-                    if(el._id){
-                      const newSub = await SubProduct.findOneAndUpdate({_id: el._id}, el, {new: true})   
-                    }
+            const oldProduct = await Product.findById(parsedProduct._id)
+            if (oldProduct.category.toString() !== parsedProduct.category) {
+                try {
+                    await Cat.updateOne({ _id: oldProduct.category }, { $pull: { product: oldProduct._id } })
+                    await Cat.updateOne({ _id: parsedProduct.category }, { $push: { product: oldProduct._id } })
+                } catch (error) {
+                    console.log(error)
+                    res.status(404).json({ messsage: "Ceva nu a mers bine la salvarea categoriilor", error: error.messsage })
                 }
             }
-        }
-        if (id) {
-            const oldProduct = await Product.findById(id).populate({ path: 'category', select: 'name' }).populate({ path: 'subProducts' })
-            if (oldProduct) {
-                if(req.body.ings){
-                    const ings = JSON.parse(req.body.ings)
-                    oldProduct.ings = ings;
-                }
-                if(req.body.toppings){
-                    const toppings = JSON.parse(req.body.toppings)
-                    oldProduct.toppings = toppings;
-                }
-                oldProduct.sgrTax = sgrTax;
-                oldProduct.recipe = recipe
-                oldProduct.name = name;
-                oldProduct.price = price;
-                oldProduct.qty = qty;
-                oldProduct.description = description;
-                oldProduct.longDescription = longDescription;
-                oldProduct.printer = printer;
-                oldProduct.tva = tva;
-                oldProduct.dep = dep;
-                oldProduct.mainCat = mainCat
-                oldProduct.printOut = printOut
-                oldProduct.image = JSON.parse(images)
-                oldProduct.order = parseFloat(order);
-                if (oldProduct.category._id.toString() !== category) {
+            for (let oldImage of oldProduct.image) {
+                const newImageIndex = parsedProduct.image.findIndex(i => i.filename === oldImage.filename);
+                if (newImageIndex === -1) {
+                  if (oldImage.filename) {
                     try {
-                        await Cat.updateOne({ _id: oldProduct.category._id }, { $pull: { product: oldProduct._id } })
-                        await Cat.updateOne({ _id: category }, { $push: { product: oldProduct._id } })
-                        oldProduct.category = category
+                      await cloudinary.uploader.destroy(oldImage.filename);
+                      console.log(`Deleted old image with public_id: ${oldImage.filename}`);
                     } catch (error) {
-                        console.log(error)
-                        res.status(404).json({ messsage: "Ceva nu a mers bine la salvarea categoriilor", error: error.messsage })
+                      console.error(`Failed to delete old image with public_id: ${oldImage.filename}`, error);
                     }
+                  } else {
+                    console.warn('No public_id found for old image, cannot delete.');
+                  }
                 }
-                if (req.file) {
-                    const { filename, path } = req.file
-                    await cloudinary.uploader.destroy(oldProduct.image.filename)
-                    oldProduct.image.filename = filename;
-                    oldProduct.image.path = path;
-                }
-                await oldProduct.save()
-                const newProduct = await Product.findById(id).populate([
-                    {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
-                    {path: "category", select: 'name'},
-                    {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
-                    {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
-                ])
-                res.status(200).json({ message: `Produst ${oldProduct.name} a fost modificat cu success!`, product: newProduct })
-            } else {
-                res.status(404).json({ message: 'Produsul nu a fost găsit in baza de date!' })
-            }
-        } else {
-            res.status(404).json({ message: 'Lipsă ID produs!!' })
-        }
+              }
+              const newProduct = await Product.findByIdAndUpdate(parsedProduct._id, parsedProduct, {new: true}).populate([
+                {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
+                {path: "category", select: 'name'},
+                {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+                {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
+            ])
+            res.status(200).json({ message: `Produst ${oldProduct.name} a fost modificat cu success!`, product: newProduct })
+          
     } catch( error){
         console.log(error)
         res.status(500).json({message: error.message})
