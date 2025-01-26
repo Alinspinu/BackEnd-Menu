@@ -71,6 +71,7 @@ module.exports.addPontaj = async (req, res, next) => {
             const newDate = new Date(date.setDate(date.getDate()+1)).setUTCHours(0,0,0,0);
             console.log(date)
             console.log(i)
+            console.log(month)
             const day = {
                  date: newDate,
                  number: i,
