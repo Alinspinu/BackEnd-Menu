@@ -88,11 +88,12 @@ async function createProductSaleReport(billProducts, date){
           } else {
             let saleLog = dbProduct.saleLog 
             if(saleLog.length) {
-              const dayIndex = saleLog.findIndex(d => d.date.getTime() === dayDate.getTime())
+              const dayIndex = saleLog.findIndex(d => new Date(d.date).getTime() === dayDate.getTime())
               if(dayIndex !== -1){
                const hours = saleLog[dayIndex].hours
-               const hourIndex = hours.findIndex(h => h.date.getTime() === hourDate.getTime())
+               const hourIndex = hours.findIndex(h => new Date(h.date).getTime() === hourDate.getTime())
                 if(hourIndex !== -1){ 
+
                   saleLog[dayIndex].hours[hourIndex].qty += product.quantity
                   saleLog[dayIndex].qty += product.quantity
                 } else {
@@ -141,10 +142,10 @@ async function createProductSaleReport(billProducts, date){
             } else {
               const saleLog = subProduct.saleLog 
               if(saleLog.length){
-                const dayIndex = saleLog.findIndex(d => d.date.getTime() === dayDate.getTime())
+                const dayIndex = saleLog.findIndex(d => new Date(d.date).getTime() === dayDate.getTime())
                 if(dayIndex !== -1){
                  const hours = saleLog[dayIndex].hours
-                 const hourIndex = hours.findIndex(h => h.date.getTime() === hourDate.getTime())
+                 const hourIndex = hours.findIndex(h => new Date(h.date).getTime() === hourDate.getTime())
                   if(hourIndex !== -1){ 
                     saleLog[dayIndex].hours[hourIndex].qty += product.quantity
                     saleLog[dayIndex].qty += product.quantity
