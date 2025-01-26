@@ -78,9 +78,9 @@ async function createProductSaleReport(billProducts, date){
     try{
       const dayDate = new Date(date)
       const hourDate = new Date(date)
+      const h = dayDate.getHours()
       hourDate.setMinutes(0,0,0)
       dayDate.setHours(0,0,0,0)
-      const h = dayDate.getHours()
 
       for(let product of billProducts){
         const dbProduct = await Product.findById(product.productId)
