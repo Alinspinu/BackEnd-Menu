@@ -125,7 +125,7 @@ module.exports.addProd = async (req, res, next) => {
         if(subProducts.length){
             for(let sub of subProducts){
                 sub.product = savedProduct._id
-                const ingredients = sub.ins.map(i => ({qty: i.qty, ing: i.ing._id}))
+                const ingredients = sub.ings.map(i => ({qty: i.qty, ing: i.ing._id}))
                 sub.ings = ingredients
                 const newSubProduct = new SubProduct(sub)
                 const savedSubProduct = await newSubProduct.save()
