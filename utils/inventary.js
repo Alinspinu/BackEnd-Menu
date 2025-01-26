@@ -97,6 +97,8 @@ async function createProductSaleReport(billProducts, date){
 
                   saleLog[dayIndex].hours[hourIndex].qty += product.quantity
                   saleLog[dayIndex].qty += product.quantity
+                  saleLog[dayIndex].discount = round(saleLog[dayIndex].discount + product.discount)
+                  saleLog[dayIndex].total = round(saleLog[dayIndex].total + ((product.quantity* product.price) - product.discount))
                 } else {
                   const newHour = {
                     date: hourDate,
@@ -110,6 +112,8 @@ async function createProductSaleReport(billProducts, date){
                 const newDay = {
                   date: dayDate,
                   qty: product.quantity,
+                  discount: product.discount,
+                  total: round((product.quantity* product.price) - product.discount),
                   hours: [
                     {
                       date: hourDate,
@@ -124,6 +128,8 @@ async function createProductSaleReport(billProducts, date){
               const newDay = {
                 date: dayDate,
                 qty: product.quantity,
+                discount: product.discount,
+                total: round((product.quantity* product.price) - product.discount),
                 hours: [
                   {
                     date: hourDate,
@@ -153,6 +159,8 @@ async function createProductSaleReport(billProducts, date){
                   if(hourIndex !== -1){ 
                     saleLog[dayIndex].hours[hourIndex].qty += product.quantity
                     saleLog[dayIndex].qty += product.quantity
+                    saleLog[dayIndex].discount = round(saleLog[dayIndex].discount + product.discount)
+                    saleLog[dayIndex].total = round(saleLog[dayIndex].total + ((product.quantity* product.price) - product.discount))
                   } else {
                     const newHour = {
                       date: hourDate,
@@ -166,6 +174,8 @@ async function createProductSaleReport(billProducts, date){
                   const newDay = {
                     date: dayDate,
                     qty: product.quantity,
+                    discount: product.discount,
+                    total: round((product.quantity* product.price) - product.discount),
                     hours: [
                       {
                         date: hourDate,
@@ -180,6 +190,8 @@ async function createProductSaleReport(billProducts, date){
                 const newDay = {
                   date: dayDate,
                   qty: product.quantity,
+                  discount: product.discount,
+                  total: round((product.quantity* product.price) - product.discount),
                   hours: [
                     {
                       date: hourDate,
