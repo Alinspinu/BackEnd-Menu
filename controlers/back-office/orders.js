@@ -8,7 +8,7 @@ const Product = require('../../models/office/product/product')
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
 const {generateSoketId} = require('../../utils/functions')
 
-const {unloadIngs, uploadIngs} = require('../../utils/inventary')
+const {unloadIngs, uploadIngs, createProductSaleReport} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
 
 const {print} = require('../../utils/print/printOrders')
@@ -46,11 +46,28 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}})
+    
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     try{
     } catch (err){
         console.log(err)
+    }
+}
+
+
+module.exports.testRaport = async (req, res) => {
+    try{
+        const today = new Date().setUTCHours(0,0,0,0)
+        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done'})
+        for(let order of orders){
+            await createProductSaleReport(order.products, order.updatedAt)
+         }
+         res.status(200).json({message: 'All good in the hood'})
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
     }
 }
 
