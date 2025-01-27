@@ -63,8 +63,9 @@ module.exports.testRaport = async (req, res) => {
         const orders = await Order.find({ locatie: "655e2e7c5a3d53943c6b7c53" , updatedAt: {$gte: today, $lte: end}, status: 'done'})
         // console.log(today)
         console.log(orders.length)
-        console.log(orders)
+ 
         for(let order of orders){
+            console.log(order.products)
             // await createProductSaleReport(order.products, order.updatedAt)
          }
          res.status(200).json({message: 'All good in the hood'})
