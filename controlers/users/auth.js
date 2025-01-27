@@ -142,7 +142,7 @@ module.exports.login = async (req, res, next) => {
             discount: user.discount
         };
         const data = {name: user.name, action: 's-a conectat'}
-        await sendInfoAdminEmail(data)
+        // await sendInfoAdminEmail(data)
         res.status(200).json(sendData);
     };
 };
