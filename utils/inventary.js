@@ -98,7 +98,7 @@ async function createProductSaleReport(billProducts, date){
                   saleLog[dayIndex].hours[hourIndex].qty += product.quantity
                   saleLog[dayIndex].qty += product.quantity
                   saleLog[dayIndex].discount = round(saleLog[dayIndex].discount + product.discount)
-                  saleLog[dayIndex].total = round(saleLog[dayIndex].total + ((product.quantity* product.price) - product.discount))
+                  saleLog[dayIndex].total = round(saleLog[dayIndex].total + ((product.quantity * product.price) - product.discount))
                 } else {
                   const newHour = {
                     date: hourDate,
@@ -107,6 +107,7 @@ async function createProductSaleReport(billProducts, date){
                   }
                   saleLog[dayIndex].hours.push(newHour)
                   saleLog[dayIndex].qty += product.quantity
+                  saleLog[dayIndex].total += round(saleLog[dayIndex].total + ((product.quantity * product.price) - product.discount))
                 }
               } else {
                 const newDay = {
@@ -169,6 +170,7 @@ async function createProductSaleReport(billProducts, date){
                     }
                     saleLog[dayIndex].hours.push(newHour)
                     saleLog[dayIndex].qty += product.quantity
+                    saleLog[dayIndex].total += round(saleLog[dayIndex].total + ((product.quantity * product.price) - product.discount))
                   }
                 } else {
                   const newDay = {
