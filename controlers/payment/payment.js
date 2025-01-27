@@ -256,6 +256,7 @@ module.exports.printBill = async (req, res, next) => {
 
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
 
+        await createProductSaleReport(savedBill.products, savedBill.updatedAt)
         savedBill.products.map(async (el) => {
             if (el.toppings.length) {
               await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });

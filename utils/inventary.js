@@ -208,8 +208,6 @@ async function createProductSaleReport(billProducts, date){
               const savedSubProd = await subProduct.save()
               console.log('Logul de vanzare  a fost salvat pentru sub produsul', savedSubProd.name, savedSubProd._id )
             }
-          } else {
-            console.warn('Eroare! Sub Produsul nu a fost gasit iun baza de date la crearea raportului!', product.name)
           }
 
       }
