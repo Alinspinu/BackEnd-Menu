@@ -56,104 +56,77 @@ module.exports.getOrder = async (req, res, next) => {
 }
 
 
+module.exports.testRaport = async (req, res) => {
+    try{
+        const today = new Date(2025, 0, 1).setUTCHours(0,0,0,0)
+        const end = new Date(2025, 0, 12).setUTCHours(0,0,0,0)
+        const orders = await Order.find({ locatie: "655e2e7c5a3d53943c6b7c53" , updatedAt: {$gte: today, $lte: end}, status: 'done'})
+        for(let order of orders){
+            await createProductSaleReport(order.products, order.updatedAt)
+         }
+         res.status(200).json({message: 'All good in the hood'})
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 // module.exports.testRaport = async (req, res) => {
-//     try{
-//         const today = new Date(2025, 0, 1).setUTCHours(0,0,0,0)
-//         const end = new Date(2025, 0, 2).setUTCHours(0,0,0,0)
-//         const orders = await Order.find({ locatie: "655e2e7c5a3d53943c6b7c53" , updatedAt: {$gte: today, $lte: end}, status: 'done'})
-//         for(let order of orders){
-//             for(let product of order.products){
-//                 const prod = await Product.findOne({name: product.name})
-//                 if(!prod){
-//                     const names = product.name.split('-')
-//                     const prodSub = await Product.findOne({name: names[0]}).populate({path: 'subProducts', select: 'name'})
-//                     if(prodSub){
-//                         console.log('Found product with sub products ', prodSub.name)
-//                         product.productId = prodSub._id
-//                         console.log(' Product ID added ', product.productId)
-//                         const subProduct = prodSub.subProducts.find(s => s.name === names[1])
-//                         if(subProduct){
-//                             console.log('found subProduct ', subProduct.name)
-//                             product.subProductId = subProduct._id
-//                             console.log('sub product id added ', product.subProductId)
+//     try {
+//         const today = new Date(2025, 0, 10).setUTCHours(0, 0, 0, 0);
+//         const end = new Date(2025, 0, 12).setUTCHours(0, 0, 0, 0);
+//         const orders = await Order.find({ 
+//             locatie: "655e2e7c5a3d53943c6b7c53", 
+//             updatedAt: { $gte: today, $lte: end }, 
+//             status: 'done' 
+//         });
+//         const orderPromises = orders.map(async (order) => {
+//             const productPromises = order.products.map(async (product) => {
+//                 const prod = await Product.findOne({ name: product.name });
+//                 if (!prod) {
+//                     const names = product.name.split('-');
+//                     const prodSub = await Product.findOne({ name: names[0] }).populate({ path: 'subProducts', select: 'name' });
+//                     if (prodSub) {
+//                         console.log('Found product with sub products', prodSub.name);
+//                         if(!product.productId){
+//                             product.productId = prodSub._id;
+//                             console.log('Product ID added', product.productId, order.updatedAt);
+//                         }
+//                         const subProduct = prodSub.subProducts.find(s => s.name === names[1]);
+//                         if (subProduct) {
+//                             console.log('Found subProduct', subProduct.name);
+//                             if(!product.subProductId){
+//                                 product.subProductId = subProduct._id;
+//                                 console.log('Sub product ID added', product.subProductId);
+//                             }
 //                         }
 //                     }
 //                 } else {
-//                     console.log('Found product ', prod.name)
-//                     product.productId = prod._id
-//                     console.log('Product ID ADDED ', product.productId)
+//                     console.log('Found product', prod.name);
+//                     if(!product.productId){
+//                         product.productId = prod._id;
+//                         console.log('Product ID ADDED', product.productId, order.updatedAt);
+//                     }
 //                 }
-//                 const ord = await order.save()
-//                 if(ord) console.log("***************Order saved *****************")
-//             }
+//                 await order.save(); // Save order after all changes to products
+//                 console.log("***************Order saved *****************");
+//             });
 
-//             // await createProductSaleReport(order.products, order.updatedAt)
-//          }
-//          res.status(200).json({message: 'All good in the hood'})
+//             // Wait for all product updates to finish
+//             await Promise.all(productPromises);
+//         });
 
-//     } catch(error){
-//         console.log(error)
-//         res.status(500).json(error)
+//         // Wait for all orders to finish processing
+//         await Promise.all(orderPromises);
+
+//         res.status(200).json({ message: 'All good in the hood' });
+
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json(error);
 //     }
-// }
-
-module.exports.testRaport = async (req, res) => {
-    try {
-        const today = new Date(2025, 0, 10).setUTCHours(0, 0, 0, 0);
-        const end = new Date(2025, 0, 12).setUTCHours(0, 0, 0, 0);
-        const orders = await Order.find({ 
-            locatie: "655e2e7c5a3d53943c6b7c53", 
-            updatedAt: { $gte: today, $lte: end }, 
-            status: 'done' 
-        });
-
-        // Iterate over orders and process products concurrently
-        const orderPromises = orders.map(async (order) => {
-            const productPromises = order.products.map(async (product) => {
-                const prod = await Product.findOne({ name: product.name });
-                if (!prod) {
-                    const names = product.name.split('-');
-                    const prodSub = await Product.findOne({ name: names[0] }).populate({ path: 'subProducts', select: 'name' });
-                    if (prodSub) {
-                        console.log('Found product with sub products', prodSub.name);
-                        if(!product.productId){
-                            product.productId = prodSub._id;
-                            console.log('Product ID added', product.productId, order.updatedAt);
-                        }
-                        const subProduct = prodSub.subProducts.find(s => s.name === names[1]);
-                        if (subProduct) {
-                            console.log('Found subProduct', subProduct.name);
-                            if(!product.subProductId){
-                                product.subProductId = subProduct._id;
-                                console.log('Sub product ID added', product.subProductId);
-                            }
-                        }
-                    }
-                } else {
-                    console.log('Found product', prod.name);
-                    if(!product.productId){
-                        product.productId = prod._id;
-                        console.log('Product ID ADDED', product.productId, order.updatedAt);
-                    }
-                }
-                await order.save(); // Save order after all changes to products
-                console.log("***************Order saved *****************");
-            });
-
-            // Wait for all product updates to finish
-            await Promise.all(productPromises);
-        });
-
-        // Wait for all orders to finish processing
-        await Promise.all(orderPromises);
-
-        res.status(200).json({ message: 'All good in the hood' });
-
-    } catch (error) {
-        console.log(error);
-        res.status(500).json(error);
-    }
-};
+// };
 
 
 
