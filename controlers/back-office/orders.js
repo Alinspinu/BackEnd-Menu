@@ -116,19 +116,25 @@ module.exports.testRaport = async (req, res) => {
                     const prodSub = await Product.findOne({ name: names[0] }).populate({ path: 'subProducts', select: 'name' });
                     if (prodSub) {
                         console.log('Found product with sub products', prodSub.name);
-                        product.productId = prodSub._id;
-                        console.log('Product ID added', product.productId);
+                        if(!product.productId){
+                            product.productId = prodSub._id;
+                            console.log('Product ID added', product.productId);
+                        }
                         const subProduct = prodSub.subProducts.find(s => s.name === names[1]);
                         if (subProduct) {
                             console.log('Found subProduct', subProduct.name);
-                            product.subProductId = subProduct._id;
-                            console.log('Sub product ID added', product.subProductId);
+                            if(!product.subProductId){
+                                product.subProductId = subProduct._id;
+                                console.log('Sub product ID added', product.subProductId);
+                            }
                         }
                     }
                 } else {
                     console.log('Found product', prod.name);
-                    product.productId = prod._id;
-                    console.log('Product ID ADDED', product.productId);
+                    if(!product.productId){
+                        product.productId = prod._id;
+                        console.log('Product ID ADDED', product.productId);
+                    }
                 }
                 await order.save(); // Save order after all changes to products
                 console.log("***************Order saved *****************");
