@@ -166,7 +166,7 @@ nirSchema.pre('save', async function (next){
     };
 
     const promises = doc.ingredients.map((el) => {
-      return Ingredient.updateOne(
+      return Ingredient.updateOneAndUpdate(
         { name: el.name, gestiune: el.gestiune },
         {
           $setOnInsert: {
