@@ -13,6 +13,7 @@ module.exports.addSuplier = async (req, res, next) => {
         if(check){
             return res.status(401).json({message: "Codul fiscal este deja inregistrat in baza de date contactati echipa de suport alin@flowmanager.ro"})
         } else {
+            delete suplier._id
             const newLocation = new Locatie(suplier) 
              const loc = await newLocation.save()
              const table = new Table({
@@ -27,6 +28,7 @@ module.exports.addSuplier = async (req, res, next) => {
         if(check){
            return res.status(200).json({message: `Furnizorul ${check.name} a fost gasit in basa de date!`, suplier: check})
         } else {
+             delete suplier._id
              const newSuplier = new Suplier(suplier);
              newSuplier.name = suplier.bussinessName
              await newSuplier.save();
