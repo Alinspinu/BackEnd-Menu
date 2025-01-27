@@ -3,42 +3,16 @@ const Ingredient = require('../../models/office/inv-ingredient')
 const Nir = require('../../models/office/nir')
 const {round} = require('../../utils/functions')
 
+
+
+
 module.exports.saveNir = async( req, res, next) => {
     const {nir, loc} = req.body;
     try{
       const newNir = new Nir(nir)
       newNir.locatie = loc
       const savedNir = await newNir.save()
-      const promises = nir.ingredients.map((el) => {
-        return Ingredient.updateOne(
-          { name: el.name, gestiune: el.gestiune, locatie: loc },
-          {
-            $setOnInsert: {
-              um: el.um,
-              gestiune: el.gestiune,
-              locatie: loc,
-            },
-            $set: {
-              price: el.price,
-              tva: el.tva,
-              dep: el.dep,
-              tvaPrice: round(el.price * (1 + el.tva / 100)),
-            },
-            $inc: {qty: el.qty}
-          },
-          { upsert: true, new: true }
-        ).exec();
-      });
-    
-      Promise.all(promises)
-        .then((results) => {
-          console.log(`Updated/created documents: ${results}`);
-          res.status(200).json({message: "Documentul a fost salvat cu success!", nir: savedNir})
-        })
-        .catch((err) => {
-          console.log(`Error: ${err}`);
-          next(err);
-        });
+      res.status(200).json({message: "Documentul a fost salvat cu success!", nir: savedNir})
     } catch (err) {
       console.log(err)
       res.status(500).json({message: err.message})
