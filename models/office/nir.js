@@ -187,7 +187,7 @@ nirSchema.pre('save', async function (next){
               date: doc.documentDate,
               qty: el.qty,
               operation: operation,
-              uploadPrice: roundd(el.price * (1 + el.tva / 100)),
+              uploadPrice: round(el.price * (1 + el.tva / 100)),
               logId: el.logId
             }
           }
