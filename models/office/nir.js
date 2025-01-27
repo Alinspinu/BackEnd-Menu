@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const Counter = require("../utils/counter");
 const Ingredient = require('../office/inv-ingredient')
 const Suplier = require('../office/suplier')
-const {roundd } = require('../../utils/functions')
+const {round } = require('../../utils/functions')
 
 const nirSchema = new Schema({
   suplier: { 
@@ -178,7 +178,7 @@ nirSchema.pre('save', async function (next){
             price: el.price,
             tva: el.tva,
             dep: el.dep,
-            tvaPrice: roundd(el.price * (1 + el.tva / 100)),
+            tvaPrice: round(el.price * (1 + el.tva / 100)),
             sellPrice: el.sellPrice
           },
           $inc: {qty: el.qty},
