@@ -62,7 +62,7 @@ module.exports.testRaport = async (req, res) => {
         const end = new Date(2025, 0, 1).setUTCHours(0,0,0,0)
         const orders = await Order.find({ locatie: "655e2e7c5a3d53943c6b7c53" , createdAt: {$gte: today}, status: 'done'})
         for(let order of orders){
-            await createProductSaleReport(order.products, order.updatedAt)
+            await createProductSaleReport(order.products, order.createdAt)
          }
          res.status(200).json({message: 'All good in the hood'})
 
