@@ -146,7 +146,7 @@ async function createProductSaleReport(billProducts, date){
             console.log('Logul de vanzare  a fost salvat pentru produsul',savedProd.name , savedProd._id, ' la data de ')
           }
 
-          if(product && product.subProductId.length > 6) {
+          if(product && product.subProductId && product.subProductId.length > 6) {
             const subProduct = await SubProduct.findById(product.subProductId)
             if(!subProduct){
               console.log('Eroare! Sub Produsul nu a fost gasit iun baza de date la crearea raportului! Dar a trecut de Id Check')
