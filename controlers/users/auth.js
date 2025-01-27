@@ -174,7 +174,7 @@ module.exports.verifyToken = async (req, res, next) => {
                     locatie: user.locatie
                 };
                 const data = {name: user.name, action: 's-a inregistrat'}
-                await sendInfoAdminEmail(data)
+                // await sendInfoAdminEmail(data)
                 res.status(200).json(userData);
             } else {
                 res.status(404).json({ message: 'User not found' });
@@ -241,7 +241,7 @@ module.exports.resetPassword = async (req, res, next) => {
                     locatie: user.locatie
                 };
                 const data = {name: user.name, action: 'și-a resetat parola'}
-                await sendInfoAdminEmail(data)
+                // await sendInfoAdminEmail(data)
                 res.status(200).json(userData);
             } else {
                 res.status(404).json({ message: 'User not found' });
