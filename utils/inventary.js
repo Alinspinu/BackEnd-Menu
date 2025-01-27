@@ -85,7 +85,7 @@ async function createProductSaleReport(billProducts, date){
       for(let product of billProducts){
         const dbProduct = await Product.findById(product.productId)
           if(!dbProduct){
-            console.log('Eroare! Produsul nu a fost gasit in baza de date la crearea raportului!')
+            console.log('Eroare! Produsul nu a fost gasit in baza de date la crearea raportului!', product.name)
           } else {
             let saleLog = dbProduct.saleLog 
             if(saleLog.length) {
@@ -208,6 +208,8 @@ async function createProductSaleReport(billProducts, date){
               const savedSubProd = await subProduct.save()
               console.log('Logul de vanzare  a fost salvat pentru sub produsul', savedSubProd.name, savedSubProd._id )
             }
+          } else {
+            console.log('Eroare! Sub Produsul nu a fost gasit iun baza de date la crearea raportului!', product.name)
           }
 
       }
