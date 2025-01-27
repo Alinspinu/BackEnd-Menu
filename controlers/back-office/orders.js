@@ -60,6 +60,8 @@ module.exports.testRaport = async (req, res) => {
     try{
         const today = new Date(2025, 1, 20).setUTCHours(0,0,0,0)
         const orders = await Order.find({ locatie: "655e2e7c5a3d53943c6b7c53" , updatedAt: {$gte: today}, status: 'done'})
+        console.log(today)
+        console.log(orders.length)
         for(let order of orders){
             await createProductSaleReport(order.products, order.updatedAt)
          }
