@@ -99,8 +99,8 @@ module.exports.getOrder = async (req, res, next) => {
 
 module.exports.testRaport = async (req, res) => {
     try {
-        const today = new Date(2025, 0, 6).setUTCHours(0, 0, 0, 0);
-        const end = new Date(2025, 0, 10).setUTCHours(0, 0, 0, 0);
+        const today = new Date(2025, 0, 10).setUTCHours(0, 0, 0, 0);
+        const end = new Date(2025, 0, 12).setUTCHours(0, 0, 0, 0);
         const orders = await Order.find({ 
             locatie: "655e2e7c5a3d53943c6b7c53", 
             updatedAt: { $gte: today, $lte: end }, 
