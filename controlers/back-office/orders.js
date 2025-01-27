@@ -100,7 +100,7 @@ module.exports.getOrder = async (req, res, next) => {
 module.exports.testRaport = async (req, res) => {
     try {
         const today = new Date(2025, 0, 1).setUTCHours(0, 0, 0, 0);
-        const end = new Date(2025, 0, 2).setUTCHours(0, 0, 0, 0);
+        const end = new Date(2025, 0, 12).setUTCHours(0, 0, 0, 0);
         const orders = await Order.find({ 
             locatie: "655e2e7c5a3d53943c6b7c53", 
             updatedAt: { $gte: today, $lte: end }, 
@@ -118,7 +118,7 @@ module.exports.testRaport = async (req, res) => {
                         console.log('Found product with sub products', prodSub.name);
                         if(!product.productId){
                             product.productId = prodSub._id;
-                            console.log('Product ID added', product.productId);
+                            console.log('Product ID added', product.productId, order.updatedAt);
                         }
                         const subProduct = prodSub.subProducts.find(s => s.name === names[1]);
                         if (subProduct) {
@@ -133,7 +133,7 @@ module.exports.testRaport = async (req, res) => {
                     console.log('Found product', prod.name);
                     if(!product.productId){
                         product.productId = prod._id;
-                        console.log('Product ID ADDED', product.productId);
+                        console.log('Product ID ADDED', product.productId, order.updatedAt);
                     }
                 }
                 await order.save(); // Save order after all changes to products
