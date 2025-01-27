@@ -28,7 +28,11 @@ module.exports.saveIng = async(req, res, next) => {
         console.log(filterTo)
         const ings = await Ingredient.find(filterTo).populate({path: 'ings.ing'});
         console.log(ings.length)
-        const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
+        const sortedIngs = ings.sort((a, b) => {
+          if(a.name && b.name){
+            return a.name.localeCompare(b.name)
+          }
+        })
         res.status(200).json(sortedIngs)
       }catch (err) {
         console.log(err)
