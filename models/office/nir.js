@@ -172,8 +172,13 @@ nirSchema.pre('save', async function (next){
           $setOnInsert: {
             name: el.name,
             um: el.um,
+            price: el.price,
+            tva: el.tva,
+            dep: el.dep,
             gestiune: el.gestiune,
             locatie: doc.locatie,
+            tvaPrice: round(el.price * (1 + el.tva / 100)),
+            sellPrice: el.sellPrice
           },
           $set: {
             price: el.price,
