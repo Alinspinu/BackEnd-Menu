@@ -117,8 +117,8 @@ module.exports.saveIng = async(req, res, next) => {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
         const formattedDate = date.toISOString();
-        const ings = await Ingredient.find({locatie: loc, productIngredient: false, dep: { $in: ['marfa', 'materie'] }}).select('inventary name gestiune dep um')
-        console.log(ings.length)
+        const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune dep um')
+        console.log('ingrediente', ings.length)
         const updatePromises = ings.map(ing => {
           let index = 1;
           if (ing.inventary && ing.inventary.length) {
@@ -140,9 +140,9 @@ module.exports.saveIng = async(req, res, next) => {
           );
         });
     
-        await Promise.all(updatePromises);
+       const promises =  await Promise.all(updatePromises);
         const formatedDate = formatedDateToShow(date)
-        res.status(200).json({ message: `Inventarul a fost salvat pentru data de ${formatedDate}`});
+        res.status(200).json({ message: `Inventarul a fost salvat pentru data de ${formatedDate} pentru ${promises.length} ingredinete`});
       } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });
