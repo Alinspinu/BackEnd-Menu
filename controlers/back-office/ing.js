@@ -1,5 +1,5 @@
 const Ingredient = require('../../models/office/inv-ingredient')
-const {round} = require('./../../utils/functions')
+const {round, formatedDateToShow} = require('./../../utils/functions')
 const Inventary = require('../../models/office/inventary')
 const Order = require('../../models/office/product/order')
 const DelProd = require('../../models/office/product/deletetProduct')
@@ -140,8 +140,8 @@ module.exports.saveIng = async(req, res, next) => {
         });
     
         await Promise.all(updatePromises);
-    
-        res.status(200).json({ message: "inventary saved" });
+        const formatedDate = formatedDateToShow(date)
+        res.status(200).json({ message: `Inventarul a fost salvat pentru data de ${formatedDate}`});
       } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });
