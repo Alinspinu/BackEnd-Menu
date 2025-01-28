@@ -113,11 +113,12 @@ module.exports.saveIng = async(req, res, next) => {
 
     module.exports.saveInventary = async (req, res, next) => {
       const {loc} = req.body
+      console.log(loc)
       try {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
         const formattedDate = date.toISOString();
-        const ings = await Ingredient.find({locatie: loc}).select('name gestiune dep um')
+        const ings = await Ingredient.find({locatie: loc})
         console.log('ingrediente', ings.length)
       //   const updatePromises = ings.map(ing => {
       //     let index = 1;
