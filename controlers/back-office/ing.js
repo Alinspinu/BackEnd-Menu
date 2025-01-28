@@ -112,38 +112,37 @@ module.exports.saveIng = async(req, res, next) => {
 
 
     module.exports.saveInventary = async (req, res, next) => {
-      const {loc} = req.body
-      console.log(loc)
+      const {loc} = req.query
       try {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
         const formattedDate = date.toISOString();
-        const ings = await Ingredient.find({locatie: loc})
-        console.log('ingrediente', ings.length)
-      //   const updatePromises = ings.map(ing => {
-      //     let index = 1;
-      //     if (ing.inventary && ing.inventary.length) {
-      //       index += ing.inventary.length;
-      //     } else {
-      //       index = 1;
-      //     }
+        const ings = await Ingredient.find({locatie: loc, productIngredient: false, dep: { $in: ['marfa', 'materie'] }}).select('inventary name gestiune dep um')
+        console.log(ings.length)
+        const updatePromises = ings.map(ing => {
+          let index = 1;
+          if (ing.inventary && ing.inventary.length) {
+            index += ing.inventary.length;
+          } else {
+            index = 1;
+          }
     
-      //     const entry = {
-      //       index: index,
-      //       day: formattedDate,
-      //       qty: ing.qty
-      //     };
+          const entry = {
+            index: index,
+            day: formattedDate,
+            qty: ing.qty
+          };
     
-      //     // Use updateOne to update the inventory field only
-      //     return Ingredient.updateOne(
-      //       { _id: ing._id },
-      //       { $push: { inventary: entry } }
-      //     );
-      //   });
+          // Use updateOne to update the inventory field only
+          return Ingredient.updateOne(
+            { _id: ing._id },
+            { $push: { inventary: entry } }
+          );
+        });
     
-      //  const promises =  await Promise.all(updatePromises);
+        const promises = await Promise.all(updatePromises);
         const formatedDate = formatedDateToShow(date)
-        res.status(200).json({ message: `Inventarul a fost salvat pentru data de ${formatedDate} pentru  ingredinete`});
+        res.status(200).json({ message: `Inventarul a fost salvat pentru data de ${formatedDate} pentru ${promises.length} ingrediente`});
       } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });
