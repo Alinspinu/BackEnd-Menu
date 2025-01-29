@@ -44,7 +44,7 @@ module.exports.editDep = async (req, res) => {
 }
 
 
-module.exports.deleteDeps = async (req, res) => {
+module.exports.deleteDep = async (req, res) => {
     const {id} = req.query
     try{
         await Dep.findByIdAndDelete(id)
