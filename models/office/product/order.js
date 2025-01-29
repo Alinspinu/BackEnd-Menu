@@ -188,6 +188,10 @@ const orderTrueSchema = new Schema({
                 imgPath: String,
                 payToGo: Boolean,
                 dep: String,
+                // dep: {
+                //     type: Schema.Types.ObjectId,
+                //     ref: 'Dep'
+                // },
                 sub: Boolean,
                 qty: String,
                 section: String,
@@ -267,15 +271,12 @@ orderTrueSchema.post('save', async function (doc, next) {
     console.log('HIT THE POST SAVE FUNCTION')
     try {
         if(doc.soketId){
-            // Find all documents with the same soketId
+
             const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId });
             console.log('duplicate orders', duplicates.length)
             if (duplicates.length > 1) {
             
-              // Keep the oldest document and remove the others
-              const idsToDelete = duplicates.slice(1).map(d => d._id); // Get all but the first one (oldest)
-              
-              // Delete the rest of the duplicates
+              const idsToDelete = duplicates.slice(1).map(d => d._id);
               await mongoose.model('Order').deleteMany({ _id: { $in: idsToDelete } });
               console.log(`Deleted ${idsToDelete.length} duplicate document(s) for soketId: ${doc.soketId}`);
             }

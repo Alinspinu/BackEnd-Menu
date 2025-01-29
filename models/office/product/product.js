@@ -52,7 +52,6 @@ const productTrueSchema = new Schema({
     longDescription: String,
     tva: Number,
     subId: String,
-    dep: String,
     preOrder: Boolean,
     preOrderPrice: Number,
     paring: [

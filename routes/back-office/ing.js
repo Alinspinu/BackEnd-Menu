@@ -3,6 +3,9 @@ const router = express.Router();
 
 const ingRoutes = require('../../controlers/back-office/ing')
 const printRoutes = require('../../controlers/print')
+const depsRoutes = require('../../controlers/back-office/deps')
+
+
 router.route('/search-ingredients').get(ingRoutes.searchIng);
 router.route('/ingredient')
     .post(ingRoutes.saveIng)
@@ -27,6 +30,18 @@ router.route('/ing').get(ingRoutes.getIng)
 router.route('/log')
         .get(ingRoutes.getIngUploadLog)
         .delete(ingRoutes.deleteIngUpLog)
+
+router.route('/dep')
+        .get(depsRoutes.getDep)
+        .post(depsRoutes.addDep)
+        .put(depsRoutes.editDep)
+        .delete(depsRoutes.deleteDep)
+
+router.route('/gest')
+    .get(depsRoutes.getGest)
+    .post(depsRoutes.addGest)
+    .put(depsRoutes.editGest)
+    .delete(depsRoutes.deleteGest)
 
 // router.route('/fix').get(ingRoutes.fixbuBulealaOvi)
 
