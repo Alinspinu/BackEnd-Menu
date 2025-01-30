@@ -163,6 +163,7 @@ module.exports.saveIng = async(req, res, next) => {
 module.exports.saveManualInventary = async (req, res, next) => {
   try{
     const {data} = req.body
+    console.log(data)
     const ing  = await Ingredient.findById(data.ingId)
     ing.inventary.forEach(inv => {
       if(inv.index === data.invIndex){
@@ -171,7 +172,12 @@ module.exports.saveManualInventary = async (req, res, next) => {
       }
     })
     const newIng = await ing.save()
-    res.status(200).json({message: 'Inventarul a fost actualizat', ing: newIng})
+    const dbIng = await Ingredient.findById(newIng._id)
+        .select([ '-unloadLog', '-uploadLog', '-inventary'])
+        .populate({path: 'salePoint', select: 'name'})
+        .populate({path: 'gest', select: 'name'})
+        .populate({path: 'dept', select: 'name'})
+    res.status(200).json({message: 'Inventarul a fost actualizat', ing: dbIng})
   } catch(err){
     console.log(err)
     res.status(500).json({message: err.message})
