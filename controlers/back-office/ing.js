@@ -19,7 +19,13 @@ module.exports.saveIng = async(req, res, next) => {
       const newIng = new Ingredient(ing)
       newIng.locatie = loc
       const savedIng =  await newIng.save()
-      return res.status(200).json({message: `Ingredientul ${newIng.name} a fost salvat cu succes!`, ing: savedIng})
+      const dbIng = Ingredient.findById(savedIng._id)
+            .select([ '-unloadLog', '-uploadLog'])
+            .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
+            .populate({path: 'salePoint', select: 'name'})
+            .populate({path: 'gest', select: 'name'})
+            .populate({path: 'dept', select: 'name'})
+      return res.status(200).json({message: `Ingredientul ${newIng.name} a fost salvat cu succes!`, ing: dbIng})
     }
   }
   
