@@ -527,7 +527,7 @@ module.exports.printNir = async (req, res, next) => {
           let filterTo = {}
           const filter = req.body.filter
           if(filter && filter.gestiune.length){
-            filterTo.gestiune = filter.gestiune
+            filterTo.gest = filter.gestiune
           }
           if(filter && filter.type.length){
             if(filter.type === "compus"){
@@ -537,7 +537,7 @@ module.exports.printNir = async (req, res, next) => {
             }
           }
           if(filter && filter.dep.length){
-            filterTo.dep = filter.dep
+            filterTo.dept = filter.dep
           }
           // filterTo.gestiune = 'bucatarie'
           // filterTo.ings = { $eq: [] }
@@ -548,7 +548,6 @@ module.exports.printNir = async (req, res, next) => {
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Lista ingrediente');
         const ings = await Ingredient.find(filterTo).select([ '-unloadLog', '-uploadLog'])
-        console.log(ings.length)
         const sortedIngs = ings.sort((a, b) => a.name.localeCompare(b.name))
      
         const docTitle =  [
