@@ -130,7 +130,7 @@ module.exports.saveIng = async(req, res, next) => {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
         const formattedDate = date.toISOString();
-        const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune dep um')
+        const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune qty dep um')
         const updatePromises = ings.map(ing => {
           let index = 1;
           if (ing.inventary && ing.inventary.length) {
