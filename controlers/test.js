@@ -1,7 +1,7 @@
 
 
 
-const Ingredient = require('../../models/office/inv-ingredient.js')
+const Ingredient = require('../models/office/inv-ingredient')
 
 
 module.exports.updateGest = async (req, res) => {
