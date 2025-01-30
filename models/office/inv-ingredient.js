@@ -98,15 +98,15 @@ const invIngSchema = new Schema({
     type: Number,
     default: 0
   },
-  // gestiune: String,
-  gestiune: {
+  gestiune: String,
+  gest: {
     type: Schema.Types.ObjectId,
     ref: 'Gestiune'
   
   },
   recipe: String,
-  // dep: String,
-  dep: {
+  dep: String,
+  dept: {
     type: Schema.Types.ObjectId,
     ref: 'Dep'
   },
