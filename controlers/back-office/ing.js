@@ -25,7 +25,7 @@ module.exports.saveIng = async(req, res, next) => {
     module.exports.searchIng = async (req, res, next) => {
       const loc = req.query.loc
       const page = parseInt(req.query.page) || 1;
-      const limit = 600; e
+      const limit = 600; 
       const skip = (page - 1) * limit;
       try{  
         const items = await Ingredient.find({locatie: loc}).skip(skip).limit(limit)
