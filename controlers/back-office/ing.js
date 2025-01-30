@@ -174,7 +174,7 @@ module.exports.saveManualInventary = async (req, res, next) => {
     const newIng = await ing.save()
     console.log('saved inventary', newIng.inventary)
     const dbIng = await Ingredient.findById(newIng._id)
-        .select([ '-unloadLog', '-uploadLog', '-inventary'])
+        .select([ '-unloadLog', '-uploadLog'])
         .populate({path: 'salePoint', select: 'name'})
         .populate({path: 'gest', select: 'name'})
         .populate({path: 'dept', select: 'name'})
