@@ -19,7 +19,7 @@ module.exports.saveIng = async(req, res, next) => {
       const newIng = new Ingredient(ing)
       newIng.locatie = loc
       const savedIng =  await newIng.save()
-      const dbIng = Ingredient.findById(savedIng._id)
+      const dbIng = await Ingredient.findById(savedIng._id)
             .select([ '-unloadLog', '-uploadLog'])
             .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
             .populate({path: 'salePoint', select: 'name'})
