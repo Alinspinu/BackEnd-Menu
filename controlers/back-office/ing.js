@@ -167,11 +167,13 @@ module.exports.saveManualInventary = async (req, res, next) => {
     const ing  = await Ingredient.findById(data.ingId)
     ing.inventary.forEach(inv => {
       if(inv.index === data.invIndex){
+        console.log(inv)
         inv.faptic = data.qtyInv
         inv.qty = data.scriptic
       }
     })
     const newIng = await ing.save()
+    console.log('saved inventary', newIng.inventary)
     const dbIng = await Ingredient.findById(newIng._id)
         .select([ '-unloadLog', '-uploadLog', '-inventary'])
         .populate({path: 'salePoint', select: 'name'})
