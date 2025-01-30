@@ -39,6 +39,7 @@ const repRoutes = require('./routes/back-office/report.js')
 const invoiceRoutes = require('./routes/back-office/invoice.js')
 const gbtRoutes = require('./routes/gbt.js')
 const reservationRoutes = require('./routes/reservation.js')
+const testRoutes = require('./routes/test.js')
 const cron = require('node-cron');
 
 const {authApi} = require('./auth/auth')
@@ -143,6 +144,8 @@ app.use('/report', authApi, repRoutes);
 app.use('/invoice', authApi, invoiceRoutes)
 app.use('/gbt', gbtRoutes)
 app.use('/reservation', authApi, reservationRoutes)
+
+app.use('/test', testRoutes)
 
 app.get('/rew', (req, res) => {
     const googleReviewUrl = 'https://search.google.com/local/writereview?placeid=ChIJ96oXXor7ykARXU3JtcikJjs';

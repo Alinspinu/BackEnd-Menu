@@ -1,6 +1,6 @@
 const Dep = require('../../models/office/product/dep')
 const Gest = require('../../models/office/product/gestiune')
-
+const mongoose = require('mongoose')
 
 
 
@@ -108,4 +108,7 @@ module.exports.deleteGest = async (req, res) => {
         res.status(500).json(error)
     }
 }
+
+
+
 
