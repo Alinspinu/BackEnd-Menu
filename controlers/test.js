@@ -2,7 +2,7 @@
 
 
 const Ingredient = require('../models/office/inv-ingredient')
-
+const mongoose = require('mongoose')
 
 module.exports.updateGest = async (req, res) => {
     try{
