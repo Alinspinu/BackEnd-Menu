@@ -169,7 +169,6 @@ module.exports.saveManualInventary = async (req, res, next) => {
       if(inv.index === data.invIndex){
         console.log(inv)
         inv.faptic = data.qtyInv
-        inv.qty = data.scriptic
       }
     })
     const newIng = await ing.save()
