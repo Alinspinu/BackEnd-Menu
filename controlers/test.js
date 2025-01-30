@@ -8,7 +8,7 @@ module.exports.updateGest = async (req, res) => {
     try{
         const ingsBu = await  Ingredient.updateMany({gestiune: 'bucatarie'}, {$set: {gest: '679a634e1feadad813f5f86c' }})
         const ingsB = await  Ingredient.updateMany({gestiune: 'bar'}, {$set: {gest: '679a635e1feadad813f5f86e' }})
-        const ingsM = await  Ingredient.updateMany({gestiune: 'magazie'}, {$set: {gest: '6679a63681feadad813f609dd' }})
+        const ingsM = await  Ingredient.updateMany({gestiune: 'magazie'}, {$set: {gest: '679a63681feadad813f609dd' }})
 
         const ingsMate = await  Ingredient.updateMany({dep: 'materie'}, {$set: {dept: '679a63811feadad813f609df' }})
         const ingsMarf = await  Ingredient.updateMany({dep: 'marfa'}, {$set: {dept: '679a63901feadad813f609e1' }})
