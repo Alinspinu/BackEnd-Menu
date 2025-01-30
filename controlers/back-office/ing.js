@@ -32,7 +32,8 @@ module.exports.saveIng = async(req, res, next) => {
           .select([ '-unloadLog', '-uploadLog'])
           .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
           .populate({path: 'salePoint', select: 'name'})
-          .populate({path: 'gestiune', select: 'name'})
+          .populate({path: 'gest', select: 'name'})
+          .populate({path: 'dept', select: 'name'})
         const totalItems = 1100
         console.log(limit)
         const totalPages = Math.ceil(totalItems / limit);
