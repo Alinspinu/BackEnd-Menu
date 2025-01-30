@@ -6,20 +6,20 @@ const mongoose = require('mongoose')
 
 module.exports.updateGest = async (req, res) => {
     try{
-        const ingsBu = await  Ingredient.updateMany({gestiune: 'bucatarie'}, {$set: {gest: new mongoose.Types.ObjectId('679a634e1feadad813f5f86c') }})
-        const ingsB = await  Ingredient.updateMany({gestiune: 'bar'}, {$set: {gest: new mongoose.Types.ObjectId('679a635e1feadad813f5f86e') }})
-        const ingsM = await  Ingredient.updateMany({gestiune: 'magazie'}, {$set: {gest: new mongoose.Types.ObjectId('6679a63681feadad813f609dd') }})
+        const ingsBu = await  Ingredient.updateMany({gestiune: 'bucatarie'}, {$set: {gest: '679a634e1feadad813f5f86c' }})
+        const ingsB = await  Ingredient.updateMany({gestiune: 'bar'}, {$set: {gest: '679a635e1feadad813f5f86e' }})
+        const ingsM = await  Ingredient.updateMany({gestiune: 'magazie'}, {$set: {gest: '6679a63681feadad813f609dd' }})
 
-        const ingsMate = await  Ingredient.updateMany({dep: 'materie'}, {$set: {dept: new mongoose.Types.ObjectId('679a63811feadad813f609df') }})
-        const ingsMarf = await  Ingredient.updateMany({dep: 'marfa'}, {$set: {dept: new mongoose.Types.ObjectId('679a63901feadad813f609e1') }})
-        const ingsCons = await  Ingredient.updateMany({dep: 'consumabil'}, {$set: {dept: new mongoose.Types.ObjectId('679a639e1feadad813f609e3') }})
-        const ingsSer = await  Ingredient.updateMany({dep: 'servicii'}, {$set: {dept: new mongoose.Types.ObjectId('679a63a71feadad813f609e5') }})
-        const ingsMark = await  Ingredient.updateMany({dep: 'marketing'}, {$set: {dept: new mongoose.Types.ObjectId('679a63b71feadad813f609e7') }})
-        const ingsInv = await  Ingredient.updateMany({dep: 'ob-inventar'}, {$set: {dept: new mongoose.Types.ObjectId('679a63c61feadad813f609e9') }})
-        const ingsAmen = await  Ingredient.updateMany({dep: 'amenajari'}, {$set: {dept: new mongoose.Types.ObjectId('679a63d91feadad813f6b107') }})
-        const ingsComb = await  Ingredient.updateMany({dep: 'combustibil'}, {$set: {dept: new mongoose.Types.ObjectId('679a63e31feadad813f6cc7e') }})
-        const ingsUti = await  Ingredient.updateMany({dep: 'utilitati'}, {$set: {dept: new mongoose.Types.ObjectId('679a63f61feadad813f6e8a7') }})
-        const ingsChi = await  Ingredient.updateMany({dep: 'chirie'}, {$set: {dept: new mongoose.Types.ObjectId('679a640f1feadad813f6fa16') }})
+        const ingsMate = await  Ingredient.updateMany({dep: 'materie'}, {$set: {dept: '679a63811feadad813f609df' }})
+        const ingsMarf = await  Ingredient.updateMany({dep: 'marfa'}, {$set: {dept: '679a63901feadad813f609e1' }})
+        const ingsCons = await  Ingredient.updateMany({dep: 'consumabil'}, {$set: {dept:'679a639e1feadad813f609e3' }})
+        const ingsSer = await  Ingredient.updateMany({dep: 'servicii'}, {$set: {dept: '679a63a71feadad813f609e5' }})
+        const ingsMark = await  Ingredient.updateMany({dep: 'marketing'}, {$set: {dept: '679a63b71feadad813f609e7'}})
+        const ingsInv = await  Ingredient.updateMany({dep: 'ob-inventar'}, {$set: {dept: '679a63c61feadad813f609e9' }})
+        const ingsAmen = await  Ingredient.updateMany({dep: 'amenajari'}, {$set: {dept: '679a63d91feadad813f6b107' }})
+        const ingsComb = await  Ingredient.updateMany({dep: 'combustibil'}, {$set: {dept: '679a63e31feadad813f6cc7e' }})
+        const ingsUti = await  Ingredient.updateMany({dep: 'utilitati'}, {$set: {dept:'679a63f61feadad813f6e8a7'}})
+        const ingsChi = await  Ingredient.updateMany({dep: 'chirie'}, {$set: {dept: '679a640f1feadad813f6fa16' }})
 
 
 
