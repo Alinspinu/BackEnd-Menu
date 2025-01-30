@@ -106,7 +106,6 @@ module.exports.saveIng = async(req, res, next) => {
       try{  
         const {id} = req.query;
         const {newIng} = req.body;
-        console.log('ingredientul nou', newIng)
         await Ingredient.findByIdAndUpdate(id, newIng);
         const ing = await Ingredient.findById(id)
           .select([ '-unloadLog', '-uploadLog', '-inventary'])
@@ -114,7 +113,6 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'salePoint', select: 'name'})
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
-          console.log('saved ing', ing)
         res.status(200).json({message: `Ingredientul ${ing.name} a fost actualizat cu succes!`, ing: ing})
       } catch(err){
         console.log(err)
