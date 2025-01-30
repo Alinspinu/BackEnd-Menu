@@ -28,6 +28,8 @@ module.exports.saveIng = async(req, res, next) => {
       return res.status(200).json({message: `Ingredientul ${newIng.name} a fost salvat cu succes!`, ing: dbIng})
     }
   }
+
+
   
     module.exports.searchIng = async (req, res, next) => {
       const loc = req.query.loc
@@ -128,8 +130,7 @@ module.exports.saveIng = async(req, res, next) => {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
         const formattedDate = date.toISOString();
-        const ings = await Ingredient.find({locatie: loc, productIngredient: false, dep: { $in: ['marfa', 'materie'] }}).select('inventary name gestiune dep um')
-        console.log(ings.length)
+        const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune dep um')
         const updatePromises = ings.map(ing => {
           let index = 1;
           if (ing.inventary && ing.inventary.length) {
