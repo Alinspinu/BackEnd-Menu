@@ -15,6 +15,7 @@ module.exports.saveIng = async(req, res, next) => {
     if(checkIng){
       return res.status(226).json({message: "Ingredientul deja exista în baza de date!"})
     } else {
+      delete newIng._id
       const newIng = new Ingredient(ing)
       newIng.locatie = loc
       const savedIng =  await newIng.save()
