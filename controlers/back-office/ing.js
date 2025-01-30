@@ -24,8 +24,8 @@ module.exports.saveIng = async(req, res, next) => {
   
     module.exports.searchIng = async (req, res, next) => {
       const loc = req.query.loc
-      const page = parseInt(req.query.page) || 1; // Get page from request, default to 1
-      const limit = 600; // Items per page
+      const page = parseInt(req.query.page) || 1;
+      const limit = 600; e
       const skip = (page - 1) * limit;
       try{  
         const items = await Ingredient.find({locatie: loc}).skip(skip).limit(limit)
@@ -103,6 +103,9 @@ module.exports.saveIng = async(req, res, next) => {
         const ing = await Ingredient.findById(id)
           .select([ '-unloadLog', '-uploadLog', '-inventary'])
           .populate({path: "ings.ing", select: '-unloadLog -uploadLog -inventary'})
+          .populate({path: 'salePoint', select: 'name'})
+          .populate({path: 'gest', select: 'name'})
+          .populate({path: 'dept', select: 'name'})
         res.status(200).json({message: `Ingredientul ${ing.name} a fost actualizat cu succes!`, ing: ing})
       } catch(err){
         console.log(err)
@@ -134,7 +137,6 @@ module.exports.saveIng = async(req, res, next) => {
             qty: ing.qty
           };
     
-          // Use updateOne to update the inventory field only
           return Ingredient.updateOne(
             { _id: ing._id },
             { $push: { inventary: entry } }
