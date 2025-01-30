@@ -10,7 +10,7 @@ const mongoose = require('mongoose')
 module.exports.getDep = async (req, res) => {
     const {salePoint, loc} = req.query
     try{
-        const deps = Dep.find({salePoint: salePoint, locatie: loc})
+        const deps = await Dep.find({salePoint: salePoint, locatie: loc})
         res.status(200).json(deps)
     } catch(error) {
         console.log(error)
@@ -61,7 +61,7 @@ module.exports.deleteDep = async (req, res) => {
 module.exports.getGest = async (req, res) => {
     const  {salePoint, loc} = req.query;
     try{
-        const gests = Gest.find({salePoint: salePoint, locatie: loc})
+        const gests = await Gest.find({salePoint: salePoint, locatie: loc})
         res.status(200).json(gests)
     } catch(error){
         console.log(error)
