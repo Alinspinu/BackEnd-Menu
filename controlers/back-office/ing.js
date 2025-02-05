@@ -406,7 +406,6 @@ module.exports.compareScriptic = async (req, res, next) => {
               product.toppings.forEach(topping=>{
                 if(topping.ing.ings.length){
                   topping.ing.ings.forEach(ig => {
-                    console.log('topping ing compus', ig.ing.name)
                     const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                     if (existingIngredient) {
                       const updatedIng = {
