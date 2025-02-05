@@ -377,11 +377,12 @@ module.exports.compareScriptic = async (req, res, next) => {
                   // console.log('Simplu in compus - compus', ig.ing.name, ig.qty * ing.qty)
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
-                    existingIngredient.qty = round(existingIngredient.qty + (ig.qty * ing.qty))
+                    // existingIngredient.qty = round(existingIngredient.qty + (ig.qty * ing.qty))
                     const updatedIng = {
+                      qty: existingIngredient.qty + round(ig.qty * ing.qty), 
                       ing: existingIngredient.ing
                     }
-                    // consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                    consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                     // existingIngredient.qty += ig.qty 
                   } else {
                     consIngs.push(ig);
@@ -391,12 +392,12 @@ module.exports.compareScriptic = async (req, res, next) => {
                 if(ing && ing.ing){
                   const existingIngredient = consIngs.find(p =>p.ing.name === ing.ing.name);
                   if (existingIngredient) {
-                    existingIngredient.qty = round(existingIngredient.qty + ing.qty)
+                    // existingIngredient.qty = round(existingIngredient.qty + ing.qty)
                     const updatedIng = {
                       qty: existingIngredient.qty + ing.qty,
                       ing: existingIngredient.ing
                     }
-                    // consIngs = consIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                    consIngs = consIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
                   } else {
                     consIngs.push(ing);
                   }
@@ -413,12 +414,12 @@ module.exports.compareScriptic = async (req, res, next) => {
                     console.log('topping ing compus', ig.ing.name)
                     const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                     if (existingIngredient) {
-                      existingIngredient.qty = round(existingIngredient.qty + (ig.qty * topping.qty))
+                      // existingIngredient.qty = round(existingIngredient.qty + (ig.qty * topping.qty))
                       const updatedIng = {
-                        qty: existingIngredient.qty + ig.qty,
+                        qty: existingIngredient.qty + round(ig.qty * topping.qty),
                         ing: existingIngredient.ing
                       }
-                        // consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                        consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                     } else {
                       consIngs.push(ig);
                     }
@@ -435,7 +436,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                     // if(updatedIng.ing.name === "Lapte Vegetal"){
                     //   console.log(updatedIng.qty)
                     // }
-                    // consIngs = consIngs.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+                    consIngs = consIngs.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
                   } else {
                     const ig = {
                       qty: topping.qty,
