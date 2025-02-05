@@ -98,14 +98,17 @@ const invIngSchema = new Schema({
     type: Number,
     default: 0
   },
-  gestiune: {
-    type: String,
-    default: 'magazie',
-    index: true
+  gestiune: String,
+  gest: {
+    type: Schema.Types.ObjectId,
+    ref: 'Gestiune'
+  
   },
   recipe: String,
-  dep: {
-    type: String,
+  dep: String,
+  dept: {
+    type: Schema.Types.ObjectId,
+    ref: 'Dep'
   },
   productIngredient: {
     type: Boolean, 
