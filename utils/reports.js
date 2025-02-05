@@ -899,6 +899,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     }
                                 break
                             case 'Marfă': 
+                                console.log(ing.gest.name)
                                     if(ing.gest.name === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsMfBuc += (ing.tvaPrice * log.qty)
