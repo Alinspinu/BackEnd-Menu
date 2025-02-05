@@ -372,12 +372,12 @@ module.exports.compareScriptic = async (req, res, next) => {
           order.products.forEach(product => {
             product.ings.forEach(ing => {
               if(ing.ing.ings && ing.ing.ings.length){
-                
+                console.log('Compus', ing.ing.name, ing.qty)
                 ing.ing.ings.forEach(ig => {
-                  console.log('Simplu in compus - compus', ig.ing.name, ig.qty)
+                  // console.log('Simplu in compus - compus', ig.ing.name, ig.qty)
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
-                    existingIngredient.qty = round(existingIngredient.qty + ig.qty)
+                    existingIngredient.qty = round(existingIngredient.qty + (ig.qty / ing.qty))
                     const updatedIng = {
                       ing: existingIngredient.ing
                     }
@@ -412,7 +412,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                   topping.ing.ings.forEach(ig => {
                     const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                     if (existingIngredient) {
-                      existingIngredient.qty = round(existingIngredient.qty + ig.qty)
+                      existingIngredient.qty = round(existingIngredient.qty + (ig.qty / topping.qty))
                       const updatedIng = {
                         qty: existingIngredient.qty + ig.qty,
                         ing: existingIngredient.ing
