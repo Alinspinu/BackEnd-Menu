@@ -246,7 +246,7 @@ module.exports.compareScriptic = async (req, res, next) => {
     const startTime = new Date(start).setUTCHours(0,0,0,0)
     const endTime = new Date(end).setUTCHours(0,0,0,0)
     const eTime = new Date(end).setUTCHours(23,0,0,0)
-    const ings = await Ingredient.find({locatie: loc,  productIngredient: false, dep: { $in: ['marfa', 'materie']}}).select('name uploadLog um')
+    const ings = await Ingredient.find({locatie: loc,  productIngredient: false}).select('name uploadLog um')
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'})
           .populate({path: 'billProduct.ings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
           .populate({path: 'billProduct.toppings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
@@ -481,18 +481,7 @@ module.exports.compareScriptic = async (req, res, next) => {
 
 
 
-    ings.forEach(ing => {
-      ing.uploadLog.forEach(log => {
-        const logDate = new Date(log.date).setUTCHours(0,0,0,0)
-        if(logDate >= startTime && logDate <= endTime && log.operation && log.operation.name === 'intrare'){
-            const compareIng = ingredients.find(ingr => ingr.name === ing.name)
-            if(compareIng) {
-              compareIng.upload.value += log.qty
-              compareIng.upload.entries.push(log)
-            }
-        }
-      })
-    })
+
 
     delIngs.forEach(ing => {
       const compareIng = {
@@ -540,6 +529,19 @@ module.exports.compareScriptic = async (req, res, next) => {
       } else {
         ingredients.push(compareIng)
       }
+    })
+    
+    ings.forEach(ing => {
+      ing.uploadLog.forEach(log => {
+        const logDate = new Date(log.date).setUTCHours(0,0,0,0)
+        if(logDate >= startTime && logDate <= endTime && log.operation && log.operation.name === 'intrare'){
+            const compareIng = ingredients.find(ingr => ingr.name === ing.name)
+            if(compareIng) {
+              compareIng.upload.value += log.qty
+              compareIng.upload.entries.push(log)
+            }
+        }
+      })
     })
    
     const compareInv = {
