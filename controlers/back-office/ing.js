@@ -545,7 +545,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         ingredients.push(compareIng)
       }
     })
-    
+
     ings.forEach(ing => {
       ing.uploadLog.forEach(log => {
         const logDate = new Date(log.date).setUTCHours(0,0,0,0)
