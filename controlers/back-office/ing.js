@@ -374,7 +374,7 @@ module.exports.compareScriptic = async (req, res, next) => {
               if(ing.ing.ings && ing.ing.ings.length){
                 // console.log('Compus', ing.ing.name, ing.qty)
                 ing.ing.ings.forEach(ig => {
-                  console.log('Simplu in compus - compus', ig.ing.name, ig.qty * ing.qty)
+                  // console.log('Simplu in compus - compus', ig.ing.name, ig.qty * ing.qty)
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
                     existingIngredient.qty = round(existingIngredient.qty + (ig.qty * ing.qty))
@@ -410,6 +410,7 @@ module.exports.compareScriptic = async (req, res, next) => {
               product.toppings.forEach(topping=>{
                 if(topping.ing.ings.length){
                   topping.ing.ings.forEach(ig => {
+                    console.log('topping ing compus', ig.ing.name)
                     const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                     if (existingIngredient) {
                       existingIngredient.qty = round(existingIngredient.qty + (ig.qty * topping.qty))
