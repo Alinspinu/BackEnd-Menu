@@ -222,7 +222,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     const pontaj = await Pontaj.findOne({locatie: loc, month: pontMonth}).populate('days.users.employee')
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
     const dbUsers = await User.find({locatie: loc, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
-    const allIngs = await Ingredient.find({locatie: loc, productIngredient: false}).select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune'])
+    const allIngs = await Ingredient.find({locatie: loc, productIngredient: false})
+                    .select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune', 'dept', 'gest'])
+                    .populate({path: 'gest', select: 'name'})
+                    .populate({path: 'dept', select: 'name'})
     const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}})
                                 .populate({path: 'ings.ing', select: 'name um ings tvaPrice productIngredient', populate: {path: 'ings.ing', select: 'name um tvaPrice' }})
     const values = {
@@ -759,8 +762,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             for(const log of ing.uploadLog) {
                     const logDate = new Date(log.date).getTime()
                     if(startTime < logDate && logDate < endTime) {
-                        switch (ing.dep) {
-                            case 'consumabil':                       
+                        switch (ing.dept.name) {
+                            case 'Consumabil':                       
                                 if(!log.uploadPrice){
                                     values.totalSuplies += (ing.tvaPrice * log.qty) 
                                 } else {
@@ -775,7 +778,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                               }
                               consEntryes.push(cObject)
                               break;
-                            case 'servicii':                        
+                            case 'Servicii':                        
                                 if(!log.uploadPrice){
                                     values.serviceValue += (ing.tvaPrice * log.qty) 
                                 } else {
@@ -790,7 +793,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 }
                                 servEntryes.push(sObject)
                               break;
-                            case 'ob-inventar':                 
+                            case 'Obiecte de inventar':                 
                                 if(!log.uploadPrice){
                                     values.inventarySpendings += (ing.tvaPrice * log.qty)
                                 } else {
@@ -805,7 +808,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 }
                                 obInvEntryes.push(oObject)
                               break;
-                            case 'marketing':                    
+                            case 'Marketing':                    
                                 if(!log.uploadPrice){
                                     values.marketingValue += (ing.tvaPrice * log.qty)
                                 } else {
@@ -820,7 +823,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 }
                                 marketingEntryes.push(mObject)
                               break;
-                            case 'amenajari':                
+                            case 'Amenajări':                
                                 if(!log.uploadPrice){
                                     values.constructionsValue += (ing.tvaPrice * log.qty)
                                 } else {
@@ -835,7 +838,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 }
                                 amenajariEntryes.push(aObject)
                               break;
-                            case 'combustibil':                  
+                            case 'Combustibil':                  
                                 if(!log.uploadPrice){
                                     values.gasValue += (ing.tvaPrice * log.qty)
                                 } else {
@@ -850,7 +853,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 }
                                 combsEntryes.push(bObject)
                               break;
-                            case 'chirie':             
+                            case 'Chirie':             
                                 if(!log.uploadPrice){
                                     values.rentValue += (ing.tvaPrice * log.qty)
                                 } else {
@@ -864,10 +867,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     suplier: log.operation.details
                                 }
                                 rentEntryes.push(rObject)
-                                console.log('OBJECT***', rObject)
-                                console.log('LOG****',log)
                               break;
-                            case 'utilitati':        
+                            case 'Utilități':        
                                 if(!log.uploadPrice){
                                     values.utilitiesValue += (ing.tvaPrice * log.qty)
                                 } else {
@@ -881,15 +882,15 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     suplier: log.operation.details
                                 }
                                 utilitiesEntryes.push(uObject)
-                            case 'materie':
-                                    if(ing.gestiune === 'bucatarie'){
+                            case 'Materie Primă':
+                                    if(ing.gestiune === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsProdBuc += (ing.tvaPrice * log.qty)
                                         } else {
                                             values.inIngsProdBuc += (log.uploadPrice * log.qty)
                                         }
                                     }
-                                    if(ing.gestiune === 'bar'){
+                                    if(ing.gestiune === 'Bar'){
                                         if(!log.uploadPrice){
                                         values.inIngsProdBar += (ing.tvaPrice * log.qty)
                                     } else {
@@ -897,15 +898,15 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     }
                                     }
                                 break
-                            case 'marfa': 
-                                    if(ing.gestiune === 'bucatarie'){
+                            case 'Marfă': 
+                                    if(ing.gestiune === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsMfBuc += (ing.tvaPrice * log.qty)
                                         } else {
                                             values.inIngsMfBuc += (log.uploadPrice * log.qty)
                                         }
                                     }
-                                    if(ing.gestiune === 'bar'){
+                                    if(ing.gestiune === 'Bar'){
                                         if(!log.uploadPrice){
                                         values.inIngsMfBar += (ing.tvaPrice * log.qty)
                                     } else {
