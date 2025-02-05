@@ -372,15 +372,16 @@ module.exports.compareScriptic = async (req, res, next) => {
           order.products.forEach(product => {
             product.ings.forEach(ing => {
               if(ing.ing.ings && ing.ing.ings.length){
-                console.log('Compus', ing.ing.name)
+                
                 ing.ing.ings.forEach(ig => {
+                  console.log('Simplu in compus - compus', ig.ing.name)
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
+                    existingIngredient.qty += ig.qty
                     const updatedIng = {
-                      qty: existingIngredient.qty + ig.qty,
                       ing: existingIngredient.ing
                     }
-                    consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                    // consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                     // existingIngredient.qty += ig.qty 
                   } else {
                     consIngs.push(ig);
@@ -388,14 +389,14 @@ module.exports.compareScriptic = async (req, res, next) => {
                 })
               } else {
                 if(ing && ing.ing){
-                  console.log('Simplu', ing.ing.name)
                   const existingIngredient = consIngs.find(p =>p.ing.name === ing.ing.name);
                   if (existingIngredient) {
+                    existingIngredient.qty += ig.qty
                     const updatedIng = {
                       qty: existingIngredient.qty + ing.qty,
                       ing: existingIngredient.ing
                     }
-                    consIngs = consIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                    // consIngs = consIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
                   } else {
                     consIngs.push(ing);
                   }
@@ -411,11 +412,12 @@ module.exports.compareScriptic = async (req, res, next) => {
                   topping.ing.ings.forEach(ig => {
                     const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                     if (existingIngredient) {
+                      existingIngredient.qty += ig.qty
                       const updatedIng = {
                         qty: existingIngredient.qty + ig.qty,
                         ing: existingIngredient.ing
                       }
-                        consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                        // consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                     } else {
                       consIngs.push(ig);
                     }
@@ -424,6 +426,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                 else{
                   const existingIngredient = consIngs.find(p =>p.ing.name === topping.ing.name);
                   if (existingIngredient) {
+                    existingIngredient.qty += ig.qty
                     const updatedIng = {
                       qty: existingIngredient.qty + topping.qty,
                       ing: existingIngredient.ing
@@ -431,7 +434,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                     // if(updatedIng.ing.name === "Lapte Vegetal"){
                     //   console.log(updatedIng.qty)
                     // }
-                    consIngs = consIngs.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+                    // consIngs = consIngs.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
                   } else {
                     const ig = {
                       qty: topping.qty,
