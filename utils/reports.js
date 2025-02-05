@@ -758,10 +758,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     //CALC SUPLIES
 
     for(const ing of allIngs){
-        if(ing.name === 'Croissant cu unt'){
-            console.log(ing.gest)
-            console.log(ing.dept)
-        }
         if(ing.uploadLog){
             for(const log of ing.uploadLog) {
                     const logDate = new Date(log.date).getTime()
