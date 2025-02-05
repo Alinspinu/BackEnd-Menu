@@ -372,9 +372,8 @@ module.exports.compareScriptic = async (req, res, next) => {
           order.products.forEach(product => {
             product.ings.forEach(ing => {
               if(ing.ing.ings && ing.ing.ings.length){
-                console.log(ing.ing.name)
+                console.log('Compus', ing.ing.name)
                 ing.ing.ings.forEach(ig => {
-                  // console.log(ig.ing.name)
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
                     const updatedIng = {
@@ -389,6 +388,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                 })
               } else {
                 if(ing && ing.ing){
+                  console.log('Simplu', ing.ing.name)
                   const existingIngredient = consIngs.find(p =>p.ing.name === ing.ing.name);
                   if (existingIngredient) {
                     const updatedIng = {
