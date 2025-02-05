@@ -883,14 +883,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                 }
                                 utilitiesEntryes.push(uObject)
                             case 'Materie Primă':
-                                    if(ing.gestiune === 'Bucătărie'){
+                                    if(ing.gest.name === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsProdBuc += (ing.tvaPrice * log.qty)
                                         } else {
                                             values.inIngsProdBuc += (log.uploadPrice * log.qty)
                                         }
                                     }
-                                    if(ing.gestiune === 'Bar'){
+                                    if(ing.gest.name === 'Bar'){
                                         if(!log.uploadPrice){
                                         values.inIngsProdBar += (ing.tvaPrice * log.qty)
                                     } else {
@@ -899,14 +899,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     }
                                 break
                             case 'Marfă': 
-                                    if(ing.gestiune === 'Bucătărie'){
+                                    if(ing.gest.name === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsMfBuc += (ing.tvaPrice * log.qty)
                                         } else {
                                             values.inIngsMfBuc += (log.uploadPrice * log.qty)
                                         }
                                     }
-                                    if(ing.gestiune === 'Bar'){
+                                    if(ing.gest.name === 'Bar'){
                                         if(!log.uploadPrice){
                                         values.inIngsMfBar += (ing.tvaPrice * log.qty)
                                     } else {
