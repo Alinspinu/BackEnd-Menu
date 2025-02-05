@@ -371,11 +371,11 @@ module.exports.compareScriptic = async (req, res, next) => {
         orders.forEach(order=> {
           order.products.forEach(product => {
             product.ings.forEach(ing => {
-          
+              console.log(ing.name)
               if(ing.ings && ing.ings.length){
-                console.log(ing.name)
+                // console.log(ing.name)
                 ing.ings.forEach(ig => {
-                  console.log(ig.ing.name)
+                  // console.log(ig.ing.name)
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
                     const updatedIng = {
