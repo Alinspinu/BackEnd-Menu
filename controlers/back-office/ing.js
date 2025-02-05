@@ -400,6 +400,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                   }
                 }
                 else {
+                  console.log(ing)
                 }
               }
             })
