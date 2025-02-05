@@ -391,7 +391,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                 if(ing && ing.ing){
                   const existingIngredient = consIngs.find(p =>p.ing.name === ing.ing.name);
                   if (existingIngredient) {
-                    existingIngredient.qty += ig.qty
+                    existingIngredient.qty += ing.qty
                     const updatedIng = {
                       qty: existingIngredient.qty + ing.qty,
                       ing: existingIngredient.ing
@@ -426,7 +426,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                 else{
                   const existingIngredient = consIngs.find(p =>p.ing.name === topping.ing.name);
                   if (existingIngredient) {
-                    existingIngredient.qty += ig.qty
+                    existingIngredient.qty += topping.qty
                     const updatedIng = {
                       qty: existingIngredient.qty + topping.qty,
                       ing: existingIngredient.ing
