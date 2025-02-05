@@ -198,7 +198,7 @@ module.exports.saveInv = async (req, res, next) => {
   try{
     const {date, loc} = req.body
     const invDate = new Date(date).setUTCHours(0,0,0,0)
-    const ings = await Ingredient.find({locatie: loc, productIngredient: false, dep: { $in: ['marfa', 'materie'] }}).select('inventary name gestiune dep um')
+    const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune dep um')
     const ingredients = ings.map(ing => {
 
       let foundFirstMatch = false;
