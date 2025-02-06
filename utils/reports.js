@@ -699,7 +699,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             if(ing.ing){
                 ingredients.forEach(ings => {
                     if(ings.ing._id.toString() === ing.ing._id.toString()) {
-                        // console.log(ings.ing.name, ings.ing.tvaPrice, ing.qty, prod.billProduct.quantity)
+                        console.log('new', values.totalDep)
                         values.totalDep += (ing.qty * ings.ing.tvaPrice * prod.billProduct.quantity)
                         cost = round(cost + (ing.qty * ings.ing.tvaPrice))
                         console.log(cost, ings.ing.name )
@@ -741,6 +741,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             if(product.name === prod.name){
                 for(const ing of product.ings){
                     if(ing.ing){
+                        console.log('old', values.totalDep)
                         values.totalDep += (ing.qty * ing.ing.tvaPrice * prod.qty)
                         cost = round(cost + (ing.qty * ing.ing.tvaPrice))
                     }
@@ -999,7 +1000,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         paymentMethods: createPaymentMethods(values),
     })
     console.log(report.impairment)
-    console.log('total values',round(values.totalDep))
+    console.log('total values', values.totalDep)
     const newRep = await report.save()
     // console.log(values)
     return newRep
