@@ -648,11 +648,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         }
     }
 
-
-    console.log('****************', values.totalDep)
     //CALC IMPAIRMENTS
     
-    console.log('FOI De Deprecieri',impSheets)
 
     for(const sheet of impSheets){
         for(let ing of sheet.ings){
@@ -668,6 +665,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                             cost: round(ingg.ing.tvaPrice * (ingg.qty * ing.qty)),
                             name: ingg.ing.name
                         }
+                        console.log('imp-shhet conpus ing', ingx)
                         depProducts.push(ingx)
                         values.totalDep += ingx.cost
                     }
@@ -759,7 +757,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     cost: cost,
                     qty: prod.qty
                 }
-                console.log('old prod', pro)
                 depProducts.push(pro)
             }
         }
