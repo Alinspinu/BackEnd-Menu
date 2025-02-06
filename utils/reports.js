@@ -695,11 +695,12 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             if(ing.ing){
                 ingredients.forEach(ings => {
                     if(ings.ing._id.toString() === ing.ing._id.toString()) {
+                        console.log(ings.ing.name, ings.ing.tvaPrice)
                         values.totalDep += (ing.qty * ings.ing.tvaPrice * prod.billProduct.quantity)
                         cost = round(cost + (ing.qty * ings.ing.tvaPrice))
                     }   
                 })
-                console.log('new', values.totalDep)
+                // console.log('new', values.totalDep)
             } else {
                 const existingProd = oldProd.find(obj => obj.name === prod.billProduct.name)
                 if(existingProd){
@@ -741,7 +742,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 }
             }
         })
-        console.log('old', values.totalDep)
+        // console.log('old', values.totalDep)
         if(cost > 0){
             const existingProd = depProducts.find(p => p.name === prod.name)
             if(existingProd){
