@@ -666,6 +666,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                             cost: round(ingg.ing.tvaPrice * (ingg.qty * ing.qty)),
                             name: ingg.ing.name
                         }
+                        console.log('imp-shhet prodIng', ingx)
                         depProducts.push(ingx)
                         values.totalDep += ing.cost
                     }
@@ -681,6 +682,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                         cost: round(ing.ing.tvaPrice * ing.qty),
                         name: ing.ing.name
                     }
+                    console.log('imp-shhet simple ing', ingg)
                     depProducts.push(ingg)
                     values.totalDep += ingg.cost
                 }
