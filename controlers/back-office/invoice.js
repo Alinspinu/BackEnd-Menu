@@ -62,8 +62,8 @@ module.exports.getMessages = async (req, res) => {
         }
         if(allPages > page){
           const diference = allPages - page
-          for(let i=2; i <= diference; i++){
-             page = i
+          for(let i=1; i <= diference; i++){
+             page = i+1
              console.log('page', page)
              const resp = await axios.get(apiUrl1, config)
              messages = [...messages, ...resp.data.mesaje]
