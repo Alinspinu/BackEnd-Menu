@@ -14,7 +14,7 @@ module.exports.addImpSheet = async (req, res) => {
                               .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
                               .populate({path: 'user', select: 'employee.fullName'})
       if(modifyedSheeet){
-            res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: modifyedSheeet})
+            res.status(200).json({message: "Fișa a fost editată cu succes!", sheet: modifyedSheeet})
       } else {
         const newSheet = new ImpSheet(sheet)
         const savedSheet = await newSheet.save()
