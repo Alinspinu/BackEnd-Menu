@@ -648,6 +648,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         }
     }
 
+
+    console.log('****************', values.totalDep)
     //CALC IMPAIRMENTS
     
 
