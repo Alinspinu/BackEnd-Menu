@@ -41,7 +41,8 @@ module.exports.getMessages = async (req, res) => {
 
     module.exports.getMessagesByDate = async (req, res) => {
       const {startDate, endDate, cif} = req.body
-      const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=1`
+      let page = 1
+      const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=${page}`
       const config = {
         headers: {
           'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
@@ -52,13 +53,28 @@ module.exports.getMessages = async (req, res) => {
     try{
     const response = await axios.get(apiUrl1, config)
     if(response){
+        const allPages = response.data.numar_total_pagini
+        let messages = response.data.mesaje
+        if(allPages === page){
+          res.status(200).json(response.data)
+        }
+        if(allPages > page){
+          const diference = allPages - page
+          for(let i=2; i <= diference; i++){
+             page = i
+             const resp = await axios.get(apiUrl1, config)
+             messages = [...messages, ...resp.data.mesaje]
+          }
+        response.data.mesaje = messages
         res.status(200).json(response.data)
+        }
     }
     }catch(error){
         console.log(error)
         res.status(500).json(error)
     }
 }
+
 
 
 module.exports.getInvoice = async (req, res) => {
