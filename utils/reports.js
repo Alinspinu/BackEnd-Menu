@@ -879,6 +879,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
+                                console.log(uObject)
+                                console.log('TOTAL', values.utilitiesValue)
                                 utilitiesEntryes.push(uObject)
                             case 'Materie Primă':
                                     if(ing.gest.name === 'Bucătărie'){
