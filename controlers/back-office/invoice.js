@@ -10,10 +10,8 @@ const endDate = new Date('2024-11-16').getTime()
 
 const baseApiDaysUrl = 'https://api.anaf.ro/prod/FCTEL/rest/listaMesajeFactura ?zile= 10&cif=44994432'
 
-const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=44994432&pagina=1`
 
-
-                 
+    
 
 
 
@@ -35,6 +33,27 @@ module.exports.getMessages = async (req, res) => {
         res.status(200).json(response.data)
     }
 
+    }catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+    module.exports.getMessagesByDate = async (req, res) => {
+      const {startDate, endDate, cif} = req.body
+      const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=1`
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
+          'Content-Type': 'application/json',
+        }
+      }
+
+    try{
+    const response = await axios.get(apiUrl1, config)
+    if(response){
+        res.status(200).json(response.data)
+    }
     }catch(error){
         console.log(error)
         res.status(500).json(error)
