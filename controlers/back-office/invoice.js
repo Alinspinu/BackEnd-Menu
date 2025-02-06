@@ -62,10 +62,12 @@ module.exports.getMessages = async (req, res) => {
           const diference = allPages - page
           for(let i=2; i <= diference; i++){
              page = i
+             console.log('page', page)
              const resp = await axios.get(apiUrl1, config)
              messages = [...messages, ...resp.data.mesaje]
           }
         response.data.mesaje = messages
+        console.log(messages)
         res.status(200).json(response.data)
         }
     }
