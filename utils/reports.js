@@ -652,7 +652,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
     console.log('****************', values.totalDep)
     //CALC IMPAIRMENTS
     
-
+    console.log('FOI De Deprecieri',impSheets)
 
     for(const sheet of impSheets){
         for(let ing of sheet.ings){
