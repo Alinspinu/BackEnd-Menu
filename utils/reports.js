@@ -658,6 +658,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 for(let ingg of ing.ing.ings){
                     const index = depProducts.findIndex(i => i.name === ingg.ing.name)
                     if(index !== -1){
+                        console.log(('compus', ingg.ing.name, ingg.qty, ing.ing.name, ing.qty, ingg.ing.tvaPrice))
                         depProducts[index].qty = round(depProducts[index].qty + (ingg.qty * ing.qty))
                         values.totalDep += (round(ingg.qty * ing.qty) * ingg.ing.tvaPrice)
                     } else {
@@ -674,6 +675,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             } else {
                 const index = depProducts.findIndex(i => i.name === ing.ing.name)
                 if(index !== -1){
+                    console.log('simplu', ing.ing.name, ing.qty, ing.ing.tvaPrice)
                     depProducts[index].qty = round(depProducts[index].qty + ing.qty)
                     values.totalDep += (ing.qty * ing.ing.tvaPrice)
                 } else {
@@ -697,9 +699,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             if(ing.ing){
                 ingredients.forEach(ings => {
                     if(ings.ing._id.toString() === ing.ing._id.toString()) {
-                        console.log(ings.ing.name, ings.ing.tvaPrice, ing.qty, prod.billProduct.quantity)
+                        // console.log(ings.ing.name, ings.ing.tvaPrice, ing.qty, prod.billProduct.quantity)
                         values.totalDep += (ing.qty * ings.ing.tvaPrice * prod.billProduct.quantity)
                         cost = round(cost + (ing.qty * ings.ing.tvaPrice))
+                        console.log(cost, ings.ing.name )
                     }   
                 })
                 // console.log('new', values.totalDep)
