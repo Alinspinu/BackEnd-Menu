@@ -34,6 +34,7 @@ const imparimentSheetSchema = new Schema({
 
 
 imparimentSheetSchema.pre('deleteOne', { document: false, query: true }, async function (next) {
+    console.log('hit pre deleteOne')
         try{
             const query = this.getQuery()
             const dbSheet = await this.model.findOne(query)
