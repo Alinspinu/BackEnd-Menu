@@ -10,15 +10,22 @@ const Ingredient = require('../../models/office/inv-ingredient')
 module.exports.addImpSheet = async (req, res) => {
     try{
       const {sheet} = req.body
-      const newSheet = new ImpSheet(sheet)
-      const savedSheet = await newSheet.save()
-      const dbSheet = await ImpSheet.findById(savedSheet._id)
-            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
-            .populate({path: 'user', select: 'employee.fullName'})
-      if(dbSheet){
-        res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: dbSheet})
-      } else{
-        res.status(200).json({message: 'Fișa nu a fost găsită în baza de date dupa salvare!'})
+      const modifyedSheeet = await ImpSheet.findByIdAndUpdate(sheet._id, sheet, {new: true})
+                              .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
+                              .populate({path: 'user', select: 'employee.fullName'})
+      if(modifyedSheeet){
+            res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: modifyedSheeet})
+      } else {
+        const newSheet = new ImpSheet(sheet)
+        const savedSheet = await newSheet.save()
+        const dbSheet = await ImpSheet.findById(savedSheet._id)
+              .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
+              .populate({path: 'user', select: 'employee.fullName'})
+        if(dbSheet){
+          res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: dbSheet})
+        } else{
+          res.status(200).json({message: 'Fișa nu a fost găsită în baza de date dupa salvare!'})
+        }
       }
     } catch(error){
       console.log(error)
