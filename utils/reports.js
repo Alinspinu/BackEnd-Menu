@@ -658,15 +658,15 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 for(let ingg of ing.ing.ings){
                     const index = depProducts.findIndex(i => i.name === ingg.ing.name)
                     if(index !== -1){
-                        depProducts[index].qty = round(depProducts[index].qty + ingg.qty)
-                        values.totalDep += (ingg.qty * ingg.ing.tvaPrice)
+                        depProducts[index].qty = round(depProducts[index].qty + (ingg.qty * ing.qty))
+                        values.totalDep += (round(ingg.qty * ing.qty) * ingg.ing.tvaPrice)
                     } else {
-                        const ing = {
-                            qty: ingg.qty,
-                            cost: round(ingg.ing.tvaPrice * ingg.qty),
+                        const ingx = {
+                            qty: round(ingg.qty * ing.qty),
+                            cost: round(ingg.ing.tvaPrice * (ingg.qty * ing.qty)),
                             name: ingg.ing.name
                         }
-                        depProducts.push(ing)
+                        depProducts.push(ingx)
                         values.totalDep += ing.cost
                     }
                 }
@@ -723,6 +723,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     cost: cost,
                     qty: prod.billProduct.quantity
                 }
+                console.log('new prod', prodd)
                 depProducts.push(prodd)
             }
         }
@@ -750,6 +751,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     cost: cost,
                     qty: prod.qty
                 }
+                console.log('old prod', pro)
                 depProducts.push(pro)
             }
         }
