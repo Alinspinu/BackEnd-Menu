@@ -660,7 +660,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 for(let ingg of ing.ing.ings){
                     const index = depProducts.findIndex(i => i.name === ingg.ing.name)
                     if(index !== -1){
-                        // console.log(('compus', ingg.ing.name, ingg.qty, ing.ing.name, ing.qty, ingg.ing.tvaPrice))
+                        console.log(('compus', ingg.ing.name, ingg.qty, ing.ing.name, ing.qty, ingg.ing.tvaPrice))
                         depProducts[index].qty = round(depProducts[index].qty + (ingg.qty * ing.qty))
                         values.totalDep += (round(ingg.qty * ing.qty) * ingg.ing.tvaPrice)
                     } else {
@@ -669,7 +669,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                             cost: round(ingg.ing.tvaPrice * (ingg.qty * ing.qty)),
                             name: ingg.ing.name
                         }
-                        // console.log('imp-shhet prodIng', ingx)
+                        console.log('imp-shhet prodIng', ingx)
                         depProducts.push(ingx)
                         values.totalDep += ing.cost
                     }
@@ -677,7 +677,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             } else {
                 const index = depProducts.findIndex(i => i.name === ing.ing.name)
                 if(index !== -1){
-                    // console.log('simplu', ing.ing.name, ing.qty, ing.ing.tvaPrice)
+                    console.log('simplu', ing.ing.name, ing.qty, ing.ing.tvaPrice)
                     depProducts[index].qty = round(depProducts[index].qty + ing.qty)
                     values.totalDep += (ing.qty * ing.ing.tvaPrice)
                 } else {
@@ -686,7 +686,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                         cost: round(ing.ing.tvaPrice * ing.qty),
                         name: ing.ing.name
                     }
-                    // console.log('imp-shhet simple ing', ingg)
+                    console.log('imp-shhet simple ing', ingg)
                     depProducts.push(ingg)
                     values.totalDep += ingg.cost
                 }
@@ -1001,7 +1001,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
     })
-    console.log(report.impairment)
+    // console.log(report.impairment)
     console.log('total values', values.totalDep)
     const newRep = await report.save()
     // console.log(values)
