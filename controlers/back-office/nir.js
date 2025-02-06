@@ -48,6 +48,7 @@ module.exports.getSheets = async (req, res) => {
     try{
         const {loc} = req.query
         const sheets = await ImpSheet.find({locatie: loc})
+        .sort({date: -1})
         .limit(30)
         .populate({path: 'ings.ing', select: 'name price um tva'})
         .populate({path: 'user', select: 'employee.fullName'})
