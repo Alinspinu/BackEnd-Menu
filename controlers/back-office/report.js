@@ -241,7 +241,7 @@ async function createReport(reports){
             entries: [...report.rent.entries, ...rep.rent.entries]
         }
         report.utilities = {
-            total: round(report.utilities.total + rep.rent.total),
+            total: round(report.utilities.total + rep.utilities.total),
             entries: [...report.utilities.entries, ...rep.utilities.entries]
         }
 
