@@ -699,7 +699,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                         cost = round(cost + (ing.qty * ings.ing.tvaPrice))
                     }   
                 })
-            
+                console.log('new', values.totalDep)
             } else {
                 const existingProd = oldProd.find(obj => obj.name === prod.billProduct.name)
                 if(existingProd){
@@ -741,6 +741,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                 }
             }
         })
+        console.log('old', values.totalDep)
         if(cost > 0){
             const existingProd = depProducts.find(p => p.name === prod.name)
             if(existingProd){
