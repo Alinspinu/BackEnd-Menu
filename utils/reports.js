@@ -662,10 +662,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     } else {
                         const ingx = {
                             qty: round(ingg.qty * ing.qty),
-                            cost: round(ingg.ing.tvaPrice * (ingg.qty * ing.qty)),
+                            cost: ingg.ing.tvaPrice,
                             name: ingg.ing.name
                         }
-                        console.log('imp-shhet conpus ing', ingx)
                         depProducts.push(ingx)
                         values.totalDep += ingx.cost
                     }
@@ -673,16 +672,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             } else {
                 const index = depProducts.findIndex(i => i.name === ing.ing.name)
                 if(index !== -1){
-                    // console.log('simplu', ing.ing.name, ing.qty, ing.ing.tvaPrice)
                     depProducts[index].qty = round(depProducts[index].qty + ing.qty)
                     values.totalDep += (ing.qty * ing.ing.tvaPrice)
                 } else {
                     const ingg = {
                         qty: ing.qty,
-                        cost: round(ing.ing.tvaPrice * ing.qty),
+                        cost: ing.ing.tvaPrice,
                         name: ing.ing.name
                     }
-                    console.log('imp-shhet simple ing', ingg)
                     depProducts.push(ingg)
                     values.totalDep += ingg.cost
                 }
@@ -697,13 +694,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             if(ing.ing){
                 ingredients.forEach(ings => {
                     if(ings.ing._id.toString() === ing.ing._id.toString()) {
-                        // console.log('new', values.totalDep)
                         values.totalDep += (ing.qty * ings.ing.tvaPrice * prod.billProduct.quantity)
                         cost = round(cost + (ing.qty * ings.ing.tvaPrice))
-                        console.log(cost, ings.ing.name )
                     }   
                 })
-                // console.log('new', values.totalDep)
             } else {
                 const existingProd = oldProd.find(obj => obj.name === prod.billProduct.name)
                 if(existingProd){
@@ -727,7 +721,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
                     cost: cost,
                     qty: prod.billProduct.quantity
                 }
-                // console.log('new prod', prodd)
                 depProducts.push(prodd)
             }
         }
@@ -739,14 +732,12 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             if(product.name === prod.name){
                 for(const ing of product.ings){
                     if(ing.ing){
-                        console.log('old', values.totalDep)
                         values.totalDep += (ing.qty * ing.ing.tvaPrice * prod.qty)
                         cost = round(cost + (ing.qty * ing.ing.tvaPrice))
                     }
                 }
             }
         })
-        // console.log('old', values.totalDep)
         if(cost > 0){
             const existingProd = depProducts.find(p => p.name === prod.name)
             if(existingProd){
