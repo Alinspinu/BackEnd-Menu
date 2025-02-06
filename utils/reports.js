@@ -695,7 +695,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
             if(ing.ing){
                 ingredients.forEach(ings => {
                     if(ings.ing._id.toString() === ing.ing._id.toString()) {
-                        console.log(ings.ing.name, ings.ing.tvaPrice)
+                        console.log(ings.ing.name, ings.ing.tvaPrice, ing.qty, prod.billProduct.quantity)
                         values.totalDep += (ing.qty * ings.ing.tvaPrice * prod.billProduct.quantity)
                         cost = round(cost + (ing.qty * ings.ing.tvaPrice))
                     }   
