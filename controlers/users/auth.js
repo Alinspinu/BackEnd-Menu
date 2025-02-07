@@ -282,7 +282,8 @@ module.exports.login = async (req, res, next) => {
             };
         });
     } else if (user.status === "active") {
-        const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: '1d'});
+        let expireDate = user.admin === 1 ? '7d' : '1d'
+        const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn:  expireDate});
         const sendData = {
             token: token,
             name: user.name,
