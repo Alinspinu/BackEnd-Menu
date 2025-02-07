@@ -14,8 +14,13 @@ module.exports.sendEntry = async (req, res, next) => {
             try{
                 const documents = await Day.find({locatie: loc}).populate({path: "entry"})
                 .limit(40)
-                .sort({ date: 1});
-                res.status(200).json({message: 'all good', documents})
+                .sort({ date: -1});
+                const sortedDocs = documents.sort((a,b) => {
+                    const aDate = new Date(a.date).getTime()
+                    const bDate = new Date(b.date).getTime()
+                    return aDate-bDate
+                })
+                res.status(200).json({message: 'all good', documents: sortedDocs})
             } catch(err){
                 console.log(err.message)
                 res.status(500).json({message: 'Error'+ err})
