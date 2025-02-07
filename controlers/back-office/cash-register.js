@@ -14,7 +14,6 @@ module.exports.sendEntry = async (req, res, next) => {
             try{
                 const documents = await Day.find({locatie: loc}).populate({path: "entry"})
                 .limit(40)
-                .sort({ date: -1 });
                 res.status(200).json({message: 'all good', documents})
             } catch(err){
                 console.log(err.message)
