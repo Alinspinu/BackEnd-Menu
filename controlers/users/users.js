@@ -103,7 +103,8 @@ module.exports.fixBul = async (req, res, next) => {
         console.log(req)
         const user = await User.findOne({email: "alin@flowmanager.ro"})
         const startDate = new Date(2024, 9, 1)
-        const orders = await Order.find({createdAt: {$gte: startDate}})
+        const endDate = new Date(2024, 9, 1)
+        const orders = await Order.find({'clientInfo.userId': user._id, createdAt: {$gte: startDate}})
         for(let order of orders){
             if(order.clientInfo.userId === user._id){
                 user.orders.push(order._id)
