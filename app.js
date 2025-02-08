@@ -127,7 +127,7 @@ app.use('/auth', authRoutes);
 app.use('/nutrition', nutritionRoutes);
 app.use('/register', authApi, registerRoutes);
 app.use('/table', authApi, tableRoutes);
-app.use('/users', authApi, usersRoutes);
+app.use('/users',  usersRoutes);
 app.use('/notification', authApi, notifRoutes)
 app.use("/top", toppingRoutes);
 app.use('/suplier', authApi, suplierRoutes);
