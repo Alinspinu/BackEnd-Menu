@@ -109,12 +109,15 @@ module.exports.fixBul = async (req, res, next) => {
                 user.orders.push(order._id)
             }
         }
+        console.log(user)
+        console.log(orders.length)
         setTimeout(async () => {
             await user.save()
         }, 5000)
         res.status(200)
     } catch(error) {
         console.log(error)
+        res.status(500).josn(error)
     }
 }
 
