@@ -101,7 +101,7 @@ const Order = require('../../models/office/product/order')
 module.exports.fixBul = async (req, res, next) => {
     try{
         const user = await User.findOne({email: "alin@flowmanager.ro"})
-        const startDate = new Date(2024, 9, 1)
+        const startDate = new Date(2024, 5, 1)
         const endDate = new Date(2024, 9, 1)
         const orders = await Order.find({'clientInfo.userId': user._id, createdAt: {$gte: startDate}})
         for(let order of orders){
