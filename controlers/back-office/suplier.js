@@ -44,12 +44,8 @@ module.exports.addSuplier = async (req, res, next) => {
    module.exports.sendSuplier = async (req, res, next) => {
     const loc = req.body.loc
        try{
-         const userData = req.body.search;
-         const suplier = await Suplier.find({locatie: loc});
-         let result = suplier.filter((object) =>
-         object.name.toLocaleLowerCase().includes(userData.toLocaleLowerCase())
-         );      
-         res.status(200).json(result);
+         const supliers = await Suplier.find({locatie: loc});     
+         res.status(200).json(supliers);
        } catch(err){
            console.log(err)
            res.status(500).json({message: "Oups something went wrong", err: err})
