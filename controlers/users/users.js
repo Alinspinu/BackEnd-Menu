@@ -96,6 +96,28 @@ module.exports.sendUser = async (req, res, next) => {
     }
 }
 
+const Order = require('../../models/office/product/order')
+
+module.exports.fixBul = async (req, res, next) => {
+    try{
+
+        const user = await User.findOne({email: "alin@flowmanager.ro"})
+        const startDate = new Date(2024, 9, 1)
+        const orders = await Order.find({createdAt: {$gte: startDate}})
+        for(let order of orders){
+            if(order.clientInfo.userId === user._id){
+                user.orders.push(order._id)
+            }
+        }
+        setTimeout(async () => {
+            await user.save()
+        }, 5000)
+        res.status(200)
+    } catch(error) {
+        console.log(error)
+    }
+}
+
 
 module.exports.editUser = async (req, res, next) => {
     const {update} = req.body;
