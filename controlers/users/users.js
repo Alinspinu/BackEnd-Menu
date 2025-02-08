@@ -78,6 +78,7 @@ module.exports.sendUser = async (req, res, next) => {
                     'index',
                     'employee',
                     'clientInfo',
+                    'payment',
                     'productCount',
                     'products.name', 
                     'products.quantity',
