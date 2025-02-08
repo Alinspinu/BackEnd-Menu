@@ -106,9 +106,7 @@ module.exports.fixBul = async (req, res, next) => {
         const endDate = new Date(2024, 9, 1)
         const orders = await Order.find({'clientInfo.userId': user._id, createdAt: {$gte: startDate}})
         for(let order of orders){
-            if(order.clientInfo.userId === user._id){
-                user.orders.push(order._id)
-            }
+          user.orders.push(order._id)
         }
         console.log(user)
         console.log(orders.length)
