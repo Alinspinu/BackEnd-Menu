@@ -113,7 +113,7 @@ module.exports.fixBul = async (req, res, next) => {
         console.log(user)
         console.log(orders.length)
         await user.save()
-        res.status(200).joson({message: 'message'})
+        res.status(200).json({message: 'message'})
     } catch(error) {
         console.log(error)
         res.status(500).josn(error)
