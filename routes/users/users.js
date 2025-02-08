@@ -31,7 +31,6 @@ router.route('/loc')
     .put(users.editLocatie)
     .post(users.updateVivaData)
 
-router.route('/fix').get(users.fixBul)
 
 
 router.route('/get-cash').get(users.sendUserCashback)
