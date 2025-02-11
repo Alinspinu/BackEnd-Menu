@@ -27,12 +27,8 @@ module.exports.getOrder = async (req, res, next) => {
     if(start && end){
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
-        const orders = await Order.find({locatie: loc, updatedAt: {$gte: startTime, $lt: endTime}, status: 'done'})
-                    .populate({path: 'masaRest', select: 'name index'})
-                    .populate({path: 'category', select: 'name'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'})
-                    .populate({path: 'masaRest', select: 'name index'})
-                    .populate({path: 'category', select: 'name'})
+        const orders = await Order.find({locatie: loc, updatedAt: {$gte: startTime, $lt: endTime}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
@@ -40,23 +36,15 @@ module.exports.getOrder = async (req, res, next) => {
     if(day && !end && !start) {
         const start = new Date(day).setUTCHours(0,0,0,0)
         const end = new Date(day).setUTCHours(23,59,59,9999)
-        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: start, $lt: end}, status: 'done'})
-                    .populate({path: 'masaRest', select: 'name index'})
-                    .populate({path: 'category', select: 'name'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'})
-                    .populate({path: 'masaRest', select: 'name index'})
-                    .populate({path: 'category', select: 'name'})
+        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: start, $lt: end}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     if(!day && !end && !start) {
         const today = new Date().setUTCHours(0,0,0,0)
-        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done'})
-                .populate({path: 'masaRest', select: 'name index'})
-                .populate({path: 'category', select: 'name'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'})
-                .populate({path: 'masaRest', select: 'name index'})
-                .populate({path: 'category', select: 'name'})
+        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}})
     
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
