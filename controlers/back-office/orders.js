@@ -27,8 +27,12 @@ module.exports.getOrder = async (req, res, next) => {
     if(start && end){
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
-        const orders = await Order.find({locatie: loc, updatedAt: {$gte: startTime, $lt: endTime}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
+        const orders = await Order.find({locatie: loc, updatedAt: {$gte: startTime, $lt: endTime}, status: 'done'})
+                    .populate({path: 'masaRest', select: 'name index'})
+                    .populate({path: 'category', select: 'name'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open'})
+                    .populate({path: 'masaRest', select: 'name index'})
+                    .populate({path: 'category', select: 'name'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
@@ -36,15 +40,23 @@ module.exports.getOrder = async (req, res, next) => {
     if(day && !end && !start) {
         const start = new Date(day).setUTCHours(0,0,0,0)
         const end = new Date(day).setUTCHours(23,59,59,9999)
-        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: start, $lt: end}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
+        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: start, $lt: end}, status: 'done'})
+                    .populate({path: 'masaRest', select: 'name index'})
+                    .populate({path: 'category', select: 'name'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open'})
+                    .populate({path: 'masaRest', select: 'name index'})
+                    .populate({path: 'category', select: 'name'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     if(!day && !end && !start) {
         const today = new Date().setUTCHours(0,0,0,0)
-        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
+        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done'})
+                .populate({path: 'masaRest', select: 'name index'})
+                .populate({path: 'category', select: 'name'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open'})
+                .populate({path: 'masaRest', select: 'name index'})
+                .populate({path: 'category', select: 'name'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}})
     
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
@@ -72,61 +84,7 @@ module.exports.testRaport = async (req, res) => {
     }
 }
 
-// module.exports.testRaport = async (req, res) => {
-//     try {
-//         const today = new Date(2025, 0, 10).setUTCHours(0, 0, 0, 0);
-//         const end = new Date(2025, 0, 12).setUTCHours(0, 0, 0, 0);
-//         const orders = await Order.find({ 
-//             locatie: "655e2e7c5a3d53943c6b7c53", 
-//             updatedAt: { $gte: today, $lte: end }, 
-//             status: 'done' 
-//         });
-//         const orderPromises = orders.map(async (order) => {
-//             const productPromises = order.products.map(async (product) => {
-//                 const prod = await Product.findOne({ name: product.name });
-//                 if (!prod) {
-//                     const names = product.name.split('-');
-//                     const prodSub = await Product.findOne({ name: names[0] }).populate({ path: 'subProducts', select: 'name' });
-//                     if (prodSub) {
-//                         console.log('Found product with sub products', prodSub.name);
-//                         if(!product.productId){
-//                             product.productId = prodSub._id;
-//                             console.log('Product ID added', product.productId, order.updatedAt);
-//                         }
-//                         const subProduct = prodSub.subProducts.find(s => s.name === names[1]);
-//                         if (subProduct) {
-//                             console.log('Found subProduct', subProduct.name);
-//                             if(!product.subProductId){
-//                                 product.subProductId = subProduct._id;
-//                                 console.log('Sub product ID added', product.subProductId);
-//                             }
-//                         }
-//                     }
-//                 } else {
-//                     console.log('Found product', prod.name);
-//                     if(!product.productId){
-//                         product.productId = prod._id;
-//                         console.log('Product ID ADDED', product.productId, order.updatedAt);
-//                     }
-//                 }
-//                 await order.save(); // Save order after all changes to products
-//                 console.log("***************Order saved *****************");
-//             });
 
-//             // Wait for all product updates to finish
-//             await Promise.all(productPromises);
-//         });
-
-//         // Wait for all orders to finish processing
-//         await Promise.all(orderPromises);
-
-//         res.status(200).json({ message: 'All good in the hood' });
-
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json(error);
-//     }
-// };
 
 
 
@@ -418,7 +376,6 @@ module.exports.saveOrder = async (req, res, next) => {
         if (order.user !== 'john doe') {
             const newOrder = new Order(order) 
             const user = await User.findById(order.user);
-            console.log(user)
             if (user) {
                 newOrder.clientInfo.email = user.email
                 newOrder.clientInfo.discount = user.discount
@@ -570,6 +527,61 @@ module.exports.deleteOrder = async (req, res, next) => {
 
 
 
+// module.exports.testRaport = async (req, res) => {
+//     try {
+//         const today = new Date(2025, 0, 10).setUTCHours(0, 0, 0, 0);
+//         const end = new Date(2025, 0, 12).setUTCHours(0, 0, 0, 0);
+//         const orders = await Order.find({ 
+//             locatie: "655e2e7c5a3d53943c6b7c53", 
+//             updatedAt: { $gte: today, $lte: end }, 
+//             status: 'done' 
+//         });
+//         const orderPromises = orders.map(async (order) => {
+//             const productPromises = order.products.map(async (product) => {
+//                 const prod = await Product.findOne({ name: product.name });
+//                 if (!prod) {
+//                     const names = product.name.split('-');
+//                     const prodSub = await Product.findOne({ name: names[0] }).populate({ path: 'subProducts', select: 'name' });
+//                     if (prodSub) {
+//                         console.log('Found product with sub products', prodSub.name);
+//                         if(!product.productId){
+//                             product.productId = prodSub._id;
+//                             console.log('Product ID added', product.productId, order.updatedAt);
+//                         }
+//                         const subProduct = prodSub.subProducts.find(s => s.name === names[1]);
+//                         if (subProduct) {
+//                             console.log('Found subProduct', subProduct.name);
+//                             if(!product.subProductId){
+//                                 product.subProductId = subProduct._id;
+//                                 console.log('Sub product ID added', product.subProductId);
+//                             }
+//                         }
+//                     }
+//                 } else {
+//                     console.log('Found product', prod.name);
+//                     if(!product.productId){
+//                         product.productId = prod._id;
+//                         console.log('Product ID ADDED', product.productId, order.updatedAt);
+//                     }
+//                 }
+//                 await order.save(); // Save order after all changes to products
+//                 console.log("***************Order saved *****************");
+//             });
+
+//             // Wait for all product updates to finish
+//             await Promise.all(productPromises);
+//         });
+
+//         // Wait for all orders to finish processing
+//         await Promise.all(orderPromises);
+
+//         res.status(200).json({ message: 'All good in the hood' });
+
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json(error);
+//     }
+// };
 
 
 // module.exports.saveOrEditBill = async (req, res, next) => {
