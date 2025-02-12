@@ -39,6 +39,7 @@ const entrySchema = new Schema({
         'Plata catre administrator',
         'Avans',
         'Salariu',
+        'Concediu',
         'Bonus vanzari',
         'Bonus excelenta',
         'Tips Card'
