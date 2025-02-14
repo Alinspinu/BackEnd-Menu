@@ -14,6 +14,7 @@ const reportSchema = new Schema({
         type: Number,
         index: true
     },
+    period: String,
     day: {
         type: Date,
         index: true
