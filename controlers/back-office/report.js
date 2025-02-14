@@ -158,9 +158,12 @@ async function createReport(reports){
         period: period,
         cashIn: 0,
         vatValue: 0,
+        day: reports[0].day,
+        endDay: lastReport.day,
         cashInNoVat: 0,
         ingsValue: 0,
         rentValue: 0,
+        reports: reports.map(r => r._id),
         diverse: {
             total: 0,
             entry: []
