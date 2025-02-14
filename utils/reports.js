@@ -209,7 +209,7 @@ const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'I
 
 async function createDayReport(billProducts, ingredients, loc, bills, dat, point) {
     const date = new Date(dat)
-    const month = date.getUTCMonth()p
+    const month = date.getUTCMonth()
     const year = date.getUTCFullYear()
     const pontMonth = `${months[month]} - ${year}`
     const daysNumber = getDaysInMonthFromDate(new Date(dat))
