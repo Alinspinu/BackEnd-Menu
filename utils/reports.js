@@ -207,16 +207,14 @@ async function getIngredients(products){
 
 const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
 
-async function createDayReport(billProducts, ingredients, loc, bills, dat) {
+async function createDayReport(billProducts, ingredients, loc, bills, dat, point) {
     const date = new Date(dat)
-    const month = date.getUTCMonth()
+    const month = date.getUTCMonth()p
     const year = date.getUTCFullYear()
     const pontMonth = `${months[month]} - ${year}`
     const daysNumber = getDaysInMonthFromDate(new Date(dat))
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
-
-    console.log(date)
 
     const entries = await Entry.find({typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'})
     const pontaj = await Pontaj.findOne({locatie: loc, month: pontMonth}).populate('days.users.employee')
@@ -928,6 +926,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat) {
 
     const report = new Report({
         locatie: loc,
+        salePoint: point,
         day: startTime,
         cashIn: round(values.totalBills),
         vatValue: round(values.vatVal),

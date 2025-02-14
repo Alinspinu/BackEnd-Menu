@@ -68,7 +68,7 @@ module.exports.getReports = async(req, res, next) => {
 }
 
 module.exports.saveReport = async(req, res) => {
-    const {report} = re.body
+    const {report} = req.body
     try{
         const newReport = new Report(report)
         const savedReport = await newReport.save()
@@ -79,6 +79,16 @@ module.exports.saveReport = async(req, res) => {
     }
 }
 
+module.exports.getLastReport = async (req, res) => {
+    const {loc, point} = req.query
+    try{
+        const report = await Report.findOne({locatie: loc, salePoint: point, period: { $exists: true }}).sort({_id: -1})
+        res.status(200).json(report)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
 
 module.exports.getReportsDates = async (req, res) => {
     try{
@@ -156,6 +166,8 @@ async function createReport(reports){
     const lastReport = reports[reports.length -1]
     const report = {
         period: period,
+        salePoint: lastReport.salePoint,
+        locatie: lastReport.locatie,
         cashIn: 0,
         vatValue: 0,
         day: reports[0].day,

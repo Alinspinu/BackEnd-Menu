@@ -13,7 +13,7 @@ router.route('/all')
     .delete(repCont.deleteReports)
 router.route('/update').get(repCont.updateRap)
 router.route('/delete').delete(repCont.deleteReport)
-
+router.route('/last').get(repCont.getLastReport)
 router.route('/survey')
     .get(repCont.getSurveys)
     .post(repCont.addSurvey)
