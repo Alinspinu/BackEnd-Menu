@@ -18,6 +18,10 @@ const reportSchema = new Schema({
         type: Date,
         index: true
     },
+    endDay: {
+        type: Date,
+        index: true
+    },
     cashIn: {
         type: Number,
         required: true
@@ -303,7 +307,14 @@ const reportSchema = new Schema({
     salePoint: {
         type: Schema.Types.ObjectId,
         ref: 'SalePoint'
-      }
+      },
+
+    reports: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Report'
+        }
+    ]
 })
 
 

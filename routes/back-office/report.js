@@ -4,7 +4,9 @@ const repCont = require('./../../controlers/back-office/report.js')
 
 
 
-router.route('/').get(repCont.getReports)
+router.route('/')
+    .get(repCont.getReports)
+    .post(repCont.saveReport)
 router.route('/dates').get(repCont.getReportsDates)
 router.route('/all')
     .get(repCont.getAllReports)

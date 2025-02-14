@@ -67,6 +67,18 @@ module.exports.getReports = async(req, res, next) => {
     }
 }
 
+module.exports.saveReport = async(req, res) => {
+    const {report} = re.body
+    try{
+        const newReport = new Report(report)
+        const savedReport = await newReport.save()
+        res.status(200).json({message: 'Raportul a fost salvat cu success!', report: savedReport})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 
 module.exports.getReportsDates = async (req, res) => {
     try{
