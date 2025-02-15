@@ -216,15 +216,15 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
 
-    const entries = await Entry.find({typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'})
-    const pontaj = await Pontaj.findOne({locatie: loc, month: pontMonth}).populate('days.users.employee')
-    const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
-    const dbUsers = await User.find({locatie: loc, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
-    const allIngs = await Ingredient.find({locatie: loc, productIngredient: false})
+    const entries = await Entry.find({locatie: loc, salePoint: point,typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'})
+    const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee')
+    const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
+    const dbUsers = await User.find({locatie: loc, 'employee.salePoint': point, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
+    const allIngs = await Ingredient.find({locatie: loc, productIngredient: false, salePoint: point})
                     .select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune', 'dept', 'gest'])
                     .populate({path: 'gest', select: 'name'})
                     .populate({path: 'dept', select: 'name'})
-    const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}})
+    const impSheets = await ImpSheet.find({locatie: loc, salePoint: point, date: {$gte: startTime, $lte: endTime}})
                                 .populate({path: 'ings.ing', select: 'name um ings tvaPrice productIngredient', populate: {path: 'ings.ing', select: 'name um tvaPrice' }})
     const values = {
         workValueTotal: 0,
