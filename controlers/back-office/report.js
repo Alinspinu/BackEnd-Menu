@@ -58,7 +58,7 @@ module.exports.getReports = async(req, res, next) => {
         const {startDate, endDate, loc} = req.query
         const start = new Date(startDate).setUTCHours(0,0,0,0)
         const end = new Date(endDate).setUTCHours(0,0,0,0)
-        const reports = await Report.find({day: {$gte: start, $lte: end}, locatie: loc}).sort({day: 1})
+        const reports = await Report.find({period: {$exists: false}, day: {$gte: start, $lte: end}, locatie: loc}).sort({day: 1})
         const report = await createReport(reports)
         res.status(200).json(report)
     } catch(err) {
