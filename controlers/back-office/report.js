@@ -179,7 +179,7 @@ async function createReport(reports){
         cashInNoVat: 0,
         ingsValue: 0,
         rentValue: 0,
-        reports: reports.map(r => r._id),
+        // reports: reports.map(r => r._id),
         diverse: {
             total: 0,
             entry: []
