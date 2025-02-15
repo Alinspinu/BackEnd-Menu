@@ -82,8 +82,11 @@ module.exports.saveReport = async(req, res) => {
 module.exports.getLastReport = async (req, res) => {
     const {loc, point} = req.query
     try{
-        const report = await Report.findOne({locatie: loc, salePoint: point, period: { $exists: true }}).sort({_id: -1})
-        res.status(200).json(report)
+        const report = await Report.find({locatie: loc, salePoint: point, period: { $exists: true }})
+                    .sort({_id: -1})
+                    .limit(1)
+                    .populate({path: 'reports', select: 'cashIn ingsValue workValue'})
+        res.status(200).json(report[0])
     } catch(error){
         console.log(error)
         res.status(500).json(error)
