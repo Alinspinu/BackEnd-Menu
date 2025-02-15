@@ -169,6 +169,7 @@ async function createReport(reports){
     const lastReport = reports[reports.length -1]
     const report = {
         period: period,
+        reports: reports,
         salePoint: lastReport.salePoint,
         locatie: lastReport.locatie,
         cashIn: 0,
