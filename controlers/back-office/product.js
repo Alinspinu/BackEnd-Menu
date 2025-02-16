@@ -19,7 +19,7 @@ const {checkTopping, round} = require('../../utils/functions')
         {
             path: 'toppings', select: 'qty name ing', 
             populate: {
-                path: 'ing', select: 'name tvaPrice um ings productIngredient', 
+                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                 populate: {
                     path: 'ings', select: 'qty ing', 
                     populate: {path: 'ing', select: 'name tvaPrice'
@@ -46,7 +46,7 @@ const {checkTopping, round} = require('../../utils/functions')
         {
             path: 'toppings', select: 'qty name ing', 
             populate: {
-                path: 'ing', select: 'name tvaPrice um ings productIngredient', 
+                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                 populate: {
                     path: 'ings', select: 'qty ing', 
                     populate: {path: 'ing', select: 'name tvaPrice'
@@ -115,7 +115,7 @@ module.exports.addProd = async (req, res, next) => {
             {
                 path: 'toppings', select: 'qty name ing', 
                 populate: {
-                    path: 'ing', select: 'name tvaPrice um ings productIngredient', 
+                    path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                     populate: {
                         path: 'ings', select: 'qty ing', 
                         populate: {path: 'ing', select: 'name tvaPrice'
@@ -170,7 +170,7 @@ module.exports.editProduct = async (req, res, next) => {
                 {
                     path: 'toppings', select: 'qty name ing', 
                     populate: {
-                        path: 'ing', select: 'name tvaPrice um ings productIngredient', 
+                        path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                         populate: {
                             path: 'ings', select: 'qty ing', 
                             populate: {path: 'ing', select: 'name tvaPrice'
