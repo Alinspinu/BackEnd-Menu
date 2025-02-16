@@ -15,20 +15,31 @@ const {checkTopping, round} = require('../../utils/functions')
       const {loc} = req.body
       const products = await Product.find({locatie: loc}).populate([
         {path: 'category', select: 'name'}, 
-        {path: 'subProducts', populate: {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'}},
+        {path: 'subProducts', populate: {
+            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient', 
+                populate: {
+                    path: 'ings.ing', select: 'name tvaPrice'
+                }
+            }
+        },
         {
             path: 'toppings', select: 'qty name ing price', 
             populate: {
                 path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                 populate: {
                     path: 'ings', select: 'qty ing', 
-                    populate: {path: 'ing', select: 'name tvaPrice'
-
+                    populate: {
+                        path: 'ing', select: 'name tvaPrice'
                     }
                 }
             }
         },
-        {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
+        {
+            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings', 
+                populate: {
+                    path: 'ings.ing', select: 'name tvaPrice'
+                }
+        },
     ])
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
@@ -55,7 +66,12 @@ const {checkTopping, round} = require('../../utils/functions')
                 }
             }
         },
-        {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
+        {
+            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings', 
+                populate: {
+                    path: 'ings.ing', select: 'name tvaPrice'
+                }
+        },
     ])
       res.status(200).json(product)
     }catch(error) {
@@ -118,13 +134,19 @@ module.exports.addProd = async (req, res, next) => {
                     path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                     populate: {
                         path: 'ings', select: 'qty ing', 
-                        populate: {path: 'ing', select: 'name tvaPrice'
+                        populate: {
+                            path: 'ing', select: 'name tvaPrice'
     
                         }
                     }
                 }
             },
-            {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
+            {
+                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings', 
+                    populate: {
+                        path: 'ings.ing', select: 'name tvaPrice'
+                    }
+            },
         ]);
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
     } catch (err) {
@@ -179,7 +201,12 @@ module.exports.editProduct = async (req, res, next) => {
                         }
                     }
                 },
-                {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
+                {
+                    path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings', 
+                        populate: {
+                            path: 'ings.ing', select: 'name tvaPrice'
+                        }
+                },
             ])
             res.status(200).json({ message: `Produst ${oldProduct.name} a fost modificat cu success!`, product: newProduct })
           
