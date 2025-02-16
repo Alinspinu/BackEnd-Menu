@@ -15,11 +15,12 @@ const {checkTopping, round} = require('../../utils/functions')
       const {loc} = req.body
       const products = await Product.find({locatie: loc}).populate([
         {path: 'category', select: 'name'}, 
-        {path: 'subProducts', populate: {
-            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient', 
-                populate: {
-                    path: 'ings.ing', select: 'name tvaPrice'
-                }
+        {
+            path: 'subProducts', populate: {
+                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient', 
+                    populate: {
+                        path: 'ings.ing', select: 'name tvaPrice'
+                    }
             }
         },
         {
@@ -52,7 +53,14 @@ const {checkTopping, round} = require('../../utils/functions')
   module.exports.getProduct = async (req, res, next) => {
     try{
       const product = await Product.findById(req.query.id).populate([
-        {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
+        {
+            path: 'subProducts', populate: {
+                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient', 
+                    populate: {
+                        path: 'ings.ing', select: 'name tvaPrice'
+                    }
+            }
+        },
         {path: "category", select: 'name'},
         {
             path: 'toppings', select: 'qty name ing price', 
@@ -126,7 +134,14 @@ module.exports.addProd = async (req, res, next) => {
         }
   
         const productToSend = await Product.findById(savedProduct._id).populate([
-            {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
+            {
+                path: 'subProducts', populate: {
+                    path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient', 
+                        populate: {
+                            path: 'ings.ing', select: 'name tvaPrice'
+                        }
+                }
+            },
             {path: "category", select: 'name'},
             {
                 path: 'toppings', select: 'qty name ing price', 
@@ -187,7 +202,14 @@ module.exports.editProduct = async (req, res, next) => {
                 }
               }
               const newProduct = await Product.findByIdAndUpdate(parsedProduct._id, parsedProduct, {new: true}).populate([
-                {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
+                {
+                    path: 'subProducts', populate: {
+                        path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient', 
+                            populate: {
+                                path: 'ings.ing', select: 'name tvaPrice'
+                            }
+                    }
+                },
                 {path: "category", select: 'name'},
                 {
                     path: 'toppings', select: 'qty name ing', 
