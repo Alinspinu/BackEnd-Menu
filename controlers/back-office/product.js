@@ -16,7 +16,18 @@ const {checkTopping, round} = require('../../utils/functions')
       const products = await Product.find({locatie: loc}).populate([
         {path: 'category', select: 'name'}, 
         {path: 'subProducts', populate: {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'}},
-        {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+        {
+            path: 'toppings', select: 'qty name ing', 
+            populate: {
+                path: 'ing', select: 'name tvaPrice um ings', 
+                populate: {
+                    path: 'ings', select: 'qty ing', 
+                    populate: {path: 'ing', select: 'name tvaPrice'
+
+                    }
+                }
+            }
+        },
         {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
     ])
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
@@ -32,7 +43,18 @@ const {checkTopping, round} = require('../../utils/functions')
       const product = await Product.findById(req.query.id).populate([
         {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
         {path: "category", select: 'name'},
-        {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+        {
+            path: 'toppings', select: 'qty name ing', 
+            populate: {
+                path: 'ing', select: 'name tvaPrice um ings', 
+                populate: {
+                    path: 'ings', select: 'qty ing', 
+                    populate: {path: 'ing', select: 'name tvaPrice'
+
+                    }
+                }
+            }
+        },
         {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
     ])
       res.status(200).json(product)
@@ -90,7 +112,18 @@ module.exports.addProd = async (req, res, next) => {
         const productToSend = await Product.findById(savedProduct._id).populate([
             {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
             {path: "category", select: 'name'},
-            {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+            {
+                path: 'toppings', select: 'qty name ing', 
+                populate: {
+                    path: 'ing', select: 'name tvaPrice um ings', 
+                    populate: {
+                        path: 'ings', select: 'qty ing', 
+                        populate: {path: 'ing', select: 'name tvaPrice'
+    
+                        }
+                    }
+                }
+            },
             {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
         ]);
         console.log(productToSend)
@@ -135,7 +168,18 @@ module.exports.editProduct = async (req, res, next) => {
               const newProduct = await Product.findByIdAndUpdate(parsedProduct._id, parsedProduct, {new: true}).populate([
                 {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
                 {path: "category", select: 'name'},
-                {path: 'toppings.ing', select: 'gestiune qty vanzare um sellPrice name'},
+                {
+                    path: 'toppings', select: 'qty name ing', 
+                    populate: {
+                        path: 'ing', select: 'name tvaPrice um ings', 
+                        populate: {
+                            path: 'ings', select: 'qty ing', 
+                            populate: {path: 'ing', select: 'name tvaPrice'
+        
+                            }
+                        }
+                    }
+                },
                 {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'},
             ])
             res.status(200).json({ message: `Produst ${oldProduct.name} a fost modificat cu success!`, product: newProduct })
