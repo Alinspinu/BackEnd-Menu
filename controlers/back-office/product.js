@@ -17,7 +17,7 @@ const {checkTopping, round} = require('../../utils/functions')
         {path: 'category', select: 'name'}, 
         {path: 'subProducts', populate: {path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'}},
         {
-            path: 'toppings', select: 'qty name ing', 
+            path: 'toppings', select: 'qty name ing price', 
             populate: {
                 path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                 populate: {
@@ -44,7 +44,7 @@ const {checkTopping, round} = require('../../utils/functions')
         {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
         {path: "category", select: 'name'},
         {
-            path: 'toppings', select: 'qty name ing', 
+            path: 'toppings', select: 'qty name ing price', 
             populate: {
                 path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                 populate: {
@@ -113,7 +113,7 @@ module.exports.addProd = async (req, res, next) => {
             {path: 'subProducts', populate:{path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um'} }, 
             {path: "category", select: 'name'},
             {
-                path: 'toppings', select: 'qty name ing', 
+                path: 'toppings', select: 'qty name ing price', 
                 populate: {
                     path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune', 
                     populate: {
