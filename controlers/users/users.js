@@ -153,7 +153,7 @@ module.exports.sendCustomer = async (req, res, next) => {
             res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
         }
       } else {
-          const customer = await User.findById(id).select('name email cashBack  discount cardIndex');
+          const customer = await User.findOne({email: id}).select('name email cashBack  discount cardIndex');
           if(customer){
               res.status(200).json({message: 'All good', customer})
           } else {
