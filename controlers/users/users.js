@@ -265,7 +265,7 @@ module.exports.newCustomer = async (req, res, next) => {
               discount: {general: 10}
           });
           const savedUser = await user.save();
-          const customer = await User.findById(savedUser._id).select('name telephone email cashBack');
+          const customer = await User.findById(savedUser._id).select('name telephone email cashBack discount');
         //   await sendCompleteRegistrationEmail(customer);
           res.status(200).json({message: 'All good', customer});
       }
