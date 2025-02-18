@@ -144,25 +144,16 @@ module.exports.deleteUser = async (req, res, next) => {
 
 module.exports.sendCustomer = async (req, res, next) => {
   try{
-      const {id, loc } = req.query;
-      if(id.length < 22 && id !== "andrei" && id !== 'a' && id !== 'o' && id !== 'ds10' && id !== 'ds15' && id !== 'ds20'){
-        const customer = await User.findOne({cardIndex:  +id, locatie: loc}).select('name email telphone cashBack discount cardIndex');
+      const {id, loc, card} = req.query;
+      if(card){
+        const customer = await User.findOne({cardIndex:  +id, locatie: loc}).select('name email cashBack discount cardIndex');
         if(customer){
             res.status(200).json({message: 'All good', customer: customer})
         } else {
             res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
         }
-      } 
-      if( id === "andrei" || id === 'a' || id === 'o' || id === 'ds10' || id === 'ds15' || id === 'ds20'){
-        const customer = await User.findOne({cardName:  id, locatie: loc}).select('name email telphone cashBack discount cardIndex');
-        if(customer){
-            res.status(200).json({message: 'All good', customer})
-        } else {
-            res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
-        }
-      }
-      if(id.length > 22) {
-          const customer = await User.findById(id).select('name email telphone cashBack  discount');
+      } else {
+          const customer = await User.findById(id).select('name email cashBack  discount cardIndex');
           if(customer){
               res.status(200).json({message: 'All good', customer})
           } else {
