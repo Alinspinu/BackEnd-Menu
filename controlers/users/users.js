@@ -144,15 +144,16 @@ module.exports.deleteUser = async (req, res, next) => {
 
 module.exports.sendCustomer = async (req, res, next) => {
   try{
-      const {id, loc, card} = req.query;
-      if(card){
+      const {id, loc, mode} = req.query;
+      if(mode === 'card'){
         const customer = await User.findOne({cardIndex:  +id, locatie: loc}).select('name email cashBack discount cardIndex');
         if(customer){
             res.status(200).json({message: 'All good', customer: customer})
         } else {
             res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
         }
-      } else {
+      } 
+      if(mode === 'email') {
           const customer = await User.findOne({email: id}).select('name email cashBack  discount cardIndex');
           if(customer){
               res.status(200).json({message: 'All good', customer})
