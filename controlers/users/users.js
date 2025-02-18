@@ -146,11 +146,20 @@ module.exports.sendCustomer = async (req, res, next) => {
   try{
       const {id, loc, mode} = req.query;
       if(mode === 'card'){
-        const customer = await User.findOne({cardIndex:  +id, locatie: loc}).select('name email cashBack discount cardIndex');
-        if(customer){
-            res.status(200).json({message: 'All good', customer: customer})
+        if(id.length < 22){
+            const customer = await User.findOne({cardIndex:  +id, locatie: loc}).select('name email cashBack discount cardIndex');
+            if(customer){
+                res.status(200).json({message: 'All good', customer: customer})
+            } else {
+                res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
+            }
         } else {
-            res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
+            const customer = await User.findById(id).select('name email cashBack discount cardIndex');
+            if(customer){
+                res.status(200).json({message: 'All good', customer: customer})
+            } else {
+                res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
+            }
         }
       } 
       if(mode === 'email') {
