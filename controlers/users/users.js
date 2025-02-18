@@ -266,7 +266,7 @@ module.exports.newCustomer = async (req, res, next) => {
           });
           const savedUser = await user.save();
           const customer = await User.findById(savedUser._id).select('name telephone email cashBack');
-          await sendCompleteRegistrationEmail(customer);
+        //   await sendCompleteRegistrationEmail(customer);
           res.status(200).json({message: 'All good', customer});
       }
   }catch(err){
