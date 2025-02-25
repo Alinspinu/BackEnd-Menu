@@ -104,7 +104,6 @@ module.exports.addSuplier = async (req, res, next) => {
 
    module.exports.updateSuplierRecords = async (req, res) => {
     const {id, records} = req.body
-    console.log(records)
     try{
        const suplier = await Suplier.findByIdAndUpdate(id, {$set: {records: records}}, {new: true})
         if(!suplier){
