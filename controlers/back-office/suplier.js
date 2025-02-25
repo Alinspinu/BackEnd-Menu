@@ -44,7 +44,7 @@ module.exports.addSuplier = async (req, res, next) => {
    module.exports.addSold = async (req, res) => {
     try{
 
-        const supliers = Suplier.find({locatie: "655e2e7c5a3d53943c6b7c53"})
+        const supliers = await Suplier.find({locatie: "655e2e7c5a3d53943c6b7c53"})
         for(let suplier of supliers) {
                 for(let record of suplier.records){
                     record.sold = 0
