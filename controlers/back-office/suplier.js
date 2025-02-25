@@ -41,23 +41,23 @@ module.exports.addSuplier = async (req, res, next) => {
     }
    }
 
-   module.exports.addSold = async (req, res) => {
-    try{
+//    module.exports.addSold = async (req, res) => {
+//     try{
 
-        const supliers = await Suplier.find({locatie: "655e2e7c5a3d53943c6b7c53"})
-        for(let suplier of supliers) {
-                for(let record of suplier.records){
-                    record.sold = 0
-                }
-            const sup =  await suplier.save()
-            console.log(`furnizorul ${sup.name} afost actualizat`)
-        }
-        res.status(200).json({message: 'furnozorii au fost actualizati'})
-    } catch(error){
-        console.log(error)
-        res.status(500).json(error)
-    }
-   }
+//         const supliers = await Suplier.find({locatie: "655e2e7c5a3d53943c6b7c53"})
+//         for(let suplier of supliers) {
+//                 for(let record of suplier.records){
+//                     record.sold = 0
+//                 }
+//             const sup =  await suplier.save()
+//             console.log(`furnizorul ${sup.name} afost actualizat`)
+//         }
+//         res.status(200).json({message: 'furnozorii au fost actualizati'})
+//     } catch(error){
+//         console.log(error)
+//         res.status(500).json(error)
+//     }
+//    }
    
    module.exports.sendSuplier = async (req, res, next) => {
     const loc = req.body.loc

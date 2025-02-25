@@ -13,6 +13,5 @@ router.route('/remove-suplier').delete(suplierRoutes.deleteSuplier)
 router.route('/update-suplier').put(suplierRoutes.editSuplier)
 router.route('/get-suplier').get(suplierRoutes.getSuplier)
 
-router.route('/add-sold').get(suplierRoutes.addSold)
 
 module.exports = router
