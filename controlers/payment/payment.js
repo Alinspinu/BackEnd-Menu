@@ -143,9 +143,8 @@ module.exports.checkUser = async (req, res, next) => {
 
 
 module.exports.addVoucher = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
  try{
-        const {code, value} = req.body
+        const {code, value, loc} = req.body
         const voucher = new Voucher({
             code: code,
             value: value,
@@ -160,9 +159,8 @@ module.exports.addVoucher = async (req, res, next) => {
 }
 
 module.exports.checkVoucher = async (req, res, next) => {
-    const loc = '655e2e7c5a3d53943c6b7c53'
     try{
-        const {code} = req.body
+        const {code, loc} = req.body
         const voucher = await Voucher.findOne({code: code, locatie: loc})
         if(voucher){
          res.status(200).json({message: `Voucherul a fost găsit cu suma de ${voucher.value} lei!`, voucher: voucher})

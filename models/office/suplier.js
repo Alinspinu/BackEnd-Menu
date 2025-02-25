@@ -60,6 +60,9 @@ const suplierSchema = new Schema({
           }
         ]
       },
+      sold: {
+        type: Number
+      },
       nir: [
         {
           type: Schema.Types.ObjectId,

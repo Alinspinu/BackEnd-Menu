@@ -40,6 +40,24 @@ module.exports.addSuplier = async (req, res, next) => {
        res.status(500).json({message: "Oups something went wrong!", err: err})
     }
    }
+
+   module.exports.addSold = async (req, res) => {
+    try{
+
+        const supliers = Suplier.find({locatie: "655e2e7c5a3d53943c6b7c53"})
+        for(let suplier of supliers) {
+                for(let record of suplier.records){
+                    record.sold = 0
+                }
+            const sup =  await suplier.save()
+            console.log(`furnizorul ${sup.name} afost actualizat`)
+        }
+        res.status(200).json({message: 'furnozorii au fost actualizati'})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+   }
    
    module.exports.sendSuplier = async (req, res, next) => {
     const loc = req.body.loc
@@ -58,8 +76,12 @@ module.exports.addSuplier = async (req, res, next) => {
     const {suplierId, record} = req.body
     try{
         let sum = record.document.amount
+        const sup = await Suplier.findById(suplierId).select('sold name')
         if(record.typeOf === 'iesire'){
             sum = - record.document.amount
+            record.sold = sup.sold - record.document.amount
+        } else {
+            record.sold = sup.sold + record.document.amount
         }
         const suplier = await Suplier.findByIdAndUpdate(
             suplierId,  
@@ -101,18 +123,26 @@ module.exports.addSuplier = async (req, res, next) => {
    module.exports.removeRecord = async (req, res) => {
     const {suplierId, docId, amount} = req.body
     try{
-        const updatedSupplier = await Suplier.findByIdAndUpdate(
-            suplierId,
-            { 
-                $pull: { records: { 'document.docId': docId } },
-                $inc: { sold: amount }
-            },
-            { new: true, useFindAndModify: false }
-            );
-        if (!updatedSupplier) {
-            return res.status(404).json({ message: 'Furnizorul nu a fost găsit!' });
-        }
-        return res.status(200).json({ message: 'Record removed!' });
+        const suplier = await Suplier.findById(suplierId);
+            if (suplier) {
+                const recordIndex = suplier.records.findIndex(r => r.document.docId.toString() === docId.toString());
+                conole.log('Rcord index', recordIndex)
+                if (recordIndex !== -1) {
+                    suplier.records.splice(recordIndex, 1);
+                    for (let i = recordIndex; i < suplier.records.length; i++) {
+                        suplier.records[i].sold -= amount;
+                    }
+                    suplier.sold = suplier.sold - amount
+                    await suplier.save();
+                }
+
+             res.status(200).json({ message: 'Record removed!' });
+
+            } else {
+
+              res.status(404).json({ message: 'Furnizorul nu a fost găsit!' });
+            }
+
     } catch(error) {
         console.log(error)
         res.status(500).json(error)

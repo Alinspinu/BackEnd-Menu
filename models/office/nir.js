@@ -129,6 +129,7 @@ const nirSchema = new Schema({
 nirSchema.pre('save', async function (next){
   try{
     const doc = this
+    const sup = await Suplier.findById(doc.suplier).select('name sold')
 
     const record = {
       typeOf: 'intrare',
@@ -137,6 +138,7 @@ nirSchema.pre('save', async function (next){
         docId: doc.nrDoc,
         amount: doc.totalDoc,
       },
+      sold: sup.sold + doc.totalDoc,
       date: doc.documentDate,
       nir: doc._id 
     }
@@ -228,14 +230,21 @@ nirSchema.pre('deleteOne', { document: true, query: false }, async function(next
 
     // if(doc.suplier){
 
-      const suplier =  await Suplier.findByIdAndUpdate(
-         doc.suplier,
-         { 
-             $pull: { records: { nir: doc._id } },
-             $inc: { sold: - doc.totalDoc }
-         },
-         { new: true, useFindAndModify: false }
-       )
+    const suplier = await Suplier.findById(doc.suplier);
+
+      if (suplier) {
+          const recordIndex = suplier.records.findIndex(r => r.nir.toString() === doc._id.toString());
+          conole.log('Rcord index', recordIndex)
+          if (recordIndex !== -1) {
+              suplier.records.splice(recordIndex, 1);
+              for (let i = recordIndex; i < suplier.records.length; i++) {
+                  suplier.records[i].sold -= doc.totalDoc;
+              }
+              suplier.sold = suplier.sold - doc.totalDoc
+              await suplier.save();
+          }
+      }
+
        console.log('furnizorul a fos actualizat', suplier.name)
     // }
 

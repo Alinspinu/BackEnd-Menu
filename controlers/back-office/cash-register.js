@@ -76,6 +76,7 @@ module.exports.addEntry = async (req, res, next) => {
             document: document
         })
         if(typeOf === 'Plata furnizor' && !asociat){
+            const sup = await Suplier.findById(suplier).select('name sold')
             const record = {
                 typeOf: 'iesire',
                 document: {
@@ -83,8 +84,9 @@ module.exports.addEntry = async (req, res, next) => {
                     docId: document.number,
                     amount: amount,
                     asociat: false,
-                    docRecords: []
+                    docRecords: [],
                 },
+                sold: sup.sold - amount,
                 description: description,
                 date: entryDate
             }
