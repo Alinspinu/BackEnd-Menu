@@ -118,7 +118,7 @@ module.exports.getNirsBySuplier = async (req, res, next) => {
     const {id} = req.query
     const nirs = await Nir.find({suplier: id})
         .sort({ createdAt: -1 })
-        .limit(30)
+        .limit(50)
         .populate({path: 'suplier'})
     res.status(200).json(nirs)
   } catch(error){
