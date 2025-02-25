@@ -107,6 +107,11 @@ module.exports.addSuplier = async (req, res, next) => {
    module.exports.updateSuplierRecords = async (req, res) => {
     const {id, records} = req.body
     try{
+        for(let record of records) {
+            if(record.document.amount === 2219.99){
+                console.log(record)
+            }
+        }
        const suplier = await Suplier.findByIdAndUpdate(id, {$set: {records: records}}, {new: true})
         if(!suplier){
             res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
