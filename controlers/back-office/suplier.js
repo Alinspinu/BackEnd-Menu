@@ -77,12 +77,14 @@ module.exports.addSuplier = async (req, res, next) => {
     try{
         let sum = record.document.amount
         const sup = await Suplier.findById(suplierId).select('sold name')
+        console.log('sold furnizor', sup.sold)
         if(record.typeOf === 'iesire'){
             sum = - record.document.amount
             record.sold = sup.sold - record.document.amount
         } else {
             record.sold = sup.sold + record.document.amount
         }
+        console.log(record)
         const suplier = await Suplier.findByIdAndUpdate(
             suplierId,  
             { 
@@ -130,7 +132,6 @@ module.exports.addSuplier = async (req, res, next) => {
                     const bDate = new Date(b.date).getTime()
                     return aDate - bDate
                 })
-                console.log(sortedRecords)
                 const recordIndex = sortedRecords.findIndex(r => r.document.docId.toString() === docId.toString());
                 console.log('Rcord index', recordIndex)
                 if (recordIndex !== -1) {
