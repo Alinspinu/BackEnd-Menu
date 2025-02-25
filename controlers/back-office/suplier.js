@@ -126,7 +126,7 @@ module.exports.addSuplier = async (req, res, next) => {
         const suplier = await Suplier.findById(suplierId);
             if (suplier) {
                 const recordIndex = suplier.records.findIndex(r => r.document.docId.toString() === docId.toString());
-                conole.log('Rcord index', recordIndex)
+                console.log('Rcord index', recordIndex)
                 if (recordIndex !== -1) {
                     suplier.records.splice(recordIndex, 1);
                     for (let i = recordIndex; i < suplier.records.length; i++) {
