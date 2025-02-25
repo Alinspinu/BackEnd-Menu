@@ -233,14 +233,20 @@ nirSchema.pre('deleteOne', { document: true, query: false }, async function(next
     const suplier = await Suplier.findById(doc.suplier);
 
       if (suplier) {
-          const recordIndex = suplier.records.findIndex(r => r.nir.toString() === doc._id.toString());
-          conole.log('Rcord index', recordIndex)
+        const sortedRecords = suplier.records.sort((a, b) => {
+          const aDate = new Date(a.date).getTime() 
+          const bDate = new Date(b.date).getTime()
+          return aDate - bDate
+      })
+          const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
+          console.log('Rcord index', recordIndex)
           if (recordIndex !== -1) {
-              suplier.records.splice(recordIndex, 1);
-              for (let i = recordIndex; i < suplier.records.length; i++) {
-                  suplier.records[i].sold -= doc.totalDoc;
+              sortedRecords.splice(recordIndex, 1);
+              for (let i = recordIndex; i < sortedRecords.length; i++) {
+                  sortedRecords[i].sold -= doc.totalDoc;
               }
               suplier.sold = suplier.sold - doc.totalDoc
+              suplier.records = sortedRecords
               await suplier.save();
           }
       }
