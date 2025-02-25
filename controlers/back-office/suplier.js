@@ -108,7 +108,7 @@ module.exports.addSuplier = async (req, res, next) => {
     const {id, records} = req.body
     try{
         for(let record of records) {
-            if(record.document.amount === 2219.99){
+            if(record.document.amount === 3445.28){
                 console.log(record)
             }
         }
