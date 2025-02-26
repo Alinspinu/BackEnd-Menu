@@ -138,7 +138,6 @@ nirSchema.pre('save', async function (next){
         docId: doc.nrDoc,
         amount: doc.totalDoc,
       },
-      sold: sup.sold + doc.totalDoc,
       date: doc.documentDate,
       nir: doc._id 
     }
