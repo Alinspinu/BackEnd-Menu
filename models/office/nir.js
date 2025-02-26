@@ -163,9 +163,11 @@ nirSchema.pre('save', async function (next){
           console.log('Rcord index nir save schema', recordIndex)
           if (recordIndex !== -1) {
               for (let i = recordIndex; i < sortedRecords.length; i++) {
+                if(sortedRecords[i].sold){
                   console.log('recodrd after', sortedRecords[i].sold)
                   sortedRecords[i].sold += doc.totalDoc;
                   console.log('recodrd before', sortedRecords[i].sold)
+                }
               }
               sup.sold = sup.sold + doc.totalDoc
               sup.records = sortedRecords
