@@ -129,7 +129,7 @@ const nirSchema = new Schema({
 nirSchema.pre('save', async function (next){
   try{
     const doc = this
-    const sup = await Suplier.findById(doc.suplier).select('name sold')
+    const sup = await Suplier.findById(doc.suplier)
 
     const record = {
       typeOf: 'intrare',
