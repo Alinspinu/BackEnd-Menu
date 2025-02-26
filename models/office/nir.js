@@ -176,7 +176,7 @@ nirSchema.pre('save', async function (next){
 
 
 
-    console.log("Supplier update:", suplier.name);
+    console.log("Supplier update:", sup.name);
 
     const counter = await Counter.findOneAndUpdate(
       { locatie: doc.locatie, model: "Nir" },
