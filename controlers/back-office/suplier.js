@@ -134,7 +134,7 @@ module.exports.addSuplier = async (req, res, next) => {
                     return aDate - bDate
                 })
                 console.log(sortedRecords)
-                const recordIndex = sortedRecords.findIndex(r => r.document.docId.toString() === docId.toString());
+                const recordIndex = sortedRecords.findIndex(r => r.document.docId === docId);
                 console.log('Rcord index', recordIndex)
                 if (recordIndex !== -1) {
                     sortedRecords.splice(recordIndex, 1);
