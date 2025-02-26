@@ -76,26 +76,30 @@ module.exports.addSuplier = async (req, res, next) => {
     const {suplierId, record} = req.body
     try{
         let sum = record.document.amount
-        const sup = await Suplier.findById(suplierId).select('sold name')
-        console.log('sold furnizor', sup.sold)
-        if(record.typeOf === 'iesire'){
-            sum = - record.document.amount
-            record.sold = sup.sold - record.document.amount
-        } else {
-            record.sold = sup.sold + record.document.amount
-        }
-        console.log(record)
-        const suplier = await Suplier.findByIdAndUpdate(
-            suplierId,  
-            { 
-                $push: { records: record },
-                $inc: { sold: sum } 
-            },
-            { new: true, useFindAndModify: false })
-        if(!suplier){
-            res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
-        } else {
+        const suplier = await Suplier.findById(suplierId)
+        if(suplier){
+          if(record.typeOf === 'iesire'){
+            record.sold = suplier.sold 
+            suplier.records.push(record)
+            const sortedRecords = suplier.records.sort((a, b) => {
+                const aDate = new Date(a.date).getTime() 
+                const bDate = new Date(b.date).getTime()
+                return aDate - bDate
+            })
+            const recordIndex = sortedRecords.findIndex(r => JSON.stringify(r) === JSON.stringify(record));
+            console.log('Rcord index', recordIndex)
+            if (recordIndex !== -1) {
+                for (let i = recordIndex; i < sortedRecords.length; i++) {
+                    sortedRecords[i].sold -= sum;
+                }
+                suplier.sold = suplier.sold - sum
+                suplier.records = sortedRecords
+                await suplier.save();
+            }
+          }
             res.status(200).json({message: 'Inregistrare reusita!'})
+        } else {
+            res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
         }
     } catch(error) {
         console.log(error)
