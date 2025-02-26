@@ -188,7 +188,7 @@ nirSchema.pre('save', async function (next){
 
     const operation = {
       name: 'intrare', 
-      details: suplier.name +  " Nr  Doc - " + doc.nrDoc
+      details: sup.name +  " Nr  Doc - " + doc.nrDoc
     };
 
     const promises = doc.ingredients.map((el) => {
