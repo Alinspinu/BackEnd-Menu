@@ -86,7 +86,11 @@ module.exports.addSuplier = async (req, res, next) => {
                 const bDate = new Date(b.date).getTime()
                 return aDate - bDate
             })
-            const recordIndex = sortedRecords.findIndex(r => JSON.stringify(r) === JSON.stringify(record));
+            const recordIndex = sortedRecords.findIndex(r => 
+                r.document.docId === record.document.docId && 
+                r.document.amount === record.document.amount && 
+                r.document.typeOf === record.document.typeOf
+            );
             console.log('Rcord index', recordIndex)
             if (recordIndex !== -1) {
                 for (let i = recordIndex; i < sortedRecords.length; i++) {
