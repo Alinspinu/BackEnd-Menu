@@ -105,15 +105,10 @@ module.exports.addSuplier = async (req, res, next) => {
 
 
    module.exports.updateSuplierRecords = async (req, res) => {
-    const {id, records} = req.body
+    const {id, record} = req.body
     try{
-        const parsedRecords = JSON.parse(records)
-        for(let record of parsedRecords){
-            if(record.document.amount === 1124.38 ){
-                console.log(record)
-            }
-        }
-       const suplier = await Suplier.findByIdAndUpdate(id, {$set: {records: parsedRecords}}, {new: true})
+
+       const suplier = await Suplier.findByIdAndUpdate(id, {$push: {records: record}}, {new: true})
         if(!suplier){
             res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
         } else {

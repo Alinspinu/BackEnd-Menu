@@ -239,11 +239,13 @@ nirSchema.pre('deleteOne', { document: true, query: false }, async function(next
           return aDate - bDate
       })
           const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
-          console.log('Rcord index', recordIndex)
+          console.log('Rcord index nir schema', recordIndex)
           if (recordIndex !== -1) {
               sortedRecords.splice(recordIndex, 1);
               for (let i = recordIndex; i < sortedRecords.length; i++) {
+                  console.log('recodrd after', sortedRecords[i].sold)
                   sortedRecords[i].sold -= doc.totalDoc;
+                  console.log('recodrd before', sortedRecords[i].sold)
               }
               suplier.sold = suplier.sold - doc.totalDoc
               suplier.records = sortedRecords
