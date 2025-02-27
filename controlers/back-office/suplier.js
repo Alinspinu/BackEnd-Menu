@@ -76,10 +76,12 @@ module.exports.addSuplier = async (req, res, next) => {
     const {suplierId, record} = req.body
     try{
         let sum = record.document.amount
+        console.log('suplier id', suplierId)
         const suplier = await Suplier.findById(suplierId)
         if(suplier){
           if(record.typeOf === 'iesire'){
             record.sold = suplier.sold 
+            console.log(record)
             suplier.records.push(record)
             const sortedRecords = suplier.records.sort((a, b) => {
                 const aDate = new Date(a.date).getTime() 
