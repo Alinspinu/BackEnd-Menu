@@ -150,22 +150,21 @@ nirSchema.pre('save', async function (next){
           return aDate - bDate
       })
           const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
-          console.log('Rcord index nir save schema', recordIndex)
           if (recordIndex !== -1) {
               for (let i = recordIndex; i < sortedRecords.length; i++) {
-                  console.log('recodrd after', sortedRecords[i].sold)
                   sortedRecords[i].sold += doc.totalDoc;
-                  console.log('recodrd before', sortedRecords[i].sold)
               }
               sup.sold = sup.sold + doc.totalDoc
               sup.records = sortedRecords
               await sup.save();
+              console.log("Supplier update:", sup.name);
+          } else {
+            console.error('ERROR record not found, Sulier unchanged!')
           }
       }
 
 
 
-    console.log("Supplier update:", sup.name);
 
     const counter = await Counter.findOneAndUpdate(
       { locatie: doc.locatie, model: "Nir" },
@@ -241,8 +240,6 @@ nirSchema.pre('deleteOne', { document: true, query: false }, async function(next
 
     const results = await Promise.all(promises)
 
-    // if(doc.suplier){
-
     const suplier = await Suplier.findById(doc.suplier);
 
       if (suplier) {
@@ -252,22 +249,19 @@ nirSchema.pre('deleteOne', { document: true, query: false }, async function(next
           return aDate - bDate
       })
           const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
-          console.log('Rcord index  nir delete schema', recordIndex)
           if (recordIndex !== -1) {
               sortedRecords.splice(recordIndex, 1);
               for (let i = recordIndex; i < sortedRecords.length; i++) {
-                  console.log('recodrd after', sortedRecords[i].sold)
                   sortedRecords[i].sold -= doc.totalDoc;
-                  console.log('recodrd before', sortedRecords[i].sold)
               }
               suplier.sold = suplier.sold - doc.totalDoc
               suplier.records = sortedRecords
               await suplier.save();
+              console.log('furnizorul a fos actualizat', suplier.name)
+          } else {
+            console.error('ERROR! Record not found! Suplier unchanged!')
           }
       }
-
-       console.log('furnizorul a fos actualizat', suplier.name)
-    // }
 
 
     next()

@@ -41,23 +41,6 @@ module.exports.addSuplier = async (req, res, next) => {
     }
    }
 
-//    module.exports.addSold = async (req, res) => {
-//     try{
-
-//         const supliers = await Suplier.find({locatie: "655e2e7c5a3d53943c6b7c53"})
-//         for(let suplier of supliers) {
-//                 for(let record of suplier.records){
-//                     record.sold = 0
-//                 }
-//             const sup =  await suplier.save()
-//             console.log(`furnizorul ${sup.name} afost actualizat`)
-//         }
-//         res.status(200).json({message: 'furnozorii au fost actualizati'})
-//     } catch(error){
-//         console.log(error)
-//         res.status(500).json(error)
-//     }
-//    }
    
    module.exports.sendSuplier = async (req, res, next) => {
     const loc = req.body.loc
@@ -76,11 +59,9 @@ module.exports.addSuplier = async (req, res, next) => {
     const {suplierId, record} = req.body
     try{
         let sum = record.document.amount
-        console.log('suplier id', suplierId)
         const suplier = await Suplier.findById(suplierId)
         if(suplier){
             record.sold = suplier.sold 
-            console.log(record)
             suplier.records.push(record)
             const sortedRecords = suplier.records.sort((a, b) => {
                 const aDate = new Date(a.date).getTime() 
@@ -92,7 +73,6 @@ module.exports.addSuplier = async (req, res, next) => {
                 r.document.amount === record.document.amount && 
                 r.document.typeOf === record.document.typeOf
             );
-            console.log('Rcord index', recordIndex)
             if (recordIndex !== -1) {
                 if(record.typeOf === 'iesire'){
                     for (let i = recordIndex; i < sortedRecords.length; i++) {
@@ -152,20 +132,16 @@ module.exports.addSuplier = async (req, res, next) => {
                     return aDate - bDate
                 })
                 const recordIndex = sortedRecords.findIndex(r => r._id.toString() === docId.toString());
-                console.log('Rcord index', recordIndex)
                 if (recordIndex !== -1) {
                     const record = sortedRecords[recordIndex]
                     sortedRecords.splice(recordIndex, 1);
-                    console.log(record.typeOf, amount)
                     if(record.typeOf === 'iesire'){
-                        console.log('hit iesire')
                         for (let i = recordIndex; i < sortedRecords.length; i++) {
                             sortedRecords[i].sold += amount;
                         }
                         suplier.sold = suplier.sold + amount
                         suplier.records = sortedRecords
                     } else {
-                        console.log('hit intrare')
                         for (let i = recordIndex; i < sortedRecords.length; i++) {
                             sortedRecords[i].sold -= amount;
                         }
