@@ -156,6 +156,7 @@ module.exports.addSuplier = async (req, res, next) => {
                 if (recordIndex !== -1) {
                     const record = sortedRecords[recordIndex]
                     sortedRecords.splice(recordIndex, 1);
+                    console.log(record.typeOf)
                     if(record.typeOf === 'iesire'){
                         for (let i = recordIndex; i < sortedRecords.length; i++) {
                             sortedRecords[i].sold += amount;
