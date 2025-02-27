@@ -158,15 +158,15 @@ module.exports.addSuplier = async (req, res, next) => {
                     sortedRecords.splice(recordIndex, 1);
                     if(record.typeOf === 'iesire'){
                         for (let i = recordIndex; i < sortedRecords.length; i++) {
-                            sortedRecords[i].sold += sum;
+                            sortedRecords[i].sold += amount;
                         }
-                        suplier.sold = suplier.sold + sum
+                        suplier.sold = suplier.sold + amount
                         suplier.records = sortedRecords
                     } else {
                         for (let i = recordIndex; i < sortedRecords.length; i++) {
-                            sortedRecords[i].sold -= sum;
+                            sortedRecords[i].sold -= amount;
                         }
-                        suplier.sold = suplier.sold - sum
+                        suplier.sold = suplier.sold - amount
                         suplier.records = sortedRecords
                     }
                     await suplier.save();
