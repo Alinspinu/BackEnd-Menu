@@ -138,7 +138,7 @@ nirSchema.pre('save', async function (next){
         docId: doc.nrDoc,
         amount: doc.totalDoc,
       },
-      sold: 0,
+      sold: sup.sold,
       date: doc.documentDate,
       nir: doc._id 
     }
@@ -254,9 +254,6 @@ nirSchema.pre('deleteOne', { document: true, query: false }, async function(next
           const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
           console.log('Rcord index  nir delete schema', recordIndex)
           if (recordIndex !== -1) {
-            // const record = sortedRecords[recordIndex]
-            // const paymentRecordIndex = sortedRecords.findIndex(r => r.typeOf === 'iesire' && r.document.amount === record.document.amount && r.document.typeOf === "banca")
-            // if(paymentRecordIndex !== -1) sortedRecords.splice(paymentRecordIndex, 1)
               sortedRecords.splice(recordIndex, 1);
               for (let i = recordIndex; i < sortedRecords.length; i++) {
                   console.log('recodrd after', sortedRecords[i].sold)
