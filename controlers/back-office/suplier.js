@@ -79,7 +79,6 @@ module.exports.addSuplier = async (req, res, next) => {
         console.log('suplier id', suplierId)
         const suplier = await Suplier.findById(suplierId)
         if(suplier){
-          if(record.typeOf === 'iesire'){
             record.sold = suplier.sold 
             console.log(record)
             suplier.records.push(record)
@@ -95,15 +94,24 @@ module.exports.addSuplier = async (req, res, next) => {
             );
             console.log('Rcord index', recordIndex)
             if (recordIndex !== -1) {
-                for (let i = recordIndex; i < sortedRecords.length; i++) {
-                    sortedRecords[i].sold -= sum;
+                if(record.typeOf === 'iesire'){
+                    for (let i = recordIndex; i < sortedRecords.length; i++) {
+                        sortedRecords[i].sold -= sum;
+                    }
+                    suplier.sold = suplier.sold - sum
+                    suplier.records = sortedRecords
+                } else {
+                    for (let i = recordIndex; i < sortedRecords.length; i++) {
+                        sortedRecords[i].sold += sum;
+                    }
+                    suplier.sold = suplier.sold + sum
+                    suplier.records = sortedRecords
                 }
-                suplier.sold = suplier.sold - sum
-                suplier.records = sortedRecords
                 await suplier.save();
+                res.status(200).json({message: 'Inregistrare reusita!'})
+            } else {
+                res.status(200).json({message: 'Intrarea nu a fost inregistrată corect!'})
             }
-          }
-            res.status(200).json({message: 'Inregistrare reusita!'})
         } else {
             res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
         }
