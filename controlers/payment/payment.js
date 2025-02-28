@@ -283,7 +283,7 @@ module.exports.printBill = async (req, res, next) => {
 module.exports.printUnreg = async (req, res, next) => {
     try{
         const {bill} = req.body
-        const response = await sendToPrint({nefiscal: bill}, 'print')
+        socket.emit('nefiscal', JSON.stringify(bill))
         res.status(200).json({message: 'Bonul a fost tipărit!'})
     } catch(err){
         handleError(err, res)
