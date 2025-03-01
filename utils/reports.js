@@ -756,10 +756,11 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     for(const ing of allIngs){
         if(ing.uploadLog){
             for(const log of ing.uploadLog) {
+                console.log(log)
                     const logDate = new Date(log.date).getTime()
-                    console.log('START TIME', new Date(startTime))
-                    console.log('LOG DATE', new Date(logDate))
-                    console.log('END TIME', new Date(endTime))
+                    // console.log('START TIME', new Date(startTime))
+                    // console.log('LOG DATE', new Date(logDate))
+                    // console.log('END TIME', new Date(endTime))
                     if(startTime < logDate && logDate < endTime) {
                         console.log(ing.dept.name)
                         switch (ing.dept.name) {
