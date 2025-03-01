@@ -756,7 +756,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     for(const ing of allIngs){
         if(ing.uploadLog){
             for(const log of ing.uploadLog) {
-                console.log(log.date)
                     const logDate = new Date(log.date).getTime()
                     if(startTime < logDate && logDate < endTime) {
                         switch (ing.dept.name) {
@@ -990,7 +989,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         paymentMethods: createPaymentMethods(values),
     })
     // console.log(report.impairment)
-    console.log('total values', values.totalDep)
+    console.log('total values', values)
     const newRep = await report.save()
     // console.log(values)
     return newRep
