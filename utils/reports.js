@@ -882,6 +882,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                 console.log('TOTAL', values.utilitiesValue)
                                 utilitiesEntryes.push(uObject)
                             case 'Materie Primă':
+                                console.log(ing.gest.name)
                                     if(ing.gest.name === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsProdBuc += (ing.tvaPrice * log.qty)
@@ -898,7 +899,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     }
                                 break
                             case 'Marfă': 
-                                console.log(ing.gest.name)
+                                // console.log(ing.gest.name)
                                     if(ing.gest.name === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsMfBuc += (ing.tvaPrice * log.qty)
