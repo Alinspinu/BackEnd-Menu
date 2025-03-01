@@ -332,6 +332,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         values.cashBack += bill.cashBack
         values.discounts += bill.discount
         values.totalBills += bill.total
+        console.log(bill.total)
+
 
     })
 
