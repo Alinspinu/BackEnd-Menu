@@ -637,7 +637,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 taxValue: round(baseTax / daysNumber),
                 user: dbUser._id,
             }
-            console.log(dbEmpl)
             const existingUser = users.find(u => u.name === dbEmpl.name)
             if(existingUser){
                 existingUser.totalIncome = round(existingUser.totalIncome + dbEmpl.totalIncome)
