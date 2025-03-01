@@ -218,7 +218,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
     const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'})
     const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee')
-    console.log(loc, point, startTime, endTime)
+    console.log(pontMonth)
     console.log(pontaj)
     const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
     const dbUsers = await User.find({locatie: loc, 'employee.salePoint': point, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
