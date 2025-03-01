@@ -299,6 +299,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
 
     // CALC BILLS TOTALS
+    console.log(bills.length)
 
     bills.forEach(bill => {
         if(bill.discount > 0 || bill.discount > 0 && bill.status === 'done'){
