@@ -8,7 +8,7 @@ const {getNowShedule} = require('../../utils/functions')
 
 
 module.exports.addShedule = async (req, res, next) => {
-    const {loc} = req.body
+    const {loc, salePoint} = req.body
     try{   
         const lastShedule = await Shedule.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
         const date = new Date(lastShedule.days[6].date)
@@ -41,7 +41,8 @@ module.exports.addShedule = async (req, res, next) => {
         const shedule = new Shedule({
                 days: days,
                 period: `${start} - ${end}`,
-                locatie: loc
+                locatie: loc,
+                salePoint: salePoint
         })  
         const savedShedule = await shedule.save()
         res.status(200).json(savedShedule)
@@ -60,7 +61,7 @@ function getDaysInMonth(year, month) {
 
 module.exports.addPontaj = async (req, res, next) => {
     const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
-    const {loc, year, month} = req.body
+    const {loc, year, month, salePoint} = req.body
 
     try{
 
@@ -84,7 +85,8 @@ module.exports.addPontaj = async (req, res, next) => {
             days: days,
             month: `${months[month]} - ${year}`,
             workValue: 0,
-            locatie: loc
+            locatie: loc,
+            salePoint: salePoint
          })
          const newPontaj = await pontaj.save()
          res.status(200).json(newPontaj)
