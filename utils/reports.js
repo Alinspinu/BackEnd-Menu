@@ -213,7 +213,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const year = date.getUTCFullYear()
     const pontMonth = `${months[month]} - ${year}`
     const daysNumber = getDaysInMonthFromDate(new Date(dat))
-    console.log(dat)
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
 
@@ -299,7 +298,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
 
     // CALC BILLS TOTALS
-    console.log(bills.length)
 
     bills.forEach(bill => {
         if(bill.discount > 0 || bill.discount > 0 && bill.status === 'done'){
@@ -333,7 +331,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         values.cashBack += bill.cashBack
         values.discounts += bill.discount
         values.totalBills += bill.total
-        console.log(bill.total)
 
 
     })
