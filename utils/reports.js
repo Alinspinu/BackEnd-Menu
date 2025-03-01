@@ -878,11 +878,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details
                                 }
-                                console.log(uObject)
-                                console.log('TOTAL', values.utilitiesValue)
+                                
                                 utilitiesEntryes.push(uObject)
                             case 'Materie Primă':
-                                console.log(ing.gest.name)
                                     if(ing.gest.name === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsProdBuc += (ing.tvaPrice * log.qty)
@@ -991,7 +989,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         paymentMethods: createPaymentMethods(values),
     })
     // console.log(report.impairment)
-    console.log('total values', values)
+    // console.log('total values', values)
     const newRep = await report.save()
     // console.log(values)
     return newRep
