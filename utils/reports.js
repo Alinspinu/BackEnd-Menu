@@ -758,6 +758,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             for(const log of ing.uploadLog) {
                     const logDate = new Date(log.date).getTime()
                     if(startTime < logDate && logDate < endTime) {
+                        console.log(ing.dept.name)
                         switch (ing.dept.name) {
                             case 'Consumabil':                       
                                 if(!log.uploadPrice){
