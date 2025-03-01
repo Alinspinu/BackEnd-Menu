@@ -213,6 +213,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const year = date.getUTCFullYear()
     const pontMonth = `${months[month]} - ${year}`
     const daysNumber = getDaysInMonthFromDate(new Date(dat))
+    console.log(dat)
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
 
@@ -756,7 +757,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     for(const ing of allIngs){
         if(ing.uploadLog){
             for(const log of ing.uploadLog) {
-                console.log(log)
+                // console.log(log)
                     const logDate = new Date(log.date).getTime()
                     // console.log('START TIME', new Date(startTime))
                     // console.log('LOG DATE', new Date(logDate))
