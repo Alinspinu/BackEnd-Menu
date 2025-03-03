@@ -68,6 +68,7 @@ module.exports.getReports = async(req, res, next) => {
 }
 
 module.exports.saveReport = async(req, res) => {
+    console.log('hit report controler')
     const {report} = req.body
     try{
         const newReport = new Report(report)
