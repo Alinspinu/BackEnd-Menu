@@ -23,6 +23,14 @@ const cigarsSchema = new Schema({
         }
     ],
     valid: Boolean,
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie',
+    },
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+    }
 })
 
 module.exports = mongoose.model('CigarsInv', cigarsSchema)
