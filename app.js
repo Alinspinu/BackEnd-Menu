@@ -105,7 +105,7 @@ app.use(compression());
 
 app.options('*', cors()); 
 
-app.use(cors())
+app.use(cors({ origin: '*' }));
 
 
 app.use(helmet.contentSecurityPolicy(helmetConfig));
