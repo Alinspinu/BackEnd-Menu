@@ -669,7 +669,7 @@ module.exports.saveCigSheet = async (req, res) => {
     const inv = new CigarsInv(sheet)
     const firstInv = await inv.save()
     const secInv = new CigarsInv({
-      date: new Date(),
+      date: new Date('2025-03-02').setHours(22,0,0,0),
       products: inv.products.map(p => {
         return {
           name: p.name,
