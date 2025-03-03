@@ -4,8 +4,6 @@ const User = require ('../../models/users/user')
 const DelProd = require('../../models/office/product/deletetProduct')
 const Ingredient = require('../../models/office/inv-ingredient')
 const Product = require('../../models/office/product/product')
-const mongoose = require('mongoose');
-const deepPopulate = require('mongoose-deep-populate')(mongoose);
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
 const {generateSoketId} = require('../../utils/functions')
@@ -205,13 +203,6 @@ module.exports.getOrderByUser = async (req, res, nex) => {
      const {userId} = req.query;
      const user = await User.findById(userId)
     const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })
-                    .deepPopulate('products.ings.ing', {
-                        populate: {
-                        'products.ings.ing': {
-                            select: 'name'
-                        }
-                        }
-                    });
     res.status(200).json(orders)
     } catch (err){
         console.log(err)
@@ -227,13 +218,6 @@ module.exports.getAllOrders = async (req, res, next) => {
         const end = new Date(date).setHours(23, 59, 59, 999)
         const {loc} = req.query;
         const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} })
-                .deepPopulate('products.ings.ing', {
-                    populate: {
-                    'products.ings.ing': {
-                        select: 'name'
-                    }
-                    }
-                });
             res.status(200).json(orders)         
     } catch(err){
         console.log(err)
