@@ -680,6 +680,8 @@ module.exports.saveCigSheet = async (req, res) => {
           ing: p.ing
         }
       }),
+      locatie: inv.locatie,
+      salePoint: inv.salePoint,
       valid: false
     })
     const secondInv = await secInv.save()
@@ -695,6 +697,7 @@ module.exports.getLastCigSheet = async (req, res) => {
   const {loc, point} = req.query
   try{
     const invs = await CigarsInv.find({locatie: loc, salePoint: point}).sort({date: -1}).limit(2)
+    console.log(invs)
     res.status(200).json(invs)
   } catch(error) {
     console.log(error)

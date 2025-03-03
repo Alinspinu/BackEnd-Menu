@@ -10,7 +10,7 @@ const cigarsSchema = new Schema({
     products: [
         {   
             name: String,
-            firts: Number,
+            first: Number,
             found: Number,
             sale: Number,
             second: Number,
