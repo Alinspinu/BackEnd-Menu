@@ -4,6 +4,7 @@ const User = require ('../../models/users/user')
 const DelProd = require('../../models/office/product/deletetProduct')
 const Ingredient = require('../../models/office/inv-ingredient')
 const Product = require('../../models/office/product/product')
+const mongoose = require('mongoose');
 const deepPopulate = require('mongoose-deep-populate')(mongoose);
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
