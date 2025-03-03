@@ -70,8 +70,9 @@ module.exports.getReports = async(req, res, next) => {
 module.exports.saveReport = async(req, res) => {
     console.log('hit report controler')
     const {report} = req.body
+    const parsedReport = JSON.parse(report)
     try{
-        const newReport = new Report(report)
+        const newReport = new Report(parsedReport)
         const savedReport = await newReport.save()
         res.status(200).json({message: 'Raportul a fost salvat cu success!', report: savedReport})
     } catch(error) {
