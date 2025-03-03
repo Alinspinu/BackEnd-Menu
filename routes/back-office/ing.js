@@ -27,6 +27,10 @@ router.route('/compare-inv').post(ingRoutes.compareScriptic)
 router.route('/update').get(ingRoutes.updateStoc)
 router.route('/ing').get(ingRoutes.getIng)
 
+router.route('/smoke')
+    .get(ingRoutes.getLastCigSheet)
+    .post(ingRoutes.saveCigSheet)
+
 router.route('/log')
         .get(ingRoutes.getIngUploadLog)
         .delete(ingRoutes.deleteIngUpLog)
