@@ -103,9 +103,10 @@ db.once("open", () => {
 
 app.use(compression());
 
+app.use(cors());
+
 app.options('*', cors()); 
 
-app.use(cors({ origin: '*' }));
 
 
 app.use(helmet.contentSecurityPolicy(helmetConfig));
