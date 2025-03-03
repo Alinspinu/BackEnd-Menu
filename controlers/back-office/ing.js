@@ -4,6 +4,7 @@ const Inventary = require('../../models/office/inventary')
 const Order = require('../../models/office/product/order')
 const DelProd = require('../../models/office/product/deletetProduct')
 const ImpSheet = require('../../models/office/imp-sheet')
+const CigarsInv = require('../../models/cigars-inv')
 
 
 
@@ -658,6 +659,46 @@ module.exports.updateUploadLog = async(req, res) => {
     res.status(200).json({message: 'All done'})
   } catch(err){
     console.log(err)
+  }
+}
+
+
+module.exports.saveCigSheet = async (req, res) => {
+      const {sheet} = req.body
+  try{
+    const inv = new CigarsInv(sheet)
+    const firstInv = await inv.save()
+    const secInv = {
+      date: new Date(),
+      products: inv.products.map(p => {
+        return {
+          name: p.name,
+          first: p.second,
+          found: p.second,
+          sale: 0,
+          second: 0,
+          ing: p.ing
+        }
+      }),
+      valid: false
+    }
+    const secondInv = await secInv.save()
+    res.status(200).json({message: 'Situația a fost salavată!', first: firstInv, second: secondInv})
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
+module.exports.getLastCigSheet = async (req, res) => {
+  const {loc, point} = req.query
+  try{
+    const invs = await CigarsInv.find({locatie: loc, salePoint: point}).sort({date: -1}).limit(2)
+    res.status(200).json(invs)
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
   }
 }
 
