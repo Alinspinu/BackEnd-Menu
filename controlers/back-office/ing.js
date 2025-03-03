@@ -668,7 +668,7 @@ module.exports.saveCigSheet = async (req, res) => {
   try{
     const inv = new CigarsInv(sheet)
     const firstInv = await inv.save()
-    const secInv = {
+    const secInv = new CigarsInv({
       date: new Date(),
       products: inv.products.map(p => {
         return {
@@ -681,7 +681,7 @@ module.exports.saveCigSheet = async (req, res) => {
         }
       }),
       valid: false
-    }
+    })
     const secondInv = await secInv.save()
     res.status(200).json({message: 'Situația a fost salavată!', first: firstInv, second: secondInv})
   } catch(error) {
