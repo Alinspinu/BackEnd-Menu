@@ -5,6 +5,7 @@ const Order = require('../../models/office/product/order')
 const DelProd = require('../../models/office/product/deletetProduct')
 const ImpSheet = require('../../models/office/imp-sheet')
 const CigarsInv = require('../../models/cigars-inv')
+const impSheet = require('../../models/office/imp-sheet')
 
 
 
@@ -666,11 +667,12 @@ module.exports.updateUploadLog = async(req, res) => {
 module.exports.saveCigSheet = async (req, res) => {
       const {sheet} = req.body
   try{
-    const inv = new CigarsInv(sheet)
-    const firstInv = await inv.save()
+    const firstInv = await CigarsInv.findByIdAndUpdate(sheet._id, sheet, {new: true})
+    // const inv = new CigarsInv(sheet)
+    // const firstInv = await inv.save()
     const secInv = new CigarsInv({
-      date: new Date,
-      products: inv.products.map(p => {
+      date: new Date(),
+      products: firstInv.products.map(p => {
         return {
           name: p.name,
           first: p.second,
@@ -680,8 +682,8 @@ module.exports.saveCigSheet = async (req, res) => {
           ing: p.ing
         }
       }),
-      locatie: inv.locatie,
-      salePoint: inv.salePoint,
+      locatie: firstInv.locatie,
+      salePoint: firstInv.salePoint,
       valid: false
     })
     const secondInv = await secInv.save()
