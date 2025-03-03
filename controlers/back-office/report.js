@@ -82,7 +82,7 @@ module.exports.saveReport = async(req, res) => {
 module.exports.getLastReport = async (req, res) => {
     const {loc, point} = req.query
     try{
-        const report = await Report.find({locatie: loc, salePoint: point, period: { $exists: true }})
+        const repor = await Report.find({locatie: loc, salePoint: point, period: { $exists: true }})
                     .sort({_id: -1})
                     .limit(1)
                     .populate({path: 'reports', select: 'cashIn ingsValue workValue day impairment'})
