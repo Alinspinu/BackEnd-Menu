@@ -390,8 +390,8 @@ module.exports.printNir = async (req, res, next) => {
           ``, 
           ``, 
           ``, 
-          `${round(achizitieValue)}`, 
-          `${round(vanzareValue)}`, ''
+          `${round(achizitieValue)} Lei`, 
+          `${round(vanzareValue)} Lei`, 
         ]
         )
     worksheet.getColumn(1).eachCell((cell) => {
@@ -426,10 +426,10 @@ module.exports.printNir = async (req, res, next) => {
       cell.alignment = { vertical: "middle", horizontal: 'right'}
     })
     worksheet.getColumn(11).eachCell((cell) => {
-      cell.alignment = { vertical: "middle", horizontal: 'right'}
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
     })
     worksheet.getColumn(12).eachCell((cell) => {
-      cell.alignment = { vertical: "middle", horizontal: 'right'}
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
     })
   
   worksheet.getRow(1).eachCell((cell)=>{
