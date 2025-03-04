@@ -389,6 +389,7 @@ module.exports.printNir = async (req, res, next) => {
           ``, 
           ``, 
           ``, 
+          ``, 
           `${round(achizitieValue)}`, 
           `${round(vanzareValue)}`, ''
         ]
@@ -422,6 +423,12 @@ module.exports.printNir = async (req, res, next) => {
       cell.alignment = { vertical: "middle", horizontal: 'center'}
     })
     worksheet.getColumn(10).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'right'}
+    })
+    worksheet.getColumn(11).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'right'}
+    })
+    worksheet.getColumn(12).eachCell((cell) => {
       cell.alignment = { vertical: "middle", horizontal: 'right'}
     })
   
@@ -462,6 +469,8 @@ module.exports.printNir = async (req, res, next) => {
     worksheet.getColumn(8).width = 13; 
     worksheet.getColumn(9).width = 15; 
     worksheet.getColumn(10).width = 15; 
+    worksheet.getColumn(11).width = 20; 
+    worksheet.getColumn(12).width = 20; 
     worksheet.mergeCells(`A1:J1`)
     worksheet.mergeCells(`A${totalsRowNumber.number}:F${totalsRowNumber.number}`)
     worksheet.mergeCells(`I${totalsRowNumber.number}:J${totalsRowNumber.number}`)
