@@ -373,8 +373,8 @@ module.exports.printNir = async (req, res, next) => {
           `${round(el.faptic)}`,
           `${round(el.scriptic)}`,
           `${round(el.faptic - el.scriptic)}`,
-          `${round(el.faptic * el.price) } Lei`,
-          `${round(el.faptic * el.sellPrice) } Lei`,
+          `${round(el.faptic * el.ing.price) } Lei`,
+          `${round(el.faptic * el.ing.sellPrice) } Lei`,
         ]
         )
     })
