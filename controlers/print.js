@@ -341,37 +341,40 @@ module.exports.printNir = async (req, res, next) => {
       'Nr',
       `Denumire Ingredient`,
       'UM',
-      'Pret (lei)',
+      'Pret (achizitie)',
+      'Pret (vanzare)',
       'Gestiune',
       'Departament',
       `Faptic (um)`, 
       `Scriptic (um)`, 
       `Diferenta (um)`, 
-      `Diferenta (lei)`, 
+      `Valoare achizitie (Pret x Qty)`, 
+      `Valoare vanzare (Pret x Qty)`, 
     ]
     worksheet.addRow(docTitle)
     worksheet.addRow(header)
-    let totalPretAchizitie = 0
-    let scripticValue = 0
-    let fapticValue = 0
+    let vanzareValue = 0
+    let achizitieValue = 0
   
      sortedIngs.forEach((el, i) => {
-        const faptic = round(el.faptic * el.ing.price)
-        const scriptic = round(el.scriptic * el.ing.price)
-        scripticValue += scriptic
-        fapticValue += faptic
+        const vanzare = round(el.faptic * el.ing.sellPrice)
+        const achizitie = round(el.faptic * el.ing.price)
+        vanzareValue += vanzare
+        achizitieValue += achizitie
       worksheet.addRow(
         [
           `${i+1}`,
           `${el.name}`,
           `${el.ing.um}`,
           `${el.ing.price}`,
+          `${el.ing.sellPrice}`,
           `${el.gestiune}`,
           `${el.dep}`,
           `${round(el.faptic)}`,
           `${round(el.scriptic)}`,
           `${round(el.faptic - el.scriptic)}`,
-          `${round((el.faptic - el.scriptic) * el.ing.price)} Lei`,
+          `${round(el.faptic * el.price) } Lei`,
+          `${round(el.faptic * el.sellPrice) } Lei`,
         ]
         )
     })
@@ -383,9 +386,11 @@ module.exports.printNir = async (req, res, next) => {
           '',
           '', 
           '', 
-          `${round(fapticValue)}`, 
-          `${round(scripticValue)}`, 
-          `${round(fapticValue - scripticValue)}`, ''
+          ``, 
+          ``, 
+          ``, 
+          `${round(achizitieValue)}`, 
+          `${round(vanzareValue)}`, ''
         ]
         )
     worksheet.getColumn(1).eachCell((cell) => {
