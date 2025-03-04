@@ -341,15 +341,15 @@ module.exports.printNir = async (req, res, next) => {
       'Nr',
       `Denumire Ingredient`,
       'UM',
-      'Pret (achizitie)',
-      'Pret (vanzare)',
+      'Pret \n (achizitie)',
+      'Pret \n (vanzare)',
       'Gestiune',
       'Departament',
       `Faptic (um)`, 
       `Scriptic (um)`, 
       `Diferenta (um)`, 
-      `Valoare achizitie (Pret x Qty)`, 
-      `Valoare vanzare (Pret x Qty)`, 
+      `Valoare \n achizitie \n (Pret x Qty)`, 
+      `Valoare \n vanzare \n (Pret x Qty)`, 
     ]
     worksheet.addRow(docTitle)
     worksheet.addRow(header)
