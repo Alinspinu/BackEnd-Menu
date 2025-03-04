@@ -341,15 +341,15 @@ module.exports.printNir = async (req, res, next) => {
       'Nr',
       `Denumire Ingredient`,
       'UM',
-      'Pret \n (achizitie)',
-      'Pret \n (vanzare)',
+      'Pret (lei) \n (achizitie)',
+      'Pret (lei) \n (vanzare)',
       'Gestiune',
       'Departament',
       `Faptic (um)`, 
       `Scriptic (um)`, 
       `Diferenta (um)`, 
-      `Valoare \n achizitie \n (Pret x Qty)`, 
-      `Valoare \n vanzare \n (Pret x Qty)`, 
+      `Valoare (lei) \n achizitie \n (Pret x Qty)`, 
+      `Valoare (lei) \n vanzare \n (Pret x Qty)`, 
     ]
     worksheet.addRow(docTitle)
     worksheet.addRow(header)
@@ -373,8 +373,8 @@ module.exports.printNir = async (req, res, next) => {
           `${round(el.faptic)}`,
           `${round(el.scriptic)}`,
           `${round(el.faptic - el.scriptic)}`,
-          `${round(el.faptic * el.ing.price) } Lei`,
-          `${round(el.faptic * el.ing.sellPrice) } Lei`,
+          `${round(el.faptic * el.ing.price) }`,
+          `${round(el.faptic * el.ing.sellPrice) }`,
         ]
         )
     })
@@ -390,8 +390,8 @@ module.exports.printNir = async (req, res, next) => {
           ``, 
           ``, 
           ``, 
-          `${round(achizitieValue)} Lei`, 
-          `${round(vanzareValue)} Lei`, 
+          `${round(achizitieValue)}`, 
+          `${round(vanzareValue)}`, 
         ]
         )
     worksheet.getColumn(1).eachCell((cell) => {
