@@ -668,8 +668,6 @@ module.exports.saveCigSheet = async (req, res) => {
       const {sheet} = req.body
   try{
     const firstInv = await CigarsInv.findByIdAndUpdate(sheet._id, sheet, {new: true})
-    // const inv = new CigarsInv(sheet)
-    // const firstInv = await inv.save()
     const secInv = new CigarsInv({
       date: new Date(),
       products: firstInv.products.map(p => {
