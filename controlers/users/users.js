@@ -1,6 +1,8 @@
 const User = require('../../models/users/user')
 const Employee = require('../../models/users/employee')
 const QRCode = require('qrcode');
+const PrintServer = require('../../models/utils/print-server')
+
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
 
@@ -140,4 +142,30 @@ module.exports.newCustomer = async (req, res, next) => {
       console.log(err);
       res.status(500).json(err);
   }
+}
+
+
+
+module.exports.savePrintServer = async (req, res) => {
+    const {server} = req.body
+    try{
+        const newServer = new PrintServer(server)
+        const savedServer = await newServer.save()
+        res.status(200).json({message: 'Serverul a fost salvat cu success!', server: savedServer})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
+module.exports.getServers = async (req, res) => {
+    const {loc, point} = req.body
+    try{    
+        const printServers = await PrintServer.find({locatie: loc, salPoint: point})
+        res.status(200).josn(printServers)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
 }

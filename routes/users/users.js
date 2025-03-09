@@ -20,6 +20,10 @@ router.route('/customer')
 router.route('/generateQr')
     .get(users.generateUserQrCode)
 
+router.route('/server')
+    .get(users.getServers)
+    .post(users.savePrintServer)
+
 
 
 
