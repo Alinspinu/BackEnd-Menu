@@ -3,6 +3,8 @@ const Locatie = require('../../models/office/locatie')
 const QRCode = require('qrcode');
 const SalePoint = require('../../models/utils/sale-point')
 
+const PrintServer = require('../../models/utils/print-server')
+
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
 
@@ -348,6 +350,32 @@ module.exports.getSalePoints = async (req, res) => {
         const {loc} = req.query
         const points = await SalePoint.find({locatie: loc})
         res.status(200).json(points)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
+
+module.exports.savePrintServer = async (req, res) => {
+    const {server} = req.body
+    try{
+        const newServer = new PrintServer(server)
+        const savedServer = await newServer.save()
+        res.status(200).json({message: 'Serverul a fost salvat cu success!', server: savedServer})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
+module.exports.getServers = async (req, res) => {
+    const {loc, point} = req.body
+    try{    
+        const printServers = await PrintServer.find({locatie: loc, salPoint: point})
+        res.status(200).josn(printServers)
     } catch(error){
         console.log(error)
         res.status(500).json(error)

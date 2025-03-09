@@ -47,5 +47,11 @@ router.route('/sale-point')
     .post(users.addSalePoint)
     .delete(users.deleteSalePoint)
 
+ 
+
+router.route('/server')
+    .get(users.getServers)
+    .post(users.savePrintServer)
+
 
 module.exports = router  
