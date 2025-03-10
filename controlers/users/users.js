@@ -372,7 +372,7 @@ module.exports.savePrintServer = async (req, res) => {
 
 
 module.exports.getServers = async (req, res) => {
-    const {loc, point} = req.body
+    const {loc, point} = req.query
     try{    
         const printServers = await PrintServer.find({locatie: loc, salPoint: point})
         res.status(200).josn(printServers)
