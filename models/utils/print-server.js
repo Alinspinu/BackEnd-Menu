@@ -13,6 +13,14 @@ const printServerSchema = new Schema({
     name: {
         type: String,
         required: true
+    },
+    key: {
+        type: String, 
+        required: true
+    },
+    status: {
+        type: Boolean,
+        default: true,
     }
 });
 
