@@ -192,7 +192,7 @@ module.exports.reports = async (req, res, next) => {
         const server = await PrintServer.findById(serverId)
         socket.emit('reports', JSON.stringify({value: value, serverKey: server.key}))
         // const response = await reports(value, server.key)
-        res.status(200).json({message: response.message})
+        res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
         handleError(err, res)
        return
@@ -204,7 +204,7 @@ module.exports.cashInandOut = async (req, res, next) =>{
         const {data, mainServer} = req.body;
         socket.emit('inOut', JSON.stringify({data: data, serverKey: mainServer.key}))
     //    const message = await inAndOut(data.mode, data.sum, server.key)
-        res.status(200).json({message: message.message})
+        res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
        handleError(err, res)
        return
