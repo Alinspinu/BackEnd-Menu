@@ -375,7 +375,7 @@ module.exports.getServers = async (req, res) => {
     const {loc, point} = req.query
     try{    
         const printServers = await PrintServer.find({locatie: loc, salPoint: point})
-        res.status(200).josn({servers: printServers})
+        res.status(200).json({servers: printServers})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
