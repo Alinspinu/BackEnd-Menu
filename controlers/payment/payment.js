@@ -185,11 +185,13 @@ module.exports.useVoucher = async (req, res, next) => {
 }
 
 
-
+const PrintServer = require('../../models/utils/print-server')
 module.exports.reports = async (req, res, next) => {
     try{
-        const {value} = req.query;
-        const response = await reports(value)
+        const {value, serverId} = req.query;
+        const server = await PrintServer.findById(serverId)
+        socket.emit('reports', JSON.stringify({value: value, serverKey: server.key}))
+        // const response = await reports(value, server.key)
         res.status(200).json({message: response.message})
     } catch(err) {
         handleError(err, res)
@@ -199,9 +201,9 @@ module.exports.reports = async (req, res, next) => {
 
 module.exports.cashInandOut = async (req, res, next) =>{
     try{
-        const {data} = req.body;
-     
-       const message = await inAndOut(data.mode, data.sum)
+        const {data, mainServer} = req.body;
+        socket.emit('inOut', JSON.stringify({data: data, serverKey: mainServer.key}))
+    //    const message = await inAndOut(data.mode, data.sum, server.key)
         res.status(200).json({message: message.message})
     } catch(err) {
        handleError(err, res)
@@ -211,10 +213,11 @@ module.exports.cashInandOut = async (req, res, next) =>{
 
 module.exports.reprinFiscal = async (req, res, next) => {
     try{
-        const {fiscal} = req.body
+        const {fiscal, mainServer} = req.body
         if(fiscal){
             const bill = JSON.parse(fiscal)
-            await printBill(bill)
+            socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key}))
+            // await printBill(bill, mainServer.key)
             res.status(200).json({message: 'Bunul a fost retipărit!'})
         } else {
             res.status(226).json({message: 'Bonul nu a putut fi tipărit!'})
@@ -228,12 +231,12 @@ module.exports.reprinFiscal = async (req, res, next) => {
 
 module.exports.printBill = async (req, res, next) => {
     try{
-        const {bill, mode} = req.body
+        const {bill, mode, mainServer} = req.body
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
         if(mode && bill.total > 0){
-           socket.emit('printBill', JSON.stringify(bill))
+           socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key}))
         } 
         if(email && email.length){
             const client = await User.findOne({email: email})
@@ -282,8 +285,8 @@ module.exports.printBill = async (req, res, next) => {
 
 module.exports.printUnreg = async (req, res, next) => {
     try{
-        const {bill} = req.body
-        socket.emit('nefiscal', JSON.stringify(bill))
+        const {bill, mainServer} = req.body
+        socket.emit('nefiscal', JSON.stringify({bill: bill, serverKey: mainServer.key}))
         res.status(200).json({message: 'Bonul a fost tipărit!'})
     } catch(err){
         handleError(err, res)

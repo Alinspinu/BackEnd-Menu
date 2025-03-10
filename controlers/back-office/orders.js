@@ -258,7 +258,7 @@ module.exports.sendOrderTime = async (req, res, next) => {
 
 
 module.exports.saveOrEditBill = async (req, res, next) => {
-    const {bill, mode} = req.body;
+    const {bill, mode, mainServer} = req.body;
     const parsedBill = JSON.parse(bill)
     const {index, billId} = req.query;
     const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
@@ -271,7 +271,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             }
-            if(mode) socket.emit('printOrder', JSON.stringify(newBill))   
+            if(mode) socket.emit('printOrder', JSON.stringify({bill: newBill, serverKey: mainServer.key}))   
 
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
@@ -288,7 +288,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 
         } else {
 
-           if(mode) socket.emit('printOrder', JSON.stringify(parsedBill))  
+           if(mode) socket.emit('printOrder', JSON.stringify({bill: parsedBill, serverKey: mainServer.key}))  
             let productsToPrint = false
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint){
