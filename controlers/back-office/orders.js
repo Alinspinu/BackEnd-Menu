@@ -259,6 +259,7 @@ module.exports.sendOrderTime = async (req, res, next) => {
 
 module.exports.saveOrEditBill = async (req, res, next) => {
     const {bill, mode, mainServer, secondaryServer} = req.body;
+    console.log(secondaryServer)
     const parsedBill = JSON.parse(bill)
     const {index, billId} = req.query;
     const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
