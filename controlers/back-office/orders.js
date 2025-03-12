@@ -258,7 +258,7 @@ module.exports.sendOrderTime = async (req, res, next) => {
 
 
 module.exports.saveOrEditBill = async (req, res, next) => {
-    const {bill, mode, mainServer} = req.body;
+    const {bill, mode, mainServer, secondaryServer} = req.body;
     const parsedBill = JSON.parse(bill)
     const {index, billId} = req.query;
     const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
@@ -271,7 +271,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
             }
-            if(mode) socket.emit('printOrder', JSON.stringify({bill: newBill, serverKey: mainServer.key}))   
+            if(mode) socket.emit('printOrder', JSON.stringify({bill: newBill, serverKey: mainServer.key, secondaryServer: secondaryServer}))   
 
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
@@ -288,7 +288,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 
         } else {
 
-           if(mode) socket.emit('printOrder', JSON.stringify({bill: parsedBill, serverKey: mainServer.key}))  
+           if(mode) socket.emit('printOrder', JSON.stringify({bill: parsedBill, serverKey: mainServer.key, secondaryServer: secondaryServer}))  
             let productsToPrint = false
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint){
@@ -369,8 +369,6 @@ module.exports.saveOrder = async (req, res, next) => {
                 newOrder.clientInfo.cashBack = user.cashBack
                 newOrder.preOrder = true
                 const savedOrder = await newOrder.save()
-
-                
                 const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
                 console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
                 if(newOrder.masa > 0){

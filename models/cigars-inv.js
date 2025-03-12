@@ -13,6 +13,7 @@ const cigarsSchema = new Schema({
             first: Number,
             found: Number,
             sale: Number,
+            in: Number,
             second: Number,
             valid: Boolean,
             ing: {
