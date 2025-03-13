@@ -37,7 +37,7 @@ module.exports.deleteSheet = async (req, res) => {
 module.exports.getSheets = async (req, res) => {
     const {loc} = req.query
   try{
-    const sheets = await Sheet.find({locatie: loc})
+    const sheets = await Sheet.find({locatie: loc}).populate({path: 'ings.ing', select: 'name um'})
     res.status(200).json({sheets: sheets})
   } catch(error){
     console.log(error)
