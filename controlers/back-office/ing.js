@@ -1,7 +1,37 @@
 const Ingredient = require('../../models/office/inv-ingredient')
 const Inventary =require('../../models/office/inventary')
+const Sheet = require('../../models/utils/sheet')
 
 
+
+module.exports.saveSheet = async (req, res) => {
+  const {sheet} = req.body
+  try{
+    const sh = new Sheet(sheet)
+    const savedSheet = await sh.save()
+    res.status(200).json({sheet: savedSheet, message: 'Fișă de iesiri salvată cu success, stocul a fost actualizat!'})
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
+module.exports.deleteSheet = async (req, res) => {
+  const {id} = req.query
+  try{
+    const sheet = await Sheet.findById(id)
+    if(sheet){
+      await sheet.deleteOne()
+      res.status(200).josn({message: 'Fișa a fost ștearsă cu success, stocul a fost actualizat!'})
+    } else{
+      res.status(226).json({message: 'Ceva nu a mers bine, fișa nu a fost găsită în baza de date!'})
+    }
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
 
 
 module.exports.saveIng = async(req, res, next) => {
