@@ -23,7 +23,7 @@ module.exports.deleteSheet = async (req, res) => {
     const sheet = await Sheet.findById(id)
     if(sheet){
       await sheet.deleteOne()
-      res.status(200).josn({message: 'Fișa a fost ștearsă cu success, stocul a fost actualizat!'})
+      res.status(200).json({message: 'Fișa a fost ștearsă cu success, stocul a fost actualizat!'})
     } else{
       res.status(226).json({message: 'Ceva nu a mers bine, fișa nu a fost găsită în baza de date!'})
     }
