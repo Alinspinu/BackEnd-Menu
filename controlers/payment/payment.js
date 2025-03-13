@@ -10,7 +10,6 @@ const Order = require('../../models/office/product/order')
 const Table = require('../../models/utils/table')
 
 const { round, sendToPrint, handleError } = require('../../utils/functions')
-const {reports, inAndOut, printBill, posPayment, printNefiscal} = require('../../utils/print/printFiscal')
 const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
 
 
@@ -191,7 +190,6 @@ module.exports.reports = async (req, res, next) => {
         const {value, serverId} = req.query;
         const server = await PrintServer.findById(serverId)
         socket.emit('reports', JSON.stringify({value: value, serverKey: server.key}))
-        // const response = await reports(value, server.key)
         res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
         handleError(err, res)
@@ -203,7 +201,6 @@ module.exports.cashInandOut = async (req, res, next) =>{
     try{
         const {data, mainServer} = req.body;
         socket.emit('inOut', JSON.stringify({data: data, serverKey: mainServer.key}))
-    //    const message = await inAndOut(data.mode, data.sum, server.key)
         res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
        handleError(err, res)
@@ -217,7 +214,6 @@ module.exports.reprinFiscal = async (req, res, next) => {
         if(fiscal){
             const bill = JSON.parse(fiscal)
             socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key}))
-            // await printBill(bill, mainServer.key)
             res.status(200).json({message: 'Bunul a fost retipărit!'})
         } else {
             res.status(226).json({message: 'Bonul nu a putut fi tipărit!'})
