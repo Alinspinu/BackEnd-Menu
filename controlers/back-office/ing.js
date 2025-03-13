@@ -34,6 +34,18 @@ module.exports.deleteSheet = async (req, res) => {
 }
 
 
+module.exports.getSheets = async (req, res) => {
+    const {loc} = req.query
+  try{
+    const sheets = await Sheet.find({locatie: loc})
+    res.status(200).json({sheets: sheets})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
 module.exports.saveIng = async(req, res, next) => {
     const {ing} = req.body;
     const {loc} = req.body;

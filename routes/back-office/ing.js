@@ -21,6 +21,11 @@ router.route('/update-ingredient-quantity').post(ingRoutes.updateIngredientQuant
 // router.route('/get-consumabil').get(ingRoutes.getIngConsumabil)
 router.route('/get-inventary').get(ingRoutes.getInventary)
 
+router.route('/sheet')
+        .post(ingRoutes.saveSheet)
+        .delete(ingRoutes.deleteSheet)
+        .get(ingRoutes.getSheets)
+
 
 
 module.exports = router
