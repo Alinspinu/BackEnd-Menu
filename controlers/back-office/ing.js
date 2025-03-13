@@ -9,7 +9,8 @@ module.exports.saveSheet = async (req, res) => {
   try{
     const sh = new Sheet(sheet)
     const savedSheet = await sh.save()
-    res.status(200).json({sheet: savedSheet, message: 'Fișă de iesiri salvată cu success, stocul a fost actualizat!'})
+    const dbSheet = await Sheet.findById(savedSheet._id).populate({path: 'ings.ing', select: 'name um gestiune'})
+    res.status(200).json({sheet: dbSheet, message: 'Fișă de iesiri salvată cu success, stocul a fost actualizat!'})
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
