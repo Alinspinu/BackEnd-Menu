@@ -34,4 +34,8 @@ const cigarsSchema = new Schema({
     }
 })
 
+
+
+
+
 module.exports = mongoose.model('CigarsInv', cigarsSchema)
