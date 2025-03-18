@@ -231,7 +231,7 @@ module.exports.printBill = async (req, res, next) => {
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
-        if(mode && bill.total > 0){
+        if(mode && bill.total > 0 && mainServer){
            socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key}))
         } 
         if(email && email.length){
