@@ -165,7 +165,7 @@ async function generateNutritionResponse(prompt) {
           When given a list of ingredients 
           with their quantities, respond 
           only with the total nutritional 
-          values per 100g of the final product and the allergens in the following JSON format:
+          values per 100g of the final product in the following JSON format:
           {
             \"nutrition\": {
               \"energy\": {
