@@ -183,7 +183,7 @@ async function generateNutritionResponse(prompt) {
               \"salts\": 0,
               \"protein\": 0
             },
-            \"allergens\": []
+            \"alergeni\": []
           }`
          } 
         ],
