@@ -184,7 +184,8 @@ async function generateNutritionResponse(prompt) {
               \"protein\": 0
             },
             \"allergens\": [\"Lista alergenilor trebuie să fie scrisă în limba română.\"]
-          }`
+          }
+            Please ensure you rely only on the correct nutritional values for each ingredient and always output them in the same way.`
          } 
         ],
       temperature: 0.8,
