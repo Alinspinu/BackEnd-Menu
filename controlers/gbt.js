@@ -185,7 +185,7 @@ async function generateNutritionResponse(prompt) {
             },
             \"allergens\": [\"Lista alergenilor trebuie să fie scrisă în limba română.\"]
           }
-          Please ensure you rely only on the correct nutritional values for each ingredient and always output them in the same way.`
+          Please ensure you rely only on the correct nutritional values for each ingredient and always output them in the same way. ang give only the json format without any comments.`
          } 
         ],
       temperature: 0.8,
