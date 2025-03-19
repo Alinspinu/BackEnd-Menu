@@ -9,5 +9,7 @@ router.route('/cookie').get(gbt.getCookie)
 
 router.route('/image').post(gbt.image)
 
+router.route('/nutrition').post(gbt.getNutritionalValues)
+
 
 module.exports = router

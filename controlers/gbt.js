@@ -43,6 +43,18 @@ module.exports.getMessage = async (req, res, next) => {
 }
 
 
+module.exports.getNutritionalValues = async (req, res) => {
+  try{
+    const {request} = req.body
+    const response = await generateNutritionResponse(request)
+    res.status(200).json({message: response})
+} catch(err){
+    console.log(err)
+    res.status(500).json(err)
+}
+}
+
+
 
 
 module.exports.image = async(req, res, next) => {
@@ -125,6 +137,53 @@ async function generateResponse(prompt) {
          {
          role: 'system',
          content: `Ești un terapeut drăguț care vrea să ajute oamenii să-si depasească condiția. Verifică și corectează textul de greseli gramaticale și de exprimare înaite de a-l trimite.`
+         } 
+        ],
+      temperature: 0.8,
+      top_p: 1
+    });
+    return response.choices[0].message.content
+  } catch (error) {
+    console.error('Error generating response:', error);
+    throw(error)
+  }
+}
+
+
+async function generateNutritionResponse(promt) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', 
+      messages: [
+        { role: 'user',
+         content: prompt,
+         },
+         {
+         role: 'system',
+         content: 
+         `You are a nutrition assistant. 
+          When given a list of ingredients 
+          with their quantities, respond 
+          only with the total nutritional 
+          values per 100g of the final product in the following JSON format:
+          {
+            \"nutrition\": {
+              \"energy\": {
+                \"kJ\": 0,
+                \"kcal\": 0
+              },
+              \"fat\": {
+                \"all\": 0,
+                \"satAcids\": 0
+              },
+              \"carbs\": {
+                \"all\": 0,
+                \"sugar\": 0
+              },
+              \"salts\": 0,
+              \"protein\": 0
+            }
+          }`
          } 
         ],
       temperature: 0.8,
