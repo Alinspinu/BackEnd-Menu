@@ -183,7 +183,7 @@ async function generateNutritionResponse(prompt) {
               \"salts\": 0,
               \"protein\": 0
             },
-            \"alergeni\": []
+            \"allergens\": [\"Lista alergenilor trebuie să fie scrisă în limba română.\"]
           }`
          } 
         ],
