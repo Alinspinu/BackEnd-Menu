@@ -185,7 +185,7 @@ async function generateNutritionResponse(prompt) {
             },
             \"allergens\": [\"Lista alergenilor trebuie să fie scrisă în limba română și să contină alergenii în acest format - gluten, crustacee, ouă, pește, arahide, soia, lapte, fructe cu coajă lemnoasă, țelină, muștar, semințe de susan, dioxid de sulf și sulfiți, lupin, moluște-.\"]
           }
-          Please ensure you rely only on the correct nutritional values for each ingredient and always output them in the same way. ang give only the json format without any comments.`
+          Please ensure you rely only on the correct nutritional values for each ingredient and always output them in the same way. ang give only the json format without any comments the output must be a valid JSON.`
          } 
         ],
       temperature: 0.8,
