@@ -19,18 +19,18 @@ const {checkTopping, round} = require('../../utils/functions')
             path: 'subProducts', populate: {
                 path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
                     populate: {
-                        path: 'ings.ing', select: 'name tvaPrice qty'
+                        path: 'ings.ing', select: 'name tvaPrice qty um' 
                     }
             }
         },
         {
-            path: 'toppings', select: 'qty name ing price', 
+            path: 'toppings', select: 'qty name ing price um', 
             populate: {
                 path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
                 populate: {
                     path: 'ings', select: 'qty ing', 
                     populate: {
-                        path: 'ing', select: 'name tvaPrice qty'
+                        path: 'ing', select: 'name tvaPrice qty um'
                     }
                 }
             }
@@ -38,7 +38,7 @@ const {checkTopping, round} = require('../../utils/functions')
         {
             path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
                 populate: {
-                    path: 'ings.ing', select: 'name tvaPrice qty'
+                    path: 'ings.ing', select: 'name tvaPrice qty um'
                 }
         },
     ])
@@ -57,18 +57,18 @@ const {checkTopping, round} = require('../../utils/functions')
             path: 'subProducts', populate: {
                 path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
                     populate: {
-                        path: 'ings.ing', select: 'name tvaPrice qty'
+                        path: 'ings.ing', select: 'name tvaPrice qty um'
                     }
             }
         },
         {path: "category", select: 'name'},
         {
-            path: 'toppings', select: 'qty name ing price', 
+            path: 'toppings', select: 'qty name ing price um', 
             populate: {
                 path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
                 populate: {
                     path: 'ings', select: 'qty ing', 
-                    populate: {path: 'ing', select: 'name tvaPrice qty'
+                    populate: {path: 'ing', select: 'name tvaPrice qty um'
 
                     }
                 }
@@ -77,7 +77,7 @@ const {checkTopping, round} = require('../../utils/functions')
         {
             path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
                 populate: {
-                    path: 'ings.ing', select: 'name tvaPrice qty'
+                    path: 'ings.ing', select: 'name tvaPrice qty um'
                 }
         },
     ])
@@ -144,13 +144,13 @@ module.exports.addProd = async (req, res, next) => {
             },
             {path: "category", select: 'name'},
             {
-                path: 'toppings', select: 'qty name ing price', 
+                path: 'toppings', select: 'qty name ing price um', 
                 populate: {
                     path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
                     populate: {
                         path: 'ings', select: 'qty ing', 
                         populate: {
-                            path: 'ing', select: 'name tvaPrice qty'
+                            path: 'ing', select: 'name tvaPrice qty um'
     
                         }
                     }
@@ -159,7 +159,7 @@ module.exports.addProd = async (req, res, next) => {
             {
                 path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
                     populate: {
-                        path: 'ings.ing', select: 'name tvaPrice qty'
+                        path: 'ings.ing', select: 'name tvaPrice qty um'
                     }
             },
         ]);
@@ -206,18 +206,18 @@ module.exports.editProduct = async (req, res, next) => {
                     path: 'subProducts', populate: {
                         path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
                             populate: {
-                                path: 'ings.ing', select: 'name tvaPrice qty'
+                                path: 'ings.ing', select: 'name tvaPrice qty um' 
                             }
                     }
                 },
                 {path: "category", select: 'name'},
                 {
-                    path: 'toppings', select: 'qty name ing', 
+                    path: 'toppings', select: 'qty name ing um', 
                     populate: {
                         path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
                         populate: {
                             path: 'ings', select: 'qty ing', 
-                            populate: {path: 'ing', select: 'name tvaPrice qty'
+                            populate: {path: 'ing', select: 'name tvaPrice qty um'
         
                             }
                         }
@@ -226,7 +226,7 @@ module.exports.editProduct = async (req, res, next) => {
                 {
                     path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
                         populate: {
-                            path: 'ings.ing', select: 'name tvaPrice qty'
+                            path: 'ings.ing', select: 'name tvaPrice qty um'
                         }
                 },
             ])
