@@ -153,7 +153,7 @@ async function generateResponse(prompt) {
 async function generateNutritionResponse(prompt) {
   try {
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', 
+      model: 'gpt-4o', 
       messages: [
         { role: 'user',
          content: prompt,
