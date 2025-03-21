@@ -68,6 +68,10 @@ const UserTrueSchema = new Schema({
         startDate: Date,
         endDate: Date,
         birthDate: Date,
+        contract: {
+            type: Boolean,
+            default: false
+        },
         active: {
             type: Boolean,
             index: true
