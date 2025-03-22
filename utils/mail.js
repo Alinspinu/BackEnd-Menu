@@ -246,14 +246,15 @@ module.exports = {
 
 
 
-async function sendCompleteRegistrationEmail(newUser, baseUrlRedirect) {
+async function sendCompleteRegistrationEmail(newUser, baseUrlRedirect, loc) {
     const token = jwt.sign({ userId: newUser._id }, process.env.AUTH_SECRET, { expiresIn: '24h' });
 
     const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
     const templateData = {
         link: `${baseUrlRedirect}register?token=${token}`,
         name: newUser.name,
-        message: 'Prin acest email vrem sa-ți finalizezi înregistrarea cardului de fidelitate'
+        message: 'Prin acest email vrem sa-ți finalizezi înregistrarea cardului de fidelitate',
+        locatie: loc
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
 
