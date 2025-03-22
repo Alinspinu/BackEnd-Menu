@@ -255,7 +255,7 @@ async function sendCompleteRegistrationEmail(newUser, baseUrlRedirect, loc) {
         name: newUser.name,
         message: 'Acest cont ți-a fost creat în parteniriat cu Kinetic Sport & Medicine.',
         messageOne: 'Prin crearea acestui cont vei beneficia de un discount de 10% la toate produsele noastere și 5% cashback.',
-        messageTow: 'Ce trebuie să faci:',
+        messageTwo: 'Ce trebuie să faci:',
         messageThree: '1. Activează-ti contul.',
         messageFour: '2. Folosește adresa de email sau codul qr generat în aplicatie la casă înainte de a achita nota de plată.',
         locatie: loc
