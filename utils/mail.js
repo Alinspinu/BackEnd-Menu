@@ -257,7 +257,7 @@ async function sendCompleteRegistrationEmail(newUser, baseUrlRedirect, loc) {
         messageOne: 'Prin crearea acestui cont vei beneficia de un discount de 10% la toate produsele noastere și 5% cashback.',
         messageTwo: 'Ce trebuie să faci:',
         messageThree: '1. Activează-ti contul.',
-        messageFour: '2. Folosește adresa de email sau codul qr generat în aplicatie la casă înainte de a achita nota de plată.',
+        messageFour: '2. Folosește la casă, adresa de email sau codul qr generat în aplicatie, înainte de a achita nota de plată.',
         locatie: loc
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
