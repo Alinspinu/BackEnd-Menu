@@ -251,7 +251,7 @@ async function sendCompleteRegistrationEmail(newUser, baseUrlRedirect) {
 
     const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
     const templateData = {
-        link: `${baseUrlRedirect}/register?token=${token}`,
+        link: `${baseUrlRedirect}register?token=${token}`,
         name: newUser.name,
         message: 'Prin acest email vrem sa-ți finalizezi înregistrarea cardului de fidelitate'
     };
