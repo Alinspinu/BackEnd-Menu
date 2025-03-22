@@ -253,7 +253,7 @@ async function sendCompleteRegistrationEmail(newUser, baseUrlRedirect, loc) {
     const templateData = {
         link: `${baseUrlRedirect}register?token=${token}`,
         name: newUser.name,
-        message: 'Prin acest email vrem sa-ți finalizezi înregistrarea cardului de fidelitate',
+        message: 'Acest cont ți-a fost creat în parteniriat cu Kinetic Sport & Medicine. Prin crearea acestui cont vei beneficia de un discount de 10% la toate produsele noastere și 5% cashback. Pentru a beneficia de aceste reduceri, in prinul rand trebuie să-ti activezi contul și să-ti folosesti adresa de email sau codul qr generat în aplicatie la CASA inainte de a achita nota de plată.',
         locatie: loc
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
