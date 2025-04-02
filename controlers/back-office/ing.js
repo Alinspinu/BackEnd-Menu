@@ -694,16 +694,22 @@ module.exports.saveCigSheet = async (req, res) => {
 
 
 module.exports.getLastCigSheet = async (req, res) => {
-  const {loc, point} = req.query
+  const {loc, point, mode} = req.query
   try{
-    const invs = await CigarsInv.find({locatie: loc, salePoint: point}).sort({date: -1}).limit(2)
-    console.log(invs)
-    res.status(200).json(invs)
+    if(mode === 'last'){
+      const invs = await CigarsInv.find({locatie: loc, salePoint: point}).sort({date: -1}).limit(2)
+      res.status(200).json(invs)
+    } else {
+      const invs = await CigarsInv.find({locatie: loc, salePoint: point})
+      res.status(200).json(invs)
+    }
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
   }
 }
+
+
 
 module.exports.updateStoc = async (req, res, next) => {
   //   const {loc} = req.query
