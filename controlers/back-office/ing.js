@@ -373,6 +373,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         orders.forEach(order=> {
           order.products.forEach(product => {
             product.ings.forEach(ing => {
+              ing.qty = round(ing.qty*product.quantity)
               if(ing.ing.ings && ing.ing.ings.length){
                 ing.ing.ings.forEach(ig => {
                   const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
@@ -406,6 +407,7 @@ module.exports.compareScriptic = async (req, res, next) => {
             })
             if(product.toppings.length){
               product.toppings.forEach(topping=>{
+                topping.qty = round(topping.qty * product.quantity)
                 if(topping.ing.ings.length){
                   topping.ing.ings.forEach(ig => {
                     const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
