@@ -23,7 +23,12 @@ module.exports.sendCats = async (req, res, next) => {
                 },
                 { path: 'paring', populate: { path: 'category', select: 'name' } },
                 { path: 'ingredients.ingredient' },
-                { path: 'ings.ing', select: 'name qty' }
+                { 
+                    path: 'ings.ing', select: 'name qty um productIngredient ings',
+                        populate: {
+                            path: 'ings.ing', select: 'name um qty'
+                        } 
+                }
             ]
         }).maxTimeMS(20000);
         res.status(200).json(cats);
