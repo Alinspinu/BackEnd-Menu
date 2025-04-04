@@ -6,7 +6,7 @@ const SubProduct = require('../../models/office/product/sub-product')
 module.exports.saveSubProd = async (req, res, next) => {
     const {loc} = req.query
     try {
-        const {product, name, price, order, qty, ings, toppings, tva, description, printOut} = req.body;
+        const {product, name, price, order, qty, ings, toppings, tva, description, printOut, nutrition, allergens, additives} = req.body;
         const productSub = await Product.findById(product);
         const newSubProduct = new SubProduct({
             name: name,
@@ -20,6 +20,9 @@ module.exports.saveSubProd = async (req, res, next) => {
             toppings: toppings,
             description: description,
             printOut: printOut,
+            nutrition: nutrition,
+            allergens: allergens,
+            additives: additives,
         });
         productSub.subProducts.push(newSubProduct);
         await newSubProduct.save();
@@ -34,7 +37,6 @@ module.exports.saveSubProd = async (req, res, next) => {
 
 module.exports.editSubproduct = async (req, res, next) => {
     const { sub } = req.body;
-    console.log(sub)
     try{
         const productToSend = await SubProduct.findByIdAndUpdate(sub._id, sub, {new: true}).populate({ path: 'product', select: 'category' })
         res.status(200).json({ message: 'Sub Produsl a fost modificat cu succes', subProd: productToSend })

@@ -79,7 +79,57 @@ const subProductSchema = new Schema({
     salePoint: {
         type: Schema.Types.ObjectId,
         ref: 'SalePoint'
-      }
+      },
+    allergens: [
+        {
+            name: String
+        }
+    ],
+    additives: [
+        {
+            name: String
+        }
+    ],
+    nutrition: {
+        energy: {
+            kJ: {
+                type: Number,
+                default: 0
+            },
+            kcal:  {
+                type: Number,
+                default: 0
+            },
+        },
+        fat: {
+            all:  {
+                type: Number,
+                default: 0
+            },
+            satAcids: {
+                type: Number,
+                default: 0
+            },
+        },
+        carbs: {
+            all: {
+                type: Number,
+                default: 0
+            },
+            sugar: {
+                type: Number,
+                default: 0
+            },
+        },
+        salts:  {
+            type: Number,
+            default: 0
+        },
+        protein:  {
+            type: Number,
+            default: 0
+        },
+    },
 })
 
 subProductSchema.pre('deleteOne', { document: true }, async function (next) {
