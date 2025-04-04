@@ -13,7 +13,12 @@ module.exports.sendCats = async (req, res, next) => {
                     path: 'subProducts',
                     populate: [
                         {path: 'product'},
-                        {path: 'ings.ing', select: 'name qty'}
+                        {
+                            path: 'ings.ing', select: 'name um ings productIngredient qty', 
+                                populate: {
+                                    path: 'ings.ing', select: 'name um qty' 
+                                }
+                        }
                     ],
                 },
                 { path: 'paring', populate: { path: 'category', select: 'name' } },
