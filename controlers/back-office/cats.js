@@ -60,7 +60,6 @@ module.exports.addCat = async (req, res, next) => {
     const {category} = req.body
 
     try {
-        console.log(category)
         const cat = new Cat(category)
         cat.locatie = loc
         await cat.save()
