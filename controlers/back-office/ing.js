@@ -10,6 +10,8 @@ const impSheet = require('../../models/office/imp-sheet')
 
 
 
+
+
 module.exports.saveIng = async(req, res, next) => {
     const {ing} = req.body;
     const {loc} = req.body;
@@ -709,6 +711,19 @@ module.exports.getLastCigSheet = async (req, res) => {
     console.log(error)
     res.status(500).json(error)
   }
+}
+
+module.exports.updateCigarsSheet = async(req, res, next) => {
+
+  const { sheet } = req.body;
+  try{
+    const inv = await CigarsInv.findByIdAndUpdate(sheet._id, sheet, {new: true})
+    res.status(200).json({message: 'Fișa a fost actualizată',  sheet: inv})
+  } catch (error) {
+    consol.elog(error)
+    res.status(500).json(error)
+  }
+
 }
 
 

@@ -30,6 +30,7 @@ router.route('/ing').get(ingRoutes.getIng)
 router.route('/smoke')
     .get(ingRoutes.getLastCigSheet)
     .post(ingRoutes.saveCigSheet)
+    .put(ingRoutes.updateCigarsSheet)
 
 router.route('/log')
         .get(ingRoutes.getIngUploadLog)
