@@ -149,7 +149,7 @@ module.exports.sendCustomer = async (req, res, next) => {
       const {id, loc, mode} = req.query;
       if(mode === 'card'){
         if(id.length < 22){
-            const customer = await User.findOne({cardIndex:  +id, locatie: loc}).select('name email cashBack discount cardIndex');
+            const customer = await User.findOne({cardIndex:  id, locatie: loc}).select('name email cashBack discount cardIndex');
             if(customer){
                 res.status(200).json({message: 'All good', customer: customer})
             } else {

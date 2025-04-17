@@ -42,7 +42,7 @@ const UserTrueSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
     },
-    cardIndex: Number,
+    cardIndex: { type: Schema.Types.Mixed },
     cardName: String,
     discount: {
         general: {
