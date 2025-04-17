@@ -253,9 +253,9 @@ module.exports.newCustomer = async (req, res, next) => {
   try{
       const {name, email, tel, cardIndex, loc, discount} = req.body;
       const check = await User.findOne({ email: email, locatie: loc }).select('name telephone email cashBack discount');
-      if (check && cardIndex === 0 && cardIndex === '0') {
+      if (check && (cardIndex === 0 || cardIndex === '0')) {
         return res.status(256).json({ message: 'Acest email există deja în baza de date!', customer: check });
-      } else if(check && cardIndex !== 0){
+      } else if(check && (cardIndex !== 0 || cardIndex !== '0')){
         const updatedUser =  await User.findByIdAndUpdate(check._id, {cardIndex: cardIndex}, {new: true})
         return res.status(200).json({ message: 'Utilizatorului i s-a adaugat cadrul la cont', customer: updatedUser });
       } else {
