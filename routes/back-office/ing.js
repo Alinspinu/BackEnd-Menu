@@ -31,6 +31,7 @@ router.route('/smoke')
     .get(ingRoutes.getLastCigSheet)
     .post(ingRoutes.saveCigSheet)
     .put(ingRoutes.updateCigarsSheet)
+    .delete(ingRoutes.deleteCigSheet)
 
 router.route('/log')
         .get(ingRoutes.getIngUploadLog)

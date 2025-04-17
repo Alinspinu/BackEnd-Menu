@@ -667,6 +667,16 @@ module.exports.updateUploadLog = async(req, res) => {
   }
 }
 
+module.exports.deleteCigSheet = async (req, res) => {
+  const {id}  = req.query
+  try{
+    await CigarsInv.findByIdAndDelete(id)
+    res.status(200).json({message: 'Inventarul a fost sters cu success!'})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
 
 module.exports.saveCigSheet = async (req, res) => {
       const {sheet} = req.body
