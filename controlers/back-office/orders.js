@@ -138,7 +138,7 @@ module.exports.calcDep = async (req, res, next) => {
 module.exports.getHavyOrders = async (req, res, next) => {
     try{
         const {start, end, day, loc, filter, report, point} = req.body
-        console.log(start, end)
+        console.log(start, end, loc, point)
         if(start && end){
             const startTime = new Date(start).setUTCHours(0,0,0,0)
             const endTime = new Date(end).setUTCHours(23,59,59,9999)
