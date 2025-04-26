@@ -268,7 +268,6 @@ orderTrueSchema.pre("save", async function (next) {
 });
 
 orderTrueSchema.post('save', async function (doc, next) {
-    console.log('HIT THE POST SAVE FUNCTION')
     try {
         if(doc.soketId){
 

@@ -8,6 +8,7 @@ const User = require('../../models/users/user');
 const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
 const Table = require('../../models/utils/table')
+const RepBill = require('../../models/office/reprintedBill')
 
 const { round, sendToPrint, handleError } = require('../../utils/functions')
 const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
@@ -210,10 +211,12 @@ module.exports.cashInandOut = async (req, res, next) =>{
 
 module.exports.reprinFiscal = async (req, res, next) => {
     try{
-        const {fiscal, mainServer} = req.body
+        const {bill, mainServer} = req.body
         if(fiscal){
-            const bill = JSON.parse(fiscal)
-            socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key}))
+            const billl = JSON.parse(bill)
+            const newRep = new RepBill({fiscal: true, bill: billl._id})
+            await newRep.save()
+            socket.emit('printBill', JSON.stringify({bill: billl, serverKey: mainServer.key}))
             res.status(200).json({message: 'Bunul a fost retipărit!'})
         } else {
             res.status(226).json({message: 'Bonul nu a putut fi tipărit!'})
@@ -282,6 +285,7 @@ module.exports.printBill = async (req, res, next) => {
 module.exports.printUnreg = async (req, res, next) => {
     try{
         const {bill, mainServer} = req.body
+        const newRep = new RepBill({fiscal: false, bill: bill._id})
         socket.emit('nefiscal', JSON.stringify({bill: bill, serverKey: mainServer.key}))
         res.status(200).json({message: 'Bonul a fost tipărit!'})
     } catch(err){
