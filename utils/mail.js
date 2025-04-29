@@ -170,7 +170,7 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
 
 
 async function sendMailToCustomer(data, emails) {
-    const templateSource = fs.readFileSync('views/layouts/new-email.ejs', 'utf-8');      
+    const templateSource = fs.readFileSync('views/layouts/new-mail.ejs', 'utf-8');      
         const renderedTemplate = ejs.render(templateSource,{data: data});
     
         const appKey = decryptData(data.locatie.gmail.app.key, data.locatie.gmail.app.secret, data.locatie.gmail.app.iv);
