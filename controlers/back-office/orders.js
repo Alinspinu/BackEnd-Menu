@@ -138,7 +138,6 @@ module.exports.calcDep = async (req, res, next) => {
 module.exports.getHavyOrders = async (req, res, next) => {
     try{
         const {start, end, day, loc, filter, report, point} = req.body
-        console.log(start, end, loc, point)
         if(start && end){
             const startTime = new Date(start).setUTCHours(0,0,0,0)
             const endTime = new Date(end).setUTCHours(23,59,59,9999)
@@ -169,9 +168,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
                                         })    
              console.log('comenzi', orders.length)                                   
             const result = await getBillProducts(orders, filter)
-            console.log(result)
             const ingredients = await getIngredients(result.allProd)
-            console.log(ingredients)
             if(report === 'report'){
                const report = await createDayReport(result.allProd, ingredients, loc, orders, startTime, point)
                res.status(200).json(report)

@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body{
+        padding: 8px !important;
+       
+    }
+    h1{
+        text-transform: uppercase;
+    }
+    h1, h2{
+        font-size: 22px !important;
+        font-family: Courier, monospace;
+        font-weight: 800;
+    }
+    .bill{
+        border: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        font-family: Courier, monospace;
+    }
+    .header, .foot, .products{
+        display: flex;
+        align-items: center;
+    }
+    .header{
+        padding: 16px 0;
+        background-color: black;
+        color: white;
+        font-size: 20px;
+    }
+    .foot{
+        margin-top: auto;
+        padding: 16px 0;
+        border-top: 1px solid black;
+        font-size: 20px;
+    }
+    .label{
+        margin-left: 68px;
+        flex: 60%;
+        text-transform: uppercase;
+    }
+    .total{
+        flex: 30%;
+        text-transform: uppercase;
+    }
+    .products{
+        padding: 4px 0;
+    }
+    .info{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-family: Courier, monospace;
+        font-size: 18px;
+        margin-top: 12px;
+    }
+    .info span{
+        padding: 12px 0;
+    }
+    .img{
+        height: 120px;
+        width: 120px;
+    }
+    .img-container{
+        margin-top: 12px;
+        font-family: Courier, monospace;
+    }
+
+  </style>
+</head>
+<body>
+
+
+</body>
+</html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Email Template</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container-fluid vh-100 cont">
+        <div class="text-center img-container col-lg-6 offset-lg-3">
+           <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg" alt="logo-image" class="img mb-4">
+           <h1 class="font mb-4">SALUT <%=data.clientInfo.name%>,</h1>
+           <h2 class="font mb-4">Îți mulțumim că ai ales True Fine Coffee!</h2>
+           <p class="font mb-4">Comanda ta a fost confirmată și este în curs de pregătie. <br> Detaliile comenzii tale sunt următoarele:</p>
+        </div>
+        <div class="bill col-lg-6 offset-lg-3 p-0">
+            <div class="header">
+                <span class="label">PRODUS</span>
+                <span class="total">PREȚ</span>
+            </div>
+            <% for (let i=0 ;i < data.products.length; i++) { %>
+                <div class="products">
+                    <span class="label"><%= data.products[i].quantity %> X <%= data.products[i].name %></span>
+                    <span class="total"><%= data.products[i].total %> Lei</span>
+                </div>
+            <% } %>
+
+            <% if (data.payOnSite) { %>
+                <li class="list-group-item d-flex custom"><span>Total de plată:</span>  <span class="bold margin-end"><%= data.totalProducts %> Lei</span> </li>
+            <% } else { %>
+                <li class="list-group-item d-flex custom"> <span>Total Produse:</span>  <span class="bold margin-end"><%= data.totalProducts %> Lei</span></li>
+            <% } %>
+         
+            <div class="foot">
+                <% if (data.payOnSite) { %>
+                    <span class="label">Total de plată</span>
+                    <span class="total"><%= data.totalProducts %> Lei</span>
+                <% } else { %>
+                    <span class="label">Total</span>
+                    <span class="total"><%= data.totalProducts %> Lei</span>
+                <% } %>
+            </div>
+
+            <% if (data.cashBack > 0) { %>
+                <div class="foot">
+                    <span class="label">Plătit cu CashBac:</span>  
+                    <span class="total"><%= data.cashBack %> Lei</span>
+                </div>
+                <% if (!data.payOnLine) { %>
+                    <div class="foot">
+                        <span class="label">Rest de plată</span> 
+                        <span class="total"><%= data.total %> Lei</span>
+                    </div>
+                <% } %>
+            <% } %>
+
+            <% if (data.payOnLine) { %>
+                <div class="foot">
+                    <span class="label">Plătit online</span> 
+                    <span class="total"><%= data.total %> Lei</span>
+                </div>
+            <% } %>
+
+        </div>
+        <div class="info">
+            <span class="address">Adresă Locație: <%= data.locatie.address %></span>
+            <span class="time">Timp estimat de ridicare: <%= data.completetime / 1000 / 60 %> minute</span>
+            <span class="mess">Te așteptăm cu drag să vii să îți ridici comanda!</span>
+        </div>
+    </div>
+</body>
+</html>

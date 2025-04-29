@@ -285,13 +285,17 @@ module.exports.printBill = async (req, res, next) => {
 module.exports.printUnreg = async (req, res, next) => {
     try{
         const {bill, mainServer} = req.body
-        const newRep = new RepBill({fiscal: false, bill: bill._id})
-        socket.emit('nefiscal', JSON.stringify({bill: bill, serverKey: mainServer.key}))
+        const billl = JSON.parse(bill)
+        const newRep = new RepBill({fiscal: false, bill: billl._id})
+        await newRep.save()
+        socket.emit('nefiscal', JSON.stringify({bill: billl, serverKey: mainServer.key}))
         res.status(200).json({message: 'Bonul a fost tipărit!'})
     } catch(err){
         handleError(err, res)
     }
 }
+
+
 
 module.exports.changePaymentMethod = async (req, res, next) => {
     try{
