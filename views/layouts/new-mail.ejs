@@ -38,7 +38,7 @@
         font-size: 20px;
     }
     .label{
-        margin-left: 68px;
+        margin-left: 10%;
         flex: 60%;
         text-transform: uppercase;
     }
@@ -55,7 +55,7 @@
         align-items: center;
         justify-content: center;
         font-family: Courier, monospace;
-        font-size: 18px;
+        font-size: 14px;
         margin-top: 12px;
     }
     .info span{
@@ -102,14 +102,7 @@
                     <span class="label"><%= data.products[i].quantity %> X <%= data.products[i].name %></span>
                     <span class="total"><%= data.products[i].total %> Lei</span>
                 </div>
-            <% } %>
-
-            <% if (data.payOnSite) { %>
-                <li class="list-group-item d-flex custom"><span>Total de plată:</span>  <span class="bold margin-end"><%= data.totalProducts %> Lei</span> </li>
-            <% } else { %>
-                <li class="list-group-item d-flex custom"> <span>Total Produse:</span>  <span class="bold margin-end"><%= data.totalProducts %> Lei</span></li>
-            <% } %>
-         
+            <% } %>         
             <div class="foot">
                 <% if (data.payOnSite) { %>
                     <span class="label">Total de plată</span>
