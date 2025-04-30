@@ -23,6 +23,12 @@ router.route('/checkIn').post(authRoutes.checkInOrOut)
 router.route('/horoscop').get(authRoutes.getHoroscop)
 
 
+router.route('/sale-point')
+    .get(authRoutes.getSalePoints)
+    .post(authRoutes.addSalePoint)
+    .delete(authRoutes.deleteSalePoint)
+
+
 // router.route('/new-user').get(authRoutes.newUser)
 
 
