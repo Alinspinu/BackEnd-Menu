@@ -6,7 +6,7 @@ const cloudinary = require('cloudinary').v2;
 module.exports.sendCats = async (req, res, next) => {
     try {
         const { loc, point } = req.query;
-        const cats = await Cat.find({locatie: loc, salePoint: point}).populate({
+        const cats = await Cat.find({locatie: loc}).populate({
             path: 'product',
             populate: [
                 { path: 'category' },
