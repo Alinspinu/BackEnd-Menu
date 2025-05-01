@@ -1,11 +1,12 @@
 
-const Cat = require('../../models/office/product/cat')
+const Cat = require('../../models/office/product/cat');
+const salePoint = require('../../models/utils/sale-point');
 const cloudinary = require('cloudinary').v2;
 
 module.exports.sendCats = async (req, res, next) => {
     try {
-        const { loc } = req.query;
-        const cats = await Cat.find({locatie: loc}).populate({
+        const { loc, point } = req.query;
+        const cats = await Cat.find({locatie: loc, salePoint: point}).populate({
             path: 'product',
             populate: [
                 { path: 'category' },

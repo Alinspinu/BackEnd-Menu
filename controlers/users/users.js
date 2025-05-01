@@ -357,6 +357,17 @@ module.exports.getSalePoints = async (req, res) => {
     }
 }
 
+module.exports.editSalePoint = async (req, res) => {
+    try{
+        const {point} = req.body
+        const updatedPoint = await SalePoint.findByIdAndUpdate(point._id, point, {new: true})
+        res.status(200).json(updatedPoint)
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 
 
 module.exports.savePrintServer = async (req, res) => {

@@ -45,6 +45,7 @@ router.route('/find').get(users.detectPaymentError)
 router.route('/sale-point')
     .get(users.getSalePoints)
     .post(users.addSalePoint)
+    .put(users.editSalePoint)
     .delete(users.deleteSalePoint)
 
  
