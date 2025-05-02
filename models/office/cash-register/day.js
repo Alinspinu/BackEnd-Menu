@@ -48,7 +48,7 @@ daySchema.pre('save', async function (next) {
             cashOutDifference = this.cashOut - originalDocument.cashOut;
         }
         const nextDocument = await this.constructor.findOne(
-            {locatie: this.locatie , date: { $gt: this.date.getTime() } },
+            {locatie: this.locatie , salePoint: this.salePoint, date: { $gt: this.date.getTime() } },
             null,
             { sort: { date: 1 } }
             );
@@ -70,7 +70,7 @@ daySchema.pre('save', async function (next) {
         }
         this.cashOut += cashInDifference;
         const nextDoc = await this.constructor.findOne(
-            {locatie: this.locatie,  date: { $gt: this.date.getTime() } },
+            {locatie: this.locatie, salePoint: this.salePoint,  date: { $gt: this.date.getTime() } },
             null,
             { sort: { date: 1 } }
             );
