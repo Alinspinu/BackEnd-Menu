@@ -121,7 +121,7 @@ module.exports.addEntry = async (req, res, next) => {
         entryDate.setUTCHours(0,0,0,0)
         const nextDay = new Date(entryDate);
         nextDay.setDate(entryDate.getDate() + 1);
-        const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay}, locatie: locatie }, null, {new: true}).populate({ path: 'entry' })
+        const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay}, locatie: locatie, salePoint: salePoint }, null, {new: true}).populate({ path: 'entry' })
         if (day) {
             const daySum = day.entry.reduce((total, doc) => total + doc.amount, 0)
             day.entry.push(newEntry)
