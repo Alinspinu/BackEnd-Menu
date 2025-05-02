@@ -12,8 +12,8 @@ const {checkTopping, round} = require('../../utils/functions')
 
  module.exports.getProducts = async (req, res, next) => {
     try{
-      const {loc} = req.body
-      const products = await Product.find({locatie: loc}).populate([
+      const {loc, point} = req.body
+      const products = await Product.find({locatie: loc, salePoint: point}).populate([
         {path: 'category', select: 'name'}, 
         {
             path: 'subProducts', populate: {
