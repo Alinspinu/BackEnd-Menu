@@ -36,12 +36,12 @@ module.exports.saveIng = async(req, res, next) => {
 
   
     module.exports.searchIng = async (req, res, next) => {
-      const loc = req.query.loc
+      const {loc, point} = req.query
       const page = parseInt(req.query.page) || 1;
       const limit = 600; 
       const skip = (page - 1) * limit;
       try{  
-        const items = await Ingredient.find({locatie: loc}).skip(skip).limit(limit)
+        const items = await Ingredient.find({locatie: loc, salePoint: point}).skip(skip).limit(limit)
           .select([ '-unloadLog', '-uploadLog'])
           .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
           .populate({path: 'salePoint', select: 'name'})
@@ -84,11 +84,11 @@ module.exports.saveIng = async(req, res, next) => {
       }
     }
 
-
+//******* */
     module.exports.getIngConsumabil = async (req, res, next) => {
-      const loc = req.query.loc
+      const {loc, point} = req.query
       try{
-        const ings = await Ingredient.find({locatie: loc, dep: 'consumabil'}).select(['name', 'tvaPrice', 'uploadLog'])
+        const ings = await Ingredient.find({locatie: loc, dep: 'consumabil', salePoint: point}).select(['name', 'tvaPrice', 'uploadLog'])
         res.status(200).json(ings)
       } catch(err){
         console.log(err)
