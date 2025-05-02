@@ -88,7 +88,7 @@ module.exports.printNir = async (req, res, next) => {
       width: 280,
     });
 
-    doc.fontSize(10).text(`PUNCT DE LUCRU: ${nir.salePoint.name}`, 700, 15, {
+    doc.fontSize(9).text(`Punct de lucru: ${nir.salePoint.name.toUpperCase()}`, 600, 15, {
       width: 280,
     });
   
