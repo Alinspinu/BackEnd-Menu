@@ -2,7 +2,8 @@
 const Nir = require('../../models/office/nir')
 const ImpSheet = require('../../models/office/imp-sheet')
 const Report = require('../../models/office/report');
-const Ingredient = require('../../models/office/inv-ingredient')
+const Ingredient = require('../../models/office/inv-ingredient');
+const salePoint = require('../../models/utils/sale-point');
 
 
 
@@ -115,12 +116,20 @@ module.exports.updateIngsLogs = async (req, res) => {
 
 module.exports.getNirsBySuplier = async (req, res, next) => {
   try{
-    const {id} = req.query
-    const nirs = await Nir.find({suplier: id})
+    const {id, point} = req.query
+    if(point && point.length) {
+      const nirs = await Nir.find({suplier: id, salePoint: point})
+          .sort({ createdAt: -1 })
+          .limit(50)
+          .populate({path: 'suplier'})
+      res.status(200).json(nirs)
+    } else {
+      const nirs = await Nir.find({suplier: id})
         .sort({ createdAt: -1 })
         .limit(50)
         .populate({path: 'suplier'})
-    res.status(200).json(nirs)
+     res.status(200).json(nirs)
+    }
   } catch(error){
     console.log(error)
     res.status(500).json({message: error.message})
@@ -182,9 +191,9 @@ module.exports.payBill = async (req, res, next) => {
 
 
 module.exports.getNirs = async(req, res, next) => {
-  const loc = req.body.loc
+  const {loc, point} = req.body
   try{
-    const nirs = await Nir.find({locatie: loc})
+    const nirs = await Nir.find({locatie: loc, salePoint: point})
           .sort({ createdAt: -1 })
           .limit(100)
           .populate({path: 'suplier'})
@@ -200,10 +209,10 @@ module.exports.getNirs = async(req, res, next) => {
 
 module.exports.getNirsByDate = async (req, res, next) => {
   try{
-    const {loc, startDate, endDate} = req.body
+    const {loc, startDate, endDate, point} = req.body
     const start = new Date(startDate)
     const end = new Date(endDate)
-    const nirs = await Nir.find({locatie: loc, documentDate: {$gte: start, $lte: end}}).populate({path: 'suplier'})
+    const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: start, $lte: end}}).populate({path: 'suplier'})
     res.status(200).json(nirs)
   }catch(err) {
     console.log(err)
