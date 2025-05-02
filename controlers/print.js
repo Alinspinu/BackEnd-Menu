@@ -26,6 +26,9 @@ module.exports.printNir = async (req, res, next) => {
   .populate({
     path: 'locatie'
   })
+  .populate({
+    path: 'salePoint'
+  })
   const firma = nir.locatie
       if(nir.discount.length){
       nir.discount.forEach(discount => {
@@ -82,6 +85,10 @@ module.exports.printNir = async (req, res, next) => {
         }
       );
     doc.fontSize(6).text(`${firma.address}`, 10, 15, {
+      width: 280,
+    });
+
+    doc.fontSize(6).text(`${nir.salePoint.name}`, 460, 15, {
       width: 280,
     });
   
