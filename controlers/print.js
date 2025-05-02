@@ -88,7 +88,7 @@ module.exports.printNir = async (req, res, next) => {
       width: 280,
     });
 
-    doc.fontSize(6).text(`${nir.salePoint.name}`, 460, 15, {
+    doc.fontSize(10).text(`${nir.salePoint.name}`, 700, 15, {
       width: 280,
     });
   
