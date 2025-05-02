@@ -1,12 +1,12 @@
 const Day = require('../models/office/cash-register/day')
 
-const createCashRegisterDay = async (loc) => {
+const createCashRegisterDay = async (loc, point) => {
   const currentDate = new Date()
   currentDate.setUTCHours(0,0,0,0)
   let defaultValue = 0
-  const latestDocument = await Day.findOne({ locatie: loc }, null, { sort: { date: -1 } });
+  const latestDocument = await Day.findOne({ locatie: loc, salePoint: point }, null, { sort: { date: -1 } });
   if(!latestDocument){
-    const firtsDay = new Day({locatie: loc}) 
+    const firtsDay = new Day({locatie: loc, salePoint: point}) 
     firtsDay.save()
   }
   

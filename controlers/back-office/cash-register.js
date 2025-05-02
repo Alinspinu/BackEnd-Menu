@@ -9,10 +9,10 @@ const Suplier = require('../../models/office/suplier')
 
 
 module.exports.sendEntry = async (req, res, next) => {
-    const{loc} = req.query
-        createCashRegisterDay(loc)
+    const{loc, point} = req.query
+        createCashRegisterDay(loc, point)
             try{
-                const documents = await Day.find({locatie: loc}).populate({path: "entry"})
+                const documents = await Day.find({locatie: loc, salePoint: point}).populate({path: "entry"})
                 .limit(40)
                 .sort({ date: -1});
                 const sortedDocs = documents.sort((a,b) => {
@@ -60,8 +60,8 @@ module.exports.deleteDay = async (req, res, next) => {
 
 
 module.exports.addEntry = async (req, res, next) => {
-    const { tip, date, typeOf, suplier, user, description, document, amount, locatie, month, asociat } = req.body
-    createCashRegisterDay(locatie)
+    const { tip, date, typeOf, suplier, user, description, document, amount, locatie, month, asociat, salePoint } = req.body
+    createCashRegisterDay(locatie, salePoint)
     if(tip && date && amount){
         const entryDate = new Date(date)
         const newEntry = new Entry({
@@ -73,7 +73,8 @@ module.exports.addEntry = async (req, res, next) => {
             typeOf: typeOf,
             suplier: suplier,
             user: user,
-            document: document
+            document: document,
+            salePoint: salePoint
         })
         if(typeOf === 'Plata furnizor' && !asociat){
             const sup = await Suplier.findById(suplier).select('name sold')
@@ -193,10 +194,10 @@ module.exports.deleteEntry = async (req, res, next) => {
 
 module.exports.showDocs = async (req, res, next) => {
     try{    
-        const {startDate, endDate, loc} = req.body
+        const {startDate, endDate, loc, point} = req.body
         const start = new Date(startDate).setUTCHours(0,0,0,0)
         const end = new Date(endDate).setUTCHours(0,0,0,0)
-        const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end} }).populate({ path: 'entry' }).sort({ date: -1 });
+        const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end}, salePoint: point }).populate({ path: 'entry' }).sort({ date: -1 });
         res.status(200).json({message: 'all good', documents: days})
     
     } catch(err){
@@ -209,7 +210,7 @@ module.exports.showDocs = async (req, res, next) => {
 
 
 module.exports.createXcel = async (req, res, next) => {
-    const {startDate, endDate, loc} = req.body
+    const {startDate, endDate, loc, point} = req.body
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(0,0,0,0)
     const startDateToShow = new Date(startDate).toISOString().split('T')[0]
@@ -217,7 +218,7 @@ module.exports.createXcel = async (req, res, next) => {
     try{
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Sheet 1');
-        const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end} }).populate({ path: 'entry' }).populate({path: 'locatie'})
+        const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end}, salePoint: point }).populate({ path: 'entry' }).populate({path: 'locatie'})
         const day1 = days[0]
         const lastDay = days.at(-1)
         let totalIn = 0
