@@ -361,7 +361,7 @@ module.exports.editSalePoint = async (req, res) => {
     try{
         const {point} = req.body
         const updatedPoint = await SalePoint.findByIdAndUpdate(point._id, point, {new: true})
-        res.status(200).json(updatedPoint)
+        res.status(200).json({point: updatedPoint, message: 'Punctul de lucru a fost modificat cu success!'})
     } catch(error) {
         console.log(error)
         res.status(500).json(error)
