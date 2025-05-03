@@ -2,14 +2,15 @@
 const Table = require('../../models/utils/table')
 const Order = require('../../models/office/product/order')
 const User = require('../../models/users/user')
+const salePoint = require('../../models/utils/sale-point')
 
 module.exports.sendTables = async (req, res, next) => {
-    const {loc} = req.query
+    const {loc, point} = req.query
     try{
-         const tables = await Table.find({locatie: loc}).populate({
+         const tables = await Table.find({locatie: loc, salePoint: point}).populate({
             path: 'bills', 
             model: "Order", 
-            match: {status: "open", locatie: loc}, 
+            match: {status: "open", locatie: loc, salePoint: point}, 
             populate: {path: 'masaRest', select: 'index'}
         })
         const sortedTables = tables.sort((a,b) => a.index - b.index)
@@ -21,33 +22,14 @@ module.exports.sendTables = async (req, res, next) => {
 }
 
 
-module.exports.sendLiveOrders = async (req, res, next) => {
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    const changeStream = Order.watch({ fullDocument: "updateLookup" });
-    changeStream.on("change", async (change) => {
-        if (
-            change.operationType === "insert" &&
-            change.fullDocument.pending &&
-            change.fullDocument.masa === 54 
-        ) {           
-            console.log('Hit the message')
-            const message = { message: 'New Order', doc: change.fullDocument}
-            res.write(`data: ${JSON.stringify(message)}\n\n`);
-        }
-    })
-    console.log('hit-no orders')
-    const message = { message: 'No Orders' }
-    res.write(`data: ${JSON.stringify(message)}\n\n`);
-}
 
 module.exports.addTable = async (req, res, next) => {
-    const {loc} = req.query
+    const {loc, point} = req.query
+    const { name } = req.body;
     try{
-        const { name } = req.body;
         const table = new Table()
         table.locatie = loc
+        table.salePoint = point
         if(name){
             table.name = name
         }

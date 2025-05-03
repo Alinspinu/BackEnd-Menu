@@ -15,6 +15,7 @@ const {print} = require('../../utils/print/printOrders')
 const {printBill, posPayment} = require('../../utils/print/printFiscal')
 
 const io = require('socket.io-client');
+const salePoint = require('../../models/utils/sale-point');
 const socket = io("https://socket.flowmanager.ro")
 // const socket = io("http://localhost:8090")
 
@@ -23,29 +24,29 @@ const socket = io("https://socket.flowmanager.ro")
 //************************SEND ORDERS********************** */
 
 module.exports.getOrder = async (req, res, next) => {
-    const {start, end, day, loc} = req.body
+    const {start, end, day, loc, point} = req.body
     if(start && end){
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
-        const orders = await Order.find({locatie: loc, updatedAt: {$gte: startTime, $lt: endTime}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
-        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}})
+        const orders = await Order.find({locatie: loc, updatedAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
     if(day && !end && !start) {
         const start = new Date(day).setUTCHours(0,0,0,0)
         const end = new Date(day).setUTCHours(23,59,59,9999)
-        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: start, $lt: end}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
-        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}})
+        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: start, $lt: end}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}, salePoint: point})
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     if(!day && !end && !start) {
         const today = new Date().setUTCHours(0,0,0,0)
-        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done'}).populate({path: 'masaRest', select: 'name index'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open'}).populate({path: 'masaRest', select: 'name index'})
-        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}})
+        const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
+        const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point})
     
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
@@ -77,7 +78,7 @@ module.exports.testRaport = async (req, res) => {
 
 
 module.exports.calcDep = async (req, res, next) => {
-    const {start, end, loc} = req.query
+    const {start, end, loc, point} = req.query
     try{
     let ingIds = []
     let oldProd = []
@@ -85,7 +86,7 @@ module.exports.calcDep = async (req, res, next) => {
     if(start && end){
         const startTime = new Date(start).setHours(0,0,0,0)
         const endTime = new Date(end).setHours(23, 59, 59, 9999)
-        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'})
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep',  salePoint: point})
         for(const prod of delProds){
             for(const ing of prod.billProduct.ings){
                 if(ing.ing){
@@ -115,7 +116,7 @@ module.exports.calcDep = async (req, res, next) => {
                 totalIngs += (ing.qty * dbIng.tvaPrice)
           }
         for(const prod of oldProd){
-            const product = await Product.findOne({name: prod.name}).select('ings').populate('ings.ing').select('tvaPrice')
+            const product = await Product.findOne({name: prod.name , salePoint: point}).select('ings').populate('ings.ing').select('tvaPrice')
             if(product){
                 for(const ing of product.ings){
                     totalIngs += (ing.qty * ing.ing.tvaPrice * prod.qty)
@@ -187,7 +188,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
 module.exports.sendDeletedproduct = async (req, res, next) => {
     try{
         const delProds = DelProd.find({})
-        re.status(200).json(delProds)
+        res.status(200).json(delProds)
     } catch (err){
         console.log(err)
         res.status(500).json({message: err.message})
@@ -196,14 +197,14 @@ module.exports.sendDeletedproduct = async (req, res, next) => {
 }
 
 module.exports.getOrderByUser = async (req, res, nex) => {
+        const {userId, point} = req.query;
     try{
-    const date = new Date()
-    const start = new Date(date).setHours(0,0,0,0)
-    const end = new Date(date).setHours(23, 59, 59, 999)
-     const {userId} = req.query;
-     const user = await User.findById(userId)
-    const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end} })
-    res.status(200).json(orders)
+        const date = new Date()
+        const start = new Date(date).setHours(0,0,0,0)
+        const end = new Date(date).setHours(23, 59, 59, 999)
+        const user = await User.findById(userId)
+        const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end},  salePoint: point })
+        res.status(200).json(orders)
     } catch (err){
         console.log(err)
         res.status(500).json({message: err.message})
@@ -212,12 +213,12 @@ module.exports.getOrderByUser = async (req, res, nex) => {
 
 
 module.exports.getAllOrders = async (req, res, next) => {
+        const {loc, point} = req.query;
     try{
         const date = new Date()
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
-        const {loc} = req.query;
-        const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} })
+        const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} , salePoint: point})
             res.status(200).json(orders)         
     } catch(err){
         console.log(err)
@@ -259,7 +260,6 @@ module.exports.sendOrderTime = async (req, res, next) => {
 
 module.exports.saveOrEditBill = async (req, res, next) => {
     const {bill, mode, mainServer, secondaryServer} = req.body;
-    console.log(secondaryServer)
     const parsedBill = JSON.parse(bill)
     const {index, billId} = req.query;
     const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
@@ -370,7 +370,7 @@ module.exports.saveOrder = async (req, res, next) => {
                 newOrder.clientInfo.cashBack = user.cashBack
                 newOrder.preOrder = true
                 const savedOrder = await newOrder.save()
-                const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
+                const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'}) 
                 console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
                 if(newOrder.masa > 0){
                     const table = await Table.findOne({locatie: loc , index: newOrder.masa});
@@ -396,7 +396,6 @@ module.exports.saveOrder = async (req, res, next) => {
             delete order.user
             const newOrder = new Order(order) 
             const savedOrder = await newOrder.save();
-            console.log(savedOrder)
             socket.emit('orderId', JSON.stringify(savedOrder))
 
             const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
