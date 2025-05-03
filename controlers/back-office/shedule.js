@@ -3,14 +3,15 @@ const Shedule = require('../../models/users/shedule')
 const Pontaj = require('../../models/users/pontaj')
 const User = require('../../models/users/user')
 const mongoose = require('mongoose');
-const {getNowShedule} = require('../../utils/functions')
+const {getNowShedule} = require('../../utils/functions');
+const salePoint = require('../../models/utils/sale-point');
 
 
 
 module.exports.addShedule = async (req, res, next) => {
     const {loc, salePoint} = req.body
     try{   
-        const lastShedule = await Shedule.findOne({locatie: loc}, {}, { sort: { '_id': -1 } })
+        const lastShedule = await Shedule.findOne({locatie: loc, salePoint: salePoint}, {}, { sort: { '_id': -1 } })
         const date = new Date(lastShedule.days[6].date)
         
         let days = []
@@ -97,21 +98,21 @@ module.exports.addPontaj = async (req, res, next) => {
 }
 
 module.exports.getPontaj = async (req, res, next) => {
-    const {loc, pont, month} = req.query
+    const {loc, pont, month, point} = req.query
     try{    
         if(pont === 'last'){
-            const pontajs = await Pontaj.find({locatie: loc})
+            const pontajs = await Pontaj.find({locatie: loc, salePoint: point})
                 .sort({_id: -1})
                 .limit(3)
             const pontaj = getNowShedule(pontajs)    
             res.status(200).json(pontaj)
         }
         if(pont === 'all'){
-            const ponts = await Pontaj.find({locatie: loc})
+            const ponts = await Pontaj.find({locatie: loc, salePoint: point})
             res.status(200).json(ponts)
         }
         if(month){
-            const pont = await Pontaj.findOne({locatie: loc, month: month})
+            const pont = await Pontaj.findOne({locatie: loc, month: month, salePoint: point})
             res.status(200).json(pont)
         }
     } catch(err){
@@ -123,10 +124,10 @@ module.exports.getPontaj = async (req, res, next) => {
 
 
 module.exports.getShedules = async (req, res, next) => {
-    const {loc, shedule} = req.query
+    const {loc, shedule, point} = req.query
     try{
         if(shedule === 'last'){
-            const shedules = await Shedule.find({locatie: loc})
+            const shedules = await Shedule.find({locatie: loc, salePoint: point})
             .sort({_id: -1})
             .limit(3)
             .populate({path: 'days.users.employee', select: 'employee.fullName'})
@@ -134,7 +135,7 @@ module.exports.getShedules = async (req, res, next) => {
             res.status(200).json(shedule)
         }
         if(shedule === 'all'){
-            const shedules = await Shedule.find({locatie: loc}).populate({path: 'days.users.employee', select: 'employee.fullName'})
+            const shedules = await Shedule.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employee', select: 'employee.fullName'})
             res.status(200).json(shedules)
         }
     } catch(err){
@@ -144,9 +145,9 @@ module.exports.getShedules = async (req, res, next) => {
 }
 
 module.exports.updateShedule = async (req, res, next) => {
-    const {sheduleId, day, user, month, dayValue, loc} = req.body
+    const {sheduleId, day, user, month, dayValue, loc, point} = req.body
     try{
-        const pontaj = await Pontaj.findOne({month: month, locatie: loc})
+        const pontaj = await Pontaj.findOne({month: month, locatie: loc, salePoint: point})
         const shedule = await Shedule.findById(sheduleId).populate({path: 'days.users.employee', select: 'employee.fullName'})
         const us = await User.findById(user.employee).select('employee').populate({path: 'employee',select: 'position' })
         const dayIndex = shedule.days.findIndex(obj => obj.day === day.day)
@@ -196,9 +197,9 @@ module.exports.updateShedule = async (req, res, next) => {
 }
 
 module.exports.deletEntry = async (req, res, next) => {
-    const {sheduleId, userId, day, month, dateStr, loc} = req.query
+    const {sheduleId, userId, day, month, dateStr, loc, point} = req.query
     try{
-        const pontaj = await Pontaj.findOne({month: month, locatie: loc})
+        const pontaj = await Pontaj.findOne({month: month, locatie: loc, salePoint: point})
         const shedule = await Shedule.findById(sheduleId)
         const date = new Date(dateStr)
         const pontDayIndex = pontaj.days.findIndex(obj => {
@@ -209,7 +210,7 @@ module.exports.deletEntry = async (req, res, next) => {
             return objDay.getTime() === inputDay.getTime();
         })
         const newPontaj = await Pontaj.findOneAndUpdate(
-            {month: month, locatie: loc}, 
+            {month: month, locatie: loc, salePoint: point}, 
             {$pull: {[`days.${pontDayIndex}.users`]: {employee: userId}}}, 
             {new: true})
         const dayIndex = shedule.days.findIndex(obj => obj.day === day)

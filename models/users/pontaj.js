@@ -19,7 +19,7 @@ const PontajSchema = new Schema({
                     employee: {
                         type: Schema.Types.ObjectId,
                         ref: 'User'
-                    }
+                    },
                 }
             ],
             workValue: Number,
