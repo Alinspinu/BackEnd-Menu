@@ -101,7 +101,8 @@ module.exports.addEntry = async (req, res, next) => {
                 amount: amount / user.length,
                 tip: typeOf,
                 date: entryDate,
-                workMonth: month
+                workMonth: month,
+                salePoint: salePoint
             }
             for(let id of user){
             await User.findOneAndUpdate({_id: id}, {$push: {'employee.payments': payment}})
@@ -113,7 +114,8 @@ module.exports.addEntry = async (req, res, next) => {
                 amount: amount,
                 tip: typeOf,
                 date: entryDate,
-                workMonth: month
+                workMonth: month,
+                salePoint: salePoint
             }
            await User.findOneAndUpdate({_id: user[0]}, {$push: {'employee.payments': payment}})
         }
