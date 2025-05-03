@@ -5,7 +5,6 @@ const createCashRegisterDay = async (loc, point) => {
   currentDate.setUTCHours(0,0,0,0)
   let defaultValue = 0
   const latestDocument = await Day.findOne({ locatie: loc, salePoint: point }, null, { sort: { date: -1 } });
-  console.log(latestDocument)
   if(!latestDocument){
     const firtsDay = new Day({locatie: loc, salePoint: point}) 
     firtsDay.save()

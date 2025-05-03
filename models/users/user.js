@@ -131,9 +131,12 @@ const UserTrueSchema = new Schema({
                 amount: Number,
                 tip: {
                         type: String,
-                        enum: ['Avans', 'Salariu', 'Bonus vanzari', 'Bonus excelenta', 'Plata catre administrator', 'Concediu', `Incasare de la administrator`]
                     },
-                workMonth: Number
+                workMonth: Number,
+                salePoint: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'SalePoint'
+                }
             
             }
         ], 
@@ -147,6 +150,10 @@ const UserTrueSchema = new Schema({
                 position: String,
                 concediu: Boolean,
                 medical: Boolean,
+                salePoint: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'SalePoint'
+                }
             }
         ],
         salePoint: {
