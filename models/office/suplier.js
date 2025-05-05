@@ -75,6 +75,10 @@ const suplierSchema = new Schema({
    
       date: {
         type: Date
+      },
+      salePoint:{
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
       }
     }
   ]

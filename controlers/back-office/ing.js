@@ -6,6 +6,7 @@ const DelProd = require('../../models/office/product/deletetProduct')
 const ImpSheet = require('../../models/office/imp-sheet')
 const CigarsInv = require('../../models/cigars-inv')
 const impSheet = require('../../models/office/imp-sheet')
+const salePoint = require('../../models/utils/sale-point')
 
 
 
@@ -129,12 +130,12 @@ module.exports.saveIng = async(req, res, next) => {
 
 
     module.exports.saveInventary = async (req, res, next) => {
-      const {loc} = req.query
+      const {loc, point} = req.query
       try {
         const date = new Date();
         date.setUTCHours(23, 0, 0, 0, 0);
         const formattedDate = date.toISOString();
-        const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune qty dep um')
+        const ings = await Ingredient.find({locatie: loc, productIngredient: false, salePoint: point}).select('inventary name gestiune qty dep um')
         const updatePromises = ings.map(ing => {
           let index = 1;
           if (ing.inventary && ing.inventary.length) {
@@ -200,9 +201,9 @@ module.exports.getIng = async (req, res) => {
 
 module.exports.saveInv = async (req, res, next) => {
   try{
-    const {date, loc} = req.body
+    const {date, loc, point} = req.body
     const invDate = new Date(date).setUTCHours(0,0,0,0)
-    const ings = await Ingredient.find({locatie: loc, productIngredient: false}).select('inventary name gestiune dep um')
+    const ings = await Ingredient.find({locatie: loc, productIngredient: false, salePoint: point}).select('inventary name gestiune dep um')
     const ingredients = ings.map(ing => {
 
       let foundFirstMatch = false;
@@ -226,10 +227,9 @@ module.exports.saveInv = async (req, res, next) => {
       return newIng
     })
     const filtredIngredients = ingredients.filter(ing => ing.name)
-    const savedInventary = await Inventary.findOne({date: invDate, locatie: loc})
+    const savedInventary = await Inventary.findOne({date: invDate, locatie: loc, salePoint: point})
     if(savedInventary) {
       const update = {
-        locatie: loc,
         date: invDate,
         ingredients: filtredIngredients
       }
@@ -241,6 +241,7 @@ module.exports.saveInv = async (req, res, next) => {
       } else {
         const inv = new Inventary({
           locatie: loc,
+          salePoint: point,
           date: invDate,
           ingredients: filtredIngredients
         })
@@ -261,19 +262,19 @@ module.exports.compareScriptic = async (req, res, next) => {
     let ingredients = []
     let consIngs = []
     let delIngs = []
-    const {start, end, loc} = req.body
+    const {start, end, loc, point} = req.body
     const startTime = new Date(start).setUTCHours(0,0,0,0)
     const endTime = new Date(end).setUTCHours(0,0,0,0)
     const eTime = new Date(end).setUTCHours(23,0,0,0)
-    const ings = await Ingredient.find({locatie: loc,  productIngredient: false}).select('name uploadLog um')
-    const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'})
+    const ings = await Ingredient.find({locatie: loc,  productIngredient: false, salePoint: point}).select('name uploadLog um')
+    const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep', salePoint: point})
           .populate({path: 'billProduct.ings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
           .populate({path: 'billProduct.toppings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
-    const firstInventary = await Inventary.findOne({date: startTime, locatie: loc})
-    const lastInventary = await Inventary.findOne({date: endTime, locatie: loc})
-    const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: eTime}})
+    const firstInventary = await Inventary.findOne({date: startTime, locatie: loc, salePoint: point})
+    const lastInventary = await Inventary.findOne({date: endTime, locatie: loc, salePoint: point})
+    const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: eTime}, salePoint: point})
                               .populate({path: 'ings.ing', select: 'name um ings productIngredient', populate: {path: 'ings.ing', select: 'name um' }})
-    const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}}).populate([
+    const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}, salePoint: point}).populate([
       {
         path: 'products.ings.ing', 
         populate: {path: 'ings.ing'}
@@ -603,14 +604,14 @@ module.exports.updateIngredientQuantity = async (req, res, next) => {
 
 module.exports.getInventary = async (req, res, next) =>{
   try{
-    const {inventaryId, loc} = req.query;
+    const {inventaryId, loc, point} = req.query;
     if(inventaryId === 'last'){
-      const inventary = await Inventary.findOne({locatie: loc}).sort({ _id: -1 })
+      const inventary = await Inventary.findOne({locatie: loc, salePoint: point}).sort({ _id: -1 })
         .populate({path: 'ingredients.ing', select: 'price um'})
       res.status(200).json(inventary)
     } else if(inventaryId === "all"){
     
-      const inventaries = await Inventary.find({locatie: loc})
+      const inventaries = await Inventary.find({locatie: loc, salePoint: point})
         .populate({path: 'ingredients.ing', select: 'price um'})
       res.status(200).json(inventaries)
     } else {

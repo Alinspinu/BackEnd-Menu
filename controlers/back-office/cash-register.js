@@ -89,7 +89,8 @@ module.exports.addEntry = async (req, res, next) => {
                 },
                 sold: sup.sold - amount,
                 description: description,
-                date: entryDate
+                date: entryDate,
+                salePoint: salePoint
             }
             await Suplier.findByIdAndUpdate(
                 suplier,  
