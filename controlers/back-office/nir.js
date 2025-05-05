@@ -41,8 +41,8 @@ module.exports.deleteSheet = async (req, res) => {
 
 module.exports.getSheets = async (req, res) => {
     try{
-        const {loc} = req.query
-        const sheets = await ImpSheet.find({locatie: loc})
+        const {loc, point} = req.query
+        const sheets = await ImpSheet.find({locatie: loc, salePoint: point})
         .sort({date: -1})
         .limit(30)
         .populate({path: 'ings.ing', select: 'name price um tva'})
@@ -61,10 +61,10 @@ module.exports.getSheets = async (req, res) => {
 
 module.exports.getSheetsByPeriod = async (req, res) => {
   try{
-    const {startDate, endDate, loc} = req.query
+    const {startDate, endDate, loc, point} = req.query
     const startTime = new Date(startDate).getTime()
     const endTime = new Date(endDate).getTime()
-    const sheets = ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}}) 
+    const sheets = ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}, salePoint: point}) 
     res.status(200).json(sheets)
   } catch(error){
     console.log(error)
