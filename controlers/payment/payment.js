@@ -60,12 +60,12 @@ module.exports.getToken = async (req, res, next) => {
         };
         token = response.data.access_token;
         const urlPayment = 'https://api.vivapayments.com/checkout/v2/orders';
-        const response2 = await axios.post(urlPayment, requestBody, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${response.data.access_token}`,
-            }
-        });
+        // const response2 = await axios.post(urlPayment, requestBody, {
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         Authorization: `Bearer ${response.data.access_token}`,
+        //     }
+        // });
         res.status(200).json(response2.data);
     } catch (error) {
         console.error(error);
