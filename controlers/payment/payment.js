@@ -29,6 +29,9 @@ module.exports.getToken = async (req, res, next) => {
             Authorization: `Basic ${credentials}`
         };
         const total = parseInt(req.query.total) * 100;
+        console.log('Posting to:', url);
+        console.log('Headers:', headers);
+        console.log('Body:', 'grant_type=client_credentials');
         const response = await axios.post(url, 'grant_type=client_credentials', { headers });
         const requestBody = {
             amount: total,
@@ -49,7 +52,7 @@ module.exports.getToken = async (req, res, next) => {
             disableExactAmount: false,
             disableCash: true,
             disableWallet: true,
-            sourceCode: '1180',
+            sourceCode: '8010',
             merchantTrns: '',
             tags: [
 
@@ -60,12 +63,12 @@ module.exports.getToken = async (req, res, next) => {
         };
         token = response.data.access_token;
         const urlPayment = 'https://api.vivapayments.com/checkout/v2/orders';
-        // const response2 = await axios.post(urlPayment, requestBody, {
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         Authorization: `Bearer ${response.data.access_token}`,
-        //     }
-        // });
+        const response2 = await axios.post(urlPayment, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${response.data.access_token}`,
+            }
+        });
         res.status(200).json(response2.data);
     } catch (error) {
         console.error(error);
