@@ -29,9 +29,6 @@ module.exports.getToken = async (req, res, next) => {
             Authorization: `Basic ${credentials}`
         };
         const total = parseInt(req.query.total) * 100;
-        console.log('Posting to:', url);
-        console.log('Headers:', headers);
-        console.log('Body:', 'grant_type=client_credentials');
         const response = await axios.post(url, 'grant_type=client_credentials', { headers });
         const requestBody = {
             amount: total,
