@@ -51,7 +51,7 @@ module.exports.getToken = async (req, res, next) => {
             disableExactAmount: false,
             disableCash: true,
             disableWallet: true,
-            sourceCode: code,
+            sourceCode: '8010',
             merchantTrns: '',
             tags: [
 
