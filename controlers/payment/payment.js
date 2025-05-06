@@ -19,6 +19,7 @@ const socket = io("https://socket.flowmanager.ro")
 // const socket = io("http://localhost:8090")
 
 module.exports.getToken = async (req, res, next) => {
+    const {code} = req.query
     try {
         const clientId = process.env.VIVA_CLIENT_ID_PRODUCTION;
         const clientSecret = process.env.VIVA_CLIENT_SECRET_PRODUCTION;
@@ -49,7 +50,7 @@ module.exports.getToken = async (req, res, next) => {
             disableExactAmount: false,
             disableCash: true,
             disableWallet: true,
-            sourceCode: '1180',
+            sourceCode: code,
             merchantTrns: '',
             tags: [
 
