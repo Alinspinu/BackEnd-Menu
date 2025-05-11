@@ -361,9 +361,9 @@ module.exports.saveOrder = async (req, res, next) => {
     try {
         const {order, adminEmail, loc} = req.body
         order.soketId = generateSoketId(16)
-        if (order.user !== 'john doe') {
+        if (order.clientInfo.name !== 'Neînregistrat') {
             const newOrder = new Order(order) 
-            const user = await User.findById(order.user);
+            const user = await User.findById(order.clientInfo.userId);
             if (user) {
                 newOrder.clientInfo.email = user.email
                 newOrder.clientInfo.discount = user.discount
@@ -433,6 +433,7 @@ module.exports.setOrderTime = async (req, res, next) => {
         const time = parseFloat(req.query.time);
         const orderId = (req.query.orderId);
         const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true });
+        socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime}))
         console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
         res.status(200).json({ message: 'time set' });
     } catch (error) {
