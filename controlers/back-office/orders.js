@@ -361,6 +361,9 @@ module.exports.saveOrder = async (req, res, next) => {
     try {
         const {order, adminEmail, loc} = req.body
         order.soketId = generateSoketId(16)
+        const table = await Table.findOne({locatie: loc, salePoint: order.salePoint, name: 'Comenzi Online'});
+        table ? order.masa = table.index : null
+        table ? order.masaRest = table._id : null
         if (order.clientInfo.name !== 'Neînregistrat') {
             const newOrder = new Order(order) 
             const user = await User.findById(order.clientInfo.userId);
@@ -372,8 +375,6 @@ module.exports.saveOrder = async (req, res, next) => {
                 const savedOrder = await newOrder.save()
                 const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'}) 
                 console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
-
-                const table = await Table.findOne({locatie: loc, salePoint: newOrder.salePoint, name: 'Comenzi Online'});
                 if(table){
                     table.bills.push(savedOrder._id)
                     await table.save()
@@ -399,8 +400,6 @@ module.exports.saveOrder = async (req, res, next) => {
 
             const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
             console.log(`Order ${dbOrder._id} saved without a user!`)
-            
-            const table = await Table.findOne({locatie: loc, salePoint: newOrder.salePoint, name: 'Comenzi Online'});
             if(table){
                 table.bills.push(savedOrder._id)
                 await table.save()
