@@ -28,6 +28,10 @@ router.route('/sale-point')
     .post(authRoutes.addSalePoint)
     .delete(authRoutes.deleteSalePoint)
 
+router.route('/ct')
+    .get(authRoutes.encodeUserID)
+    .post(authRoutes.decodeUserToken)
+
 
 // router.route('/new-user').get(authRoutes.newUser)
 
