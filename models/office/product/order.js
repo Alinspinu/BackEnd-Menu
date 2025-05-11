@@ -144,7 +144,6 @@ const orderTrueSchema = new Schema({
     employee:{
       fullName: {
         type: String,
-        indec: true
       },
       position: String,
       user: {
