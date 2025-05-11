@@ -17,7 +17,7 @@ module.exports.encodeUserID = async (req, res) => {
             xx4,
             createdAt: Date.now()
           };
-          const token = jwt.sign(payload, process.env.AUTH_SECRET, { expiresIn: '5m' });
+          const token = jwt.sign(payload, process.env.AUTH_SECRET, { expiresIn: '10m' });
           res.status(200).json(token)
 
     } catch(error) {
@@ -28,13 +28,10 @@ module.exports.encodeUserID = async (req, res) => {
 
 module.exports.decodeUserToken = async (req, res) => {
     const {token} = req.body
-
     if (!token) return res.status(400).json({ error: 'Missing token' });
-
     try{
         const decoded = jwt.verify(token, process.env.AUTH_SECRET);
         res.status(200).json(decoded)
-
     } catch(error) {
         console.log(error)
         res.status(500).json(error)
