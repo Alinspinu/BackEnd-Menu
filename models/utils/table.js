@@ -53,7 +53,7 @@ tableSchema.pre('deleteOne', { document: true, query: false }, async function (n
   
     try {
       // Find the highest index in the collection
-      const highestIndex = await this.constructor.findOne({locatie: this.locatie, salepoint: this.salePoint}).sort({ index: -1 }).select('index');
+      const highestIndex = await this.constructor.findOne({locatie: this.locatie, salePoint: this.salePoint}).sort({ index: -1 }).select('index');
   
       // Set the index for the new document
       this.index = highestIndex ? highestIndex.index + 1 : 1;
