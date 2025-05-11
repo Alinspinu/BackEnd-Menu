@@ -80,6 +80,7 @@ module.exports.saveNir = async( req, res, next) => {
     nir.documentDate = new Date(Date.now())
    }
    try{
+    console.log(nir)
       const newNir = new Nir(nir)
       newNir.suplier = nir.suplier._id
       newNir.locatie = loc
