@@ -388,7 +388,6 @@ module.exports.saveOrder = async (req, res, next) => {
                 if(order.payOnline){
                     action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
-                if(order.completetime > 2) socket.emit('orderTime', JSON.stringify({id: savedOrder._id, time: savedOrder.completetime}))
                 socket.emit('orderId', JSON.stringify(savedOrder))
                 sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
                 res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate });
@@ -399,7 +398,6 @@ module.exports.saveOrder = async (req, res, next) => {
             const newOrder = new Order(order) 
             const savedOrder = await newOrder.save();
             socket.emit('orderId', JSON.stringify(savedOrder))
-            if(order.completetime > 2) socket.emit('orderTime', JSON.stringify({id: savedOrder._id, time: savedOrder.completetime}))
             const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
             console.log(`Order ${dbOrder._id} saved without a user!`)
             if(table){
