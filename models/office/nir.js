@@ -167,7 +167,7 @@ nirSchema.pre('save', async function (next){
 
 
     const counter = await Counter.findOneAndUpdate(
-      { locatie: doc.locatie, model: "Nir" },
+      { locatie: doc.locatie, model: "Nir", salePonit: doc.salePoint },
       { $inc: { value: 1 } },
       { upsert: true, new: true }
     );

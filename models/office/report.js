@@ -325,7 +325,7 @@ reportSchema.pre("save", async function (next) {
       if(doc.index > 0){
       } else {
         const counter = await Counter.findOneAndUpdate(
-          { locatie: this.locatie, model: "Report" },
+          { locatie: this.locatie, model: "Report", salePoint: this.salePoint },
           { $inc: { value: 1 } },
           { upsert: true, new: true }
         );

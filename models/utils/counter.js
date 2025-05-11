@@ -8,6 +8,10 @@ const CounterSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Locatie'
 },
+salePoint: {
+  type: Schema.Types.ObjectId,
+  ref: 'SalePoint'
+}
 });
 
 module.exports = mongoose.model('Counter', CounterSchema);
