@@ -366,8 +366,10 @@ module.exports.saveOrder = async (req, res, next) => {
         table ? order.masaRest = table._id : null
         delete order._id
         delete order.empolyee.user
+        console.log(order)
         if (order.clientInfo.name !== 'Neînregistrat') {
             const newOrder = new Order(order) 
+            console.log(newOrder)
             const user = await User.findById(order.clientInfo.userId);
             if (user) {
                 newOrder.clientInfo.email = user.email
