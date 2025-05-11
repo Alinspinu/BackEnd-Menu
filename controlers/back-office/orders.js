@@ -360,13 +360,13 @@ module.exports.unloadIngs = async (req, res, next) => {
 module.exports.saveOrder = async (req, res, next) => {
     try {
         const {order, adminEmail, loc} = req.body
+        console.log(order)
         order.soketId = generateSoketId(16)
         const table = await Table.findOne({locatie: loc, salePoint: order.salePoint, name: 'Comenzi Online'});
         table ? order.masa = table.index : null
         table ? order.masaRest = table._id : null
         delete order._id
         delete order.empolyee.user
-        console.log(order)
         if (order.clientInfo.name !== 'Neînregistrat') {
             const newOrder = new Order(order) 
             console.log(newOrder)
