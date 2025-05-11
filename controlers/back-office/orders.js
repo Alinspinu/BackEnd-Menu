@@ -365,7 +365,7 @@ module.exports.saveOrder = async (req, res, next) => {
         table ? order.masa = table.index : null
         table ? order.masaRest = table._id : null
         delete order._id
-        delete order.emplyee.user
+        delete order.empolyee.user
         if (order.clientInfo.name !== 'Neînregistrat') {
             const newOrder = new Order(order) 
             const user = await User.findById(order.clientInfo.userId);
