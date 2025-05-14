@@ -130,9 +130,9 @@ module.exports.verifyOTP = async (req, res) => {
             const now = new Date().getTime()
             const otpDate = new Date(user.otp.date).getTime()
             if( now - otpDate < 300000){
-                res.status(200).json({message: 'valid'})
+                res.status(200).json({message: 'valid', id: user._id})
             } else {
-                res.status(200).json({message: 'expired'})
+                res.status(200).json({message: 'expired', id: user._id})
             }
         } else {
             res.status(200).json({message: 'invalid'})
