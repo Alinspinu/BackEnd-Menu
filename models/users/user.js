@@ -166,6 +166,10 @@ const UserTrueSchema = new Schema({
         enum: ['active', 'inactive'],
         default: 'inactive'
     },
+    otp: {
+        code: String,
+        date: Date
+    },
     hobbies: {
         type: String,
         default: ''

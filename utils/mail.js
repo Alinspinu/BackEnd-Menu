@@ -41,14 +41,12 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
 
 
 
-async function sendVerificationEmail(newUser, baseUrlRedirect) {
-    const token = jwt.sign({ userId: newUser._id }, process.env.AUTH_SECRET, { expiresIn: '15m' });
-    
+async function sendVerificationEmail(newUser) {
+ 
     const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
     const templateData = {
-        link: `${baseUrlRedirect}verify-email?token=${token}`,
+        otp: newUser.otp,
         name: newUser.name,
-        message: 'Prin acest mesaj vrem să-ți confirmi adresa de email.',
         locatie: newUser.locatie.name
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
@@ -65,7 +63,7 @@ async function sendVerificationEmail(newUser, baseUrlRedirect) {
           });
           const mailOptions = {
               from: newUser.locatie.gmail.email,
-              to: newUser.email, // Assuming the email is present in the newUser object
+              to: newUser.email, 
               subject: 'Verificare Email',
               html: renderedTemplate
           };

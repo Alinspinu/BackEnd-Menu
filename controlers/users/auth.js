@@ -5,7 +5,7 @@ const Locatie = require('../../models/office/locatie')
 const SalePoint = require('../../models/utils/sale-point')
 
 
-const { comparePasswords, hashPassword, round } = require('../../utils/functions')
+const { comparePasswords, hashPassword, round, generateSoketId } = require('../../utils/functions')
 const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, sendEmployeeEmail } = require('../../utils/mail')
 const {generateMood, horoscop} = require('../../controlers/gbt')
 
@@ -48,7 +48,6 @@ module.exports.register = async (req, res, next) => {
                 password: hashedPassword,
                 telephone: tel,
                 survey: survey,
-                locatie: loc
             }
             const user = await User.findByIdAndUpdate(id, update, {new: true})
             
@@ -63,6 +62,7 @@ module.exports.register = async (req, res, next) => {
            }
            if (password === confirmPassword) {
                const hashedPassword = hashPassword(password);      
+               const otp = generateSoketId(3)
                const newUser = new User({
                    email: email,
                    password: hashedPassword,
@@ -72,6 +72,7 @@ module.exports.register = async (req, res, next) => {
                    survey: survey,
                    locatie: loc,
                    cashBackProcent: 5,
+                   otp: {code: otp, date: new Date()}
                });
                if(loc === '65ba7dcf1694ff43f52d44ed'){
                     newUser.discount.general = 10
@@ -82,7 +83,7 @@ module.exports.register = async (req, res, next) => {
                 }   
                 await newUser.save();
                 const dbUser = await User.findOne({email: email, locatie: loc}).populate({path: 'locatie'})
-                sendVerificationEmail(dbUser, url).then(response => {
+                sendVerificationEmail(dbUser).then(response => {
                    if (response.message === 'Email sent') {
                        res.status(200).json({ message: response.message, id: newUser._id });
                    } else {
@@ -98,6 +99,47 @@ module.exports.register = async (req, res, next) => {
         res.status(500).json(error)
     }
 };
+
+module.exports.resendOTP = async (req, res) => {
+    const {id} = req.query
+    try{
+        const otp = generateSoketId(3)
+        const user = await User.findByIdAndUpdate(id, {otp: {code: otp, date: new Date()}}, {new: true})
+        if(user){
+        sendVerificationEmail(user).then(response => {
+            if (response.message === 'Email sent') {
+                res.status(200).json({ message: response.message, id: user._id });
+            } else {
+                res.status(256).json({ message: response.message, id: user._id });
+            };
+        });
+        }
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.verifyOTP = async (req, res) => {
+    const {otp} = req.body
+    try{
+        const user = await User.findOne({otp: otp})
+        if(user){
+            const now = new Date().getTime()
+            const otpDate = new Date(user.otp.date).getTime()
+            if( now - otpDate < 300000){
+                res.status(200).json({message: 'valid'})
+            } else {
+                res.status(200).json({message: 'expired'})
+            }
+        } else {
+            res.status(200).json({message: 'invalid'})
+        }
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
 
 
 module.exports.checkInOrOut = async (req, res) => {
