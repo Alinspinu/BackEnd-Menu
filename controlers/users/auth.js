@@ -132,10 +132,10 @@ module.exports.verifyOTP = async (req, res) => {
             const otpDate = new Date(user.otp.date).getTime()
             if( now - otpDate < 300000){
                 user.status = 'active'
-                const activeUser = await user.save()
-                const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: '5m'});
-                activeUser.token = token
-                res.status(200).json({message: 'valid', id: user._id, user: activeUser})
+                await user.save()
+                const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: '1d'});
+                const sendData = addUserData(user, token)
+                res.status(200).json({message: 'valid', id: user._id, user: sendData})
             } else {
                 res.status(200).json({message: 'expired', id: user._id})
             }
@@ -361,22 +361,23 @@ module.exports.login = async (req, res, next) => {
     } else if (user.status === "active") {
         let expireDate = user.admin === 1 ? '7d' : '1d'
         const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn:  expireDate});
-        const sendData = {
-            token: token,
-            name: user.name,
-            admin: user.admin,
-            cashBack: user.cashBack,
-            email: user.email,
-            status: user.status,
-            telephone: user.telephone,
-            employee: user.employee,
-            locatie: user.locatie._id,
-            discount: user.discount,
-            profilePic: user.profilePic,
-            hobbies: user.hobbies,
-            description: user.description,
-            checkIn: user.checkIn,
-        };
+        const sendData = addUserData(user, token)
+        // const sendData = {
+        //     token: token,
+        //     name: user.name,
+        //     admin: user.admin,
+        //     cashBack: user.cashBack,
+        //     email: user.email,
+        //     status: user.status,
+        //     telephone: user.telephone,
+        //     employee: user.employee,
+        //     locatie: user.locatie._id,
+        //     discount: user.discount,
+        //     profilePic: user.profilePic,
+        //     hobbies: user.hobbies,
+        //     description: user.description,
+        //     checkIn: user.checkIn,
+        // };
         res.status(200).json(sendData);
     };
 
@@ -387,6 +388,26 @@ module.exports.login = async (req, res, next) => {
 
 };
 
+
+function addUserData (user, token) {
+    const sendData = {
+        token: token,
+        name: user.name,
+        admin: user.admin,
+        cashBack: user.cashBack,
+        email: user.email,
+        status: user.status,
+        telephone: user.telephone,
+        employee: user.employee,
+        locatie: user.locatie._id,
+        discount: user.discount,
+        profilePic: user.profilePic,
+        hobbies: user.hobbies,
+        description: user.description,
+        checkIn: user.checkIn,
+    };
+    return sendData
+}
 
 
 
