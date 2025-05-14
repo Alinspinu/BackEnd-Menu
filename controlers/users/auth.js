@@ -126,6 +126,7 @@ module.exports.verifyOTP = async (req, res) => {
     const {otp} = req.body
     try{
         const user = await User.findOne({'otp.code': otp.code}).populate({path: 'locatie'})
+        console.log(user)
         if(user){
             const now = new Date().getTime()
             const otpDate = new Date(user.otp.date).getTime()
