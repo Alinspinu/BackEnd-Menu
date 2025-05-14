@@ -132,8 +132,10 @@ module.exports.verifyOTP = async (req, res) => {
             const otpDate = new Date(user.otp.date).getTime()
             if( now - otpDate < 300000){
                 user.status = 'active'
-                await user.save()
-                res.status(200).json({message: 'valid', id: user._id})
+                const activeUser = await user.save()
+                const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn: '5m'});
+                activeUser.token = token
+                res.status(200).json({message: 'valid', id: user._id, user: activeUser})
             } else {
                 res.status(200).json({message: 'expired', id: user._id})
             }
@@ -343,7 +345,7 @@ module.exports.login = async (req, res, next) => {
         return res.status(401).json({ message: 'Invalid email or password' });
     };
     if (user.status === 'inactive') {
-        return  sendVerificationEmail(user, url).then(response => {
+        return  sendVerificationEmail(user).then(response => {
             const userData = {
                 name: user.name,
                 email: user.email,
