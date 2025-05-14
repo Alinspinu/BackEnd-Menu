@@ -104,7 +104,8 @@ module.exports.resendOTP = async (req, res) => {
     const {id} = req.query
     try{
         const otp = generateSoketId(4)
-        const user = await User.findByIdAndUpdate(id, {otp: {code: otp, date: new Date()}}, {new: true})
+        const user = await User.findByIdAndUpdate(id, {otp: {code: otp, date: new Date()}}, {new: true}).populate({path: 'locatie'})
+        console.log(user)
         if(user){
         sendVerificationEmail(user).then(response => {
             if (response.message === 'Email sent') {
@@ -125,9 +126,7 @@ module.exports.resendOTP = async (req, res) => {
 module.exports.verifyOTP = async (req, res) => {
     const {otp} = req.body
     try{
-        console.log(otp)
         const user = await User.findOne({otp: { $exists: true }, 'otp.code': otp, }).populate({path: 'locatie'})
-        console.log(user)
         if(user){
             const now = new Date().getTime()
             const otpDate = new Date(user.otp.date).getTime()
