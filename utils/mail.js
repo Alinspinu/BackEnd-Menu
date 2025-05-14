@@ -12,7 +12,7 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
         action: data.action,
         prompt: data.prompt ? data.prompt : ''
     };
-    const renderedTemplate = ejs.render(templateSource, templateData);
+    const renderedTemplate = ejs.render(templateSource, {data: templateData});
     const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);
 
           const transporter = nodemailer.createTransport({
@@ -49,7 +49,7 @@ async function sendVerificationEmail(newUser) {
         name: newUser.name,
         locatie: newUser.locatie.name
     };
-    const renderedTemplate = ejs.render(templateSource, templateData);
+    const renderedTemplate = ejs.render(templateSource, {data: templateData});
     
     const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
 
