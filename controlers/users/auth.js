@@ -108,11 +108,13 @@ module.exports.resendOTP = async (req, res) => {
         if(user){
         sendVerificationEmail(user).then(response => {
             if (response.message === 'Email sent') {
-                res.status(200).json({ message: response.message, id: user._id });
+                res.status(200).json({ message: response.message });
             } else {
-                res.status(256).json({ message: response.message, id: user._id });
+                res.status(256).json({ message: response.message});
             };
         });
+        } else {
+            res.status(200).json({message: 'Utilizatorul nu a fost găsit!'})
         }
     } catch(error) {
         console.log(error)
