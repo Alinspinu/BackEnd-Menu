@@ -389,7 +389,7 @@ module.exports.saveOrder = async (req, res, next) => {
                     action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
                 socket.emit('orderId', JSON.stringify(savedOrder))
-                sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
+                // sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
                 res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate });
             }
         } else {
@@ -429,7 +429,10 @@ module.exports.setOrderTime = async (req, res, next) => {
     try {
         const time = parseFloat(req.query.time);
         const orderId = (req.query.orderId);
-        const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true });
+        const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true }).populate({path: 'locatie'}) ;
+        if (order.clientInfo.name !== 'Neînregistrat'){
+            sendMailToCustomer(order, [`office@truefinecoffee.ro`, `${order.clientInfo.email}`])
+        }
         socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime}))
         console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
         res.status(200).json({ message: 'time set' });
