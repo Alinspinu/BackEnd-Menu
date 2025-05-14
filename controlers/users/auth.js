@@ -62,7 +62,7 @@ module.exports.register = async (req, res, next) => {
            }
            if (password === confirmPassword) {
                const hashedPassword = hashPassword(password);      
-               const otp = generateSoketId(3)
+               const otp = generateSoketId(4)
                const newUser = new User({
                    email: email,
                    password: hashedPassword,
@@ -103,7 +103,7 @@ module.exports.register = async (req, res, next) => {
 module.exports.resendOTP = async (req, res) => {
     const {id} = req.query
     try{
-        const otp = generateSoketId(3)
+        const otp = generateSoketId(4)
         const user = await User.findByIdAndUpdate(id, {otp: {code: otp, date: new Date()}}, {new: true})
         if(user){
         sendVerificationEmail(user).then(response => {
