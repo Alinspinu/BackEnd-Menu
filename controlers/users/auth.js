@@ -362,22 +362,6 @@ module.exports.login = async (req, res, next) => {
         let expireDate = user.admin === 1 ? '7d' : '1d'
         const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn:  expireDate});
         const sendData = addUserData(user, token)
-        // const sendData = {
-        //     token: token,
-        //     name: user.name,
-        //     admin: user.admin,
-        //     cashBack: user.cashBack,
-        //     email: user.email,
-        //     status: user.status,
-        //     telephone: user.telephone,
-        //     employee: user.employee,
-        //     locatie: user.locatie._id,
-        //     discount: user.discount,
-        //     profilePic: user.profilePic,
-        //     hobbies: user.hobbies,
-        //     description: user.description,
-        //     checkIn: user.checkIn,
-        // };
         res.status(200).json(sendData);
     };
 

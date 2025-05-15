@@ -214,15 +214,12 @@ module.exports.cashInandOut = async (req, res, next) =>{
 module.exports.reprinFiscal = async (req, res, next) => {
     try{
         const {bill, mainServer} = req.body
-        if(fiscal){
-            const billl = JSON.parse(bill)
-            const newRep = new RepBill({fiscal: true, bill: billl._id})
-            await newRep.save()
-            socket.emit('printBill', JSON.stringify({bill: billl, serverKey: mainServer.key}))
-            res.status(200).json({message: 'Bunul a fost retipărit!'})
-        } else {
-            res.status(226).json({message: 'Bonul nu a putut fi tipărit!'})
-        }
+        const billl = JSON.parse(bill)
+        const newRep = new RepBill({fiscal: true, bill: billl._id})
+        await newRep.save()
+        socket.emit('printBill', JSON.stringify({bill: billl, serverKey: mainServer.key}))
+        res.status(200).json({message: 'Bunul a fost retipărit!'})
+     
     } catch(err){
         console.log(err)
         res.status(500).json(err)
