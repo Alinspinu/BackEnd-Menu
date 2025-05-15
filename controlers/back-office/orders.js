@@ -435,7 +435,7 @@ module.exports.setOrderTime = async (req, res, next) => {
         }
         socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime}))
         console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
-        res.status(200).json({ message: 'time set' });
+        res.status(200).json({ message: 'time set', order: order });
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: error.message })
