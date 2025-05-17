@@ -22,6 +22,8 @@ router.route('/verify-employee-token').post(authRoutes.verifyEmployeeToken)
 router.route('/checkIn').post(authRoutes.checkInOrOut)
 router.route('/horoscop').get(authRoutes.getHoroscop)
 
+router.route('/update-user-data').post(authRoutes.updateUserData)
+
 
 router.route('/otp')
     .get(authRoutes.resendOTP)

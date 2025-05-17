@@ -100,6 +100,46 @@ module.exports.register = async (req, res, next) => {
     }
 };
 
+
+
+module.exports.updateUserData = async (req, res) => {
+    const {data} = req.body
+    try{
+        if(data.mode === 'password'){
+            const user = await User.findById(data.userId)
+
+            if (!user || !comparePasswords(data.oldPassword, user.password)) {
+            return res.status(401).json({ message: 'Parola actuala nu este corectă!' });
+            } 
+
+            if (data.password === data.confirmPassword) {
+                const hashedPassword = hashPassword(data.password);
+                const update = {
+                    password: hashedPassword,
+                    name: data.name,
+                    telephone: data.telephone,
+                    email: data.email
+                }
+                const savedUser = await User.findByIdAndUpdate(user._id, update, {new: true})
+                
+                res.status(200).json({ message: "Datele au fost actualizate.", user: savedUser});
+            }
+        } else {
+           const update = {
+                name: data.name,
+                telephone: data.telephone,
+                email: data.email
+            }
+            const savedUser = await User.findByIdAndUpdate(data.userId, update, {new: true})
+            res.status(200).json({ message: "Datele au fost actualizate.", user: savedUser});
+        }
+    } catch(error) {
+        res.status(500).json(error)
+        console.log(error)
+    }
+
+}
+
 module.exports.resendOTP = async (req, res) => {
     const {id} = req.query
     try{
