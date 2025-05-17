@@ -437,7 +437,7 @@ function addUserData (user, token) {
 
 
 module.exports.verifyToken = async (req, res, next) => {
-    const { token, adminEmail } = req.body;
+    const { token } = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
         if (userId) {
@@ -476,7 +476,6 @@ module.exports.verifyToken = async (req, res, next) => {
 module.exports.sendEmailResetPassword = async (req, res, next) => {
     try {
         const { email, loc, url } = req.body;
-        console.log(email, loc, url)
         const user = await User.findOne({ email: email, locatie: loc }).populate({path: 'locatie'});
         if (user) {
             return sendResetEmail(user, url).then(response => {
@@ -502,7 +501,7 @@ module.exports.sendEmailResetPassword = async (req, res, next) => {
 }
 
 module.exports.resetPassword = async (req, res, next) => {
-    const { token, password, confirmPassword, adminEmail} = req.body;
+    const { token, password, confirmPassword, adminEmail = 'alin@truefinecoffee.ro'} = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
         if (userId) {
