@@ -389,7 +389,6 @@ module.exports.saveOrder = async (req, res, next) => {
                     action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
                 }
                 socket.emit('orderId', JSON.stringify(savedOrder))
-                // sendMailToCustomer(dbOrder,[`${adminEmail}`, `${user.email}`])
                 res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate });
             }
         } else {
@@ -422,6 +421,29 @@ module.exports.saveOrder = async (req, res, next) => {
  
 
 //************************UPDATE ORDERS********************** */
+
+
+module.exports.changeBillTable = async (req, res) => {
+    const {orderId, tableIndex} = req.body
+    try{
+
+        const dbOrder = await Order.findById(orderId)
+        if(dbOrder){
+            const oldTable = await Table.findByIdAndUpdate(dbOrder.masaRest, {$pull: {bills: dbOrder._id}}, {new: true})
+            const newTable = await Table.findOneAndUpdate({index: tableIndex, locatie: dbOrder.locatie, salePoint: dbOrder.salePoint}, {$push:{bills: dbOrder._id}}, {new: true})
+            dbOrder.masaRest = newTable._id;
+            dbOrder.masa = tableIndex
+            const savedOrder = await dbOrder.save()
+            res.status(200).json({order: savedOrder, oldT: oldTable, newT: newTable, message: "Comanda a afost mutată!"})
+        } else {
+            res.status(200).json({message: 'Comanda nu a fost găsită!'})
+        }
+
+    } catch(error) {
+        res.status(500).json(error)
+        console.log(error)
+    }
+}
 
 
 

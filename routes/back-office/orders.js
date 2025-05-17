@@ -12,6 +12,7 @@ router.route('/order-done').get(orderRoutes.orderDone);
 router.route('/set-order-time').get(orderRoutes.setOrderTime);
 router.route('/order-pending').get(orderRoutes.endPending);
 router.route('/finished-orders').get(orderRoutes.getOrderDone);
+router.route('/move').post(orderRoutes.changeBillTable)
 
 router.route('/get-time').get(orderRoutes.sendOrderTime);
 router.route('/bill', authApi)
