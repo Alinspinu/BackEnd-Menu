@@ -448,14 +448,14 @@ module.exports.changeBillTable = async (req, res) => {
 
 
 module.exports.setOrderTime = async (req, res, next) => {   
-    try {
         const time = parseFloat(req.query.time);
-        const orderId = (req.query.orderId);
+        const orderId = req.query.orderId;
+    try {
         const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true }).populate({path: 'locatie'}) ;
         if (order.clientInfo.name !== 'Neînregistrat'){
             sendMailToCustomer(order, [`office@truefinecoffee.ro`, `${order.clientInfo.email}`])
         }
-        socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime}))
+        socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime, masa: order.masa}))
         console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
         res.status(200).json({ message: 'time set', order: order });
     } catch (error) {
