@@ -455,7 +455,7 @@ module.exports.setOrderTime = async (req, res, next) => {
         if (order.clientInfo.name !== 'Neînregistrat'){
             sendMailToCustomer(order, [`office@truefinecoffee.ro`, `${order.clientInfo.email}`])
         }
-        socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime, masa: order.masa}))
+        socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime, masa: order.masa, toGo: order.toGo}))
         console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
         res.status(200).json({ message: 'time set', order: order });
     } catch (error) {
