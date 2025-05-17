@@ -133,7 +133,7 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
         name: newUser.name,
         locatie: newUser.locatie.name,
     };
-    const renderedTemplate = ejs.render(templateSource, {data: data});
+    const renderedTemplate = ejs.render(templateSource, {data: templateData});
 
     const appKey = decryptData(newUser.locatie.gmail.app.key,newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
 
