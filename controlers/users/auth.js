@@ -381,6 +381,13 @@ module.exports.login = async (req, res, next) => {
                             .populate({
                                     path: 'locatie'
                             })
+                            .populate({
+                                path: 'orders', 
+                                select: 'productCount tips total soketId createdAt completetime discount cashBack payment paymentMethod salePoint', 
+                                populate: {
+                                    path: 'salePoint'
+                                    }
+                                })
     if (!user || !comparePasswords(password, user.password)) {
         return res.status(401).json({ message: 'Invalid email or password' });
     };
@@ -429,6 +436,7 @@ function addUserData (user, token) {
         hobbies: user.hobbies,
         description: user.description,
         checkIn: user.checkIn,
+        orders: user.orders
     };
     return sendData
 }
