@@ -14,6 +14,8 @@ router.route('/order-pending').get(orderRoutes.endPending);
 router.route('/finished-orders').get(orderRoutes.getOrderDone);
 router.route('/move').post(orderRoutes.changeBillTable)
 
+router.route('/client').get(orderRoutes.getClientOrders)
+
 router.route('/get-time').get(orderRoutes.sendOrderTime);
 router.route('/bill', authApi)
     .post(orderRoutes.saveOrEditBill)

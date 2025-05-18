@@ -73,7 +73,16 @@ module.exports.testRaport = async (req, res) => {
     }
 }
 
-
+module.exports.getClientOrders = async (req, res) => {
+    const {userId} = req.query
+    try{
+        const orders = await Order.find({user: userId})
+        res.status(200).josn(orders)
+    } catch(error){
+        res.status(500).json(error)
+        console.log(error)
+    }
+}
 
 
 
@@ -271,6 +280,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             newBill.clientInfo = parsedBill.clientInfo
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
                 newBill.user = parsedBill.clientInfo._id
+                newBill.clientInfo.userId = newBill.user
             }
             if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: newBill, serverKey: mainServer.key, secondaryServer: secondaryServer}))   
 
@@ -373,23 +383,18 @@ module.exports.saveOrder = async (req, res, next) => {
                 newOrder.clientInfo.email = user.email
                 newOrder.clientInfo.discount = user.discount
                 newOrder.clientInfo.cashBack = user.cashBack
+                newOrder.user = user._id
                 newOrder.preOrder = true
                 const savedOrder = await newOrder.save()
-                const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'}) 
-                console.log(`Order ${dbOrder._id} saved with the user ${user.name}!`)
+                user.orders.push(savedOrder._id)
+                await user.save()
+               
                 if(table){
                     table.bills.push(savedOrder._id)
                     await table.save()
                 }
-                let action 
-                if(order.payOnSite){
-                    action = `a dat o comanda pe care o plătește în locație cu cashBack ${order.cashBack}`
-                } 
-                if(order.payOnline){
-                    action = `a dat o comanda pe care a plătito online cu cashBack ${order.cashBack}`
-                }
                 socket.emit('orderId', JSON.stringify(savedOrder))
-                res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate });
+                res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate, order: savedOrder });
             }
         } else {
             order.preOrder = true
@@ -398,14 +403,10 @@ module.exports.saveOrder = async (req, res, next) => {
             const savedOrder = await newOrder.save();
             socket.emit('orderId', JSON.stringify(savedOrder))
             const dbOrder = await Order.findById(savedOrder._id).populate({path: 'locatie'})
-            console.log(`Order ${dbOrder._id} saved without a user!`)
             if(table){
                 table.bills.push(savedOrder._id)
                 await table.save()
             }
-
-            const data = {name: 'No user', action: 'a dat o comanda ce a fost platita Online'}
-            sendInfoAdminEmail(data, adminEmail, dbOrder.locatie.gmail)
             res.status(200).json({ message: 'Order Saved Without a user', orderId: newOrder._id, orderIndex: order.index });
         }
    
