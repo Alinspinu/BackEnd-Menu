@@ -430,7 +430,8 @@ function addUserData (user, token) {
         hobbies: user.hobbies,
         description: user.description,
         checkIn: user.checkIn,
-        orders: user.orders
+        orders: user.orders,
+        cashBackProcent: user.cashBackProcent,
     };
     return sendData
 }
