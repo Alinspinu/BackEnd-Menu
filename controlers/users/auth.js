@@ -414,6 +414,7 @@ module.exports.login = async (req, res, next) => {
 
 
 function addUserData (user, token) {
+    console.log(user)
     const sendData = {
         token: token,
         name: user.name,
