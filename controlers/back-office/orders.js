@@ -385,10 +385,7 @@ module.exports.saveOrder = async (req, res, next) => {
                 newOrder.clientInfo.cashBack = user.cashBack
                 newOrder.user = user._id
                 newOrder.preOrder = true
-                const savedOrder = await newOrder.save()
-                user.orders.push(savedOrder._id)
-                await user.save()
-               
+                const savedOrder = await newOrder.save()        
                 if(table){
                     table.bills.push(savedOrder._id)
                     await table.save()

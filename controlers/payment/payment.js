@@ -232,17 +232,14 @@ module.exports.printBill = async (req, res, next) => {
         bill.status = 'done'
         bill.pending = false
         const email = bill.clientInfo.email
-        console.log('client email', email)
         if(mode && bill.total > 0 && mainServer){
            socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key}))
         } 
         if(email && email.length){
-            const client = await User.findOne({email: email})
+            const client = await User.findOne({email: email, locatie: bill.locatie})
             if(client){
-                console.log(client.cashBack)
                 client.orders.push(bill)
                 client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
-                console.log(client.cashBack)
             }
             await client.save()
         }
@@ -255,7 +252,6 @@ module.exports.printBill = async (req, res, next) => {
             total: bill.total,
             clientInfo: bill.clientInfo
         }
-        console.log(update)
 
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
 
