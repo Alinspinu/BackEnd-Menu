@@ -247,6 +247,7 @@ module.exports.printBill = async (req, res, next) => {
             status: 'done',
             pending: false,
             payment: bill.payment,
+            paymentMethod: bill.paymentMethod,
             tips: bill.tips,
             total: bill.total,
             clientInfo: bill.clientInfo
