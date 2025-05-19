@@ -535,172 +535,22 @@ module.exports.deleteOrder = async (req, res, next) => {
 };
 
 
+module.exports.fixBul = async (req, res) => {
+    try{
 
+        const users = await User.find()
+        for( const user of users){
+            if(user.orders?.length){
+                for(const orderId of user.orders){
+                    console.log(orderId)
+                    await Order.findOneAndUpdate(orderId, {user: user._id})
+                }
+            }
+        }
+        res.status(200).json({message:'All good'})
 
-// module.exports.testRaport = async (req, res) => {
-//     try {
-//         const today = new Date(2025, 0, 10).setUTCHours(0, 0, 0, 0);
-//         const end = new Date(2025, 0, 12).setUTCHours(0, 0, 0, 0);
-//         const orders = await Order.find({ 
-//             locatie: "655e2e7c5a3d53943c6b7c53", 
-//             updatedAt: { $gte: today, $lte: end }, 
-//             status: 'done' 
-//         });
-//         const orderPromises = orders.map(async (order) => {
-//             const productPromises = order.products.map(async (product) => {
-//                 const prod = await Product.findOne({ name: product.name });
-//                 if (!prod) {
-//                     const names = product.name.split('-');
-//                     const prodSub = await Product.findOne({ name: names[0] }).populate({ path: 'subProducts', select: 'name' });
-//                     if (prodSub) {
-//                         console.log('Found product with sub products', prodSub.name);
-//                         if(!product.productId){
-//                             product.productId = prodSub._id;
-//                             console.log('Product ID added', product.productId, order.updatedAt);
-//                         }
-//                         const subProduct = prodSub.subProducts.find(s => s.name === names[1]);
-//                         if (subProduct) {
-//                             console.log('Found subProduct', subProduct.name);
-//                             if(!product.subProductId){
-//                                 product.subProductId = subProduct._id;
-//                                 console.log('Sub product ID added', product.subProductId);
-//                             }
-//                         }
-//                     }
-//                 } else {
-//                     console.log('Found product', prod.name);
-//                     if(!product.productId){
-//                         product.productId = prod._id;
-//                         console.log('Product ID ADDED', product.productId, order.updatedAt);
-//                     }
-//                 }
-//                 await order.save(); // Save order after all changes to products
-//                 console.log("***************Order saved *****************");
-//             });
-
-//             // Wait for all product updates to finish
-//             await Promise.all(productPromises);
-//         });
-
-//         // Wait for all orders to finish processing
-//         await Promise.all(orderPromises);
-
-//         res.status(200).json({ message: 'All good in the hood' });
-
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json(error);
-//     }
-// };
-
-
-// module.exports.saveOrEditBill = async (req, res, next) => {
-//     const {bill} = req.body;
-//     const parsedBill = JSON.parse(bill)
-//     const {index, billId} = req.query;
-//     try{
-//         if(billId === "new"){
-//             delete parsedBill._id
-//             delete parsedBill.index
-//             const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
-//             const newBill = new Order(parsedBill);
-//             newBill.clientInfo = parsedBill.clientInfo
-//             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
-//                 newBill.user = parsedBill.clientInfo._id
-//             }         
-//             newBill.products.forEach(el => {
-//                 if(el.sentToPrint){
-//                     el.sentToPrint = false
-//                     console.log("new",el.sentToPrint)
-//                 }
-//             })
-//             const savedBill = await newBill.save();
-//             table.bills.push(savedBill);
-//             await table.save();
-//             socket.emit('bill', JSON.stringify(savedBill))
-//             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total,  masa: {_id: table._id, index: table.index}})
-//         } else {
-//             parsedBill.products.forEach(el => {
-//                 if(el.sentToPrint){
-//                     el.sentToPrint = false
-//                     console.log("old",el.sentToPrint)
-//                 }
-//             })
-//             const savedBill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-//             socket.emit('bill', JSON.stringify(bill))
-//             res.status(200).json({billId: parsedBill._id, index: parsedBill.index, billTotal: parsedBill.total, products: parsedBill.products, masa: parsedBill.masaRest})
-//         }
-//     } catch(err){
-//         console.log(err)
-//         res.status(500).json({message: 'Something went wrong', err: err.message})
-//     }
-// }
-
-// module.exports.saveOrEditBill = async (req, res, next) => {
-//     const {bill} = req.body;
-//     const parsedBill = JSON.parse(bill)
-//     const {index, billId} = req.query;
-//     try{
-//         if(billId === "new"){
-//             delete parsedBill._id
-//             delete parsedBill.index
-//             const table = await Table.findOne({index: index, locatie: parsedBill.locatie})
-//             const newBill = new Order(parsedBill);
-//             newBill.clientInfo = parsedBill.clientInfo
-//             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
-//                 newBill.user = parsedBill.clientInfo._id
-//             } 
-//             print(newBill)
-//             newBill.products.forEach(el => {
-//                 if(el.sentToPrint && el.ings.length || el.sentToPrint && el.toppings.length ){
-//                     if(el.toppings.length){
-//                         unloadIngs(el.toppings, el.quantity, {name:'vanzare', details: el.name});
-//                     } 
-//                     if(el.ings.length){
-//                         unloadIngs(el.ings, el.quantity, {name:'vanzare', details: el.name});
-//                     }
-//                     el.sentToPrint = false;
-//                     console.log("new", el.sentToPrint)
-//                 } else if(el.sentToPrint){
-//                     el.sentToPrint = false
-//                     console.log("new",el.sentToPrint)
-//                 }
-//             })
-//             const savedBill = await newBill.save();
-          
-//             table.bills.push(savedBill);
-//             setTimeout(() => {
-//                 socket.emit('bill', JSON.stringify(savedBill))
-//             }, 1000)
-//             await table.save();
-//             res.status(200).json({billId: savedBill._id, index: savedBill.index, products: savedBill.products, billTotal: savedBill.total, masa: {_id: table._id, index: table.index}})
-//         } else {
-//             print(parsedBill)
-//             parsedBill.products.forEach(el => {
-//               if(el.sentToPrint){
-//                     el.sentToPrint = false
-//                     console.log("old",el.sentToPrint)
-//                 }
-//             })
-//             async function saveBill() {
-//                 const order = await Order.findById(billId)
-//                 if(order.status === "done"){
-//                     parsedBill.status = 'done'
-//                     parsedBill.payment = order.payment
-//                     parsedBill.pending = order.pending
-//                     const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-//                     socket.emit('bill', JSON.stringify(bill))
-//                     res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
-//                 } else {
-//                     const bill = await Order.findByIdAndUpdate(billId, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
-//                     socket.emit('bill', JSON.stringify(bill))
-//                     res.status(200).json({billId: bill._id, index: bill.index, billTotal: bill.total, products: bill.products, masa: bill.masaRest})
-//                 }
-//             }
-//             setTimeout(saveBill, 1000)
-//         }
-//     } catch(err){
-//         console.log(err)
-//         res.status(500).json({message: 'Something went wrong', err: err.message})
-//     }
-// }
+    } catch(err) {
+        console.log(err)
+        res.status(500).json(err)
+    }
+}
