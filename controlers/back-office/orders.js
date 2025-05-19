@@ -311,6 +311,10 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 socket.emit('billl', JSON.stringify(parsedBill))
             }
             delete parsedBill._id
+            if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
+                parsedBill.user = parsedBill.clientInfo._id
+                newBill.clientInfo.userId = parsedBill.user
+            }
             const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId}, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
             if(bill){
                 res.status(200).json({bill: bill})
