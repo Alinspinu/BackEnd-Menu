@@ -9,5 +9,5 @@ router.route('/register').post(authRoutes.register);
 router.route('/login').post(authRoutes.login);
 router.route('/register-employee').post(authRoutes.registerEmployee)
 
-
+router.route('/create').get(authRoutes.createUser)
 module.exports = router;

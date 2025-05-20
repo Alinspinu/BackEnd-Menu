@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 const User = require('../../models/users/user');
 
 const { comparePasswords, hashPassword } = require('../../utils/functions')
-const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, } = require('../../utils/mail')
+const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, } = require('../../utils/mail');
+const locatie = require('../../models/office/locatie');
 
 
 
@@ -60,6 +61,30 @@ module.exports.register = async (req, res, next) => {
         res.status(500).json(error)
     }
 };
+
+
+
+module.exports.createUser = async (req, res) => {
+    try{
+
+        const user = new User({
+            name: 'Cafetish',
+            email: 'cafetishteam@outlook.com',
+            password: hashPassword('2joy1coffee@'),
+            status: 'active',
+            telephone: '123456',
+            locatie: '65ba7dcf1694ff43f52d44ed',  
+        })
+
+        const savedUser = await user.save()
+
+        res.status(200).json(savedUser)
+
+    } catch(error){
+        res.status(200).json(error)
+        console.log(error)
+    }
+}
 
 
 module.exports.registerEmployee = async (req, res, next) => {
