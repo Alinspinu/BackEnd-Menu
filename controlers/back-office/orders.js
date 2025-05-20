@@ -534,23 +534,3 @@ module.exports.deleteOrder = async (req, res, next) => {
     }
 };
 
-
-module.exports.fixBul = async (req, res) => {
-    try{
-
-        const users = await User.find()
-        for( const user of users){
-            if(user.orders?.length){
-                for(const orderId of user.orders){
-                    console.log(orderId)
-                    await Order.findOneAndUpdate(orderId, {user: user._id})
-                }
-            }
-        }
-        res.status(200).json({message:'All good'})
-
-    } catch(err) {
-        console.log(err)
-        res.status(500).json(err)
-    }
-}
