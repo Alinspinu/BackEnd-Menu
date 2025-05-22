@@ -157,6 +157,13 @@ module.exports.getInvoice = async (req, res) => {
     });
   }
 
+  const getText = (val) => {
+    if (typeof val === 'string') return val;
+    if (typeof val === 'object' && '_' in val) return val._;
+    return val?.toString?.() || 'Unknown';
+  };
+  
+
 
   const parseInvoiceData = (invoiceData, id) => {
     console.log(invoiceData)
@@ -189,20 +196,31 @@ module.exports.getInvoice = async (req, res) => {
         : 'Unknown VAT Number'
     };
 
-   const customer = {
-    name: Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"]) && 
-            Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"]) && 
-            Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"]) 
-        ? (invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]["_"] || 
-        invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]) 
+    const customerParty = invoiceData.Invoice["cac:AccountingCustomerParty"]?.[0]?.["cac:Party"]?.[0];
+
+    const customer = {
+      name: customerParty?.["cac:PartyLegalEntity"]?.[0]?.["cbc:RegistrationName"]?.[0]
+        ? getText(customerParty["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0])
         : 'Unknown Customer',
-    vatNumber: Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"]) && 
-                Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"]) && 
-                Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"]) 
-        ? (invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]["_"] || 
-        invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]) 
+    
+      vatNumber: customerParty?.["cac:PartyTaxScheme"]?.[0]?.["cbc:CompanyID"]?.[0]
+        ? getText(customerParty["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0])
         : 'Unknown VAT Number'
     };
+  //  const customer = {
+  //   name: Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"]) && 
+  //           Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"]) && 
+  //           Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"]) 
+  //       ? (invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]["_"] || 
+  //       invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]) 
+  //       : 'Unknown Customer',
+  //   vatNumber: Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"]) && 
+  //               Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"]) && 
+  //               Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"]) 
+  //       ? (invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]["_"] || 
+  //       invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]) 
+  //       : 'Unknown VAT Number'
+  //   };
     const products = invoiceData.Invoice["cac:InvoiceLine"].map(item => {
         // Extract the name of the item
         const itemName = Array.isArray(item["cac:Item"][0]["cbc:Name"]) 
