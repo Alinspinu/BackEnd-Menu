@@ -83,6 +83,7 @@ module.exports.getInvoice = async (req, res) => {
     const {id} = req.query;
     try{
         const invoice = await downloadZipFile(id)
+        console.log(invoice)
         res.status(200).json(invoice)
     } catch(err) {
         console.log(err)
@@ -116,6 +117,8 @@ module.exports.getInvoice = async (req, res) => {
           'Accept': 'application/zip',
         },
       });
+
+      console.log('anaf response', response)
 
         const zip = new AdmZip(response.data);
         const zipEntries = zip.getEntries(); 
