@@ -118,7 +118,7 @@ module.exports.getInvoice = async (req, res) => {
         },
       });
 
-      console.log('anaf response', response)
+      // console.log('anaf response', response)
 
         const zip = new AdmZip(response.data);
         const zipEntries = zip.getEntries(); 
@@ -159,6 +159,7 @@ module.exports.getInvoice = async (req, res) => {
 
 
   const parseInvoiceData = (invoiceData, id) => {
+    console.log(invoiceData)
    const invoiceNumber = Array.isArray(invoiceData.Invoice["cbc:ID"]) 
     ? (invoiceData.Invoice["cbc:ID"][0]["_"] || invoiceData.Invoice["cbc:ID"][0]) 
     : invoiceData.Invoice["cbc:ID"] || 'Unknown';
