@@ -21,6 +21,10 @@ const notificationSchema = new Schema({
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
+    },
+    salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
     }
     
 },{timestamps: true})

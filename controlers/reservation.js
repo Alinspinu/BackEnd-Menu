@@ -7,10 +7,17 @@ const socket = io("https://socket.flowmanager.ro")
 
 
 module.exports.getReservations = async(req, res) => {
-    const {loc, date} = req.query
+    const {loc, date, point} = req.query
     const currentDate = new Date(date)
     try{
-        const reservations = await Reservation.find({locatie: loc, date: {$gte: currentDate}}).limit(20).populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}])
+        const reservations = await Reservation.find(
+            {
+                locatie: loc, 
+                salePoint: point, 
+                date: {$gte: currentDate}
+            }
+        ).limit(20)
+         .populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}, {path: 'salePoint'}])
         res.status(200).json(reservations)
     } catch(error){
         console.log(error)
@@ -19,7 +26,7 @@ module.exports.getReservations = async(req, res) => {
 }
 
 module.exports.addReservation = async(req, res)  => {
-    const {reservation} = req.body
+    const {reservation, email} = req.body
     try{
         const client = await User.findOne({telephone: reservation.client.telephone})
         if(client){
@@ -29,7 +36,6 @@ module.exports.addReservation = async(req, res)  => {
         const savedReservation = await newReservation.save()
         socket.emit('reservation', JSON.stringify(savedReservation))
         res.status(200).json(savedReservation)
-
     } catch(error){
         console.log(error)
         res.status(200).json(error)

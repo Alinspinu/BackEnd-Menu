@@ -20,15 +20,16 @@ webPush.setVapidDetails(
 module.exports.addNotification = async(req, res) => {
     const {notification, userId} = req.body
     try{
-        const newNot = new Notification(notification)
-        const savedNot = await newNot.save()
-        socket.emit('notification', JSON.stringify(savedNot))
         let userIds = []
         if(userId === 'all'){
             userIds = (await User.find({'employee.active': true, 'checkIn.value': true }).select('_id')).map(u => u._id)
         } else {
             userIds = userId
         }
+        if(!notification.reciver.length) notification.reciver = userIds
+        const newNot = new Notification(notification)
+        const savedNot = await newNot.save()
+        socket.emit('notification', JSON.stringify(savedNot))
         await sendPushNotifications(savedNot, userIds)
         res.status(200).json(savedNot)  
     } catch(error){
