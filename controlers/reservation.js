@@ -23,10 +23,12 @@ webPush.setVapidDetails(
 module.exports.addReservationFromClient = async(req, res)  => {
     const {reservation, email} = req.body
     try{
-        let userIds = (await User.find({'employee.active': true, 'checkIn.value': true }).select('_id')).map(u => u._id)
+        const userIds = (await User.find({'employee.active': true, 'checkIn.value': true }).select('_id')).map(u => u._id)
+        console.log(userIds)
         const salePoint = await SalePoint.findById(reservation.salePoint).select('name')
         const newReservation = new Reservation(reservation)
         const savedReservation = await newReservation.save()
+        console.log(savedReservation)
         socket.emit('reservation', JSON.stringify(savedReservation))
         const notif = new Notification({
             sender: 'Rezervare Online',
