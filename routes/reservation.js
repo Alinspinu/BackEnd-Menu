@@ -10,8 +10,10 @@ router.route('/', authApi)
     .delete(resControlers.deleteReservation)
 
 router.route('/id', authApi).get(resControlers.getReservationById)
+router.route('/update', authApi).post(resControlers.modifyReservationStatus)
 
 router.route('/online').post(resControlers.addReservationFromClient)
+
 
 
 module.exports = router

@@ -81,9 +81,6 @@ function formatedDateToShow(date, timeDifferece = 0){
         const roDate = new Date(inputDate)
         const hours = roDate.getHours().toString()
         const minutes = roDate.getMinutes().toString()
-        console.log(roDate)
-        console.log(hours)
-        console.log(minutes)
         const hour = hours.padStart(2, "0") + ":" + minutes.padStart(2, "0");
         const monthNames = [
           "Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",

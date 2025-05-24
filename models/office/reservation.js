@@ -19,12 +19,16 @@ const reservationSchema = new Schema({
             type: String,
             required: true
         },
+        email: {
+            type: String
+        },
         client: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         }
     },
     date: Date,
+    dateString: String,
     guests: Number,
     position: String,
     details: String,
@@ -34,7 +38,7 @@ const reservationSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['new', 'accepted', 'canceled', 'done']
+        enum: ['new', 'accepted', 'canceled', 'pending',  'done']
     },
     user: {
         type: Schema.Types.ObjectId,

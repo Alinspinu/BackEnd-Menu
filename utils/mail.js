@@ -200,6 +200,39 @@ async function sendMailToCustomer(data, emails) {
           }
 };
 
+async function sendReservationEmail(reservation) {
+    const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8');      
+        const renderedTemplate = ejs.render(templateSource,{reservation: reservation});
+    
+        const appKey = decryptData(reservation.locatie.gmail.app.key, reservation.locatie.gmail.app.secret, reservation.locatie.gmail.app.iv);
+    
+          if(appKey !== "0") {
+                  const transporter = nodemailer.createTransport({
+                      service: 'Gmail',
+                      auth: {
+                          user: reservation.locatie.gmail.email,
+                          pass: appKey
+                      }
+                  });
+              
+                  const mailOptions = {
+                      from: reservation.locatie.gmail.email,
+                      to: reservation.client.email,
+                      subject: reservation.status === 'canceled' ? 'Rezervare respinsă' : 'Rezervare acceptată',
+                      html: renderedTemplate
+                  };
+              
+                  try {
+                      const info = await transporter.sendMail(mailOptions);
+                      console.log('Email sent:', info.response);
+                      return { message: 'Email sent' };
+                  } catch (error) {
+                      console.error('Error sending email:', error);
+                      return { message: 'Error sending email' };
+                  };
+          }
+};
+
 
 module.exports = {
     sendResetEmail,
@@ -209,6 +242,7 @@ module.exports = {
     // sendMailToCake,
     sendMailToCustomer,
     sendEmployeeEmail,
+    sendReservationEmail
   };
 
 

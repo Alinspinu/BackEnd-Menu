@@ -4,13 +4,15 @@ const Notification = require('../models/users/notification')
 const SalePoint = require('../models/utils/sale-point')
 const Subscription = require('../models/utils/subscription')
 
-const {formatedDateToShowDots} = require('../utils/functions')
+const {sendReservationEmail} = require('../utils/mail')
+
 
 
 const io = require('socket.io-client')
 const socket = io("https://socket.flowmanager.ro")
 
 const webPush = require('web-push');
+const locatie = require('../models/office/locatie')
 
 
 webPush.setVapidDetails(
@@ -21,14 +23,20 @@ webPush.setVapidDetails(
 
 
 module.exports.addReservationFromClient = async(req, res)  => {
-    const {reservation, email} = req.body
+    const {reservation} = req.body
     try{
         const userIds = (await User.find({'employee.active': true, 'checkIn.value': true }).select('_id')).map(u => u._id)
-        console.log(userIds)
-        const salePoint = await SalePoint.findById(reservation.salePoint).select('name')
+        const salePoint = await SalePoint.findById(reservation.salePoint)
         const newReservation = new Reservation(reservation)
+        const startTime = new Date(reservation.date).getTime() - 2 * 60 * 60 * 1000
+        const endTime = new Date(reservation.date).getTime() + 2 * 60 * 60 * 1000
+        const reservations = Reservation.find({salePoint: reservation.salePoint, date: {$lte: endTime, $gte: startTime}})
+        let pendding = ' '
+        if(reservations.length > 6){
+            newReservation.status = 'pending' 
+            pendding = ' în AȘTEPTARE '
+        } 
         const savedReservation = await newReservation.save()
-        console.log(savedReservation)
         socket.emit('reservation', JSON.stringify(savedReservation))
         const notif = new Notification({
             sender: 'Rezervare Online',
@@ -43,16 +51,31 @@ module.exports.addReservationFromClient = async(req, res)  => {
                 url: `https://cash-flow-waiters.web.app/reservation/${savedReservation._id}`
                 },
             },
-            message: `Rezevare la ${salePoint.name} în data de ${formatedDateToShowDots(savedReservation.date)}, ${savedReservation.client.name}, ${savedReservation.guests} persoane, ${savedReservation.details}!`
+            message: `Rezevare${pendding}la ${salePoint.name} pe ${savedReservation.dateString}, prntru ${savedReservation.client.name}, ${savedReservation.guests} persoane, ${savedReservation.details}!`
         }) 
         const savedNot = await notif.save()
         socket.emit('notification', JSON.stringify(savedNot))
         await sendPushNotifications(savedNot, userIds)
         res.status(200).json(savedReservation)
+        
     } catch(error){
         console.log(error)
         res.status(200).json(error)
     }
+}
+
+
+module.exports.modifyReservationStatus = async(req, res) => {
+    const {reservation} = req.body
+    try{
+        const updatedReservation = await Reservation.findByIdAndUpdate(reservation._id, reservation, {new: true}).populate({path: 'locatie'}).populate({path: 'salePoint'})
+        await sendReservationEmail(reservation)
+        res.status(200).json(updatedReservation)
+    } catch(error) {
+        res.status(500).json(error)
+        console.log(error)
+    }
+
 }
 
 

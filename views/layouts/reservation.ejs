@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+  <style>
+    @font-face {
+  font-family: 'NoirProRegular'; 
+  src: url('../../public/font/NoirPro-Regular.woff') format('truetype'); 
+}
+    @font-face {
+  font-family: 'NoirProMed'; 
+  src: url('../../public/font/NoirPro-Medium.woff') format('truetype'); 
+}
+
+body{
+        padding: 8px !important;
+       
+    }
+    h1, h2, .code{
+      font-family: NoirProMed, Courier !important;
+    }
+
+    p, .address{
+      font-family: NoirProRegular, Courier !important;
+    }
+    .address{
+      font-style: italic;
+    }
+    h1{
+        text-transform: uppercase;
+    }
+    h2{
+      font-size: 22px !important;
+    }
+    .img{
+        height: 120px;
+        width: 120px;
+    }
+    .img-container{
+        margin-top: 12px;
+    }
+    .code{
+      font-size: 46px;
+      font-weight: bold;
+      letter-spacing: 6px;
+    }
+  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Info Reservation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container-fluid vh-100 cont">
+    <div class="text-center img-container col-lg-6 offset-lg-3">
+       <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg" alt="logo-image" class="img mb-4">
+       <h1 class="mb-4">salut, <%=reservation.client.name%>!</h1>
+       <h2 class="mb-4">Ne bucurăm că vrei să vii la True Fine Coffee.</h2>
+       <%if(reservation.status === 'canceled') {%>
+       <p>Din păcate, pe <%=reservation.dateString%> avem deja toate locurile ocupate la <%=reservation.salePoint.name%>. <br>Te rugăm să alegi un alt interval sau o altă zi pentru rezervare. <br> Îți mulțumim pentru înțelegere!</p>
+       <%} else {%>
+       <p>Rezervarea ta pentru <%=reservation.dateString%> a fost acceptată. <br> Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
+       <%}%>
+    </div>
+
+</div>
+
+</body>
+</html>
