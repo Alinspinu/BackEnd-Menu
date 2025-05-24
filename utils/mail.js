@@ -233,6 +233,42 @@ async function sendReservationEmail(reservation) {
           }
 };
 
+async function sendAdminMessage(data) {
+    const templateSource = fs.readFileSync('views/layouts/contact.ejs', 'utf-8');      
+        const renderedTemplate = ejs.render(templateSource,{data: data});
+    
+        const appKey = decryptData(data.locatie.gmail.app.key, data.locatie.gmail.app.secret, data.locatie.gmail.app.iv);
+    
+          if(appKey !== "0") {
+                  const transporter = nodemailer.createTransport({
+                      service: 'Gmail',
+                      auth: {
+                          user: reservation.locatie.gmail.email,
+                          pass: appKey
+                      }
+                  });
+              
+                  const mailOptions = {
+                      from: data.locatie.gmail.email,
+                      to: 'office@truefinecoffee.ro',
+                      subject: 'Mesaj nou CONTACT',
+                      html: renderedTemplate
+                  };
+              
+                  try {
+                      const info = await transporter.sendMail(mailOptions);
+                      console.log('Email sent:', info.response);
+                      return { message: 'Email sent' };
+                  } catch (error) {
+                      console.error('Error sending email:', error);
+                      return { message: 'Error sending email' };
+                  };
+          }
+};
+
+
+
+
 
 module.exports = {
     sendResetEmail,
@@ -242,7 +278,8 @@ module.exports = {
     // sendMailToCake,
     sendMailToCustomer,
     sendEmployeeEmail,
-    sendReservationEmail
+    sendReservationEmail,
+    sendAdminMessage
   };
 
 

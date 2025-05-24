@@ -13,6 +13,7 @@ router.route('/id', authApi).get(resControlers.getReservationById)
 router.route('/update', authApi).post(resControlers.modifyReservationStatus)
 
 router.route('/online').post(resControlers.addReservationFromClient)
+router.route('/contact').post(resControlers.createContact)
 
 
 

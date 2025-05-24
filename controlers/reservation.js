@@ -3,8 +3,11 @@ const User = require('../models/users/user')
 const Notification = require('../models/users/notification')
 const SalePoint = require('../models/utils/sale-point')
 const Subscription = require('../models/utils/subscription')
+const ContactMessage = require('../models/utils/contact-mes')
+const Locatie = require('../models/office/locatie')
 
-const {sendReservationEmail} = require('../utils/mail')
+
+const {sendReservationEmail, sendAdminMessage} = require('../utils/mail')
 
 
 
@@ -12,7 +15,6 @@ const io = require('socket.io-client')
 const socket = io("https://socket.flowmanager.ro")
 
 const webPush = require('web-push');
-const locatie = require('../models/office/locatie')
 
 
 webPush.setVapidDetails(
@@ -182,6 +184,22 @@ async function sendPushNotifications(notification, userIds){
           console.error('Failed to send notification:', error);
         }
       }
+    }
+}
+
+
+module.exports.createContact = async (req, res) => {
+    const {message} = req.body
+    try{
+        const newMessage = new ContactMessage(message)
+        const savedMessage = await newMessage.save()
+        const locatie = await Locatie.findById(message.locatie)
+        const data = { mess: savedMessage, locatie: locatie}
+        await sendAdminMessage(data)
+        res.status(200).json({message: 'All good'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
     }
 }
 
