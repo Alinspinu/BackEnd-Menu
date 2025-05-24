@@ -78,8 +78,8 @@ function formatedDateToShow(date, timeDifferece = 0){
      function formatedDateToShowDots(date){
       if(date){
         const inputDate = new Date(date);
-        const hours = inputDate.getHours().toLocaleString();
-        const minutes = inputDate.getMinutes().toLocaleString();
+        const hours = inputDate.getHours()
+        const minutes = inputDate.getMinutes()
         const hour = hours.padStart(2, "0") + ":" + minutes.padStart(2, "0");
         const monthNames = [
           "Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",
