@@ -32,7 +32,7 @@ module.exports.addReservationFromClient = async(req, res)  => {
         const endTime = new Date(reservation.date).getTime() + 2 * 60 * 60 * 1000
         const reservations = Reservation.find({salePoint: reservation.salePoint, date: {$lte: endTime, $gte: startTime}})
         let pendding = ' '
-        if(reservations.length > 6){
+        if(reservations.length > 4){
             newReservation.status = 'pending' 
             pendding = ' în AȘTEPTARE '
         } else {
