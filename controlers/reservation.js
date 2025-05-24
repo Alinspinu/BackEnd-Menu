@@ -51,7 +51,7 @@ module.exports.addReservationFromClient = async(req, res)  => {
                 url: `https://cash-flow-waiters.web.app/reservation/${savedReservation._id}`
                 },
             },
-            message: `Rezevare${pendding}la ${salePoint.name} pe ${savedReservation.dateString}, prntru ${savedReservation.client.name}, ${savedReservation.guests} persoane, ${savedReservation.details}!`
+            message: `Rezevare${pendding}la ${salePoint.name} pe ${savedReservation.dateString}, pentru ${savedReservation.client.name}, ${savedReservation.guests} persoane, ${savedReservation.details}!`
         }) 
         const savedNot = await notif.save()
         socket.emit('notification', JSON.stringify(savedNot))
@@ -69,7 +69,7 @@ module.exports.modifyReservationStatus = async(req, res) => {
     const {reservation} = req.body
     try{
         const updatedReservation = await Reservation.findByIdAndUpdate(reservation._id, reservation, {new: true}).populate({path: 'locatie'}).populate({path: 'salePoint'})
-        await sendReservationEmail(reservation)
+        await sendReservationEmail(updatedReservation)
         res.status(200).json(updatedReservation)
     } catch(error) {
         res.status(500).json(error)
