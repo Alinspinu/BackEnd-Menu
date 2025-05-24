@@ -77,10 +77,11 @@ function formatedDateToShow(date, timeDifferece = 0){
 
      function formatedDateToShowDots(date){
       if(date){
-        const inputDate = new Date(date);
-        const hours = inputDate.getHours().toString()
-        const minutes = inputDate.getMinutes().toString()
-        console.log(inputDate)
+        const inputDate = new Date(date).toLocaleString('en-US', { timeZone: 'Europe/Bucharest' });
+        const roDate = new Date(inputDate)
+        const hours = roDate.getHours().toString()
+        const minutes = roDate.getMinutes().toString()
+        console.log(roDate)
         console.log(hours)
         console.log(minutes)
         const hour = hours.padStart(2, "0") + ":" + minutes.padStart(2, "0");
