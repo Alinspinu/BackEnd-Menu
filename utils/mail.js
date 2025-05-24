@@ -243,7 +243,7 @@ async function sendAdminMessage(data) {
                   const transporter = nodemailer.createTransport({
                       service: 'Gmail',
                       auth: {
-                          user: reservation.locatie.gmail.email,
+                          user: data.locatie.gmail.email,
                           pass: appKey
                       }
                   });
