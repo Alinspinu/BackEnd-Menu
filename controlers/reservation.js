@@ -30,7 +30,8 @@ module.exports.addReservationFromClient = async(req, res)  => {
         const newReservation = new Reservation(reservation)
         const startTime = new Date(reservation.date).getTime() - 2 * 60 * 60 * 1000
         const endTime = new Date(reservation.date).getTime() + 2 * 60 * 60 * 1000
-        const reservations = Reservation.find({salePoint: reservation.salePoint, date: {$lte: endTime, $gte: startTime}})
+        const reservations = await Reservation.find({salePoint: reservation.salePoint, date: {$gte: startTime, $lte: endTime}})
+        console.log(reservation.length)
         let pendding = ' '
         if(reservations.length > 4){
             newReservation.status = 'pending' 
