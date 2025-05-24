@@ -89,7 +89,7 @@ function formatedDateToShow(date, timeDifferece = 0){
           "Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie",
           "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"
         ];
-        return `${inputDate.getDate().toString().padStart(2, '0')}-${monthNames[inputDate.getMonth()]}-${inputDate.getFullYear()} : ${hour} `
+        return `${roDate.getDate().toString().padStart(2, '0')}-${monthNames[roDate.getMonth()]}-${roDate.getFullYear()} : ${hour} `
       } else {
         return 'xx'
       }
