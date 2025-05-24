@@ -31,14 +31,14 @@ module.exports.addReservationFromClient = async(req, res)  => {
         const startTime = new Date(reservation.date).getTime() - 2 * 60 * 60 * 1000
         const endTime = new Date(reservation.date).getTime() + 2 * 60 * 60 * 1000
         const reservations = await Reservation.find({salePoint: reservation.salePoint, status: 'accepted', date: {$gte: startTime, $lte: endTime}})
-        console.log(reservation.length)
         let pendding = ' '
-        if(reservations.length > 4){
+        if(reservations.length > 4 || reservation.guests > 15){
             newReservation.status = 'pending' 
             pendding = ' în AȘTEPTARE '
         } else {
-            reservation.status = 'accepted'
+            newReservation.status = 'accepted'
         }
+
         const savedReservation = await newReservation.save()
         socket.emit('reservation', JSON.stringify(savedReservation))
         const notif = new Notification({
