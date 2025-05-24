@@ -4,6 +4,8 @@ const Notification = require('../models/users/notification')
 const SalePoint = require('../models/utils/sale-point')
 const Subscription = require('../models/utils/subscription')
 
+const {formatedDateToShowDots} = require('../utils/functions')
+
 
 const io = require('socket.io-client')
 const socket = io("https://socket.flowmanager.ro")
@@ -39,7 +41,7 @@ module.exports.addReservationFromClient = async(req, res)  => {
                 url: `https://cash-flow-waiters.web.app/reservation/${savedReservation._id}`
                 },
             },
-            message: `Rezevare la ${salePoint.name} în data de ${formatedDateToShow(savedReservation.date)}, ${savedReservation.client.name}, ${savedReservation.guests} persoane, ${savedReservation.details}!`
+            message: `Rezevare la ${salePoint.name} în data de ${formatedDateToShowDots(savedReservation.date)}, ${savedReservation.client.name}, ${savedReservation.guests} persoane, ${savedReservation.details}!`
         }) 
         const savedNot = await notif.save()
         socket.emit('notification', JSON.stringify(savedNot))
