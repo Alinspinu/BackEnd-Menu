@@ -35,7 +35,9 @@ module.exports.addReservationFromClient = async(req, res)  => {
         if(reservations.length > 6){
             newReservation.status = 'pending' 
             pendding = ' în AȘTEPTARE '
-        } 
+        } else {
+            reservation.status = 'accepted'
+        }
         const savedReservation = await newReservation.save()
         socket.emit('reservation', JSON.stringify(savedReservation))
         const notif = new Notification({
