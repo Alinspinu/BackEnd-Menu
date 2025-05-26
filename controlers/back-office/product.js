@@ -19,8 +19,8 @@ module.exports.updateProducts = async (req, res) => {
         for(const product of products){
             for( const sub of product.subProducts){
                 if(sub.name === 'Decofeinizat'){
-                    sub.description = 'Țară de origine Columbia. Note: caramel sărat, alune, scorțișoară și coji de portocală.'
-                    await SubProduct.findByIdAndUpdate(sub._id, sub)
+                    const description = 'Țară de origine Columbia. Note: caramel sărat, alune, scorțișoară și coji de portocală.'
+                    await SubProduct.findByIdAndUpdate(sub._id, {description: description})
                 }
             }
         }
