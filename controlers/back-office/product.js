@@ -19,7 +19,7 @@ module.exports.updateProducts = async (req, res) => {
         for(const product of products){
             for( const sub of product.subProducts){
                 if(sub.name === 'Decofeinizat'){
-                   const description = 'Țară de origine: Columbia, / Procesare: [Fermentare Naturală], / Decofeinizată cu: Acetat de etil provenit din trestie de zahăr, / Profil aromatic: [caramel sărat, alune, scorțișoară și coji de portocală.]'
+                   const description = 'Țară de origine: Columbia, | Procesare: Fermentare Naturală, | Decofeinizată cu: Acetat de etil provenit din trestie de zahăr, | Profil aromatic: [caramel sărat, alune, scorțișoară și coji de portocală.]'
                     await SubProduct.findByIdAndUpdate(sub._id, {description: description})
                 }
             }
