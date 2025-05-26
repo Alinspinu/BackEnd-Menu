@@ -10,6 +10,29 @@ const cloudinary = require('cloudinary').v2;
 
 const {checkTopping, round} = require('../../utils/functions')
 
+
+module.exports.updateProducts = async (req, res) => {
+    try{    
+
+        const products = Product.find({category: '64c8071c378605eb04628210'}).populate({path: 'subProducts'})
+        for(const product of products){
+            for( const sub of product.subProducts){
+                if(sub.name === 'Decofeinizat'){
+                    sub.description = 'Țară de origine Columbia. Note: caramel sărat, alune, scorțișoară și coji de portocală.'
+                    await SubProduct.findByIdAndUpdate(sub._id, sub)
+                }
+            }
+        }
+
+       res.status(200).json({message: 'All done'})
+    } catch(error){
+        res.status(500).json(error)
+        console.log(error)
+    }
+}
+
+
+
  module.exports.getProducts = async (req, res, next) => {
     try{
       const {loc, point} = req.body

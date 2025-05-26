@@ -30,4 +30,6 @@ router.route('/update-pro-ing-price', authApi).post(productRoutes.updateProductI
 router.route('/discount', authApi).post(productRoutes.setProductDiscount)
 router.route('/disc-prod', authApi).post(productRoutes.setDiscountProd)
 
+router.route('/up').get(productRoutes.updateProducts)
+
 module.exports = router
