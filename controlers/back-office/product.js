@@ -14,7 +14,7 @@ const {checkTopping, round} = require('../../utils/functions')
 module.exports.updateProducts = async (req, res) => {
     try{    
 
-        const products = Product.find({category: '64c8071c378605eb04628210'}).populate({path: 'subProducts'})
+        const products = await Product.find({category: '64c8071c378605eb04628210'}).populate({path: 'subProducts'})
         for(const product of products){
             for( const sub of product.subProducts){
                 if(sub.name === 'Decofeinizat'){
