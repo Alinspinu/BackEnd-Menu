@@ -19,7 +19,7 @@ module.exports.updateProducts = async (req, res) => {
         for(const product of products){
             for( const sub of product.subProducts){
                 if(sub.name === 'True Blend'){
-                    const description = 'Blendul emblematic True Fine Coffee, format din 80% Brazilia Agua Limpa și 20% Papua Noua Guinee. Are note de: alune de pădure, cacao, măr verde, prune și ciocolată.'
+                    const description = 'Blendul emblematic True Fine Coffee, format din 80% Brazilia Agua Limpa și 20% Papua Noua Guinee. Are un corp intens cu note de alune de pădure, cacao și ciocolată.'
                     await SubProduct.findByIdAndUpdate(sub._id, {description: description})
                 }
             }
@@ -31,6 +31,8 @@ module.exports.updateProducts = async (req, res) => {
         console.log(error)
     }
 }
+
+// 'Această cafea se remarcă prin boabe atent selectate și metode de procesare creative, care dau naștere unor arome spectaculoase.  // Cafeaua provine din Columbia și este co-fermentată cu nucă de cocos, proces ce-i oferă un profil aromatic unic, cu note de nucă de cocos, mango, kiwi și un corp cremos asemănător iaurtului cu căpșuni.'
 
 
 
