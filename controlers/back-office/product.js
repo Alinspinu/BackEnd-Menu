@@ -9,7 +9,7 @@ const mongoose = require('mongoose')
 const cloudinary = require('cloudinary').v2;
 
 const {checkTopping, round} = require('../../utils/functions')
-
+ const description = 'Mix. Note: caramel sărat, alune, scorțișoară și coji de portocală.'
 
 module.exports.updateProducts = async (req, res) => {
     try{    
@@ -18,8 +18,8 @@ module.exports.updateProducts = async (req, res) => {
         console.log('produse gasite', products.length)
         for(const product of products){
             for( const sub of product.subProducts){
-                if(sub.name === 'Decofeinizat'){
-                    const description = 'Țară de origine Columbia. Note: caramel sărat, alune, scorțișoară și coji de portocală.'
+                if(sub.name === 'True Blend'){
+                    const description = 'Blendul emblematic True Fine Coffee, format din 80% Brazilia Agua Limpa și 20% Papua Noua Guinee. Are note de: alune de pădure, cacao, măr verde, prune și ciocolată.'
                     await SubProduct.findByIdAndUpdate(sub._id, {description: description})
                 }
             }
