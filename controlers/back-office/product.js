@@ -18,9 +18,9 @@ module.exports.updateProducts = async (req, res) => {
         console.log('produse gasite', products.length)
         for(const product of products){
             for( const sub of product.subProducts){
-                if(sub.name === 'True Blend'){
-                //    const description = 'Țară de origine: Columbia, | Procesare: Fermentare Naturală, | Decofeinizată cu: Acetat de etil provenit din trestie de zahăr, | Profil aromatic: [caramel sărat, alune, scorțișoară și coji de portocală.]'
-                const description = 'Blendul emblematic [True Fine Coffee], format din 80% Brazilia Agua Limpa și 20% Papua Noua Guinee. Are un corp [intens] cu note de [alune de pădure, cacao și ciocolată.]'
+                if(sub.name === 'Decofeinizat'){
+                   const description = 'Țară de origine: Columbia, | Procesare: Fermentare Naturală, | Decofeinizată cu: Acetat de etil provenit din trestie de zahăr, | Profil aromatic: [caramel sărat, alune, scorțișoară și coji de portocală.]'
+                // const description = 'Blendul emblematic [True Fine Coffee], format din 80% Brazilia Agua Limpa și 20% Papua Noua Guinee. Are un corp [intens] cu note de [alune de pădure, cacao și ciocolată.]'
                     await SubProduct.findByIdAndUpdate(sub._id, {description: description})
                 }
             }
