@@ -14,13 +14,13 @@ const {checkTopping, round} = require('../../utils/functions')
 module.exports.updateProducts = async (req, res) => {
     try{    
 
-        const products = await Product.find({category: '64c8074e378605eb04628212'}).populate({path: 'subProducts'})
+        const products = await Product.find({category: '64c8078d378605eb04628214'}).populate({path: 'subProducts'})
         console.log('produse gasite', products.length)
         for(const product of products){
             for( const sub of product.subProducts){
-                if(sub.name === 'Decofeinizat'){
-                   const description = 'Țară de origine: Columbia, | Procesare: Fermentare Naturală, | Decofeinizată cu: Acetat de etil provenit din trestie de zahăr, | Profil aromatic: [caramel sărat, alune, scorțișoară și coji de portocală.]'
-                // const description = 'Blendul emblematic [True Fine Coffee], format din 80% Brazilia Agua Limpa și 20% Papua Noua Guinee. Are un corp [intens] cu note de [alune de pădure, cacao și ciocolată], perfect completate de crema de lapte, care îl transformă într-o experiență de neuitat.'
+                if(sub.name === 'True Blend'){
+                //    const description = 'Țară de origine: Columbia, | Procesare: Fermentare Naturală, | Decofeinizată cu: Acetat de etil provenit din trestie de zahăr, | Profil aromatic: [caramel sărat, alune, scorțișoară și coji de portocală.]'
+                const description = 'Blendul emblematic [True Fine Coffee], format din 80% Brazilia Agua Limpa și 20% Papua Noua Guinee. Are un corp [intens] cu note de [alune de pădure, cacao și ciocolată.]'
                     await SubProduct.findByIdAndUpdate(sub._id, {description: description})
                 }
             }
