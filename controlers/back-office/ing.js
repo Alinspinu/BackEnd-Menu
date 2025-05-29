@@ -49,7 +49,7 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'salePoint', select: 'name'})
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
-        const totalItems = 1100
+        const totalItems = 1300
         console.log(limit)
         const ing = items.find(i => i._id === "683763760c7221a32654b6a8")
         console.log('ing',  ing)
