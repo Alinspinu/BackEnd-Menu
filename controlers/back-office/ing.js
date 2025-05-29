@@ -38,6 +38,7 @@ module.exports.saveIng = async(req, res, next) => {
   
     module.exports.searchIng = async (req, res, next) => {
       const {loc, point} = req.query
+      console.log(loc)
       const page = parseInt(req.query.page) || 1;
       const limit = 600; 
       const skip = (page - 1) * limit;
