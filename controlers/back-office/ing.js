@@ -50,6 +50,8 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'dept', select: 'name'})
         const totalItems = 1100
         console.log(limit)
+        const ing = items.find(i => i._id === "683763760c7221a32654b6a8")
+        console.log('ing',  ing)
         const totalPages = Math.ceil(totalItems / limit);
         res.status(200).json({
           items,
