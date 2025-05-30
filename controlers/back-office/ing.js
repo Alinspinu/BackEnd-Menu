@@ -38,7 +38,6 @@ module.exports.saveIng = async(req, res, next) => {
   
     module.exports.searchIng = async (req, res, next) => {
       const {loc, point} = req.query
-      console.log(loc)
       const page = parseInt(req.query.page) || 1;
       const limit = 600; 
       const skip = (page - 1) * limit;
@@ -49,10 +48,8 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'salePoint', select: 'name'})
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
-        const totalItems = 1300
-        console.log(limit)
+        const totalItems = 1500
         const ing = items.find(i => i._id === "683763760c7221a32654b6a8")
-        console.log('ing',  ing)
         const totalPages = Math.ceil(totalItems / limit);
         res.status(200).json({
           items,
