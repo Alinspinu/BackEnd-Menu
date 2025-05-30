@@ -166,7 +166,7 @@ module.exports.getInvoice = async (req, res) => {
 
 
   const parseInvoiceData = (invoiceData, id) => {
-    console.log(invoiceData.Invonce["cac:AllowanceCharge"])
+    console.log(invoiceData.Invoice["cac:AllowanceCharge"])
    const invoiceNumber = Array.isArray(invoiceData.Invoice["cbc:ID"]) 
     ? (invoiceData.Invoice["cbc:ID"][0]["_"] || invoiceData.Invoice["cbc:ID"][0]) 
     : invoiceData.Invoice["cbc:ID"] || 'Unknown';
