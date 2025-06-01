@@ -16,7 +16,6 @@ const locatieSchema = new Schema({
       },
       register: {
         type: String, 
-        rewuired: true
       },
       account: {
         type: String,

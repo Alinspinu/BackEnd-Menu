@@ -395,6 +395,7 @@ module.exports.saveOrder = async (req, res, next) => {
                     await table.save()
                 }
                 socket.emit('orderId', JSON.stringify(savedOrder))
+                console.log(savedOrder)
                 res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate, order: savedOrder });
             }
         } else {

@@ -47,6 +47,22 @@ async function checkTopping(toppings, res, loc) {
     }
 }
 
+function formatDateEFactura(date){
+  if(date){
+  const date = new Date(date); 
+
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0'); 
+
+  return `${year}-${month}-${day}`;
+  } else {
+    return '1111-11-11'
+  }
+}
+
+
+
 function formatedDateToShow(date, timeDifferece = 0){
     if(date){
       const inputDate = new Date(date);
@@ -218,7 +234,8 @@ module.exports = {
     convertToDateISOString,
     generateSoketId,
     getNowShedule,
-    formatedDateToShowDots
+    formatedDateToShowDots,
+    formatDateEFactura
 }
 
 
