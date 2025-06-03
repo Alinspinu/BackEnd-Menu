@@ -108,7 +108,9 @@ module.exports.getPontaj = async (req, res, next) => {
             res.status(200).json(pontaj)
         }
         if(pont === 'all'){
+            console.log('hit', loc, point)
             const ponts = await Pontaj.find({locatie: loc, salePoint: point})
+            console.log(ponts)
             res.status(200).json(ponts)
         }
         if(month){

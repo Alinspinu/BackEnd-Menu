@@ -383,7 +383,6 @@ module.exports.saveOrder = async (req, res, next) => {
         if (order.clientInfo.name !== 'Neînregistrat') {
             const newOrder = new Order(order) 
             const user = await User.findById(order.clientInfo.userId);
-            console.log(user)
             if (user) {
                 newOrder.clientInfo.email = user.email
                 newOrder.clientInfo.discount = user.discount
@@ -396,7 +395,6 @@ module.exports.saveOrder = async (req, res, next) => {
                     await table.save()
                 }
                 socket.emit('orderId', JSON.stringify(savedOrder))
-                console.log(savedOrder)
                 res.status(200).json({ user: user, orderId: savedOrder._id, orderIndex: savedOrder.index, preOrderPickUpDate: savedOrder.preOrderPickUpDate, order: savedOrder });
             } else {
                 res.status(400).json({message: 'FARA USER'})
