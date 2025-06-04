@@ -169,11 +169,11 @@ module.exports.addSuplier = async (req, res, next) => {
     const {loc} = req.query
     try{
         const supliers = await Suplier.find({locatie: loc}).select('-records')
-        supliers.forEach(s => {
-            if(!s.vatNumber.includes('RO') && !s.vatNumber.includes('Ro') && !s.vatNumber.includes('ro')){
-                console.log(s)
-            }
-         })
+        // supliers.forEach(s => {
+        //     if(!s.vatNumber.includes('RO') && !s.vatNumber.includes('Ro') && !s.vatNumber.includes('ro')){
+        //         console.log(s)
+        //     }
+        //  })
         res.status(200).json(supliers)
     } catch(error){
         console.log(error)

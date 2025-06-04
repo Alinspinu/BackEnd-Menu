@@ -446,7 +446,7 @@ function buildEFacturaHeaderXML(invoice) {
   custAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.client.address.country).up().up();
   customerParty.ele('cac:PartyTaxScheme')
     .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
-    .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.client.vat ? 'VAT' : 'NO').up().up().up();
+    .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
   customerParty.ele('cac:PartyLegalEntity')
     .ele('cbc:RegistrationName').txt(invoice.client.name).up()
     .ele('cbc:CompanyID').txt(invoice.client.registration).up().up();
