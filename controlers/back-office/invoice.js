@@ -71,16 +71,15 @@ function createInvoice(order, customer, supplier) {
         total: +p.total, 
         totalNoVat: roundd(priceNoVat * p.quantity)
       };
-      console.log(product)
-      console.log(priceNoVat * p.quantity)
-      console.log(priceNoVat)
       if(p.discount > 0){
+        const discount = p.discount;
+        const discountNoVat = roundd(discount / vatRate);
         product.discount = {};
-        product.discount.value = p.discount;
+        product.discount.value = discountNoVat;
         product.discount.reason = 'Discount Client';
         product.discount.reasonCode = 95;
-        product.discount.precent = roundd((p.discount / +p.total) * 100)
-        product.totalNoVat = roundd(product.totalNoVat - (p.discount / (1 +(p.tva / 100))))
+        product.discount.precent = roundd((discount / +p.total) * 100)
+        product.totalNoVat = roundd(product.totalNoVat - discountNoVat)
 
 
       }
