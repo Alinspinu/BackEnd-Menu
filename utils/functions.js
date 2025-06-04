@@ -47,9 +47,9 @@ async function checkTopping(toppings, res, loc) {
     }
 }
 
-function formatDateEFactura(date){
-  if(date){
-  const date = new Date(date); 
+function formatDateEFactura(dat){
+  if(dat){
+  const date = new Date(dat); 
 
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
