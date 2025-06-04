@@ -434,8 +434,6 @@ function buildEFacturaHeaderXML(invoice) {
       contact.ele('cbc:Name').txt(invoice.supplier.contact.name).up();
     if (invoice.supplier.contact.email)
       contact.ele('cbc:ElectronicMail').txt(invoice.supplier.contact.email).up();
-    if (invoice.supplier.contact.telephone)
-      contact.ele('cbc:Telephone').txt(invoice.supplier.contact.telephone).up();
 
   // Customer block
   const customerParty = doc.ele('cac:AccountingCustomerParty').ele('cac:Party');
