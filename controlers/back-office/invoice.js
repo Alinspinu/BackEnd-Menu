@@ -26,6 +26,7 @@ module.exports.createOrderInvoice = async (req, res) => {
     const client = await Suplier.findById(clientId)
     const invoice = createInvoice(order, client, loc)
     const xml = createXMLInvoice(invoice)
+    transformXmlToPdf(xml)
     console.log(xml)
     testInvoice(xml)
     res.status(200).json(invoice)
@@ -470,6 +471,27 @@ function createXMLInvoice(invoice){
 
 
 
+async function transformXmlToPdf(xml) {
+  const standard = 'FACT1'; 
+  const novld = 'DA'; 
+  const url = `https://api.anaf.ro/prod/FCTEL/rest/transformare/${standard}/${novld}`;
+  try {
+    const response = await axios.post(url, xml, {
+      headers: {
+        'Content-Type': 'text/plain',
+        'Authorization': `Bearer ${process.env.ANAF_TOKEN}` 
+      },
+      responseType: 'arraybuffer' 
+    });
+
+
+    console.log(response.data)
+    console.log('✅ PDF saved as invoice.pdf');
+  } catch (error) {
+    console.error('❌ Error transforming XML to PDF:', error.response?.data || error.message);
+  }
+}
+
 
 
 async function testInvoice(xml) {
@@ -480,7 +502,6 @@ async function testInvoice(xml) {
 
     const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/upload';
     const url = `${baseUrl}?standard=${standard}&cif=${cif}`;
-    const form = new FormData();
 
     try {
       const response = await axios.post(url, xml, {
@@ -499,77 +520,3 @@ async function testInvoice(xml) {
   }
 
 
-
-
-
-// function createXXX(invoiceSummary) {
-//       const doc = xmlbuilder.create()
-//       .ele('Invoice', {
-//           xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
-//           'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
-//           'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'
-//         });
-  
-//         const invoiceElem = doc
-        
-//         invoiceElem
-//           .ele('cbc:ID').txt(invoiceSummary.invoiceNumber).up()
-//           .ele('cbc:IssueDate').txt(invoiceSummary.issueDate).up()
-//           .ele('cbc:DueDate').txt(invoiceSummary.dueDate).up()
-        
-//           .ele('cac:AccountingSupplierParty')
-//             .ele('cac:Party')
-//               .ele('cac:PartyName').ele('cbc:Name').txt(invoiceSummary.supplier.name).up().up()
-//               .ele('cac:PartyTaxScheme')
-//                 .ele('cbc:CompanyID').txt(invoiceSummary.supplier.vatNumber).up()
-//                 .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up()
-//               .up()
-//               .ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoiceSummary.supplier.name).up().up()
-//             .up()
-//           .up()
-        
-//           .ele('cac:AccountingCustomerParty')
-//             .ele('cac:Party')
-//               .ele('cac:PartyName').ele('cbc:Name').txt(invoiceSummary.customer.name).up().up()
-//               .ele('cac:PartyTaxScheme')
-//                 .ele('cbc:CompanyID').txt(invoiceSummary.customer.vatNumber).up()
-//                 .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up()
-//               .up()
-//               .ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoiceSummary.customer.name).up().up()
-//             .up()
-//           .up();
-    
-//           invoiceElem
-//           .ele('cac:TaxTotal')
-//             .ele('cbc:TaxAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.vatAmount).up()
-//           .up()
-//           .ele('cac:LegalMonetaryTotal')
-//             .ele('cbc:TaxExclusiveAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.taxExclusiveAmount).up()
-//             .ele('cbc:TaxInclusiveAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.taxInclusiveAmount).up()
-//             .ele('cbc:PrepaidAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.prePaydAmount).up()
-//             .ele('cbc:PayableAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.payableAmont).up()
-//           .up();
-  
-  
-//           invoiceSummary.products.forEach((product, index) => {
-//               invoiceElem
-//               .ele('cac:InvoiceLine')
-//                 .ele('cbc:ID').txt((index + 1).toString()).up()
-//                 .ele('cbc:InvoicedQuantity', { unitCode: product.unitCode }).txt(product.quantity).up()
-//                 .ele('cbc:LineExtensionAmount', { currencyID: invoiceSummary.currencyId }).txt(product.totalNoVat).up()
-//                 .ele('cac:Item')
-//                   .ele('cbc:Description').txt(product.name).up()
-//                   .ele('cac:ClassifiedTaxCategory')
-//                     .ele('cbc:ID').txt('S').up() // Add Tax category code
-//                     .ele('cbc:Percent').txt(product.vatPrecent).up()
-//                     .ele('cac:TaxScheme')
-//                       .ele('cbc:ID').txt('VAT').up()
-//                     .up()
-//                   .up()
-//                 .up()
-//                 .ele('cac:Price')
-//                   .ele('cbc:PriceAmount', { currencyID: invoiceSummary.currencyId }).txt(product.price).up()
-//                 .up()
-//               .up();
-//             });
-// }
