@@ -359,7 +359,7 @@ function createInvoice(order, customer, supplier) {
       let product = {
         name: p.name,
         quantity: p.quantity,
-        unitCode: 'XPP',
+        unitCode: 'H87',
         price: priceNoVat,
         vatPrecent: p.tva,
         total: +p.total, 
@@ -505,9 +505,10 @@ function buildEFacturaHeaderXML(invoice) {
         .ele('cbc:ChargeIndicator').txt('false').up()
         .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
         .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
+        .ele('cbc:MultiplierFactorNumeric').txt(p.discount.precent).up()
         .ele('cbc:Amount', { currencyID: invoice.currencyID }).txt(p.discount.value);
     }
-
+    // <cbc:MultiplierFactorNumeric>40.00</cbc:MultiplierFactorNumeric><!--BT-94-->
     line.ele('cac:Item')
       .ele('cbc:Name').txt(p.name).up()
       .ele('cac:ClassifiedTaxCategory')
