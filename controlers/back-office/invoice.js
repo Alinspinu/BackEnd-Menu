@@ -25,6 +25,7 @@ module.exports.createOrderInvoice = async (req, res) => {
     const loc = await Locatie.findById(locId)
     const client = await Suplier.findById(clientId)
     const invoice = createInvoice(order, client, loc)
+    console.log(invoice)
     const xml = createXMLInvoice(invoice)
     const arrayBuffeer =  transformXmlToPdf(xml, res)
     // testInvoice(xml)
