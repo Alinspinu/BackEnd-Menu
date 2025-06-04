@@ -71,6 +71,9 @@ function createInvoice(order, customer, supplier) {
         total: +p.total, 
         totalNoVat: roundd(priceNoVat * p.quantity)
       };
+      console.log(product)
+      console.log(priceNoVat * p.quantity)
+      console.log(priceNoVat)
       if(p.discount > 0){
         product.discount = {};
         product.discount.value = p.discount;
