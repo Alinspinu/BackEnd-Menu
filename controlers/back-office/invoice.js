@@ -26,13 +26,7 @@ module.exports.createOrderInvoice = async (req, res) => {
     const client = await Suplier.findById(clientId)
     const invoice = createInvoice(order, client, loc)
     const xml = createXMLInvoice(invoice)
-   const arrayBuffeer =  transformXmlToPdf(xml)
-   if(arrayBuffeer){
-    console.log(arrayBuffeer)
-     res.status(200).json(arrayBuffeer)
-   } else {
-    res.status(200).json(arrayBuffeer)
-   }
+    const arrayBuffeer =  transformXmlToPdf(xml, res)
     // testInvoice(xml)
   } catch(error) {
     console.log(error)
@@ -475,7 +469,7 @@ function createXMLInvoice(invoice){
 
 
 
-async function transformXmlToPdf(xml) {
+async function transformXmlToPdf(xml, res) {
   const standard = 'FACT1'; 
   const novld = 'DA'; 
   const url = `https://api.anaf.ro/prod/FCTEL/rest/transformare/${standard}/${novld}`;
@@ -488,12 +482,17 @@ async function transformXmlToPdf(xml) {
       responseType: 'arraybuffer' 
     });
 
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'inline; filename=invoice.pdf',
+      'Content-Length': response.data.length
+    });
 
-    console.log('✅ PDF saved as invoice.pdf');
-    return response.data
+    res.send(response.data); // send PDF to browser
+    console.log('✅ PDF sent to frontend.');
   } catch (error) {
     console.error('❌ Error transforming XML to PDF:', error.response?.data || error.message);
-    return null
+    res.status(500).send('Error generating PDF');
   }
 }
 
