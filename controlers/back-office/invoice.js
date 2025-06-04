@@ -28,6 +28,7 @@ module.exports.createOrderInvoice = async (req, res) => {
     const xml = createXMLInvoice(invoice)
    const arrayBuffeer =  transformXmlToPdf(xml)
    if(arrayBuffeer){
+    console.log(arrayBuffeer)
      res.status(200).json(arrayBuffeer)
    } else {
     res.status(200).json(arrayBuffeer)
