@@ -69,6 +69,7 @@ function createInvoice(order, customer, supplier) {
         totalNoVat: roundd((p.price * p.quantity) / (1 + (p.tva / 100)))
       }
       if(p.discount > 0){
+        product.discount = {};
         product.discount.value = p.discount;
         product.discount.reason = 'Discount Client';
         product.discount.reasonCode = 95;
