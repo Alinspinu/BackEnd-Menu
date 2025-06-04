@@ -64,7 +64,7 @@ function createInvoice(order, customer, supplier) {
         quantity: p.quantity,
         unitCode: 'XPP',
         price: p.price,
-        vatPrecent: p.vat,
+        vatPrecent: p.tva,
         total: +p.total,
         totalNoVat: round((p.price * p.quantity) / (1 + (p.tva / 100)))
       }
@@ -94,7 +94,7 @@ function createInvoice(order, customer, supplier) {
   invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
     return sum + (p.totalNoVat || 0)
   }, 0)
-  invoice.vatAmount = invoice.total - invoice.taxExclusiveAmount
+  invoice.vatAmount = invoice.taxInclusiveAmount - invoice.taxExclusiveAmount
   return invoice
 }
 
