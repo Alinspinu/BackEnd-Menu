@@ -26,9 +26,13 @@ module.exports.createOrderInvoice = async (req, res) => {
     const client = await Suplier.findById(clientId)
     const invoice = createInvoice(order, client, loc)
     const xml = createXMLInvoice(invoice)
-    transformXmlToPdf(xml)
-    testInvoice(xml)
-    res.status(200).json(invoice)
+   const arrayBuffeer =  transformXmlToPdf(xml)
+   if(arrayBuffeer){
+     res.status(200).json(arrayBuffeer)
+   } else {
+    res.status(200).json(arrayBuffeer)
+   }
+    // testInvoice(xml)
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
@@ -484,10 +488,11 @@ async function transformXmlToPdf(xml) {
     });
 
 
-    console.log(response.data)
     console.log('✅ PDF saved as invoice.pdf');
+    return response.data
   } catch (error) {
     console.error('❌ Error transforming XML to PDF:', error.response?.data || error.message);
+    return null
   }
 }
 
