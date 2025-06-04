@@ -398,71 +398,143 @@ function createInvoice(order, customer, supplier) {
 
 
 function createXMLInvoice(invoice){
-      const doc = create({ version: '1.0' })
-      .ele('Invoice', {
-        xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
-        'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
-        'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'
-      })
-      .ele('cbc:ID').txt(invoice.serie).up()
-      .ele('cbc:IssueDate').txt(invoice.issueDate).up()
-      .ele('cbc:DueDate').txt(invoice.dueDate).up();
+  const doc = create({ version: '1.0' });
 
-    const supplier = doc.ele('cac:AccountingSupplierParty').ele('cac:Party');
-    supplier.ele('cac:PartyName').ele('cbc:Name').txt(invoice.supplier.name).up().up();
-    supplier.ele('cac:PartyTaxScheme')
-      .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
-      .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.supplier.vat).up().up().up();
-    supplier.ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoice.supplier.name).up().up();
+  const invoiceElem = doc.ele('Invoice', {
+    xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
+    'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
+    'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'
+  });
 
-    const customer = doc.up().ele('cac:AccountingCustomerParty').ele('cac:Party');
-    customer.ele('cac:PartyName').ele('cbc:Name').txt(invoice.client.name).up().up();
-    customer.ele('cac:PartyTaxScheme')
-      .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
-      .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.client.vat).up().up().up();
-    customer.ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoice.client.name).up().up();
+  invoiceElem.ele('cbc:ID').txt(invoice.serie);
+  invoiceElem.ele('cbc:IssueDate').txt(invoice.issueDate);
+  invoiceElem.ele('cbc:DueDate').txt(invoice.dueDate);
 
-    const parent = doc.up();
+  // Supplier
+  const supplier = invoiceElem.ele('cac:AccountingSupplierParty').ele('cac:Party');
+  supplier.ele('cac:PartyName').ele('cbc:Name').txt(invoice.supplier.name);
+  supplier.ele('cac:PartyTaxScheme')
+    .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
+    .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.supplier.vat);
+  supplier.ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoice.supplier.name);
 
-    parent.ele('cac:TaxTotal')
-      .ele('cbc:TaxAmount', { currencyID: invoice.currencyID }).txt(invoice.vatAmount).up()
-    .up();
+  // Customer
+  const customer = invoiceElem.ele('cac:AccountingCustomerParty').ele('cac:Party');
+  customer.ele('cac:PartyName').ele('cbc:Name').txt(invoice.client.name);
+  customer.ele('cac:PartyTaxScheme')
+    .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
+    .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.client.vat);
+  customer.ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoice.client.name);
 
-    parent.ele('cac:LegalMonetaryTotal')
-      .ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxExclusiveAmount).up()
-      .ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxInclusiveAmount).up()
-      .ele('cbc:PayableAmount', { currencyID: invoice.currencyID }).txt(invoice.payableAmont).up()
-    .up();
+  // Tax Total
+  invoiceElem.ele('cac:TaxTotal')
+    .ele('cbc:TaxAmount', { currencyID: invoice.currencyID }).txt(invoice.vatAmount);
 
+  // Monetary Total
+  invoiceElem.ele('cac:LegalMonetaryTotal')
+    .ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxExclusiveAmount).up()
+    .ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxInclusiveAmount).up()
+    .ele('cbc:PayableAmount', { currencyID: invoice.currencyID }).txt(invoice.payableAmont);
 
-    invoice.products.forEach((p, i) => {
-      const line = parent.ele('cac:InvoiceLine');
-      line.ele('cbc:ID').txt((i + 1).toString()).up();
-      line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt(p.quantity).up();
-      line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyID }).txt(p.totalNoVat).up();
+  // Invoice Lines
+  invoice.products.forEach((p, i) => {
+    const line = invoiceElem.ele('cac:InvoiceLine');
+    line.ele('cbc:ID').txt((i + 1).toString());
+    line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt(p.quantity);
+    line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyID }).txt(p.totalNoVat);
 
-      if (p.discount) {
-        line.ele('cac:AllowanceCharge')
-          .ele('cbc:ChargeIndicator').txt('false').up()
-          .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
-          .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
-          .ele('cbc:Amount', { currencyID: invoice.currencyID }).txt(p.discount.value).up()
-        .up();
-      }
+    if (p.discount) {
+      line.ele('cac:AllowanceCharge')
+        .ele('cbc:ChargeIndicator').txt('false').up()
+        .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
+        .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
+        .ele('cbc:Amount', { currencyID: invoice.currencyID }).txt(p.discount.value);
+    }
 
-      line.ele('cac:Item')
-        .ele('cbc:Name').txt(p.name).up()
-        .ele('cac:ClassifiedTaxCategory')
-          .ele('cbc:ID').txt('S').up()
-          .ele('cbc:Percent').txt(p.vatPrecent).up()
-          .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up()
-        .up();
+    line.ele('cac:Item')
+      .ele('cbc:Name').txt(p.name).up()
+      .ele('cac:ClassifiedTaxCategory')
+        .ele('cbc:ID').txt('S').up()
+        .ele('cbc:Percent').txt(p.vatPrecent).up()
+        .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
 
-      line.ele('cac:Price')
-        .ele('cbc:PriceAmount', { currencyID: invoice.currencyID }).txt(p.price).up()
-      .up();
-    });
+    line.ele('cac:Price')
+      .ele('cbc:PriceAmount', { currencyID: invoice.currencyID }).txt(p.price);
+  });
 
     const xml = doc.end({ prettyPrint: true });
 console.log(xml)
+}
+
+
+function create(invoiceSummary) {
+      const doc = xmlbuilder.create()
+      .ele('Invoice', {
+          xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
+          'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
+          'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'
+        });
+  
+        const invoiceElem = doc
+        
+        invoiceElem
+          .ele('cbc:ID').txt(invoiceSummary.invoiceNumber).up()
+          .ele('cbc:IssueDate').txt(invoiceSummary.issueDate).up()
+          .ele('cbc:DueDate').txt(invoiceSummary.dueDate).up()
+        
+          .ele('cac:AccountingSupplierParty')
+            .ele('cac:Party')
+              .ele('cac:PartyName').ele('cbc:Name').txt(invoiceSummary.supplier.name).up().up()
+              .ele('cac:PartyTaxScheme')
+                .ele('cbc:CompanyID').txt(invoiceSummary.supplier.vatNumber).up()
+                .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up()
+              .up()
+              .ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoiceSummary.supplier.name).up().up()
+            .up()
+          .up()
+        
+          .ele('cac:AccountingCustomerParty')
+            .ele('cac:Party')
+              .ele('cac:PartyName').ele('cbc:Name').txt(invoiceSummary.customer.name).up().up()
+              .ele('cac:PartyTaxScheme')
+                .ele('cbc:CompanyID').txt(invoiceSummary.customer.vatNumber).up()
+                .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up()
+              .up()
+              .ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoiceSummary.customer.name).up().up()
+            .up()
+          .up();
+    
+          invoiceElem
+          .ele('cac:TaxTotal')
+            .ele('cbc:TaxAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.vatAmount).up()
+          .up()
+          .ele('cac:LegalMonetaryTotal')
+            .ele('cbc:TaxExclusiveAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.taxExclusiveAmount).up()
+            .ele('cbc:TaxInclusiveAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.taxInclusiveAmount).up()
+            .ele('cbc:PrepaidAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.prePaydAmount).up()
+            .ele('cbc:PayableAmount', { currencyID: invoiceSummary.currencyId }).txt(invoiceSummary.payableAmont).up()
+          .up();
+  
+  
+          invoiceSummary.products.forEach((product, index) => {
+              invoiceElem
+              .ele('cac:InvoiceLine')
+                .ele('cbc:ID').txt((index + 1).toString()).up()
+                .ele('cbc:InvoicedQuantity', { unitCode: product.unitCode }).txt(product.quantity).up()
+                .ele('cbc:LineExtensionAmount', { currencyID: invoiceSummary.currencyId }).txt(product.totalNoVat).up()
+                .ele('cac:Item')
+                  .ele('cbc:Description').txt(product.name).up()
+                  .ele('cac:ClassifiedTaxCategory')
+                    .ele('cbc:ID').txt('S').up() // Add Tax category code
+                    .ele('cbc:Percent').txt(product.vatPrecent).up()
+                    .ele('cac:TaxScheme')
+                      .ele('cbc:ID').txt('VAT').up()
+                    .up()
+                  .up()
+                .up()
+                .ele('cac:Price')
+                  .ele('cbc:PriceAmount', { currencyID: invoiceSummary.currencyId }).txt(product.price).up()
+                .up()
+              .up();
+            });
 }
