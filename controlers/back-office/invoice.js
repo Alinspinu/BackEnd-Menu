@@ -467,7 +467,7 @@ console.log(xml)
 }
 
 
-function create(invoiceSummary) {
+function createXXX(invoiceSummary) {
       const doc = xmlbuilder.create()
       .ele('Invoice', {
           xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
