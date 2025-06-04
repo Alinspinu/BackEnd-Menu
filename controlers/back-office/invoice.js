@@ -3,15 +3,116 @@ const axios = require('axios')
 const AdmZip = require('adm-zip');
 const xml2js = require('xml2js');
 const Nir = require('../../models/office/nir')
-
-
-const startDate = new Date('2024-11-10').getTime()
-const endDate = new Date('2024-11-16').getTime()
-
-const baseApiDaysUrl = 'https://api.anaf.ro/prod/FCTEL/rest/listaMesajeFactura ?zile= 10&cif=44994432'
+const Invoice = require('../../models/office/invoice')
+const Order = require('../../models/office/product/order')
+const Suplier = require('../../models/office/suplier')
+const Locatie = require('../../models/office/locatie')
+const {round} = require('../../utils/functions')
+const {formatDateEFactura} = require('../../utils/functions');
 
 
     
+
+function createInvoice(order, customer, supplier) {
+  const invoice = {
+    serie: 'CAMPUS',
+    issueDate: formatDateEFactura(order.updatedAt),
+    dueDate: formatDateEFactura(order.updatedAt),
+    currencyID: 'RON',
+    supplier: {
+      name: supplier.bussinessName,
+      vatNumber: supplier.vatNumber,
+      vat: 'VAT',
+      registration: supplier.register,
+      legalForm: 'Capital social 200 lei',
+      contact: {
+        name: 'Alin Spinu',
+        email: 'office@truefinecoffee.ro',
+        telephone: '0753552492',
+      },
+      address: {
+        street: supplier.address,
+        city: 'Iasi',
+        country: 'RO'
+      }
+    },
+    client: {
+      name: customer.name,
+      vatNumber: customer.vatNumber,
+      vat: 'VAT',
+      registration: customer.registration,
+      legalForm: 'Capital social',
+      contact: {
+        name: '-',
+        email: customer.email
+      },
+      address: {
+        street: customer.address,
+        city: '-',
+        country: 'RO'
+      },
+    },
+    paymentMeans: {
+      code: 42,
+      name: `CONT BANCA ${supplier.bank} IN LEI`,
+      iban: supplier.account,
+      swift: supplier.switf
+    },
+    products: order.products.map(p => {
+      let product = {
+        name: p.name,
+        quantity: p.quantity,
+        unitCode: 'XPP',
+        price: p.price,
+        vatPrecent: p.vat,
+        total: +p.total,
+        totalNoVat: round((p.price * p.quantity) / (1 + (p.tva / 100)))
+      }
+      if(p.discount > 0){
+        product.discount.value = p.discount;
+        product.discount.reason = 'Discount Client';
+        product.discount.reasonCode = 95;
+        product.discount.precent = round((p.discount / +p.total) * 100)
+        product.totalNoVat = round(product.totalNoVat - (p.discount / (1 +(p.tva / 100))))
+
+
+      }
+      return product
+    }),
+    vatAmount: 0,
+    taxExclusiveAmount: 0,
+    taxInclusiveAmount: order.total,
+    payableAmont: order.total,
+    eFacturaId: '',
+    eFacturaStatus: '',
+    eFacturaError: '',
+    customer: customer._id,
+    locatie: order.locatie,
+    salePoint: order.salePoint
+  }
+
+  invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
+    return sum + (p.totalNoVat || 0)
+  }, 0)
+  invoice.vatAmount = invoice.total - invoice.taxExclusiveAmount
+  return invoice
+}
+
+
+
+module.exports.createOrderInvoice = async (req, res) => {
+  const {orderId, locId, clientId} = req.body
+  try{
+    const order = await Order.findById(orderId)
+    const loc = await Locatie.findById(locId)
+    const client = await Suplier.findById(clientId)
+    const invoice = createInvoice(order, client, loc)
+    res.status(200).json(invoice)
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
 
 
 
@@ -19,7 +120,7 @@ const baseApiDaysUrl = 'https://api.anaf.ro/prod/FCTEL/rest/listaMesajeFactura ?
 
 
 module.exports.getMessages = async (req, res) => {
-    const {days, cif} =req.query
+    const {days, cif} = req.query
     const config = {
         headers: {
           'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,

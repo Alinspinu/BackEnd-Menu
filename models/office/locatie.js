@@ -27,6 +27,9 @@ const locatieSchema = new Schema({
         type: String,
         required: true
       },
+      swift: {
+        type: String
+      },
       VAT: {
         type: Boolean,
         required: true

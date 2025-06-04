@@ -9,6 +9,8 @@ router.route('/check').post(invoiceRoutes.checkInvoceStatus)
 
 router.route('/get-date-msg').post(invoiceRoutes.getMessagesByDate)
 
+router.route('/').post(invoiceRoutes.createOrderInvoice)
+
 
 
 
