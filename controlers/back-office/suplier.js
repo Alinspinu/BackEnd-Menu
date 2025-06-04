@@ -46,6 +46,11 @@ module.exports.addSuplier = async (req, res, next) => {
     const loc = req.body.loc
        try{
          const supliers = await Suplier.find({locatie: loc});     
+         supliers.forEach(s => {
+            if(!s.vatNumber.includes('RO')){
+                console.log(s)
+            }
+         })
          res.status(200).json(supliers);
        } catch(err){
            console.log(err)

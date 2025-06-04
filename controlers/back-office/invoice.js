@@ -29,7 +29,7 @@ module.exports.createOrderInvoice = async (req, res) => {
     // const xml = createXMLInvoice(invoice)
     const xml = buildEFacturaHeaderXML(invoice)
     const arrayBuffeer =  transformXmlToPdf(xml, res)
-    // testInvoice(xml)
+    testInvoice(xml)
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
@@ -316,7 +316,7 @@ function createInvoice(order, customer, supplier) {
     supplier: {
       name: supplier.bussinessName,
       vatNumber: supplier.vatNumber,
-      vat: 'VAT',
+      vat: supplier.VAT,
       registration: supplier.register,
       legalForm: 'Capital social 200 lei',
       contact: {
@@ -333,7 +333,7 @@ function createInvoice(order, customer, supplier) {
     client: {
       name: customer.name,
       vatNumber: customer.vatNumber,
-      vat: 'VAT',
+      vat: customer.vat,
       registration: customer.registration,
       legalForm: 'Capital social',
       contact: {
@@ -421,14 +421,21 @@ function buildEFacturaHeaderXML(invoice) {
   const suppAddr = supplierParty.ele('cac:PostalAddress');
   suppAddr.ele('cbc:StreetName').txt(invoice.supplier.address.street).up();
   suppAddr.ele('cbc:CityName').txt(invoice.supplier.address.city).up();
-  suppAddr.ele('cbc:CountrySubentity').txt('RO-B').up(); // adjust as needed
+  suppAddr.ele('cbc:CountrySubentity').txt('RO-IS').up(); // adjust as needed
   suppAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.supplier.address.country).up().up();
   supplierParty.ele('cac:PartyTaxScheme')
     .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
-    .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+    .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.supplier.vat ? 'VAT' : 'NO').up().up().up();
   supplierParty.ele('cac:PartyLegalEntity')
     .ele('cbc:RegistrationName').txt(invoice.supplier.name).up()
     .ele('cbc:CompanyID').txt(invoice.supplier.registration).up().up();
+    const contact = supplierParty.ele('cac:Contact');
+    if (invoice.supplier.contact.name)
+      contact.ele('cbc:Name').txt(invoice.supplier.contact.name).up();
+    if (invoice.supplier.contact.email)
+      contact.ele('cbc:ElectronicMail').txt(invoice.supplier.contact.email).up();
+    if (invoice.supplier.contact.telephone)
+      contact.ele('cbc:Telephone').txt(invoice.supplier.contact.telephone).up();
 
   // Customer block
   const customerParty = doc.ele('cac:AccountingCustomerParty').ele('cac:Party');
@@ -437,14 +444,14 @@ function buildEFacturaHeaderXML(invoice) {
   custAddr.ele('cbc:StreetName').txt(invoice.client.address.street).up();
   custAddr.ele('cbc:CityName').txt(invoice.client.address.city).up();
   custAddr.ele('cbc:PostalZone').txt('700058').up(); // example
-  custAddr.ele('cbc:CountrySubentity').txt('RO-IS').up(); // example
+  custAddr.ele('cbc:CountrySubentity').txt('-').up(); // example
   custAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.client.address.country).up().up();
   customerParty.ele('cac:PartyTaxScheme')
     .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
-    .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+    .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.client.vat ? 'VAT' : 'NO').up().up().up();
   customerParty.ele('cac:PartyLegalEntity')
     .ele('cbc:RegistrationName').txt(invoice.client.name).up()
-    .ele('cbc:CompanyID').txt(invoice.client.registration).up().up();
+    .ele('cbc:CompanyID').txt(invoice.client.register).up().up();
 
   // Payment Means
   const paymentMeans = doc.ele('cac:PaymentMeans');
