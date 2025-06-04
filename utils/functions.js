@@ -21,7 +21,7 @@ function hashPassword(password) {
 }
 
 function round(num){
-    return Math.round(num * 1000) / 1000
+    return Math.round(num * 100) / 100
 }
 function roundd(num){
     return Math.round(num * 100000) / 100000
