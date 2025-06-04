@@ -334,7 +334,7 @@ function createInvoice(order, customer, supplier) {
       name: customer.name,
       vatNumber: customer.vatNumber,
       vat: customer.vat,
-      registration: customer.registration,
+      registration: customer.register,
       legalForm: 'Capital social',
       contact: {
         name: '-',
@@ -449,7 +449,7 @@ function buildEFacturaHeaderXML(invoice) {
     .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.client.vat ? 'VAT' : 'NO').up().up().up();
   customerParty.ele('cac:PartyLegalEntity')
     .ele('cbc:RegistrationName').txt(invoice.client.name).up()
-    .ele('cbc:CompanyID').txt(invoice.client.register).up().up();
+    .ele('cbc:CompanyID').txt(invoice.client.registration).up().up();
 
   // Payment Means
   const paymentMeans = doc.ele('cac:PaymentMeans');
