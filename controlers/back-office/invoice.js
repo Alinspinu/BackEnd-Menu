@@ -9,100 +9,12 @@ const Suplier = require('../../models/office/suplier')
 const Locatie = require('../../models/office/locatie')
 const {roundd} = require('../../utils/functions')
 const {formatDateEFactura} = require('../../utils/functions');
+const { create } = require('xmlbuilder2');
 
 
     
 
-function createInvoice(order, customer, supplier) {
-  const invoice = {
-    serie: 'CAMPUS',
-    issueDate: formatDateEFactura(order.updatedAt),
-    dueDate: formatDateEFactura(order.updatedAt),
-    currencyID: 'RON',
-    supplier: {
-      name: supplier.bussinessName,
-      vatNumber: supplier.vatNumber,
-      vat: 'VAT',
-      registration: supplier.register,
-      legalForm: 'Capital social 200 lei',
-      contact: {
-        name: 'Alin Spinu',
-        email: 'office@truefinecoffee.ro',
-        telephone: '0753552492',
-      },
-      address: {
-        street: supplier.address,
-        city: 'Iasi',
-        country: 'RO'
-      }
-    },
-    client: {
-      name: customer.name,
-      vatNumber: customer.vatNumber,
-      vat: 'VAT',
-      registration: customer.registration,
-      legalForm: 'Capital social',
-      contact: {
-        name: '-',
-        email: customer.email
-      },
-      address: {
-        street: customer.address,
-        city: '-',
-        country: 'RO'
-      },
-    },
-    paymentMeans: {
-      code: 42,
-      name: `CONT BANCA ${supplier.bank} IN LEI`,
-      iban: supplier.account,
-      swift: supplier.switf
-    },
-    products: order.products.map(p => {
-      const price = p.price;
-      const vatRate = 1 + (p.tva / 100);
-      const priceNoVat = roundd(price / vatRate);
-      let product = {
-        name: p.name,
-        quantity: p.quantity,
-        unitCode: 'XPP',
-        price: priceNoVat,
-        vatPrecent: p.tva,
-        total: +p.total, 
-        totalNoVat: roundd(priceNoVat * p.quantity)
-      };
-      if(p.discount > 0){
-        const discount = p.discount;
-        const discountNoVat = roundd(discount / vatRate);
-        product.discount = {};
-        product.discount.value = discountNoVat;
-        product.discount.reason = 'Discount Client';
-        product.discount.reasonCode = 95;
-        product.discount.precent = roundd((discount / +p.total) * 100)
-        product.totalNoVat = roundd(product.totalNoVat - discountNoVat)
 
-
-      }
-      return product
-    }),
-    vatAmount: 0,
-    taxExclusiveAmount: 0,
-    taxInclusiveAmount: order.total,
-    payableAmont: order.total,
-    eFacturaId: '',
-    eFacturaStatus: '',
-    eFacturaError: '',
-    customer: customer._id,
-    locatie: order.locatie,
-    salePoint: order.salePoint
-  }
-
-  invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
-    return roundd(sum + (p.totalNoVat || 0))
-  }, 0)
-  invoice.vatAmount = roundd(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
-  return invoice
-}
 
 
 
@@ -113,6 +25,7 @@ module.exports.createOrderInvoice = async (req, res) => {
     const loc = await Locatie.findById(locId)
     const client = await Suplier.findById(clientId)
     const invoice = createInvoice(order, client, loc)
+    createXMLInvoice(invoice)
     res.status(200).json(invoice)
   } catch(error) {
     console.log(error)
@@ -123,14 +36,12 @@ module.exports.createOrderInvoice = async (req, res) => {
 
 
 
-
-
 module.exports.getMessages = async (req, res) => {
     const {days, cif} = req.query
     const config = {
         headers: {
           'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
-          'Content-Type': 'application/json',  // Optional: Set content type if needed
+          'Content-Type': 'application/json', 
         }
       }
 
@@ -391,5 +302,167 @@ module.exports.getInvoice = async (req, res) => {
 };
 
 
-/// CREATE INVOICE 
+/// CREATE INVOICE
 
+function createInvoice(order, customer, supplier) {
+  const invoice = {
+    serie: 'CAMPUS',
+    issueDate: formatDateEFactura(order.updatedAt),
+    dueDate: formatDateEFactura(order.updatedAt),
+    currencyID: 'RON',
+    supplier: {
+      name: supplier.bussinessName,
+      vatNumber: supplier.vatNumber,
+      vat: 'VAT',
+      registration: supplier.register,
+      legalForm: 'Capital social 200 lei',
+      contact: {
+        name: 'Alin Spinu',
+        email: 'office@truefinecoffee.ro',
+        telephone: '0753552492',
+      },
+      address: {
+        street: supplier.address,
+        city: 'Iasi',
+        country: 'RO'
+      }
+    },
+    client: {
+      name: customer.name,
+      vatNumber: customer.vatNumber,
+      vat: 'VAT',
+      registration: customer.registration,
+      legalForm: 'Capital social',
+      contact: {
+        name: '-',
+        email: customer.email
+      },
+      address: {
+        street: customer.address,
+        city: '-',
+        country: 'RO'
+      },
+    },
+    paymentMeans: {
+      code: 42,
+      name: `CONT BANCA ${supplier.bank} IN LEI`,
+      iban: supplier.account,
+      swift: supplier.switf
+    },
+    products: order.products.map(p => {
+      const price = p.price;
+      const vatRate = 1 + (p.tva / 100);
+      const priceNoVat = roundd(price / vatRate);
+      let product = {
+        name: p.name,
+        quantity: p.quantity,
+        unitCode: 'XPP',
+        price: priceNoVat,
+        vatPrecent: p.tva,
+        total: +p.total, 
+        totalNoVat: roundd(priceNoVat * p.quantity)
+      };
+      if(p.discount > 0){
+        const discount = p.discount;
+        const discountNoVat = roundd(discount / vatRate);
+        product.discount = {};
+        product.discount.value = discountNoVat;
+        product.discount.reason = 'Discount Client';
+        product.discount.reasonCode = 95;
+        product.discount.precent = roundd((discount / +p.total) * 100)
+        product.totalNoVat = roundd(product.totalNoVat - discountNoVat)
+
+
+      }
+      return product
+    }),
+    vatAmount: 0,
+    taxExclusiveAmount: 0,
+    taxInclusiveAmount: order.total,
+    payableAmont: order.total,
+    eFacturaId: '',
+    eFacturaStatus: '',
+    eFacturaError: '',
+    customer: customer._id,
+    locatie: order.locatie,
+    salePoint: order.salePoint
+  }
+
+  invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
+    return roundd(sum + (p.totalNoVat || 0))
+  }, 0)
+  invoice.vatAmount = roundd(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
+  return invoice
+}
+
+
+
+function createXMLInvoice(invoice){
+      const doc = create({ version: '1.0' })
+      .ele('Invoice', {
+        xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
+        'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
+        'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'
+      })
+      .ele('cbc:ID').txt(invoice.serie).up()
+      .ele('cbc:IssueDate').txt(invoice.issueDate).up()
+      .ele('cbc:DueDate').txt(invoice.dueDate).up();
+
+    const supplier = doc.ele('cac:AccountingSupplierParty').ele('cac:Party');
+    supplier.ele('cac:PartyName').ele('cbc:Name').txt(invoice.supplier.name).up().up();
+    supplier.ele('cac:PartyTaxScheme')
+      .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
+      .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.supplier.vat).up().up().up();
+    supplier.ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoice.supplier.name).up().up();
+
+    const customer = doc.up().ele('cac:AccountingCustomerParty').ele('cac:Party');
+    customer.ele('cac:PartyName').ele('cbc:Name').txt(invoice.client.name).up().up();
+    customer.ele('cac:PartyTaxScheme')
+      .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
+      .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.client.vat).up().up().up();
+    customer.ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoice.client.name).up().up();
+
+    const parent = doc.up();
+
+    parent.ele('cac:TaxTotal')
+      .ele('cbc:TaxAmount', { currencyID: invoice.currencyID }).txt(invoice.vatAmount).up()
+    .up();
+
+    parent.ele('cac:LegalMonetaryTotal')
+      .ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxExclusiveAmount).up()
+      .ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxInclusiveAmount).up()
+      .ele('cbc:PayableAmount', { currencyID: invoice.currencyID }).txt(invoice.payableAmont).up()
+    .up();
+
+
+    invoice.products.forEach((p, i) => {
+      const line = parent.ele('cac:InvoiceLine');
+      line.ele('cbc:ID').txt((i + 1).toString()).up();
+      line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt(p.quantity).up();
+      line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyID }).txt(p.totalNoVat).up();
+
+      if (p.discount) {
+        line.ele('cac:AllowanceCharge')
+          .ele('cbc:ChargeIndicator').txt('false').up()
+          .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
+          .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
+          .ele('cbc:Amount', { currencyID: invoice.currencyID }).txt(p.discount.value).up()
+        .up();
+      }
+
+      line.ele('cac:Item')
+        .ele('cbc:Name').txt(p.name).up()
+        .ele('cac:ClassifiedTaxCategory')
+          .ele('cbc:ID').txt('S').up()
+          .ele('cbc:Percent').txt(p.vatPrecent).up()
+          .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up()
+        .up();
+
+      line.ele('cac:Price')
+        .ele('cbc:PriceAmount', { currencyID: invoice.currencyID }).txt(p.price).up()
+      .up();
+    });
+
+    const xml = doc.end({ prettyPrint: true });
+console.log(xml)
+}
