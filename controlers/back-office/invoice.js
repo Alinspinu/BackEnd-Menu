@@ -59,16 +59,18 @@ function createInvoice(order, customer, supplier) {
       swift: supplier.switf
     },
     products: order.products.map(p => {
-      const price = p.price
+      const price = p.price;
+      const vatRate = 1 + (p.tva / 100);
+      const priceNoVat = roundd(price / vatRate);
       let product = {
         name: p.name,
         quantity: p.quantity,
         unitCode: 'XPP',
-        price: roundd((price) / (1 + (p.tva / 100))),
+        price: priceNoVat,
         vatPrecent: p.tva,
-        total: +p.total,
-        totalNoVat: roundd((price * p.quantity) / (1 + (p.tva / 100)))
-      }
+        total: +p.total, 
+        totalNoVat: roundd(priceNoVat * p.quantity)
+      };
       if(p.discount > 0){
         product.discount = {};
         product.discount.value = p.discount;
