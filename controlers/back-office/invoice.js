@@ -63,7 +63,7 @@ function createInvoice(order, customer, supplier) {
         name: p.name,
         quantity: p.quantity,
         unitCode: 'XPP',
-        price: p.price,
+        price: roundd((p.price) / (1 + (p.tva / 100))),
         vatPrecent: p.tva,
         total: +p.total,
         totalNoVat: roundd((p.price * p.quantity) / (1 + (p.tva / 100)))
