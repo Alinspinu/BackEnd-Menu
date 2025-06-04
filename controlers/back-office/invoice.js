@@ -27,7 +27,6 @@ module.exports.createOrderInvoice = async (req, res) => {
     const invoice = createInvoice(order, client, loc)
     const xml = createXMLInvoice(invoice)
     transformXmlToPdf(xml)
-    console.log(xml)
     testInvoice(xml)
     res.status(200).json(invoice)
   } catch(error) {
@@ -479,7 +478,7 @@ async function transformXmlToPdf(xml) {
     const response = await axios.post(url, xml, {
       headers: {
         'Content-Type': 'text/plain',
-        'Authorization': `Bearer ${process.env.ANAF_TOKEN}` 
+        'Authorization': `Bearer ${process.env.TOKEN_ANAF}` 
       },
       responseType: 'arraybuffer' 
     });
