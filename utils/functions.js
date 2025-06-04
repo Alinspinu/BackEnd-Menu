@@ -24,7 +24,7 @@ function round(num){
     return Math.round(num * 100) / 100
 }
 function roundd(num){
-    return Math.round(num * 100000) / 100000
+    return Math.round(num * 10000) / 10000
 }
 
 
