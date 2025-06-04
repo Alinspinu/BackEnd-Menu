@@ -7,7 +7,7 @@ const Invoice = require('../../models/office/invoice')
 const Order = require('../../models/office/product/order')
 const Suplier = require('../../models/office/suplier')
 const Locatie = require('../../models/office/locatie')
-const {round} = require('../../utils/functions')
+const {roundd} = require('../../utils/functions')
 const {formatDateEFactura} = require('../../utils/functions');
 
 
@@ -66,14 +66,14 @@ function createInvoice(order, customer, supplier) {
         price: p.price,
         vatPrecent: p.tva,
         total: +p.total,
-        totalNoVat: round((p.price * p.quantity) / (1 + (p.tva / 100)))
+        totalNoVat: roundd((p.price * p.quantity) / (1 + (p.tva / 100)))
       }
       if(p.discount > 0){
         product.discount.value = p.discount;
         product.discount.reason = 'Discount Client';
         product.discount.reasonCode = 95;
-        product.discount.precent = round((p.discount / +p.total) * 100)
-        product.totalNoVat = round(product.totalNoVat - (p.discount / (1 +(p.tva / 100))))
+        product.discount.precent = roundd((p.discount / +p.total) * 100)
+        product.totalNoVat = roundd(product.totalNoVat - (p.discount / (1 +(p.tva / 100))))
 
 
       }
@@ -92,9 +92,9 @@ function createInvoice(order, customer, supplier) {
   }
 
   invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
-    return sum + (p.totalNoVat || 0)
+    return roundd(sum + (p.totalNoVat || 0))
   }, 0)
-  invoice.vatAmount = invoice.taxInclusiveAmount - invoice.taxExclusiveAmount
+  invoice.vatAmount = roundd(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
   return invoice
 }
 
