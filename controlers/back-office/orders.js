@@ -193,6 +193,30 @@ module.exports.getHavyOrders = async (req, res, next) => {
 }
 
 
+module.exports.getIceCreamOrders = async (req, res) => {
+    const {start, end} = req.body
+    if(start && end){
+        const startTime = new Date(start).setUTCHours(0,0,0,0)
+        const endTime = new Date(end).setUTCHours(23,59,59,9999)
+    try{
+        const orders = await Order.find({products: {$elemMatch: {category: '6842a447c028051a2632b451'}}, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
+        .populate({
+            path: 'products.ings.ing',
+            select: 'name price uploadLog', 
+        })
+        .populate({
+            path: 'products.toppings.ing', 
+            select: 'name price qty tva tvaPrice um uploadLog', 
+            })  
+          res.status(200).json(orders)  
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+}
+
+
 
 module.exports.sendDeletedproduct = async (req, res, next) => {
     try{

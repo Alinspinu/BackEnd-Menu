@@ -421,6 +421,7 @@ function buildEFacturaHeaderXML(invoice) {
   const suppAddr = supplierParty.ele('cac:PostalAddress');
   suppAddr.ele('cbc:StreetName').txt(invoice.supplier.address.street).up();
   suppAddr.ele('cbc:CityName').txt(invoice.supplier.address.city).up();
+  suppAddr.ele('cbc:PostalZone').txt('700030').up(); 
   suppAddr.ele('cbc:CountrySubentity').txt('RO-IS').up(); // adjust as needed
   suppAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.supplier.address.country).up().up();
   supplierParty.ele('cac:PartyTaxScheme')
