@@ -7,7 +7,7 @@ const {authApi} = require('../../auth/auth')
 router.route('/get-orders', authApi).post(orderRoutes.getOrder);
 router.route('/get-havy-orders', authApi).post(orderRoutes.getHavyOrders)
 router.route('/get-user-orders', authApi).get(orderRoutes.getOrderByUser)
-router.route('/get-ice-orders', authApi).get(orderRoutes.getIceCreamOrders)
+router.route('/get-ice-orders', authApi).post(orderRoutes.getIceCreamOrders)
 
 router.route('/order-done').get(orderRoutes.orderDone);
 router.route('/set-order-time').get(orderRoutes.setOrderTime);
