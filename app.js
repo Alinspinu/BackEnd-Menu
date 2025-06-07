@@ -40,6 +40,7 @@ const invoiceRoutes = require('./routes/back-office/invoice.js')
 const gbtRoutes = require('./routes/gbt.js')
 const reservationRoutes = require('./routes/reservation.js')
 const testRoutes = require('./routes/test.js')
+const clientsRoutes = require('./routes/back-office/client.js')
 const cron = require('node-cron');
 
 const {authApi} = require('./auth/auth')
@@ -144,6 +145,7 @@ app.use('/print', authApi, printRoutes);
 app.use("/recipes", authApi, recipesRoutes);
 app.use('/shedule', authApi, sheduleRoutes);
 app.use('/report', authApi, repRoutes);
+app.use('/clients', authApi, clientsRoutes);
 app.use('/invoice', authApi, invoiceRoutes)
 app.use('/gbt', gbtRoutes)
 app.use('/reservation', reservationRoutes)
