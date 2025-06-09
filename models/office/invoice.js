@@ -16,6 +16,8 @@ const invoiceSchema = new Schema({
     supplier: {
         name: String,
         vatNumber: String,
+        iban: String,
+        bank: String,
         vat: {
             type: String,
             default: 'VAT'
@@ -59,6 +61,17 @@ const invoiceSchema = new Schema({
             }
         },
     },
+    paymentMeans: {
+        code: {
+            type: Number,
+            default: 42
+        },
+        serie: String,
+        name: String,
+        iban: String,
+        swift: String,
+
+    },
     products: [
         {
             name: String,
@@ -84,9 +97,9 @@ const invoiceSchema = new Schema({
         precent: Number
     },
     vatAmount: Number,
-    taxEclusiveAmount: Number,
+    taxExclusiveAmount: Number,
     taxInclusiveAmount: Number,
-    payableAmont: Number,
+    payableAmount: Number,
     prePaydAmount:{
         type: Number,
         default: 0
@@ -120,6 +133,7 @@ invoiceSchema.pre("save", async function (next) {
             if(counter){
                 doc.index = counter.value;
                 doc.invoiceNumber = `${doc.serie} nr. ${doc.index}`
+                doc.paymentMeans.serie = `${doc.serie} nr. ${doc.index}`
             }else {
                 const newCounter = new Counter({
                     locatie: doc.locatie,
@@ -130,6 +144,7 @@ invoiceSchema.pre("save", async function (next) {
                 await newCounter.save()
                 doc.index = 1
                 doc.invoiceNumber = `${doc.serie} nr. 1`
+                doc.paymentMeans.serie = `${doc.serie} nr. 1`
             }
             next();
     } catch (error) {
