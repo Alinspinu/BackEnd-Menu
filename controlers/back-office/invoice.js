@@ -479,7 +479,7 @@ function buildEFacturaHeaderXML(invoice) {
       if (d.reasonCode != null) ac.ele('cbc:AllowanceChargeReasonCode').txt(d.reasonCode.toString());
       if (d.reason) ac.ele('cbc:AllowanceChargeReason').txt(d.reason);
       if (d.precent != null) ac.ele('cbc:MultiplierFactorNumeric').txt(d.precent.toString());
-      ac.ele('cbc:Amount', { currencyID: invoice.currencyID }).txt(d.value.toFixed(2));
+      ac.ele('cbc:Amount', { currencyID: invoice.currencyId }).txt(d.value.toFixed(2));
       const taxCategory = ac.ele('cac:TaxCategory');
       taxCategory.ele('cbc:ID').txt('S');
       taxCategory.ele('cbc:Percent').txt(d.vat.toString());
@@ -502,13 +502,13 @@ function buildEFacturaHeaderXML(invoice) {
   
   const taxTotal = doc.ele('cac:TaxTotal');
   const totalVatAmount = Object.values(taxGroups).reduce((sum, grp) => sum + grp.tax, 0);
-  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyID }).txt(roundd(totalVatAmount)).up();
+  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(roundd(totalVatAmount)).up();
   
   // Add one <cac:TaxSubtotal> per VAT rate
   Object.entries(taxGroups).forEach(([rate, data]) => {
     const subtotal = taxTotal.ele('cac:TaxSubtotal');
-    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyID }).txt(roundd(data.taxable)).up();
-    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyID }).txt(roundd(data.tax)).up();
+    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(roundd(data.taxable)).up();
+    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(roundd(data.tax)).up();
     subtotal.ele('cac:TaxCategory')
       .ele('cbc:ID').txt('S').up()
       .ele('cbc:Percent').txt(rate).up()
@@ -517,18 +517,18 @@ function buildEFacturaHeaderXML(invoice) {
 
   // LegalMonetaryTotal
   const total = doc.ele('cac:LegalMonetaryTotal');
-  total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyID }).txt(invoice.taxExclusiveAmount).up();
-  total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxExclusiveAmount).up();
-  total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxInclusiveAmount).up();
-  total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyID }).txt(invoice.taxInclusiveAmount).up();
-  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyID }).txt(0).up();
+  total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(invoice.taxExclusiveAmount).up();
+  total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId }).txt(invoice.taxExclusiveAmount).up();
+  total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId }).txt(invoice.taxInclusiveAmount).up();
+  total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt(invoice.taxInclusiveAmount).up();
+  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt(0).up();
 
 
   invoice.products.forEach((p, i) => {
     const line = doc.ele('cac:InvoiceLine');
     line.ele('cbc:ID').txt((i + 1).toString());
     line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt(p.quantity);
-    line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyID }).txt(p.totalNoVat);
+    line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(p.totalNoVat);
 
     if (p.discount) {
       line.ele('cac:AllowanceCharge')
@@ -536,7 +536,7 @@ function buildEFacturaHeaderXML(invoice) {
         .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
         .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
         .ele('cbc:MultiplierFactorNumeric').txt(p.discount.precent).up()
-        .ele('cbc:Amount', { currencyID: invoice.currencyID }).txt(p.discount.value);
+        .ele('cbc:Amount', { currencyID: invoice.currencyId }).txt(p.discount.value);
     }
     // <cbc:MultiplierFactorNumeric>40.00</cbc:MultiplierFactorNumeric><!--BT-94-->
     line.ele('cac:Item')
@@ -547,7 +547,7 @@ function buildEFacturaHeaderXML(invoice) {
         .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
 
     line.ele('cac:Price')
-      .ele('cbc:PriceAmount', { currencyID: invoice.currencyID }).txt(p.price);
+      .ele('cbc:PriceAmount', { currencyID: invoice.currencyId }).txt(p.price);
   });
 
   return doc.end({ prettyPrint: true });
@@ -587,7 +587,7 @@ function createXMLInvoice(invoice){
 
   // Tax Total
   invoiceElem.ele('cac:TaxTotal')
-    .ele('cbc:TaxAmount', { currencyID: invoice.currencyID }).txt(invoice.vatAmount);
+    .ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(invoice.vatAmount);
 
   // Monetary Total
   invoiceElem.ele('cac:LegalMonetaryTotal')
