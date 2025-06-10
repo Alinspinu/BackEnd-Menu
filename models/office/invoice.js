@@ -89,13 +89,15 @@ const invoiceSchema = new Schema({
             }
         }
     ],
-    discount: {
+    discount: [
+        {
         reasonCode: Number,
         reason: String,
         vat: Number,
         value: Number,
         precent: Number
-    },
+        }
+    ],
     vatAmount: Number,
     taxExclusiveAmount: Number,
     taxInclusiveAmount: Number,

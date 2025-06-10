@@ -389,7 +389,6 @@ function createInvoice(order, customer, supplier) {
         product.discount.precent = roundd((discount / +p.total) * 100)
         product.totalNoVat = roundd(product.totalNoVat - discountNoVat)
       }
-      console.log(product)
       return product
     }),
     vatAmount: 0,
@@ -470,6 +469,22 @@ function buildEFacturaHeaderXML(invoice) {
   paymentMeans.ele('cbc:PaymentMeansCode').txt('10').up();
   paymentMeans.ele('cac:PayeeFinancialAccount')
     .ele('cbc:ID').txt(invoice.paymentMeans.iban).up().up();
+
+
+  if (Array.isArray(invoice.discount)) {
+    invoice.discount.forEach(d => {
+      const ac = doc.ele('cac:AllowanceCharge');
+      ac.ele('cbc:ChargeIndicator').txt('false');
+      if (d.reasonCode != null) ac.ele('cbc:AllowanceChargeReasonCode').txt(d.reasonCode.toString());
+      if (d.reason) ac.ele('cbc:AllowanceChargeReason').txt(d.reason);
+      if (d.precent != null) ac.ele('cbc:MultiplierFactorNumeric').txt(d.precent.toString());
+      ac.ele('cbc:Amount', { currencyID: invoice.currencyID }).txt(d.value.toFixed(2));
+      const taxCategory = ac.ele('cac:TaxCategory');
+      taxCategory.ele('cbc:ID').txt('S');
+      taxCategory.ele('cbc:Percent').txt(d.vat.toString());
+      taxCategory.ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+    });
+  }
 
   // Tax Total with example subtotals
 
