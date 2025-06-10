@@ -471,7 +471,7 @@ function buildEFacturaHeaderXML(invoice) {
   paymentMeans.ele('cac:PayeeFinancialAccount')
     .ele('cbc:ID').txt(invoice.paymentMeans.iban).up().up();
 
-
+  console.log(invoice.discount)
   if (Array.isArray(invoice.discount)) {
     invoice.discount.forEach(d => {
       const ac = doc.ele('cac:AllowanceCharge');
