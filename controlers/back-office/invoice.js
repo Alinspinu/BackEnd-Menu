@@ -43,6 +43,7 @@ module.exports.saveInvoice = async (req, res) => {
     const newInvoice = new Invoice(invoice)
     const savedInvoice = await newInvoice.save()
     const xml = buildEFacturaHeaderXML(savedInvoice)
+    console.log(xml)
     const arrayBuffeer =  transformXmlToPdf(xml, res)
     testInvoice(xml)
     // res.status(200).json({message: 'Factura a fost savată cu succes!', invoice: newInvoice})
