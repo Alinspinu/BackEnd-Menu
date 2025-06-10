@@ -144,6 +144,7 @@ module.exports.addProd = async (req, res, next) => {
         const {data} = req.body
         const product = JSON.parse(data)
         const cat = await Cat.findById(product.category);
+        if(cat.name === 'VANZARE') product.available = false
         const subProducts = JSON.parse(JSON.stringify(product.subProducts)) 
         product.subProducts = []
         const newProduct = new Product(product)
