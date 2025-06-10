@@ -45,7 +45,7 @@ module.exports.saveInvoice = async (req, res) => {
     const xml = buildEFacturaHeaderXML(savedInvoice)
     // const arrayBuffeer =  transformXmlToPdf(xml, res)
     testInvoice(xml)
-    res.status(200).json(newInvoice)
+    res.status(200).json({message: 'Factura a fost savată cu succes!', invoice: newInvoice})
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
