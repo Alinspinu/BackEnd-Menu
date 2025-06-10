@@ -37,6 +37,20 @@ module.exports.createOrderInvoice = async (req, res) => {
 }
 
 
+module.exports.saveInvoice = async (req, res) => {
+  const {invoice} = req.body
+  try{
+    const newInvoice = new Invoice(invoice)
+    const savedInvoice = await newInvoice.save()
+    const xml = buildEFacturaHeaderXML(savedInvoice)
+    // const arrayBuffeer =  transformXmlToPdf(xml, res)
+    testInvoice(xml)
+    res.status(200).json(newInvoice)
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
 
 
 module.exports.getMessages = async (req, res) => {
@@ -422,7 +436,7 @@ function buildEFacturaHeaderXML(invoice) {
   suppAddr.ele('cbc:StreetName').txt(invoice.supplier.address.street).up();
   suppAddr.ele('cbc:CityName').txt(invoice.supplier.address.city).up();
   suppAddr.ele('cbc:PostalZone').txt('700030').up(); 
-  suppAddr.ele('cbc:CountrySubentity').txt('RO-IS').up(); // adjust as needed
+  suppAddr.ele('cbc:CountrySubentity').txt('RO-IS').up(); 
   suppAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.supplier.address.country).up().up();
   supplierParty.ele('cac:PartyTaxScheme')
     .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
