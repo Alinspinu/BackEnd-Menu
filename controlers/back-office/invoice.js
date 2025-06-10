@@ -389,6 +389,7 @@ function createInvoice(order, customer, supplier) {
         product.discount.precent = roundd((discount / +p.total) * 100)
         product.totalNoVat = roundd(product.totalNoVat - discountNoVat)
       }
+      console.log(product)
       return product
     }),
     vatAmount: 0,
