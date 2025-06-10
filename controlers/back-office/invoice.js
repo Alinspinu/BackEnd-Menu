@@ -376,7 +376,7 @@ function createInvoice(order, customer, supplier) {
         unitCode: 'H87',
         price: priceNoVat,
         vatPrecent: p.tva,
-        total: +p.total, 
+        total: +p.total - p.discount, 
         totalNoVat: roundd(priceNoVat * p.quantity)
       };
       if(p.discount > 0){
@@ -388,8 +388,6 @@ function createInvoice(order, customer, supplier) {
         product.discount.reasonCode = 95;
         product.discount.precent = roundd((discount / +p.total) * 100)
         product.totalNoVat = roundd(product.totalNoVat - discountNoVat)
-
-
       }
       return product
     }),
