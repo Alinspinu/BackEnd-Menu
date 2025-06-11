@@ -1136,13 +1136,13 @@ module.exports.factura = async (req, res, next) => {
 
   //Titlu factura
 
-  doc.roundedRect(220, 220, 130, 50, 2)
+  doc.roundedRect(220, 220, 140, 60, 2)
   doc.lineWidth(0.5);
   doc.stroke()
   // doc.font('Courier')
   doc.fontSize(24)
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text('FACTURA', 228, 190)
+  doc.text('FACTURĂ', 228, 190)
   doc.fontSize(8)
   doc.font("public/font/Montserrat-Regular.ttf");
   doc.text('Numar:', 225, 190 + 35, { width: 40, align: "left" })
