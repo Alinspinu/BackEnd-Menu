@@ -1136,7 +1136,7 @@ module.exports.factura = async (req, res, next) => {
 
   //Titlu factura
 
-  doc.roundedRect(220, 220, 150, 54, 1)
+  doc.roundedRect(205, 220, 150, 54, 1)
   doc.lineWidth(0.8);
   doc.stroke()
   // doc.font('Courier')
