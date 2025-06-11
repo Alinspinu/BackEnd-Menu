@@ -1319,9 +1319,7 @@ module.exports.factura = async (req, res, next) => {
   doc.rect(25, 669, 338, 105)
   doc.lineWidth(0.5);
   doc.stroke()
-
-  doc.fontSize(10)
-
+  doc.image('public/icons/logo-stanga.png', 35, 700, {width: 300})
 
   doc.rect(363, 669, 197, 105)
   doc.lineWidth(0.5);
