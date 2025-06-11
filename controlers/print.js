@@ -13,6 +13,8 @@ const { getProducts } = require('./back-office/product');
 const { saveProductIngredient } = require('./nutrition');
 const {createRaortXml} = require('../utils/print/printOrders');
 
+const {sendBillToCustomer} = require('../utils/mail')
+
 
 module.exports.printNir = async (req, res, next) => {
   // const firma = await Locatie.findById(loc)
@@ -1059,9 +1061,9 @@ module.exports.printConsum = async (req, res) => {
 
 
 module.exports.factura = async (req, res, next) => {
-  const {id} = req.body
+  const {id, email, mode} = req.body
 
-  const invoice = await Invoice.findById(id)
+  const invoice = await Invoice.findById(id).populate({path: 'locatie'})
   const doc = new PDFDocument({
       size: "A4",
       layout: "portrait",
@@ -1336,20 +1338,33 @@ module.exports.factura = async (req, res, next) => {
   doc.text('TOTAL', 365, 745, { width: 90, align: 'center' })
   doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 464, 745, { width: 90, align: 'center' })
 
+  const buffers = [];
+  if(mode){
+    doc.on('data', buffers.push.bind(buffers));
+  } else {
+    res.type("application/pdf");
+    doc.pipe(res);
+  }
+
+
 
   doc.end()
-  res.type("application/pdf");
-  doc.pipe(res);
 
   res.once("finish", () => {
       const chunks = [];
       doc.on("data", (chunk) => {
           chunks.push(chunk);
       });
-      doc.on("end", () => {
-        const buffer = Buffer.concat(chunks);
-        const base64String = buffer.toString("base64");
-        res.status(200).send(base64String)
+      doc.on("end", async () => {
+        if(mode) {
+          const pdfBuffer = Buffer.concat(buffers);
+          const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail)
+          res.status(200).json(message)
+        } else {
+          const buffer = Buffer.concat(chunks);
+          const base64String = buffer.toString("base64");
+          res.status(200).send(base64String)
+        }
       });
   })
 }
