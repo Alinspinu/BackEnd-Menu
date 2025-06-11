@@ -1342,10 +1342,11 @@ module.exports.factura = async (req, res, next) => {
 
   const buffers = [];
   doc.on("data", (chunk) => {
-      buffers.push.bind(chunk)
+      buffers.push(chunk);
   });
   doc.on("end", async () => {
     const pdfBuffer = Buffer.concat(buffers);
+    console.log(pdfBuffer)
 
     if (mode) {
       // Email mode
