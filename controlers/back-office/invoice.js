@@ -193,6 +193,7 @@ module.exports.getInvoice = async (req, res) => {
       if(upload){
         const bills = await Invoice.find({eFacturaId:{$in: ids}})
         const billsIds = bills.map(b => b.eFacturaId)
+        console.log(billsIds)
         res.status(200).json(billsIds)
       } else {
         const nirs = await Nir.find({eFacturaId:{$in: ids}})
