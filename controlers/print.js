@@ -1082,21 +1082,21 @@ module.exports.factura = async (req, res, next) => {
   //header date firma
   doc.fontSize(10);
   doc.text(`C.I.F.:`, 25 + 10, 50, { width: 30, align: "left" });
-  doc.text(`Nr. Reg. Com.:`, 25 + 10, 62, { width: 70, align: "left" });
-  doc.text(`Capital social:`, 25 + 10, 74, { width: 70, align: "left" });
+  doc.text(`Nr. Reg. Com.:`, 25 + 10, 62, { width: 120, align: "left" });
+  doc.text(`Capital social:`, 25 + 10, 74, { width: 120, align: "left" });
   doc.text(`Adresa:`, 25 + 10, 86, { width: 38, align: "left" })
   doc.font("public/font/Montserrat-Regular.ttf");
-  doc.text(`Email:`, 25 + 10, 140, { width: 35, align: "left" })
-  doc.text(`Banca:`, 25 + 10, 152, { width: 35, align: "left" })
-  doc.text(`Cont:`, 25 + 10, 164, { width: 30, align: "left" })
+  doc.text(`Email:`, 25 + 10, 140, { width: 50, align: "left" })
+  doc.text(`Banca:`, 25 + 10, 152, { width: 50, align: "left" })
+  doc.text(`Cont:`, 25 + 10, 164, { width: 50, align: "left" })
 
   //date firma
 
   doc.fontSize(10);
   // doc.font('Courier')
-  doc.text(`${invoice.supplier.vatNumber}`, 55 + 10, 50);
-  doc.text(`${invoice.supplier.registration}`, 95 + 10, 62);
-  doc.text(`200 lei`, 95 + 10, 74);
+  doc.text(`${invoice.supplier.vatNumber}`, 150 + 10, 50);
+  doc.text(`${invoice.supplier.registration}`, 150 + 10, 62);
+  doc.text(`200 lei`, 150 + 10, 74);
   // doc.font("Courier");
   doc.text(`${invoice.supplier.address.street}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
 
@@ -1117,7 +1117,7 @@ module.exports.factura = async (req, res, next) => {
   // doc.font('Courier-Bold')
   doc.text('Client:', 395 - 40, 50, { width: 35, align: "left" })
   doc.text(`C.I.F.:`, 395 - 40, 82 - 7, { width: 30, align: "left" });
-  doc.text(`Nr. Reg. Com.:`, 395 - 40, 94 - 7, { width: 70, align: "left" });
+  doc.text(`Nr. Reg. Com.:`, 395 - 40, 94 - 7, { width: 120, align: "left" });
   doc.text(`Adresa:`, 395 - 40, 106 - 7, { width: 40, align: "left" })
 
 
@@ -1125,9 +1125,9 @@ module.exports.factura = async (req, res, next) => {
   //date client
   doc.fontSize(10);
   doc.font("public/font/Montserrat-Regular.ttf");
-  doc.text(`${invoice.client.name}`, 430 - 40, 50, { width: 215, align: "left" });
-  doc.text(`${invoice.client.vatNumber}`, 415 + 10 - 40, 82 - 7, { width: 145, align: "left" });
-  doc.text(`${invoice.client.registration}`, 455 + 10 - 40, 94 - 7, { width: 105, align: "left" });
+  doc.text(`${invoice.client.name}`, 525 - 40, 50, { width: 215, align: "left" });
+  doc.text(`${invoice.client.vatNumber}`, 525 + 10 - 40, 82 - 7, { width: 145, align: "left" });
+  doc.text(`${invoice.client.registration}`, 525 + 10 - 40, 94 - 7, { width: 105, align: "left" });
   // doc.font("Courier");
   doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 106 + 5, { width: 215, align: "left" })
 
