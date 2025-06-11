@@ -57,7 +57,7 @@ module.exports.saveInvoice = async (req, res) => {
 module.exports.getInvoices = async (req, res) => {
   const {loc} = req.query
   try{
-    const invoices = Invoice.find({locatie: loc})
+    const invoices = await Invoice.find({locatie: loc})
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)
@@ -69,7 +69,7 @@ module.exports.getInvoices = async (req, res) => {
 module.exports.editInvoice = async (req, res) => {
   const {invoice} = req.body
   try{
-    const newInvoice = Invoice.findByIdAndUpdate(invoice._id, invoice, {new: true})
+    const newInvoice = await Invoice.findByIdAndUpdate(invoice._id, invoice, {new: true})
     res.status(200).json({mesage: 'Factura a fost editată cu success!', invoice: newInvoice})
   } catch(error) {
     console.log(error)
