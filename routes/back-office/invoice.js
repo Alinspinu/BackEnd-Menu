@@ -22,7 +22,7 @@ router.route('/upload').post(invoiceRoutes.uploadInvoiceToEFactura)
 
 router.route('/save').post(invoiceRoutes.saveInvoice)
 
-router.route('/print', authApi).post(printRoutes.factura)
+router.route('/print').post(printRoutes.factura)
 
 
 
