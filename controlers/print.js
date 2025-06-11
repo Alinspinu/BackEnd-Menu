@@ -1146,15 +1146,15 @@ module.exports.factura = async (req, res, next) => {
   doc.fontSize(8)
   doc.font("public/font/Montserrat-Regular.ttf");
   doc.text('Serie/Nr.', 230, 192 + 35, { width: 40, align: "left" })
-  doc.text('Emisă la', 230, 207 + 35, { width: 40, align: "left" })
-  doc.text('Scadentă la', 230, 222 + 35, { width: 50, align: "left" })
+  doc.text('Emisă', 230, 207 + 35, { width: 40, align: "left" })
+  doc.text('Scadentă', 230, 222 + 35, { width: 40, align: "left" })
 
   // Titlu Factura Date
   doc.font('public/font/Montserrat-Bold.ttf')
   doc.fontSize(10)
   doc.text(`${invoice.invoiceNumber}`, 275, 190 + 35)
-  doc.text(`${invoice.issueDate}`, 285, 205 + 35)
-  doc.text(`${invoice.dueDate}`, 285, 220 + 35)
+  doc.text(`${invoice.issueDate}`, 275, 205 + 35)
+  doc.text(`${invoice.dueDate}`, 275, 220 + 35)
 
   //header produsex
   doc.rect(25, 280, 18, 30)
@@ -1283,7 +1283,7 @@ module.exports.factura = async (req, res, next) => {
   // doc.font("Courier");
   doc.fontSize(9)
   const productsCount = invoice.products.length
-  let rowHeigth = 12
+  let rowHeigth = 14
 
   if(productsCount >= 25 && productsCount <= 40){
     doc.fontSize(8)
