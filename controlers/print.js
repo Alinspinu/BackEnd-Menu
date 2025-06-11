@@ -1068,24 +1068,8 @@ module.exports.factura = async (req, res, next) => {
       size: "A4",
       layout: "portrait",
   });
-  
-  const buffers = [];
-  doc.on("data", (chunk) => {
-      buffers.push.bind(chunk)
-  });
-  doc.on("end", async () => {
-    const pdfBuffer = Buffer.concat(buffers);
 
-    if (mode) {
-      // Email mode
-      const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail);
-      res.status(200).json(message);
-    } else {
-      // Send as PDF response
-      res.type("application/pdf");
-      res.send(pdfBuffer);
-    }
-  });
+
   //HEADER FURNIZOR
 
   //Nume furnizor
@@ -1354,6 +1338,25 @@ module.exports.factura = async (req, res, next) => {
   doc.fontSize(16)
   doc.text('TOTAL', 365, 745, { width: 90, align: 'center' })
   doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 464, 745, { width: 90, align: 'center' })
+
+
+  const buffers = [];
+  doc.on("data", (chunk) => {
+      buffers.push.bind(chunk)
+  });
+  doc.on("end", async () => {
+    const pdfBuffer = Buffer.concat(buffers);
+
+    if (mode) {
+      // Email mode
+      const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail);
+      res.status(200).json(message);
+    } else {
+      // Send as PDF response
+      res.type("application/pdf");
+      res.send(pdfBuffer);
+    }
+  });
 
 
   doc.end()
