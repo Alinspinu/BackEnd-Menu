@@ -1145,9 +1145,9 @@ module.exports.factura = async (req, res, next) => {
   doc.text('FACTURĂ', 228, 190)
   doc.fontSize(8)
   doc.font("public/font/Montserrat-Regular.ttf");
-  doc.text('Numar:', 230, 192 + 35, { width: 40, align: "left" })
-  doc.text('Data:', 230, 207 + 35, { width: 40, align: "left" })
-  doc.text('Scadent:', 230, 222 + 35, { width: 40, align: "left" })
+  doc.text('Serie/Nr.', 230, 192 + 35, { width: 40, align: "left" })
+  doc.text('Emisă la', 230, 207 + 35, { width: 40, align: "left" })
+  doc.text('Scadentă la', 230, 222 + 35, { width: 40, align: "left" })
 
   // Titlu Factura Date
   doc.font('public/font/Montserrat-Bold.ttf')
@@ -1315,32 +1315,15 @@ module.exports.factura = async (req, res, next) => {
   })
 
   doc.fontSize(10)
-  // doc.font('Courier')
-  doc.text(`Document intocmit de ${invoice.supplier.contact.name}`, 27, 659)
   //footer factura
-  doc.rect(25, 669, 100, 105)
+  doc.rect(25, 669, 338, 105)
   doc.lineWidth(0.5);
   doc.stroke()
 
   doc.fontSize(10)
-  // doc.font('Courier')
-  doc.text('Semnatura si', 26, 675, { width: 98, align: 'center' })
-  doc.text('stampila', 26, 687, { width: 98, align: 'center' })
-  doc.text('furnizorului', 26, 699, { width: 98, align: 'center' })
 
-  doc.rect(125, 669, 238, 105)
-  doc.lineWidth(0.5);
-  doc.stroke()
 
-  doc.fontSize(9)
-  doc.text('Numele delegatului:', 126, 672, { width: 80, align: 'right' })
-  doc.text('Buletin/CI:', 126, 688, { width: 80, align: 'right' })
-  doc.text('Seria:', 216, 688, { width: 30, align: 'left' })
-  doc.text('Nr.:', 256, 688, { width: 50, align: 'left' })
-  doc.text('Eliberat:', 126, 704, { width: 80, align: 'right' })
-
-  doc.text('Semnatura Delegat', 126, 722)
-  doc.rect(363, 669, 60, 105)
+  doc.rect(363, 669, 197, 105)
   doc.lineWidth(0.5);
   doc.stroke()
   doc.font('public/font/Montserrat-Bold.ttf')
@@ -1356,15 +1339,7 @@ module.exports.factura = async (req, res, next) => {
   // doc.font('Courier-Bold')
   doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 424, 675, { width: 58, align: 'center' })
   doc.text(`${round(invoice.vatAmount)} Lei`, 484, 675, { width: 73, align: 'right' })
-  doc.lineWidth(0.3);
-  doc.moveTo(125, 719).lineTo(560, 719).stroke();
-  doc.rect(423, 669, 60, 105)
-  doc.lineWidth(0.5);
-  doc.stroke()
 
-  doc.rect(483, 669, 77, 105)
-  doc.lineWidth(0.5);
-  doc.stroke()
 
   doc.end()
   res.type("application/pdf");
