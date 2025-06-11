@@ -54,8 +54,55 @@ module.exports.saveInvoice = async (req, res) => {
 }
 
 
+module.exports.getInvoices = async (req, res) => {
+  const {loc} = req.query
+  try{
+    const invoices = Invoice.find({locatie: loc})
+    res.status(200).json(invoices)
+  } catch(error) {
+    res.status(500).json(error)
+    console.log(error)
+  }
+}
+
+
+module.exports.editInvoice = async (req, res) => {
+  const {invoice} = req.body
+  try{
+    const newInvoice = Invoice.findByIdAndUpdate(invoice._id, invoice, {new: true})
+    res.status(200).json({mesage: 'Factura a fost editată cu success!', invoice: newInvoice})
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+
+}
+
+
+module.exports.checkInvoiceUploadStatus = async (req, res) => {
+  const {id} = req.query
+  const config = {
+      headers: {
+        'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
+        'Content-Type': 'application/json', 
+      }
+    }
+     
+  try{
+  const response = await axios.get(`https://api.anaf.ro/prod/FCTEL/rest/stareMesaj?id_incarcare=${id}`, config)
+  if(response){
+      res.status(200).json(response.data)
+  }
+
+  }catch(error){
+      console.log(error)
+      res.status(500).json(error)
+  }
+}
+
+
 module.exports.getMessages = async (req, res) => {
-    const {days, cif} = req.query
+    const {days, cif, filter = 'P'} = req.query
     const config = {
         headers: {
           'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
@@ -64,7 +111,7 @@ module.exports.getMessages = async (req, res) => {
       }
 
     try{
-    const response = await axios.get(`${process.env.ANAF_DAYS_BASE_API_URL}?zile=${days}&cif=${cif}&filtru=P`, config)
+    const response = await axios.get(`${process.env.ANAF_DAYS_BASE_API_URL}?zile=${days}&cif=${cif}&filtru=${filter}`, config)
     if(response){
         res.status(200).json(response.data)
     }
