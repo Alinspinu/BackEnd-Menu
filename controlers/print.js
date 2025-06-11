@@ -4,7 +4,7 @@ const Ingredient = require('../models/office/inv-ingredient')
 const Locatie = require('../models/office/locatie')
 const Suplier = require('../models/office/suplier')
 const Order = require('../models/office/product/order')
-const Bill = require('../models/office/bill')
+const Invoice = require('../models/office/invoice')
 const User = require('../models/users/user')
 const Inventary = require('../models/office/inventary')
 const Product = require('../models/office/product/product')
@@ -1059,23 +1059,9 @@ module.exports.printConsum = async (req, res) => {
 
 
 module.exports.factura = async (req, res, next) => {
-  const {orderId, locId, clientId, userId} = req.body
-  const nota = await Order.findById(orderId)
-  const locatie = await Locatie.findById(locId)
-  const client = await Suplier.findById(clientId)
-  const user = await User.findById(userId)
-  const bill = new Bill({
-      serie: 'SLR',
-      locatie: locatie._id,
-      client: clientId,
-      products: nota.products
-  })
- const savedBill = await bill.save()
-  const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-  const date = nota.createdAt
-      .toLocaleDateString("en-GB", options)
-      .replace(/\//g, "-");
+  const {id} = req.body
 
+  const invoice = await Invoice.findById(id)
   const doc = new PDFDocument({
       size: "A4",
       layout: "portrait",
@@ -1088,7 +1074,7 @@ module.exports.factura = async (req, res, next) => {
   doc.text('Furnizor', 25 + 10, 10)
   doc.fontSize(18);
   doc.font('Times-Bold')
-  doc.text(`${locatie.bussinessName}`, 25 + 10, 25);
+  doc.text(`${invoice.supplier.name}`, 25 + 10, 25);
   doc.lineWidth(1.3);
   doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
 
@@ -1107,15 +1093,15 @@ module.exports.factura = async (req, res, next) => {
 
   doc.fontSize(10);
   doc.font('Times-Roman')
-  doc.text(`${locatie.vatNumber}`, 55 + 10, 50);
-  doc.text(`${locatie.register}`, 95 + 10, 62);
+  doc.text(`${invoice.supplier.vatNumber}`, 55 + 10, 50);
+  doc.text(`${invoice.supplier.registration}`, 95 + 10, 62);
   doc.text(`200 lei`, 95 + 10, 74);
   doc.font("public/font/RobotoSlab-Regular.ttf");
-  doc.text(`${locatie.address}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
+  doc.text(`${invoice.supplier.address.street}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
 
-  doc.text(`office@truefinecoffee.ro`, 60 + 10, 140)
-  doc.text(`${locatie.bank}`, 60 + 10, 152)
-  doc.text(`${locatie.account}`, 55 + 10, 164)
+  doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 140)
+  doc.text(`${invoice.supplier.bank}`, 60 + 10, 152)
+  doc.text(`${invoice.supplier.iban}`, 55 + 10, 164)
 
   //HEADER CLIENT
   //Nume client
@@ -1138,11 +1124,11 @@ module.exports.factura = async (req, res, next) => {
   //date client
   doc.fontSize(10);
   doc.font('Times-Roman')
-  doc.text(`${client.name}`, 430 - 40, 50, { width: 215, align: "left" });
-  doc.text(`${client.vatNumber}`, 415 + 10 - 40, 82 - 7, { width: 145, align: "left" });
-  doc.text(`${client.register}`, 455 + 10 - 40, 94 - 7, { width: 105, align: "left" });
+  doc.text(`${invoice.client.name}`, 430 - 40, 50, { width: 215, align: "left" });
+  doc.text(`${invoice.client.vatNumber}`, 415 + 10 - 40, 82 - 7, { width: 145, align: "left" });
+  doc.text(`${invoice.client.registration}`, 455 + 10 - 40, 94 - 7, { width: 105, align: "left" });
   doc.font("public/font/RobotoSlab-Regular.ttf");
-  doc.text(`${client.address || ''}`, 395 - 40, 106 + 5, { width: 215, align: "left" })
+  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 106 + 5, { width: 215, align: "left" })
 
 
 
@@ -1156,14 +1142,14 @@ module.exports.factura = async (req, res, next) => {
   doc.text('FACTURA', 228, 190)
   doc.fontSize(11)
   doc.text('Numar:', 225, 190 + 35, { width: 40, align: "left" })
-  doc.text('Serie:', 225, 205 + 35, { width: 40, align: "left" })
-  doc.text('Data:', 225, 220 + 35, { width: 40, align: "left" })
+  doc.text('Data:', 225, 205 + 35, { width: 40, align: "left" })
+  doc.text('Scadent:', 225, 220 + 35, { width: 40, align: "left" })
 
   // Titlu Factura Date
   doc.font('Times-Bold')
-  doc.text(`${bill.index}`, 265, 190 + 35)
-  doc.text(`${bill.serie}`, 265, 205 + 35)
-  doc.text(`${date}`, 265, 220 + 35)
+  doc.text(`${invoice.invoiceNumber}`, 265, 190 + 35)
+  doc.text(`${invoice.issueDate}`, 265, 205 + 35)
+  doc.text(`${invoice.dueDate}`, 265, 220 + 35)
 
   //header produse
   doc.rect(25, 280, 18, 30)
@@ -1293,30 +1279,30 @@ module.exports.factura = async (req, res, next) => {
   let valTva = 0
   doc.font("public/font/RobotoSlab-Regular.ttf");
   doc.fontSize(9)
-  let products = []
-  savedBill.products.forEach(el => {
-    const existingProduct = products.find(p => p.name === el.name)
-    if(existingProduct){
-      let total = +existingProduct.total
-      existingProduct.quantity += el.quantity
-      total += +el.price
-      existingProduct.total = total
-    } else {
-      products.push(el)
-    }
-  })
-  if(nota.tips > 0){
-    const tips ={
-      name: 'Bacsis',
-      quantity: 1,
-      price: nota.tips,
-      total: nota.tips,
-      tva: 0,
-      discount: 0,
-    }
-    products.push(tips)
-  }
-  const productsCount = products.length
+  // let products = []
+  // savedBill.products.forEach(el => {
+  //   const existingProduct = products.find(p => p.name === el.name)
+  //   if(existingProduct){
+  //     let total = +existingProduct.total
+  //     existingProduct.quantity += el.quantity
+  //     total += +el.price
+  //     existingProduct.total = total
+  //   } else {
+  //     products.push(el)
+  //   }
+  // })
+  // if(nota.tips > 0){
+  //   const tips ={
+  //     name: 'Bacsis',
+  //     quantity: 1,
+  //     price: nota.tips,
+  //     total: nota.tips,
+  //     tva: 0,
+  //     discount: 0,
+  //   }
+  //   products.push(tips)
+  // }
+  const productsCount = invoice.products.length
   let rowHeigth = 12
 
   if(productsCount >= 25 && productsCount <= 40){
@@ -1332,8 +1318,7 @@ module.exports.factura = async (req, res, next) => {
     rowHeigth = 7
   }
 
-  products.forEach((el, i) => {
-    const price = +el.total / el.quantity - el.discount
+  invoice.products.forEach((el, i) => {
     if(el.name.length > 30){
       el.name = el.name.slice(0, 40)
     }
@@ -1342,20 +1327,16 @@ module.exports.factura = async (req, res, next) => {
       doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
       doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
       doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
-      doc.text(`${round(price / (1 + (el.tva / 100)))}`, 364, newValue, { width: 58, align: "center" })
-      doc.text(`${round(el.quantity * (price / (1 + (el.tva / 100))))}`, 424, newValue, { width: 58, align: "center" })
-      doc.text(`${el.tva}%`, 486, newValue, { width: 35, align: "left" })
-      doc.text(`${round((el.quantity * price) - (el.quantity * (price / (1 + (el.tva / 100)))))}0`, 523, newValue, { width: 30, align: "right" })
-      const valTotProdFaraTva = round(el.quantity * (price - (price * (el.tva / 100))))
-      const valTotProdTva = round((el.quantity * price) - (el.quantity * (price - (price * (el.tva / 100)))))
-      valFaraTva += valTotProdFaraTva
-      valTva += valTotProdTva
+      doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
+      doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
+      doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
+      doc.text(`${round(el.total - el.totalNoVat)}0`, 523, newValue, { width: 30, align: "right" })
       heghtValue += rowHeigth
   })
 
   doc.fontSize(10)
   doc.font('Times-Roman')
-  doc.text(`Document intocmit de ${user.name}`, 27, 659)
+  doc.text(`Document intocmit de ${invoice.supplier.contact.name}`, 27, 659)
   //footer factura
   doc.rect(25, 669, 100, 105)
   doc.lineWidth(0.5);
@@ -1386,20 +1367,17 @@ module.exports.factura = async (req, res, next) => {
   doc.fontSize(12)
   doc.text('TOTAL', 365, 672)
   doc.text('TOTAL', 425, 725)
-  doc.text(`${round(valFaraTva + valTva)} Lei`, 484, 725, { width: 73, align: 'right' })
+  doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 484, 725, { width: 73, align: 'right' })
   doc.fontSize(9)
   doc.font('Times-Roman')
   doc.text('Semnatura', 364, 721, { width: 58, align: 'center' })
   doc.text('de', 364, 734, { width: 58, align: 'center' })
   doc.text('primire', 364, 746, { width: 58, align: 'center' })
   doc.font('Times-Bold')
-  doc.text(`${round(valFaraTva)} Lei`, 424, 675, { width: 58, align: 'center' })
-  doc.text(`${round(valTva)} Lei`, 484, 675, { width: 73, align: 'right' })
+  doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 424, 675, { width: 58, align: 'center' })
+  doc.text(`${round(invoice.vatAmount)} Lei`, 484, 675, { width: 73, align: 'right' })
   doc.lineWidth(0.3);
   doc.moveTo(125, 719).lineTo(560, 719).stroke();
-
-
-
   doc.rect(423, 669, 60, 105)
   doc.lineWidth(0.5);
   doc.stroke()

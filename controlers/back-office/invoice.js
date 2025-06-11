@@ -24,7 +24,6 @@ module.exports.createOrderInvoice = async (req, res) => {
     const order = await Order.findById(orderId)
     const loc = await Locatie.findById(locId)
     const client = await Client.findById(clientId)
-    console.log(client)
     const invoice = createInvoice(order, client, loc)
     const newInvoice = new Invoice(invoice)
     const savedInvoice = await newInvoice.save()

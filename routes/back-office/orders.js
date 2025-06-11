@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const orderRoutes = require('../../controlers/back-office/orders')
-const printRoutes = require('../../controlers/print')
 const {authApi} = require('../../auth/auth')
 
 router.route('/get-orders', authApi).post(orderRoutes.getOrder);
@@ -27,7 +26,6 @@ router.route('/save-order')
 router.route('/upload-ings', authApi).post(orderRoutes.uploadIngs)
 router.route('/unload-ings', authApi).post(orderRoutes.unloadIngs)
 
-router.route('/invoice', authApi).post(printRoutes.factura)
 
 router.route('/all-orders', authApi).get(orderRoutes.getAllOrders)
 
