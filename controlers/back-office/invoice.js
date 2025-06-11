@@ -134,9 +134,9 @@ module.exports.getMessages = async (req, res) => {
 }
 
     module.exports.getMessagesByDate = async (req, res) => {
-      const {startDate, endDate, cif} = req.body
+      const {startDate, endDate, cif, filter = 'P'} = req.body
       let page = 1
-      const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=${page}`
+      const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=${page}&filtru${filter}`
       const config = {
         headers: {
           'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
@@ -188,12 +188,17 @@ module.exports.getInvoice = async (req, res) => {
 
 
   module.exports.checkInvoceStatus = async (req, res) => {
-    const {ids} = req.body;
-
+    const {ids, upload} = req.body;
     try{
-      const nirs = await Nir.find({eFacturaId:{$in: ids}})
-      const nirsIds = nirs.map(n => n.eFacturaId)
-      res.status(200).json(nirsIds)
+      if(upload){
+        const bills = await Invoice.find({eFacturaId:{$in: ids}})
+        const billsIds = bills.map(b => b.eFacturaId)
+        res.status(200).json(billsIds)
+      } else {
+        const nirs = await Nir.find({eFacturaId:{$in: ids}})
+        const nirsIds = nirs.map(n => n.eFacturaId)
+        res.status(200).json(nirsIds)
+      }
     } catch(error) {
       console.log(error)
       rse.status(500).json(error)
