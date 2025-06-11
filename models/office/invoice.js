@@ -134,7 +134,7 @@ invoiceSchema.pre("save", async function (next) {
             ).exec();
             if(counter){
                 doc.index = counter.value;
-                if(!doc.invoiceNumber.length){
+                if(!doc.invoiceNumber){
                     doc.invoiceNumber = `${doc.serie} nr. ${doc.index}`
                     doc.paymentMeans.serie = `${doc.serie} nr. ${doc.index}`
                 } else {
@@ -149,7 +149,7 @@ invoiceSchema.pre("save", async function (next) {
                 })
                 await newCounter.save()
                 doc.index = 1
-                if(!doc.invoiceNumber.length){
+                if(!doc.invoiceNumber){
                     doc.invoiceNumber = `${doc.serie} nr. ${doc.index}`
                     doc.paymentMeans.serie = `${doc.serie} nr. ${doc.index}`
                 } else {
