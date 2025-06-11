@@ -1145,9 +1145,9 @@ module.exports.factura = async (req, res, next) => {
   doc.text('FACTURĂ', 228, 190)
   doc.fontSize(8)
   doc.font("public/font/Montserrat-Regular.ttf");
-  doc.text('Numar:', 230, 194 + 35, { width: 40, align: "left" })
-  doc.text('Data:', 230, 209 + 35, { width: 40, align: "left" })
-  doc.text('Scadent:', 230, 224 + 35, { width: 40, align: "left" })
+  doc.text('Numar:', 230, 192 + 35, { width: 40, align: "left" })
+  doc.text('Data:', 230, 207 + 35, { width: 40, align: "left" })
+  doc.text('Scadent:', 230, 222 + 35, { width: 40, align: "left" })
 
   // Titlu Factura Date
   doc.font('public/font/Montserrat-Bold.ttf')
@@ -1156,7 +1156,7 @@ module.exports.factura = async (req, res, next) => {
   doc.text(`${invoice.issueDate}`, 275, 205 + 35)
   doc.text(`${invoice.dueDate}`, 275, 220 + 35)
 
-  //header produse
+  //header produsex
   doc.rect(25, 280, 18, 30)
   doc.lineWidth(0.5);
   doc.stroke()
