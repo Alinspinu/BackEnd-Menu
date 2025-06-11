@@ -39,6 +39,42 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
           };
 };
 
+async  function sendBillToCustomer(buffer, email, gmail) {
+
+    const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);
+
+          const transporter = nodemailer.createTransport({
+              service: 'Gmail',
+              auth: {
+                  user: gmail.email,
+                  pass: appKey
+              }
+          });
+          const mailOptions = {
+              from: gmail.email,
+              to: email, 
+              subject: 'Factura True Fine Coffee',
+              text: 'Gasiți facura dumneavoastră atașată.',
+              attachments: [
+                {
+                  filename: 'factura.pdf',
+                  content: buffer,
+                  contentType: 'application/pdf'
+                }
+              ]
+             
+          };
+      
+          try {
+              const info = await transporter.sendMail(mailOptions);
+              console.log('Email sent:', info.response);
+              return { message: 'Email sent' };
+          } catch (error) {
+              console.error('Error sending email:', error);
+              return { message: 'Error sending email' };
+          };
+};
+
 
 
 async function sendVerificationEmail(newUser) {
@@ -271,6 +307,7 @@ async function sendAdminMessage(data) {
 
 
 module.exports = {
+    sendBillToCustomer,
     sendResetEmail,
     sendVerificationEmail,
     sendCompleteRegistrationEmail,
@@ -279,7 +316,7 @@ module.exports = {
     sendMailToCustomer,
     sendEmployeeEmail,
     sendReservationEmail,
-    sendAdminMessage
+    sendAdminMessage,
   };
 
 
