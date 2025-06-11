@@ -1327,18 +1327,17 @@ module.exports.factura = async (req, res, next) => {
   doc.lineWidth(0.5);
   doc.stroke()
   doc.font('public/font/Montserrat-Bold.ttf')
+  doc.fontSize(10)
+  doc.text('Total fără T.V.A.', 408, 672)
+  doc.text('Total T.V.A.', 478, 672)
+  // doc.text('fără', 420, 672)
+  // doc.text('T.V.A.', 420, 672)
   doc.fontSize(12)
-  doc.text('TOTAL', 365, 672)
+  doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 414, 695, { width: 58, align: 'center' })
+  doc.text(`${round(invoice.vatAmount)} Lei`, 484, 675, { width: 73, align: 'right' })
+
   doc.text('TOTAL', 425, 725)
   doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 484, 725, { width: 73, align: 'right' })
-  doc.fontSize(9)
-  doc.font('Courier')
-  doc.text('Semnatura', 364, 721, { width: 58, align: 'center' })
-  doc.text('de', 364, 734, { width: 58, align: 'center' })
-  doc.text('primire', 364, 746, { width: 58, align: 'center' })
-  // doc.font('Courier-Bold')
-  doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 424, 675, { width: 58, align: 'center' })
-  doc.text(`${round(invoice.vatAmount)} Lei`, 484, 675, { width: 73, align: 'right' })
 
 
   doc.end()
