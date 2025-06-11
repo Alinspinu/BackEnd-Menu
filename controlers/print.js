@@ -1081,14 +1081,14 @@ module.exports.factura = async (req, res, next) => {
 
   //header date firma
   doc.fontSize(10);
-  doc.text(`C.I.F.:`, 25 + 10, 50, { width: 30, align: "left" });
-  doc.text(`Nr. Reg. Com.:`, 25 + 10, 62, { width: 100, align: "left" });
-  doc.text(`Capital social:`, 25 + 10, 74, { width: 100, align: "left" });
+  doc.text(`C.I.F.`, 25 + 10, 50, { width: 30, align: "left" });
+  doc.text(`Nr. Reg. Com.`, 25 + 10, 62, { width: 100, align: "left" });
+  doc.text(`Capital social`, 25 + 10, 74, { width: 100, align: "left" });
   doc.text(`Adresa:`, 25 + 10, 86, { width: 38, align: "left" })
   doc.font("public/font/Montserrat-Regular.ttf");
-  doc.text(`Email:`, 25 + 10, 140, { width: 50, align: "left" })
-  doc.text(`Banca:`, 25 + 10, 152, { width: 50, align: "left" })
-  doc.text(`Cont:`, 25 + 10, 164, { width: 50, align: "left" })
+  doc.text(`Email`, 25 + 10, 140, { width: 50, align: "left" })
+  doc.text(`Banca`, 25 + 10, 152, { width: 50, align: "left" })
+  doc.text(`Cont`, 25 + 10, 164, { width: 50, align: "left" })
 
   //date firma
 
@@ -1115,10 +1115,10 @@ module.exports.factura = async (req, res, next) => {
   // header date client
   doc.fontSize(10);
   // doc.font('Courier-Bold')
-  doc.text('Client:', 395 - 40, 50, { width: 35, align: "left" })
-  doc.text(`C.I.F.:`, 395 - 40, 62 , { width: 30, align: "left" });
-  doc.text(`Nr. Reg. Com.:`, 395 - 40, 74 , { width: 90, align: "left" });
-  doc.text(`Adresa:`, 395 - 40, 86 , { width: 40, align: "left" })
+  doc.text('Client', 395 - 40, 50, { width: 35, align: "left" })
+  doc.text(`C.I.F.`, 395 - 40, 62 , { width: 30, align: "left" });
+  doc.text(`Nr. Reg. Com.`, 395 - 40, 74 , { width: 90, align: "left" });
+  doc.text(`Adresa`, 395 - 40, 86 , { width: 40, align: "left" })
 
 
 
@@ -1141,14 +1141,17 @@ module.exports.factura = async (req, res, next) => {
   doc.stroke()
   // doc.font('Courier')
   doc.fontSize(24)
+  doc.font('public/font/Montserrat-Bold.ttf')
   doc.text('FACTURA', 228, 190)
-  doc.fontSize(11)
+  doc.fontSize(8)
+  doc.font("public/font/Montserrat-Regular.ttf");
   doc.text('Numar:', 225, 190 + 35, { width: 40, align: "left" })
   doc.text('Data:', 225, 205 + 35, { width: 40, align: "left" })
   doc.text('Scadent:', 225, 220 + 35, { width: 40, align: "left" })
 
   // Titlu Factura Date
   doc.font('public/font/Montserrat-Bold.ttf')
+  doc.fontSize(10)
   doc.text(`${invoice.invoiceNumber}`, 265, 190 + 35)
   doc.text(`${invoice.issueDate}`, 265, 205 + 35)
   doc.text(`${invoice.dueDate}`, 265, 220 + 35)
