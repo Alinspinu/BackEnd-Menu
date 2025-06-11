@@ -156,14 +156,15 @@ invoiceSchema.pre("save", async function (next) {
 
 invoiceSchema.pre('findOneAndDelete', async function(next) {
     try{
-
-        const doc = this;
-        const counter = await Counter.findOneAndUpdate( 
-            { locatie: this.locatie, model: "Invoice", salePoint: this.salePoint },
-            { $inc: { value: -1 } },
-            { upsert: true, new: true }
-        ).exec();
-        console.log(counter)
+        const doc = await this.model.findOne(this.getQuery());
+        if(doc) {
+            const counter = await Counter.findOneAndUpdate( 
+                { locatie: doc.locatie, model: "Invoice", salePoint: doc.salePoint },
+                { $inc: { value: -1 } },
+                { upsert: true, new: true }
+            ).exec();
+            console.log(counter)
+        }
         next();
     } catch(error) {
         next(error)
