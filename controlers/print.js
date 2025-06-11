@@ -1136,8 +1136,8 @@ module.exports.factura = async (req, res, next) => {
 
   //Titlu factura
 
-  doc.roundedRect(220, 220, 140, 54, 2)
-  doc.lineWidth(0.5);
+  doc.roundedRect(220, 220, 150, 54, 1)
+  doc.lineWidth(0.8);
   doc.stroke()
   // doc.font('Courier')
   doc.fontSize(24)
@@ -1151,7 +1151,7 @@ module.exports.factura = async (req, res, next) => {
 
   // Titlu Factura Date
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.fontSize(10)
+  doc.fontSize(9)
   doc.text(`${invoice.invoiceNumber}`, 275, 190 + 35)
   doc.text(`${invoice.issueDate}`, 275, 205 + 35)
   doc.text(`${invoice.dueDate}`, 275, 220 + 35)
