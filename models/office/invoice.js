@@ -134,8 +134,12 @@ invoiceSchema.pre("save", async function (next) {
             ).exec();
             if(counter){
                 doc.index = counter.value;
-                doc.invoiceNumber = `${doc.serie} nr. ${doc.index}`
-                doc.paymentMeans.serie = `${doc.serie} nr. ${doc.index}`
+                if(!doc.invoiceNumber.length){
+                    doc.invoiceNumber = `${doc.serie} nr. ${doc.index}`
+                    doc.paymentMeans.serie = `${doc.serie} nr. ${doc.index}`
+                } else {
+                    doc.paymentMeans.serie = doc.invoiceNumber
+                }
             }else {
                 const newCounter = new Counter({
                     locatie: doc.locatie,
@@ -145,8 +149,12 @@ invoiceSchema.pre("save", async function (next) {
                 })
                 await newCounter.save()
                 doc.index = 1
-                doc.invoiceNumber = `${doc.serie} nr. 1`
-                doc.paymentMeans.serie = `${doc.serie} nr. 1`
+                if(!doc.invoiceNumber.length){
+                    doc.invoiceNumber = `${doc.serie} nr. ${doc.index}`
+                    doc.paymentMeans.serie = `${doc.serie} nr. ${doc.index}`
+                } else {
+                    doc.paymentMeans.serie = doc.invoiceNumber
+                }
             }
             next();
     } catch (error) {
