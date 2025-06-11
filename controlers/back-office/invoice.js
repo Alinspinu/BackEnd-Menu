@@ -122,7 +122,7 @@ module.exports.getMessages = async (req, res) => {
       }
 
     try{
-    const response = await axios.get(`${process.env.ANAF_DAYS_BASE_API_URL_TEST}?zile=${days}&cif=${cif}&filtru=${filter}`, config)
+    const response = await axios.get(`${process.env.ANAF_DAYS_BASE_API_URL}?zile=${days}&cif=${cif}&filtru=${filter}`, config)
     if(response){
         res.status(200).json(response.data)
     }
