@@ -5,7 +5,7 @@ const xml2js = require('xml2js');
 const Nir = require('../../models/office/nir')
 const Invoice = require('../../models/office/invoice')
 const Order = require('../../models/office/product/order')
-const Suplier = require('../../models/office/suplier')
+const Client = require('../../models/office/client')
 const Locatie = require('../../models/office/locatie')
 const {roundd} = require('../../utils/functions')
 const {formatDateEFactura} = require('../../utils/functions');
@@ -23,13 +23,11 @@ module.exports.createOrderInvoice = async (req, res) => {
   try{
     const order = await Order.findById(orderId)
     const loc = await Locatie.findById(locId)
-    const client = await Suplier.findById(clientId)
+    const client = await Client.findById(clientId)
     const invoice = createInvoice(order, client, loc)
-    console.log(invoice)
-    // const xml = createXMLInvoice(invoice)
-    const xml = buildEFacturaHeaderXML(invoice)
-    const arrayBuffeer =  transformXmlToPdf(xml, res)
-    testInvoice(xml)
+    const newInvoice = new Invoice(invoice)
+    const savedInvoice = await newInvoice.save()
+    res.status(200).json(savedInvoice)
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
@@ -42,14 +40,23 @@ module.exports.saveInvoice = async (req, res) => {
   try{
     const newInvoice = new Invoice(invoice)
     const savedInvoice = await newInvoice.save()
-    const xml = buildEFacturaHeaderXML(savedInvoice)
-    console.log(xml)
-    // const arrayBuffeer =  transformXmlToPdf(xml, res)
-    // testInvoice(xml)
-    res.status(200).json({message: 'Factura a fost savată cu succes!', invoice: newInvoice})
+    res.status(200).json({message: 'Factura a fost savată cu succes!', invoice: savedInvoice})
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
+  }
+}
+
+
+module.exports.uploadInvoiceToEFactura = async (req, res) => {
+  const {id} = req.body
+  try{
+    const invoice = await Invoice.findById(id)
+    const xml = buildEFacturaHeaderXML(invoice)
+    testInvoice(xml, res)
+  } catch(error){
+    console.log(error)
+    res.status(200).json(error)
   }
 }
 
@@ -720,7 +727,7 @@ async function transformXmlToPdf(xml, res) {
 
 
 
-async function testInvoice(xml) {
+async function testInvoice(xml, res) {
     const token = process.env.TOKEN_ANAF
     const standard = 'UBL';
     const cif = '44994432'; // CIF-ul real
@@ -740,7 +747,9 @@ async function testInvoice(xml) {
       });
   
       console.log('Upload successful:', response.data);
+      res.status(200).json({message: response.data})
     } catch (error) {
+      res.status(500).json(error)
       console.error('Error uploading:', error.data);
     }
   }

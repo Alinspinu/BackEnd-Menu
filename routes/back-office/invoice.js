@@ -17,6 +17,8 @@ router.route('/')
     .post(invoiceRoutes.createOrderInvoice)
     .delete(invoiceRoutes.deleteInvoice)
 
+router.route('/upload').post(invoiceRoutes.uploadInvoiceToEFactura)
+
 router.route('/save').post(invoiceRoutes.saveInvoice)
 
 
