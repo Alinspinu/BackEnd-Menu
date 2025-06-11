@@ -1157,7 +1157,7 @@ module.exports.factura = async (req, res, next) => {
   doc.lineWidth(0.5);
   doc.stroke()
 
-  doc.font('Courier-Roman')
+  doc.font('Courier')
   doc.fontSize(9)
   doc.text('Nr.', 26, 281)
   doc.text('crt.', 26, 296)
@@ -1345,7 +1345,7 @@ module.exports.factura = async (req, res, next) => {
   doc.text('TOTAL', 425, 725)
   doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 484, 725, { width: 73, align: 'right' })
   doc.fontSize(9)
-  doc.font('Courier-Roman')
+  doc.font('Courier')
   doc.text('Semnatura', 364, 721, { width: 58, align: 'center' })
   doc.text('de', 364, 734, { width: 58, align: 'center' })
   doc.text('primire', 364, 746, { width: 58, align: 'center' })
