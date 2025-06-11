@@ -1328,7 +1328,7 @@ module.exports.factura = async (req, res, next) => {
   doc.stroke()
   doc.fontSize(10)
   doc.text('Total fără T.V.A.', 375, 672)
-  doc.text('Total T.V.A.', 478, 672)
+  doc.text('Total T.V.A.', 478, 672, { width: 90, align: 'center' })
   doc.font('public/font/Montserrat-Bold.ttf')
   doc.fontSize(12)
   doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 375, 686, { width: 90, align: 'center' })
