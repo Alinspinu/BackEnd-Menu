@@ -466,7 +466,7 @@ function createInvoice(order, customer, supplier) {
     vatAmount: 0,
     taxExclusiveAmount: 0,
     taxInclusiveAmount: order.total,
-    payableAmont: order.total,
+    payableAmount: order.total,
     eFacturaId: '',
     eFacturaStatus: '',
     eFacturaError: '',
