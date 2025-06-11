@@ -70,7 +70,7 @@ module.exports.editInvoice = async (req, res) => {
   const {invoice} = req.body
   try{
     const newInvoice = await Invoice.findByIdAndUpdate(invoice._id, invoice, {new: true})
-    res.status(200).json({mesage: 'Factura a fost editată cu success!', invoice: newInvoice})
+    res.status(200).json({message: 'Factura a fost editată cu success!', invoice: newInvoice})
   } catch(error) {
     console.log(error)
     res.status(500).json(error) 
