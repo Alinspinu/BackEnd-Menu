@@ -1066,14 +1066,14 @@ module.exports.factura = async (req, res, next) => {
       size: "A4",
       layout: "portrait",
   });
-
+  console.log(invoice.supplier)
   //HEADER FURNIZOR
 
   //Nume furnizor
   doc.fontSize(10)
   doc.text('Furnizor', 25 + 10, 10)
   doc.fontSize(18);
-  doc.font('Times-Bold')
+  doc.font('Montserrat-Bold')
   doc.text(`${invoice.supplier.name}`, 25 + 10, 25);
   doc.lineWidth(1.3);
   doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
@@ -1084,7 +1084,7 @@ module.exports.factura = async (req, res, next) => {
   doc.text(`Nr. Reg. Com.:`, 25 + 10, 62, { width: 70, align: "left" });
   doc.text(`Capital social:`, 25 + 10, 74, { width: 70, align: "left" });
   doc.text(`Adresa:`, 25 + 10, 86, { width: 38, align: "left" })
-  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.font("Montserrat");
   doc.text(`Email:`, 25 + 10, 140, { width: 35, align: "left" })
   doc.text(`Banca:`, 25 + 10, 152, { width: 35, align: "left" })
   doc.text(`Cont:`, 25 + 10, 164, { width: 30, align: "left" })
@@ -1092,11 +1092,11 @@ module.exports.factura = async (req, res, next) => {
   //date firma
 
   doc.fontSize(10);
-  doc.font('Times-Roman')
+  doc.font('Montserrat')
   doc.text(`${invoice.supplier.vatNumber}`, 55 + 10, 50);
   doc.text(`${invoice.supplier.registration}`, 95 + 10, 62);
   doc.text(`200 lei`, 95 + 10, 74);
-  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.font("Montserrat");
   doc.text(`${invoice.supplier.address.street}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
 
   doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 140)
@@ -1108,12 +1108,12 @@ module.exports.factura = async (req, res, next) => {
   doc.fontSize(10)
 
   doc.fontSize(12);
-  doc.font('Times-Bold')
+  doc.font('Montserrat-Bold')
 
 
   // header date client
   doc.fontSize(10);
-  doc.font('Times-Bold')
+  doc.font('Montserrat-Bold')
   doc.text('Client:', 395 - 40, 50, { width: 35, align: "left" })
   doc.text(`C.I.F.:`, 395 - 40, 82 - 7, { width: 30, align: "left" });
   doc.text(`Nr. Reg. Com.:`, 395 - 40, 94 - 7, { width: 70, align: "left" });
@@ -1123,21 +1123,21 @@ module.exports.factura = async (req, res, next) => {
 
   //date client
   doc.fontSize(10);
-  doc.font('Times-Roman')
+  doc.font('Montserrat')
   doc.text(`${invoice.client.name}`, 430 - 40, 50, { width: 215, align: "left" });
   doc.text(`${invoice.client.vatNumber}`, 415 + 10 - 40, 82 - 7, { width: 145, align: "left" });
   doc.text(`${invoice.client.registration}`, 455 + 10 - 40, 94 - 7, { width: 105, align: "left" });
-  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.font("Montserrat");
   doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 106 + 5, { width: 215, align: "left" })
 
 
 
   //Titlu factura
 
-  doc.roundedRect(220, 220, 130, 50, 5)
+  doc.roundedRect(220, 220, 130, 50, 2)
   doc.lineWidth(0.5);
   doc.stroke()
-  doc.font('Times-Roman')
+  doc.font('Montserrat')
   doc.fontSize(24)
   doc.text('FACTURA', 228, 190)
   doc.fontSize(11)
@@ -1146,7 +1146,7 @@ module.exports.factura = async (req, res, next) => {
   doc.text('Scadent:', 225, 220 + 35, { width: 40, align: "left" })
 
   // Titlu Factura Date
-  doc.font('Times-Bold')
+  doc.font('Montserrat-Bold')
   doc.text(`${invoice.invoiceNumber}`, 265, 190 + 35)
   doc.text(`${invoice.issueDate}`, 265, 205 + 35)
   doc.text(`${invoice.dueDate}`, 265, 220 + 35)
@@ -1156,7 +1156,7 @@ module.exports.factura = async (req, res, next) => {
   doc.lineWidth(0.5);
   doc.stroke()
 
-  doc.font('Times-Roman')
+  doc.font('Montserrat-Roman')
   doc.fontSize(9)
   doc.text('Nr.', 26, 281)
   doc.text('crt.', 26, 296)
@@ -1275,33 +1275,8 @@ module.exports.factura = async (req, res, next) => {
   doc.stroke()
   // radare produse
 
-  let valFaraTva = 0
-  let valTva = 0
-  doc.font("public/font/RobotoSlab-Regular.ttf");
+  doc.font("Montserrat");
   doc.fontSize(9)
-  // let products = []
-  // savedBill.products.forEach(el => {
-  //   const existingProduct = products.find(p => p.name === el.name)
-  //   if(existingProduct){
-  //     let total = +existingProduct.total
-  //     existingProduct.quantity += el.quantity
-  //     total += +el.price
-  //     existingProduct.total = total
-  //   } else {
-  //     products.push(el)
-  //   }
-  // })
-  // if(nota.tips > 0){
-  //   const tips ={
-  //     name: 'Bacsis',
-  //     quantity: 1,
-  //     price: nota.tips,
-  //     total: nota.tips,
-  //     tva: 0,
-  //     discount: 0,
-  //   }
-  //   products.push(tips)
-  // }
   const productsCount = invoice.products.length
   let rowHeigth = 12
 
@@ -1335,7 +1310,7 @@ module.exports.factura = async (req, res, next) => {
   })
 
   doc.fontSize(10)
-  doc.font('Times-Roman')
+  doc.font('Montserrat')
   doc.text(`Document intocmit de ${invoice.supplier.contact.name}`, 27, 659)
   //footer factura
   doc.rect(25, 669, 100, 105)
@@ -1343,7 +1318,7 @@ module.exports.factura = async (req, res, next) => {
   doc.stroke()
 
   doc.fontSize(10)
-  doc.font('Times-Roman')
+  doc.font('Montserrat')
   doc.text('Semnatura si', 26, 675, { width: 98, align: 'center' })
   doc.text('stampila', 26, 687, { width: 98, align: 'center' })
   doc.text('furnizorului', 26, 699, { width: 98, align: 'center' })
@@ -1363,17 +1338,17 @@ module.exports.factura = async (req, res, next) => {
   doc.rect(363, 669, 60, 105)
   doc.lineWidth(0.5);
   doc.stroke()
-  doc.font('Times-Bold')
+  doc.font('Montserrat-Bold')
   doc.fontSize(12)
   doc.text('TOTAL', 365, 672)
   doc.text('TOTAL', 425, 725)
   doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 484, 725, { width: 73, align: 'right' })
   doc.fontSize(9)
-  doc.font('Times-Roman')
+  doc.font('Montserrat-Roman')
   doc.text('Semnatura', 364, 721, { width: 58, align: 'center' })
   doc.text('de', 364, 734, { width: 58, align: 'center' })
   doc.text('primire', 364, 746, { width: 58, align: 'center' })
-  doc.font('Times-Bold')
+  doc.font('Montserrat-Bold')
   doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 424, 675, { width: 58, align: 'center' })
   doc.text(`${round(invoice.vatAmount)} Lei`, 484, 675, { width: 73, align: 'right' })
   doc.lineWidth(0.3);
