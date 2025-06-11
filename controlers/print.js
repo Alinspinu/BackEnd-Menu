@@ -1326,13 +1326,13 @@ module.exports.factura = async (req, res, next) => {
   doc.rect(363, 669, 197, 105)
   doc.lineWidth(0.5);
   doc.stroke()
-  doc.fontSize(10)
-  doc.text('Total fără T.V.A.', 375, 672)
-  doc.text('Total T.V.A.', 478, 672, { width: 90, align: 'center' })
+  doc.fontSize(7)
+  doc.text('(Total fără T.V.A.)', 375, 685)
+  doc.text('(Total T.V.A.)', 478, 685, { width: 90, align: 'center' })
   doc.font('public/font/Montserrat-Bold.ttf')
   doc.fontSize(12)
-  doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 375, 686, { width: 90, align: 'center' })
-  doc.text(`${round(invoice.vatAmount)} Lei`, 480, 686, { width: 73, align: 'center' })
+  doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 365, 678, { width: 90, align: 'center' })
+  doc.text(`${round(invoice.vatAmount)} Lei`, 480, 678, { width: 75, align: 'center' })
 
   doc.text('TOTAL', 425, 725)
   doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 484, 725, { width: 73, align: 'right' })
