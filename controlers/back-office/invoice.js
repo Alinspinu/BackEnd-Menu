@@ -73,9 +73,20 @@ module.exports.editInvoice = async (req, res) => {
     res.status(200).json({mesage: 'Factura a fost editată cu success!', invoice: newInvoice})
   } catch(error) {
     console.log(error)
-    res.status(500).json(error)
+    res.status(500).json(error) 
   }
 
+}
+
+module.exports.deleteInvoice = async (req, res) => {
+  const {id} = req.query
+  try{
+    await Invoice.findByIdAndDelete(id)
+    res.status(200).json({message: 'Factura a fost ștearsă cu success!'})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
 }
 
 

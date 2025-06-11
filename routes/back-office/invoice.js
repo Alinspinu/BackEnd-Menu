@@ -15,6 +15,7 @@ router.route('/')
     .get(invoiceRoutes.getInvoices)
     .put(invoiceRoutes.editInvoice)
     .post(invoiceRoutes.createOrderInvoice)
+    .delete(invoiceRoutes.deleteInvoice)
 
 router.route('/save').post(invoiceRoutes.saveInvoice)
 
