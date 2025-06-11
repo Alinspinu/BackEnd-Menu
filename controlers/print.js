@@ -1074,7 +1074,7 @@ module.exports.factura = async (req, res, next) => {
   doc.font('Courier')
   doc.text('Furnizor', 25 + 10, 10)
   doc.fontSize(18);
-  doc.font('Courier-Bold')
+  doc.font('../public/font/Montserrat-Bold.ttf')
   doc.text(`${invoice.supplier.name}`, 25 + 10, 25);
   doc.lineWidth(1.3);
   doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
