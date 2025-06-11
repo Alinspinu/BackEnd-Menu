@@ -1334,8 +1334,9 @@ module.exports.factura = async (req, res, next) => {
   doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 365, 678, { width: 90, align: 'center' })
   doc.text(`${round(invoice.vatAmount)} Lei`, 480, 678, { width: 75, align: 'center' })
 
-  doc.text('TOTAL', 425, 725)
-  doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 484, 725, { width: 73, align: 'right' })
+  doc.fontSize(16)
+  doc.text('TOTAL', 365, 745, { width: 90, align: 'center' })
+  doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 414, 745, { width: 90, align: 'center' })
 
 
   doc.end()
