@@ -54,6 +54,7 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
   try{
     const invoice = await Invoice.findById(id)
     const xml = buildEFacturaHeaderXML(invoice)
+    console.log(xml)
     const response = await testInvoice(xml)
     invoice.eFacturaId = response.eFacturaId
     invoice.eFacturaError = response.eFacturaError
