@@ -773,7 +773,7 @@ async function testInvoice(xml, res) {
         }
 
         if(error){
-          res.status(500).json({error: error})
+          res.status(200).json({error: error})
         }
         
     } catch (error) {
