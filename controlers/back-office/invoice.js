@@ -127,11 +127,13 @@ module.exports.handleUplodErros = async (req, res) => {
   const {id} = req.query 
   try{
     const files = await downloadZipFileCheck(id)
-    if(files){
+    if(files.length){
       files.forEach(f => {
         console.log(`📄 File: ${f.name}`);
         console.log(f.content);
       })
+    } else {
+      console.log(files)
     }
     res.status(200).json({message: 'ok'})
   } catch(error){
@@ -306,6 +308,52 @@ module.exports.getInvoice = async (req, res) => {
 // }
 
 
+// async function downloadZipFileCheck(id) {
+//   try {
+//     const response = await axios.get(`${process.env.ANAF_DOWNLOAD_BASE_URL}?id=${id}`, {
+//       responseType: 'arraybuffer',
+//       headers: {
+//         'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
+//         'Accept': 'application/zip',
+//       },
+//     });
+
+//     const contentType = response.headers['content-type'];
+//     console.log('📦 Content-Type:', contentType);
+
+//     // If it's not actually a zip, parse it as XML
+//     if (!contentType.includes('application/zip')) {
+//       const text = response.data.toString('utf8');
+//       console.log('⚠️ Not a ZIP. Response:', text);
+
+//       // Try parsing XML to extract error
+//       const parsed = await xml2js.parseStringPromise(text, { explicitArray: false });
+//       const error = parsed?.header?.Errors?.$?.errorMessage || 'Unknown error';
+//       throw new Error(`ANAF returned an error: ${error}`);
+//     }
+
+//     console.log(response.data)
+//     // Proceed if it's a ZIP
+//     const zip = new AdmZip(response.data);
+//     const zipEntries = zip.getEntries();
+
+//     const files = zipEntries
+//       .filter(entry => !entry.entryName.toLowerCase().includes('semnatura'))
+//       .map(entry => ({
+//         name: entry.entryName,
+//         content: entry.getData().toString('utf8')
+//       }));
+
+//     return files;
+
+//   } catch (error) {
+//     console.error('❌ Failed to download or process ZIP:', error.message);
+//     throw error;
+//   }
+// }
+
+
+
 async function downloadZipFileCheck(id) {
   try {
     const response = await axios.get(`${process.env.ANAF_DOWNLOAD_BASE_URL}?id=${id}`, {
@@ -316,39 +364,32 @@ async function downloadZipFileCheck(id) {
       },
     });
 
-    const contentType = response.headers['content-type'];
-    console.log('📦 Content-Type:', contentType);
+    const buffer = Buffer.from(response.data);
 
-    // If it's not actually a zip, parse it as XML
-    if (!contentType.includes('application/zip')) {
-      const text = response.data.toString('utf8');
-      console.log('⚠️ Not a ZIP. Response:', text);
-
-      // Try parsing XML to extract error
-      const parsed = await xml2js.parseStringPromise(text, { explicitArray: false });
-      const error = parsed?.header?.Errors?.$?.errorMessage || 'Unknown error';
-      throw new Error(`ANAF returned an error: ${error}`);
-    }
-
-    console.log(response.data)
-    // Proceed if it's a ZIP
-    const zip = new AdmZip(response.data);
-    const zipEntries = zip.getEntries();
-
-    const files = zipEntries
-      .filter(entry => !entry.entryName.toLowerCase().includes('semnatura'))
-      .map(entry => ({
-        name: entry.entryName,
-        content: entry.getData().toString('utf8')
+    // ✅ Check if buffer is a ZIP (should start with "PK" == 0x50 0x4B)
+    if (buffer[0] === 0x50 && buffer[1] === 0x4B) {
+      const zip = new AdmZip(buffer);
+      const files = zip.getEntries().map(entry => ({
+        fileName: entry.entryName,
+        content: entry.getData().toString('utf8'),
       }));
-
-    return files;
-
-  } catch (error) {
-    console.error('❌ Failed to download or process ZIP:', error.message);
-    throw error;
+      return { type: 'zip', files };
+    } else {
+      // ❌ Not a ZIP – try parsing as JSON error
+      const text = buffer.toString('utf8');
+      try {
+        const error = JSON.parse(text);
+        return { type: 'error', message: error.eroare || text };
+      } catch (e) {
+        return { type: 'error', message: `Unexpected response: ${text.slice(0, 300)}...` };
+      }
+    }
+  } catch (err) {
+    console.error('Download failed:', err.message);
+    throw new Error('Download or processing failed');
   }
 }
+
 
 
 
