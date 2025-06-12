@@ -7,7 +7,7 @@ const Invoice = require('../../models/office/invoice')
 const Order = require('../../models/office/product/order')
 const Client = require('../../models/office/client')
 const Locatie = require('../../models/office/locatie')
-const {roundd} = require('../../utils/functions')
+const {round} = require('../../utils/functions')
 const {formatDateEFactura} = require('../../utils/functions');
 const { create } = require('xmlbuilder2');
 const { parseStringPromise } = require('xml2js');
@@ -568,7 +568,7 @@ function createInvoice(order, customer, supplier) {
     products: order.products.map(p => {
       const price = p.price;
       const vatRate = 1 + (p.tva / 100);
-      const priceNoVat = roundd(price / vatRate);
+      const priceNoVat = round(price / vatRate);
       let product = {
         name: p.name,
         quantity: p.quantity,
@@ -576,17 +576,17 @@ function createInvoice(order, customer, supplier) {
         price: priceNoVat,
         vatPrecent: p.tva,
         total: +p.total-p.discount, 
-        totalNoVat: roundd(priceNoVat * p.quantity)
+        totalNoVat: round(priceNoVat * p.quantity)
       };
       if(p.discount > 0){
         const discount = p.discount;
-        const discountNoVat = roundd(discount / vatRate);
+        const discountNoVat = round(discount / vatRate);
         product.discount = {};
         product.discount.value = discountNoVat;
         product.discount.reason = 'Discount Client';
         product.discount.reasonCode = 95;
-        product.discount.precent = roundd((discount / +p.total) * 100)
-        product.totalNoVat = roundd(product.totalNoVat - discountNoVat)
+        product.discount.precent = round((discount / +p.total) * 100)
+        product.totalNoVat = round(product.totalNoVat - discountNoVat)
       }
       return product
     }),
@@ -603,9 +603,9 @@ function createInvoice(order, customer, supplier) {
   }
 
   invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
-    return roundd(sum + (p.totalNoVat || 0))
+    return round(sum + (p.totalNoVat || 0))
   }, 0)
-  invoice.vatAmount = roundd(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
+  invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
   return invoice
 }
 
