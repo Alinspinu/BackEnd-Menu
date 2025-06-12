@@ -706,13 +706,13 @@ function buildEFacturaHeaderXML(invoice) {
   
   const taxTotal = doc.ele('cac:TaxTotal');
   const totalVatAmount = Object.values(taxGroups).reduce((sum, grp) => sum + grp.tax, 0);
-  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(roundd(totalVatAmount)).up();
+  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(round(totalVatAmount)).up();
   
   // Add one <cac:TaxSubtotal> per VAT rate
   Object.entries(taxGroups).forEach(([rate, data]) => {
     const subtotal = taxTotal.ele('cac:TaxSubtotal');
-    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(roundd(data.taxable)).up();
-    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(roundd(data.tax)).up();
+    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(round(data.taxable)).up();
+    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(round(data.tax)).up();
     subtotal.ele('cac:TaxCategory')
       .ele('cbc:ID').txt('S').up()
       .ele('cbc:Percent').txt(rate).up()
