@@ -670,24 +670,7 @@ async function transformXmlToPdf(xml, res) {
       const error = header.Errors?.$?.errorMessage;
   
       if (indexIncarcare) {
-        const verifyUrl = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`;
-        const resp = await axios.get(verifyUrl, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/xml',
-          },
-          responseType: 'text',
-          maxContentLength: Infinity,
-          maxBodyLength: Infinity
-        });
-        const head = await parseHeaderFromXml(resp.data);
-        const eFacturaStatus = head.$.stare;
-        return {
-            eFacturaStatus: eFacturaStatus,
-            eFacturaId: indexIncarcare,
-            eFacturaError: '',
-            message: 'Fișierul a fost încărcat cu success!'
-          }
+        return checkInvoiceStatus(indexIncarcare, token)
       }
       if (error) {
         return {
@@ -701,6 +684,36 @@ async function transformXmlToPdf(xml, res) {
       console.error('Error uploading:', err?.response?.data || err.message);
       throw err
     }
+  }
+
+
+  async function checkInvoiceStatus(indexIncarcare) {
+    const token = process.env.TOKEN_ANAF;
+    const veryfyBaseUrl = 'https://api.anaf.ro/test/FCTEL/rest/stareMesaj';
+    const verifyUrl = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`;
+    try{
+      const resp = await axios.get(verifyUrl, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/xml',
+        },
+        responseType: 'text',
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+      });
+      const head = await parseHeaderFromXml(resp.data);
+      const eFacturaStatus = head.$.stare;
+      return {
+          eFacturaStatus: eFacturaStatus,
+          eFacturaId: indexIncarcare,
+          eFacturaError: '',
+          message: 'Fișierul a fost încărcat cu success!'
+        }
+    } catch(error) {
+      console.error('Error uploading:', err?.response?.data || err.message);
+      throw error
+    }
+
   }
   
 
