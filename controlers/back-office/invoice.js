@@ -756,7 +756,7 @@ async function testInvoice(xml, res) {
       
         const header = result.header;
         const indexIncarcare = header.$.index_incarcare;
-        const error  = handleError.$.errorMessage
+        const error  = header.$.errorMessage
         console.log(header)
         console.log(error)
         console.log(indexIncarcare)
