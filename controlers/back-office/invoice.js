@@ -397,7 +397,7 @@ function createInvoice(order, customer, supplier) {
     serie: 'CAMPUS',
     issueDate: formatDateEFactura(order.updatedAt),
     dueDate: formatDateEFactura(order.updatedAt),
-    // currencyID: 'RON',
+    currencyID: 'RON',
     supplier: {
       name: supplier.bussinessName,
       vatNumber: supplier.vatNumber,
@@ -756,7 +756,7 @@ async function testInvoice(xml, res) {
       
         const header = result.header;
         const indexIncarcare = header.$.index_incarcare;
-        const error  = header.$.errorMessage
+        const error  = header.Errors?.$?.errorMessage;
         console.log(header)
         console.log(error)
         console.log(indexIncarcare)
