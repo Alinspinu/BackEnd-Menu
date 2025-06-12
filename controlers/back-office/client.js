@@ -26,7 +26,7 @@ module.exports.getClients = async (req, res) => {
     }
 }
 
-module.exports.editClient = async (rea, res) => {
+module.exports.editClient = async (req, res) => {
     const {client} = req.body
     try{
         const savedClient = await Client.findByIdAndUpdate(client._id, client, {new: true})
