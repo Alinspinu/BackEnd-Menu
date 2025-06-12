@@ -620,9 +620,14 @@ function buildEFacturaHeaderXML(invoice) {
     });
 
   // Invoice metadata
-  doc.ele('cbc:ID').txt(invoice.serie).up();
+  doc.ele('cbc:CustomizationID').txt('urn:cen.eu:en16931:2017#compliant#urn:efactura.mfinante.ro:CIUS-RO:1.0.1').up();
+  doc.ele('cbc:ProfileID').txt('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0').up();
+  doc.ele('cbc:ID').txt(invoice.invoiceNumber).up(); // ensure this contains digits
   doc.ele('cbc:IssueDate').txt(invoice.issueDate).up();
   doc.ele('cbc:DueDate').txt(invoice.dueDate).up();
+  doc.ele('cbc:InvoiceTypeCode').txt('380').up(); // standard invoice
+  doc.ele('cbc:DocumentCurrencyCode').txt('RON').up();
+  doc.ele('cbc:TaxCurrencyCode').txt('RON').up();
 
   // Supplier block
   const supplierParty = doc.ele('cac:AccountingSupplierParty').ele('cac:Party');
@@ -653,7 +658,7 @@ function buildEFacturaHeaderXML(invoice) {
   custAddr.ele('cbc:StreetName').txt(invoice.client.address.street).up();
   custAddr.ele('cbc:CityName').txt(invoice.client.address.city).up();
   custAddr.ele('cbc:PostalZone').txt('700058').up(); // example
-  custAddr.ele('cbc:CountrySubentity').txt('-').up(); // example
+  custAddr.ele('cbc:CountrySubentity').txt('RO-B').up(); // example
   custAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.client.address.country).up().up();
   customerParty.ele('cac:PartyTaxScheme')
     .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
@@ -661,6 +666,7 @@ function buildEFacturaHeaderXML(invoice) {
   customerParty.ele('cac:PartyLegalEntity')
     .ele('cbc:RegistrationName').txt(invoice.client.name).up()
     .ele('cbc:CompanyID').txt(invoice.client.registration).up().up();
+
 
   // Payment Means
   const paymentMeans = doc.ele('cac:PaymentMeans');
