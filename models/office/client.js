@@ -34,6 +34,12 @@ const clientSchema = new Schema({
     type: String,
     required: true
   },
+  invoiceAddress: {
+    postalCode: String,
+    street: String,
+    city: String,
+    coutrySubentity: String,
+  },
   locatie: {
     type: Schema.Types.ObjectId,
     ref: 'Locatie'
