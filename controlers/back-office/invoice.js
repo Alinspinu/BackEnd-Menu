@@ -104,20 +104,19 @@ module.exports.deleteInvoice = async (req, res) => {
 
 
 module.exports.checkInvoiceUploadStatus = async (req, res) => {
-  const {id} = req.query
-  const config = {
-      headers: {
-        'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
-        'Content-Type': 'application/json', 
-      }
-    }
-     
+  const {id} = req.query     
   try{
-  const response = await axios.get(`https://api.anaf.ro/prod/FCTEL/rest/stareMesaj?id_incarcare=${id}`, config)
-  if(response){
-      res.status(200).json(response.data)
-  }
-
+    const invoice = await Invoice.findById(id)
+    if(invoice && invoice.eFacturaId){
+      const response = await checkInvoiceStatus(invoice.eFacturaId)
+      invoice.eFacturaId = response.eFacturaId
+      invoice.eFacturaError = response.eFacturaError
+      invoice.eFacturaStatus = response.eFacturaStatus
+      const savedInvoice = await invoice.save()
+      res.status(200).json({message: response.message, invoice: savedInvoice})
+    } else {
+      res.status(200).josn({message: 'Factura nu a fost găsită', invoice: null})
+    }
   }catch(error){
       console.log(error)
       res.status(500).json(error)
@@ -716,9 +715,6 @@ async function transformXmlToPdf(xml, res) {
 
   }
   
-
-
-
 
   async function parseHeaderFromXml(xml) {
     try {
