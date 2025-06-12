@@ -54,10 +54,15 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
   try{
     const invoice = await Invoice.findById(id)
     const xml = buildEFacturaHeaderXML(invoice)
-    testInvoice(xml, res)
+    const response = await testInvoice(xml)
+    invoice.eFacturaId = response.eFacturaId
+    invoice.eFacturaError = response.eFacturaError
+    invoice.eFacturaStatus = response.eFacturaStatus
+    const savedInvoice = await invoice.save()
+    res.status(200).json({message: response.message, invoice: savedInvoice})
   } catch(error){
     console.log(error)
-    res.status(200).json(error)
+    res.status(500).json(error)
   }
 }
 
@@ -315,20 +320,6 @@ module.exports.getInvoice = async (req, res) => {
         ? getText(customerParty["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0])
         : 'Unknown VAT Number'
     };
-  //  const customer = {
-  //   name: Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"]) && 
-  //           Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"]) && 
-  //           Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"]) 
-  //       ? (invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]["_"] || 
-  //       invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]) 
-  //       : 'Unknown Customer',
-  //   vatNumber: Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"]) && 
-  //               Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"]) && 
-  //               Array.isArray(invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"]) 
-  //       ? (invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]["_"] || 
-  //       invoiceData.Invoice["cac:AccountingCustomerParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]) 
-  //       : 'Unknown VAT Number'
-  //   };
     const products = invoiceData.Invoice["cac:InvoiceLine"].map(item => {
         // Extract the name of the item
         const itemName = Array.isArray(item["cac:Item"][0]["cbc:Name"]) 
@@ -627,78 +618,6 @@ function buildEFacturaHeaderXML(invoice) {
 
 
 
-function createXMLInvoice(invoice){
-  const doc = create({ version: '1.0' });
-
-  const invoiceElem = doc.ele('Invoice', {
-    xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
-    'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
-    'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'
-  });
-
-  invoiceElem.ele('cbc:ID').txt(invoice.serie);
-  invoiceElem.ele('cbc:IssueDate').txt(invoice.issueDate);
-  invoiceElem.ele('cbc:DueDate').txt(invoice.dueDate);
-
-  // Supplier
-  const supplier = invoiceElem.ele('cac:AccountingSupplierParty').ele('cac:Party');
-      supplier.ele('cac:PartyName').ele('cbc:Name').txt(invoice.supplier.name);
-      supplier.ele('cac:PostalAddress').ele('cbc:StreetName')
-      supplier.ele('cac:PartyTaxScheme')
-        .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
-        .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.supplier.vat);
-      supplier.ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoice.supplier.name);
-
-  // Customer
-  const customer = invoiceElem.ele('cac:AccountingCustomerParty').ele('cac:Party');
-      customer.ele('cac:PartyName').ele('cbc:Name').txt(invoice.client.name);
-      customer.ele('cac:PartyTaxScheme')
-        .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
-        .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.client.vat);
-      customer.ele('cac:PartyLegalEntity').ele('cbc:RegistrationName').txt(invoice.client.name);
-
-  // Tax Total
-  invoiceElem.ele('cac:TaxTotal')
-    .ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(invoice.vatAmount);
-
-  // Monetary Total
-  invoiceElem.ele('cac:LegalMonetaryTotal')
-    .ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxExclusiveAmount).up()
-    .ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyID }).txt(invoice.taxInclusiveAmount).up()
-    .ele('cbc:PayableAmount', { currencyID: invoice.currencyID }).txt(invoice.payableAmont);
-
-  // Invoice Lines
-  invoice.products.forEach((p, i) => {
-    const line = invoiceElem.ele('cac:InvoiceLine');
-    line.ele('cbc:ID').txt((i + 1).toString());
-    line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt(p.quantity);
-    line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyID }).txt(p.totalNoVat);
-
-    if (p.discount) {
-      line.ele('cac:AllowanceCharge')
-        .ele('cbc:ChargeIndicator').txt('false').up()
-        .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
-        .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
-        .ele('cbc:Amount', { currencyID: invoice.currencyID }).txt(p.discount.value);
-    }
-
-    line.ele('cac:Item')
-      .ele('cbc:Name').txt(p.name).up()
-      .ele('cac:ClassifiedTaxCategory')
-        .ele('cbc:ID').txt('S').up()
-        .ele('cbc:Percent').txt(p.vatPrecent).up()
-        .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
-
-    line.ele('cac:Price')
-      .ele('cbc:PriceAmount', { currencyID: invoice.currencyID }).txt(p.price);
-  });
-
-    const xml = doc.end({ prettyPrint: true });
-    return xml
-}
-
-
-
 async function transformXmlToPdf(xml, res) {
   const standard = 'FACT1'; 
   const novld = 'DA'; 
@@ -728,59 +647,62 @@ async function transformXmlToPdf(xml, res) {
 
 
 
-async function testInvoice(xml, res) {
-    const token = process.env.TOKEN_ANAF
+  async function testInvoice(xml) {
+    const token = process.env.TOKEN_ANAF;
     const standard = 'UBL';
-    const cif = '44994432'; 
-    const veryfyBaseUrl = 'https://api.anaf.ro/test/FCTEL/rest/stareMesaj'
-
-
+    const cif = '44994432';
+    const veryfyBaseUrl = 'https://api.anaf.ro/test/FCTEL/rest/stareMesaj';
     const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/upload';
     const url = `${baseUrl}?standard=${standard}&cif=${cif}`;
-
+  
     try {
       const response = await axios.post(url, xml, {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/xml', 
+          'Content-Type': 'application/xml',
         },
         maxContentLength: Infinity,
         maxBodyLength: Infinity
       });
   
-
-        const header = await parseHeaderFromXml(response.data)
-        const indexIncarcare = header.$.index_incarcare;
-        const error  = header.Errors?.$?.errorMessage;
-    
-
-        if(indexIncarcare){
-            const url = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`
-            const res = await axios.get(url, {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/xml',
-                
-              },
-              responseType: 'text',
-              maxContentLength: Infinity,
-              maxBodyLength: Infinity
-            });
-
-            const head = await parseHeaderFromXml(res.data)
-            const eFaacturaStatus = head.$.stare
-            res.status(200).json({eFaacturaStatus: eFaacturaStatus, eFacturaId: indexIncarcare})
-        }
-
-        if(error){
-          res.status(200).json({error: error})
-        }
-        
-    } catch (error) {
-      res.status(500).json(error)
-      console.error('Error uploading:', error.data);
+      const header = await parseHeaderFromXml(response.data);
+      const indexIncarcare = header.$.index_incarcare;
+      const error = header.Errors?.$?.errorMessage;
+  
+      if (indexIncarcare) {
+        const verifyUrl = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`;
+        const resp = await axios.get(verifyUrl, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/xml',
+          },
+          responseType: 'text',
+          maxContentLength: Infinity,
+          maxBodyLength: Infinity
+        });
+        const head = await parseHeaderFromXml(resp.data);
+        const eFacturaStatus = head.$.stare;
+        return {
+            eFacturaStatus: `Fișierul a fost încărcat cu success! ${eFacturaStatus}`,
+            eFacturaId: indexIncarcare,
+            eFacturaError: '',
+            message: 'Fișierul a fost încărcat cu success!'
+          }
+      }
+      if (error) {
+        return {
+            message: error,
+            eFacturaError: error,
+            eFacturaStatus: 'eroare incarcare',
+            eFacturaId: ''
+          }
+      }
+    } catch (err) {
+      console.error('Error uploading:', err?.response?.data || err.message);
+      throw err
     }
   }
+  
 
 
 
@@ -791,8 +713,6 @@ async function testInvoice(xml, res) {
         explicitArray: false,
         ignoreAttrs: false,
       });
-  
-      // Return the header node directly
       return result.header;
     } catch (error) {
       console.error("Error parsing XML:", error.message);
