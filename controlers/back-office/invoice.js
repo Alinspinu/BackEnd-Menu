@@ -330,6 +330,7 @@ async function downloadZipFileCheck(id) {
       throw new Error(`ANAF returned an error: ${error}`);
     }
 
+    console.log(response.data)
     // Proceed if it's a ZIP
     const zip = new AdmZip(response.data);
     const zipEntries = zip.getEntries();
