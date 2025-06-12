@@ -657,9 +657,9 @@ function buildEFacturaHeaderXML(invoice) {
   customerParty.ele('cac:PartyName').ele('cbc:Name').txt(invoice.client.name).up().up();
   const custAddr = customerParty.ele('cac:PostalAddress');
   custAddr.ele('cbc:StreetName').txt(invoice.client.address.street).up();
-  custAddr.ele('cbc:CityName').txt('SECTOR3').up();
-  custAddr.ele('cbc:PostalZone').txt('700058').up(); // example
-  custAddr.ele('cbc:CountrySubentity').txt('RO-B').up(); // example
+  custAddr.ele('cbc:CityName').txt(invoice.client.address.city).up();
+  custAddr.ele('cbc:PostalZone').txt(invoice.client.address.postalCode).up(); // example
+  custAddr.ele('cbc:CountrySubentity').txt(invoice.client.address.countrySubentity).up(); // example
   custAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.client.address.country).up().up();
   customerParty.ele('cac:PartyTaxScheme')
     .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
