@@ -747,7 +747,7 @@ async function testInvoice(xml, res) {
         maxBodyLength: Infinity
       });
   
-      console.log('Upload successful:', response.data);
+      // console.log('Upload successful:', response.data);
 
       xml2js.parseString(response.data, { explicitArray: false, attrkey: '$' }, async (err, result) => {
         if (err) {
@@ -761,10 +761,10 @@ async function testInvoice(xml, res) {
 
         if(indexIncarcare){
             const url = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`
-            const response = await axios.get(url, {
+            const res = await axios.get(url, {
               headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/xml',
                 
               },
               responseType: 'text',
@@ -772,7 +772,7 @@ async function testInvoice(xml, res) {
               maxBodyLength: Infinity
             });
 
-            console.log(response.data)
+            console.log(res.data)
         }
         
         console.log(error)
