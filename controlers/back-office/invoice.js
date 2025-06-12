@@ -397,7 +397,7 @@ function createInvoice(order, customer, supplier) {
     serie: 'CAMPUS',
     issueDate: formatDateEFactura(order.updatedAt),
     dueDate: formatDateEFactura(order.updatedAt),
-    currencyID: 'RON',
+    // currencyID: 'RON',
     supplier: {
       name: supplier.bussinessName,
       vatNumber: supplier.vatNumber,
