@@ -10,6 +10,7 @@ const Locatie = require('../../models/office/locatie')
 const {roundd} = require('../../utils/functions')
 const {formatDateEFactura} = require('../../utils/functions');
 const { create } = require('xmlbuilder2');
+const { parseStringPromise } = require('xml2js');
 
 
     
@@ -747,13 +748,7 @@ async function testInvoice(xml, res) {
         maxBodyLength: Infinity
       });
   
-      // console.log('Upload successful:', response.data);
 
-      // xml2js.parseString(response.data, { explicitArray: false, attrkey: '$' }, async (err, result) => {
-      //   if (err) {
-      //     console.error('Error parsing XML:', err);
-      //     return;
-      //   }
         const header = await parseHeaderFromXml(response.data)
         const indexIncarcare = header.$.index_incarcare;
         const error  = header.Errors?.$?.errorMessage;
@@ -773,26 +768,21 @@ async function testInvoice(xml, res) {
             });
 
             const head = await parseHeaderFromXml(res.data)
-            console.log(head.$.stare)
+            const eFaacturaStatus = head.$.stare
+            res.status(200).json({eFaacturaStatus: eFaacturaStatus, eFacturaId: indexIncarcare})
+        }
+
+        if(error){
+          res.status(500).json({error: error})
         }
         
-        console.log(error)
-        console.log(indexIncarcare)
-      
-      // });
-
-
-
-      res.status(200).json({message: response.data})
-
-
     } catch (error) {
       res.status(500).json(error)
       console.error('Error uploading:', error.data);
     }
   }
 
-  const { parseStringPromise } = require('xml2js');
+
 
 
   async function parseHeaderFromXml(xml) {
