@@ -730,7 +730,8 @@ async function transformXmlToPdf(xml, res) {
 async function testInvoice(xml, res) {
     const token = process.env.TOKEN_ANAF
     const standard = 'UBL';
-    const cif = '44994432'; // CIF-ul real
+    const cif = '44994432'; 
+    const veryfyBaseUrl = 'https://api.anaf.ro/test/FCTEL/rest/stareMesaj'
 
 
     const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/upload';
@@ -748,20 +749,33 @@ async function testInvoice(xml, res) {
   
       console.log('Upload successful:', response.data);
 
-      xml2js.parseString(response.data, { explicitArray: false, attrkey: '$' }, (err, result) => {
+      xml2js.parseString(response.data, { explicitArray: false, attrkey: '$' }, async (err, result) => {
         if (err) {
           console.error('Error parsing XML:', err);
           return;
         }
-      
         const header = result.header;
         const indexIncarcare = header.$.index_incarcare;
         const error  = header.Errors?.$?.errorMessage;
-        console.log(header)
+    
+
+        if(indexIncarcare){
+            const url = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`
+            const response = await axios.get(url, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                
+              },
+              maxContentLength: Infinity,
+              maxBodyLength: Infinity
+            });
+
+            console.log(response.data)
+        }
+        
         console.log(error)
         console.log(indexIncarcare)
       
-        console.log('Index incarcare:', indexIncarcare); // 👉 "5024665019"
       });
 
 
