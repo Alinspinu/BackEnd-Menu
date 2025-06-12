@@ -683,7 +683,7 @@ async function transformXmlToPdf(xml, res) {
         const head = await parseHeaderFromXml(resp.data);
         const eFacturaStatus = head.$.stare;
         return {
-            eFacturaStatus: `Fișierul a fost încărcat cu success! ${eFacturaStatus}`,
+            eFacturaStatus: eFacturaStatus,
             eFacturaId: indexIncarcare,
             eFacturaError: '',
             message: 'Fișierul a fost încărcat cu success!'
