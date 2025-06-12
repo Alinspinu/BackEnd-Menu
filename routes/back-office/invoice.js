@@ -24,6 +24,8 @@ router.route('/save').post(invoiceRoutes.saveInvoice)
 
 router.route('/print').post(printRoutes.factura)
 
+router.route('/errors').get(invoiceRoutes.handleUplodErros)
+
 
 
 

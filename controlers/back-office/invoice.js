@@ -123,6 +123,23 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
   }
 }
 
+module.exports.handleUplodErros = async (rea, res) => {
+  const {id} = req.query 
+  try{
+    const files = await downloadZipFileCheck(id)
+    if(files){
+      files.forEach(f => {
+        console.log(`📄 File: ${f.name}`);
+        console.log(f.content);
+      })
+    }
+    res.status(200).json({message: 'ok'})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
 
 module.exports.getMessages = async (req, res) => {
     const {days, cif, filter = 'P'} = req.query
@@ -256,6 +273,38 @@ module.exports.getInvoice = async (req, res) => {
       console.error('Error downloading or processing the ZIP file:', error);
     }
   }
+
+
+
+async function downloadZipFileCheck(id) {
+  try {
+    
+    const response = await axios.get(`https://api.anaf.ro/test/FCTEL/rest/descarcare?id=${id}`, {
+      responseType: 'arraybuffer',
+      headers: {
+        'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
+        'Accept': 'application/zip',
+      },
+    });
+
+    const zip = new AdmZip(response.data);
+    const zipEntries = zip.getEntries();
+
+    const files = zipEntries
+      .filter(entry => !entry.entryName.toLowerCase().includes('semnatura'))
+      .map(entry => ({
+        name: entry.entryName,
+        content: entry.getData().toString('utf8') // or 'base64' if binary
+      }));
+
+    return files; // Array of { name, content }
+
+  } catch (error) {
+    console.error('❌ Failed to download or process ZIP:', error.message);
+    throw error;
+  }
+}
+
 
 
   function parseXml(xmlData) {
@@ -713,7 +762,6 @@ async function transformXmlToPdf(xml, res) {
       console.error('Error uploading:', err?.response?.data || err.message);
       throw error
     }
-
   }
   
 
