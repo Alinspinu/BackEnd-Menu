@@ -700,6 +700,7 @@ async function transformXmlToPdf(xml, res) {
         maxContentLength: Infinity,
         maxBodyLength: Infinity
       });
+      console.log(resp.data)
       const head = await parseHeaderFromXml(resp.data);
       const eFacturaStatus = head.$.stare;
       return {
