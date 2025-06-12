@@ -123,7 +123,7 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
   }
 }
 
-module.exports.handleUplodErros = async (rea, res) => {
+module.exports.handleUplodErros = async (req, res) => {
   const {id} = req.query 
   try{
     const files = await downloadZipFileCheck(id)
