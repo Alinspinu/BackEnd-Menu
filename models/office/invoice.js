@@ -103,6 +103,13 @@ const invoiceSchema = new Schema({
         }
     ],
     vatAmount: Number,
+    vatGroups: [
+        {
+            rate: Number,
+            tax: Number,
+            taxable: Number
+        }
+    ],
     taxExclusiveAmount: Number,
     taxInclusiveAmount: Number,
     payableAmount: Number,

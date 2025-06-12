@@ -693,31 +693,43 @@ function buildEFacturaHeaderXML(invoice) {
 
   // Tax Total with example subtotals
 
-  const taxGroups = {};
+  // const taxGroups = {};
 
-  invoice.products.forEach(p => {
-    const rate = p.vatPrecent;
-    if (!taxGroups[rate]) {
-      taxGroups[rate] = { taxable: 0, tax: 0 };
-    }
-    taxGroups[rate].taxable += p.totalNoVat;
-    taxGroups[rate].tax += (p.total - p.totalNoVat); // assuming `p.total` includes VAT
-  });
+  // invoice.products.forEach(p => {
+  //   const rate = p.vatPrecent;
+  //   if (!taxGroups[rate]) {
+  //     taxGroups[rate] = { taxable: 0, tax: 0 };
+  //   }
+  //   taxGroups[rate].taxable += p.totalNoVat;
+  //   taxGroups[rate].tax += (p.total - p.totalNoVat); // assuming `p.total` includes VAT
+  // });
   
+  // const totalVatAmount = Object.values(taxGroups).reduce((sum, grp) => sum + grp.tax, 0);
+
   const taxTotal = doc.ele('cac:TaxTotal');
-  const totalVatAmount = Object.values(taxGroups).reduce((sum, grp) => sum + grp.tax, 0);
-  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(round(totalVatAmount)).up();
-  
+  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(invoice.vatAmount).up();
+
   // Add one <cac:TaxSubtotal> per VAT rate
-  Object.entries(taxGroups).forEach(([rate, data]) => {
+
+  invoice.vatGroups.forEach(r => {
     const subtotal = taxTotal.ele('cac:TaxSubtotal');
-    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(round(data.taxable)).up();
-    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(round(data.tax)).up();
+    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(r.taxable).up();
+    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(r.tax).up();
     subtotal.ele('cac:TaxCategory')
       .ele('cbc:ID').txt('S').up()
-      .ele('cbc:Percent').txt(rate).up()
+      .ele('cbc:Percent').txt(r.rate).up()
       .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
-  });
+  })
+  
+  // Object.entries(taxGroups).forEach(([rate, data]) => {
+  //   const subtotal = taxTotal.ele('cac:TaxSubtotal');
+  //   subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(round(data.taxable)).up();
+  //   subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(round(data.tax)).up();
+  //   subtotal.ele('cac:TaxCategory')
+  //     .ele('cbc:ID').txt('S').up()
+  //     .ele('cbc:Percent').txt(rate).up()
+  //     .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+  // });
 
   // LegalMonetaryTotal
   const total = doc.ele('cac:LegalMonetaryTotal');
