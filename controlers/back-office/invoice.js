@@ -747,7 +747,28 @@ async function testInvoice(xml, res) {
       });
   
       console.log('Upload successful:', response.data);
+
+      xml2js.parseString(response.data, { explicitArray: false, attrkey: '$' }, (err, result) => {
+        if (err) {
+          console.error('Error parsing XML:', err);
+          return;
+        }
+      
+        const header = result.header;
+        const indexIncarcare = header.$.index_incarcare;
+        const error  = handleError.$.errorMessage
+        console.log(header)
+        console.log(error)
+        console.log(indexIncarcare)
+      
+        console.log('Index incarcare:', indexIncarcare); // 👉 "5024665019"
+      });
+
+
+
       res.status(200).json({message: response.data})
+
+
     } catch (error) {
       res.status(500).json(error)
       console.error('Error uploading:', error.data);
