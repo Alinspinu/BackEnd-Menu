@@ -27,6 +27,12 @@ const locatieSchema = new Schema({
         type: String,
         required: true
       },
+      invoiceAddress: {
+        postalCode: String,
+        street: String,
+        city: String,
+        coutrySubentity: String,
+      },
       swift: {
         type: String
       },

@@ -30,8 +30,10 @@ const invoiceSchema = new Schema({
             telephone: String
         },
         address: {
+            postalCode: String,
             street: String,
             city: String,
+            coutrySubentity: String,
             country: {
                 type: String,
                 default: 'RO'
@@ -53,8 +55,10 @@ const invoiceSchema = new Schema({
             telephone: String
         },
         address: {
+            postalCode: String,
             street: String,
             city: String,
+            coutrySubentity: String,
             country: {
                 type: String,
                 default: 'RO'
