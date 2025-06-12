@@ -749,12 +749,12 @@ async function testInvoice(xml, res) {
   
       // console.log('Upload successful:', response.data);
 
-      xml2js.parseString(response.data, { explicitArray: false, attrkey: '$' }, async (err, result) => {
-        if (err) {
-          console.error('Error parsing XML:', err);
-          return;
-        }
-        const header = result.header;
+      // xml2js.parseString(response.data, { explicitArray: false, attrkey: '$' }, async (err, result) => {
+      //   if (err) {
+      //     console.error('Error parsing XML:', err);
+      //     return;
+      //   }
+        const header = await parseHeaderFromXml(response.data)
         const indexIncarcare = header.$.index_incarcare;
         const error  = header.Errors?.$?.errorMessage;
     
@@ -772,13 +772,14 @@ async function testInvoice(xml, res) {
               maxBodyLength: Infinity
             });
 
-            console.log(res.data)
+            const head = await parseHeaderFromXml(res.data)
+            console.log(head.$.stare)
         }
         
         console.log(error)
         console.log(indexIncarcare)
       
-      });
+      // });
 
 
 
@@ -791,4 +792,20 @@ async function testInvoice(xml, res) {
     }
   }
 
+  const { parseStringPromise } = require('xml2js');
 
+
+  async function parseHeaderFromXml(xml) {
+    try {
+      const result = await parseStringPromise(xml, {
+        explicitArray: false,
+        ignoreAttrs: false,
+      });
+  
+      // Return the header node directly
+      return result.header;
+    } catch (error) {
+      console.error("Error parsing XML:", error.message);
+      throw error;
+    }
+  }
