@@ -764,6 +764,7 @@ async function testInvoice(xml, res) {
             const response = await axios.get(url, {
               headers: {
                 'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/xml',
                 
               },
               maxContentLength: Infinity,
