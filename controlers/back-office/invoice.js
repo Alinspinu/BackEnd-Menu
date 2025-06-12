@@ -356,7 +356,7 @@ module.exports.getInvoice = async (req, res) => {
 
 async function downloadZipFileCheck(id) {
   try {
-    const response = await axios.get(`${process.env.ANAF_DOWNLOAD_BASE_URL}?id=${id}`, {
+    const response = await axios.get(`${process.env.ANAF_DOWNLOAD_BASE_URL}?id=${'3037467842'}`, {
       responseType: 'arraybuffer',
       headers: {
         'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
