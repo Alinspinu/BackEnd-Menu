@@ -533,9 +533,9 @@ function createInvoice(order, customer, supplier) {
       registration: supplier.register,
       legalForm: 'Capital social 200 lei',
       contact: {
-        name: 'Alin Spinu',
-        email: 'office@truefinecoffee.ro',
-        telephone: '0753552492',
+        name: supplier.contactName,
+        email: supplier.email,
+        telephone: supplier.telephone,
       },
       address: {
         street: supplier.invoiceAddress.street,
@@ -641,7 +641,7 @@ function buildEFacturaHeaderXML(invoice) {
   const suppAddr = supplierParty.ele('cac:PostalAddress');
   suppAddr.ele('cbc:StreetName').txt(invoice.supplier.address.street).up();
   suppAddr.ele('cbc:CityName').txt(invoice.supplier.address.city).up();
-  suppAddr.ele('cbc:PostalZone').txt(nvoice.supplier.address.postalCode).up(); 
+  suppAddr.ele('cbc:PostalZone').txt(invoice.supplier.address.postalCode).up(); 
   suppAddr.ele('cbc:CountrySubentity').txt(invoice.supplier.address.coutrySubentity).up(); 
   suppAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.supplier.address.country).up().up();
   supplierParty.ele('cac:PartyTaxScheme')
