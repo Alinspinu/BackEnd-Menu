@@ -1116,7 +1116,7 @@ module.exports.factura = async (req, res, next) => {
   doc.text(`${invoice.supplier.registration}`, 130 + 10, 62);
   doc.text(`200 lei`, 130 + 10, 74);
   // doc.font("Courier");
-  doc.text(`${invoice.supplier.address.street}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
+  doc.text(`${invoice.supplier.address.city}, Strada ${invoice.supplier.address.street}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
 
   doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 140)
   doc.text(`${invoice.supplier.bank}`, 60 + 10, 152)
@@ -1148,9 +1148,9 @@ module.exports.factura = async (req, res, next) => {
   doc.text(`${invoice.client.name}`, 485 - 60, 50, { width: 150, align: "left" });
   doc.font("public/font/Montserrat-Regular.ttf");
   doc.text(`${invoice.client.vatNumber}`, 485  - 40, 62+rh , { width: 145, align: "left" });
-  doc.text(`${invoice.client.registration}`, 485  - 40, 74+rh , { width: 105, align: "left" });
+  doc.text(`${invoice.client.registration}`, 485  - 40, 74 + rh , { width: 105, align: "left" });
   // doc.font("Courier");
-  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 98+rh, { width: 215, align: "left" })
+  doc.text(`${invoice.client.address.city}, Strada ${invoice.client.address.street}`, 395 - 40, 98+rh, { width: 215, align: "left" })
 
 
 
