@@ -1148,7 +1148,7 @@ module.exports.factura = async (req, res, next) => {
   doc.text(`${invoice.client.vatNumber}`, 485  - 40, 82 , { width: 145, align: "left" });
   doc.text(`${invoice.client.registration}`, 485  - 40, 94 , { width: 105, align: "left" });
   // doc.font("Courier");
-  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 102 + 5, { width: 215, align: "left" })
+  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 114 + 5, { width: 215, align: "left" })
 
 
 
