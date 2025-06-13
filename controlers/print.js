@@ -1334,11 +1334,10 @@ module.exports.factura = async (req, res, next) => {
       if(el.discount){
         const d = el.discount
         doc.text(`Discount client ${d.precent}%`, 50, newValue + 10, { width: 225, align: 'left' })
-        doc.text(`Buc`, 274, newValue +10 , { width: 28, align: "center" })
         doc.text(`1.00`, 304, newValue + 10, { width: 58, align: "center" })
-        doc.text(`${d.value}`, 424, newValue + 10, { width: 58, align: "center" })
-        doc.text(`${round(d.value * (1 + (el.vatPrecent / 100)))}0`, 523, newValue + 10, { width: 30, align: "right" })
-        heghtValue += ((rowHeigth*2) - 2)
+        doc.text(`-${d.value}`, 424, newValue + 10, { width: 58, align: "center" })
+        doc.text(`-${round((d.value * (1 + (el.vatPrecent / 100))) - d.value)}0`, 523, newValue + 10, { width: 30, align: "right" })
+        heghtValue += ((rowHeigth*2) - (rowHeigth / 4))
       } else {
         heghtValue += rowHeigth
       }
