@@ -1150,7 +1150,7 @@ module.exports.factura = async (req, res, next) => {
   doc.text(`${invoice.client.vatNumber}`, 485  - 40, 62+rh , { width: 145, align: "left" });
   doc.text(`${invoice.client.registration}`, 485  - 40, 74+rh , { width: 105, align: "left" });
   // doc.font("Courier");
-  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 98+rh + 5, { width: 215, align: "left" })
+  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 98+rh, { width: 215, align: "left" })
 
 
 
