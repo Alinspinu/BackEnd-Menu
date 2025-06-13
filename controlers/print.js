@@ -1129,14 +1129,15 @@ module.exports.factura = async (req, res, next) => {
   doc.fontSize(12);
   doc.font('public/font/Montserrat-Bold.ttf')
 
-
+  let rh = 0
+  if(invoice.client.name.split('').length > 20) rh = 12
   // header date client
   doc.fontSize(10);
   // doc.font('Courier-Bold')
   doc.text('Client', 395 - 40, 50, { width: 35, align: "left" })
-  doc.text(`C.I.F.`, 395 - 40, 82 , { width: 30, align: "left" });
-  doc.text(`Nr. Reg. Com.`, 395 - 40, 94 , { width: 90, align: "left" });
-  doc.text(`Adresa`, 395 - 40, 106 , { width: 40, align: "left" })
+  doc.text(`C.I.F.`, 395 - 40, 62 +rh, { width: 30, align: "left" });
+  doc.text(`Nr. Reg. Com.`, 395 - 40, 74 +rh, { width: 90, align: "left" });
+  doc.text(`Adresa`, 395 - 40, 86 +rh, { width: 40, align: "left" })
 
 
 
@@ -1145,10 +1146,10 @@ module.exports.factura = async (req, res, next) => {
   // doc.font('public/font/Montserrat-Bold.ttf')
   doc.text(`${invoice.client.name}`, 485 - 60, 50, { width: 150, align: "left" });
   doc.font("public/font/Montserrat-Regular.ttf");
-  doc.text(`${invoice.client.vatNumber}`, 485  - 40, 82 , { width: 145, align: "left" });
-  doc.text(`${invoice.client.registration}`, 485  - 40, 94 , { width: 105, align: "left" });
+  doc.text(`${invoice.client.vatNumber}`, 485  - 40, 62+rh , { width: 145, align: "left" });
+  doc.text(`${invoice.client.registration}`, 485  - 40, 74+rh , { width: 105, align: "left" });
   // doc.font("Courier");
-  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 114 + 5, { width: 215, align: "left" })
+  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 98+rh + 5, { width: 215, align: "left" })
 
 
 
