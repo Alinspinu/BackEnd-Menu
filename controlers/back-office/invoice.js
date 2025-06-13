@@ -628,9 +628,10 @@ function buildEFacturaHeaderXML(invoice) {
   paymentMeans.ele('cac:PayeeFinancialAccount')
     .ele('cbc:ID').txt(invoice.paymentMeans.iban).up().up();
 
-  console.log(invoice.discount)
+  let totalDiscount = 0
   if (Array.isArray(invoice.discount)) {
     invoice.discount.forEach(d => {
+      totalDiscount += d.value
       const ac = doc.ele('cac:AllowanceCharge');
       ac.ele('cbc:ChargeIndicator').txt('false');
       if (d.reasonCode != null) ac.ele('cbc:AllowanceChargeReasonCode').txt(d.reasonCode.toString());
@@ -666,9 +667,12 @@ function buildEFacturaHeaderXML(invoice) {
   const total = doc.ele('cac:LegalMonetaryTotal');
   total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(invoice.taxExclusiveAmount).up();
   total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId }).txt(invoice.taxExclusiveAmount).up();
+
+  if(totalDiscount > 0) total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId }).txt(totalDiscount).up();
+  
   total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId }).txt(invoice.taxInclusiveAmount).up();
-  total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt(invoice.taxInclusiveAmount).up();
-  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt(0).up();
+  total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt(0).up();
+  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt(invoice.taxInclusiveAmount).up();
 
 
   invoice.products.forEach((p, i) => {
