@@ -54,7 +54,7 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
   try{
     const invoice = await Invoice.findById(id)
     const xml = buildEFacturaHeaderXML(invoice)
-    console.log(xml)
+    // console.log(xml)
     const response = await testInvoice(xml)
     invoice.eFacturaId = response.eFacturaId
     invoice.eFacturaError = response.eFacturaError
@@ -538,8 +538,10 @@ function createInvoice(order, customer, supplier) {
         telephone: '0753552492',
       },
       address: {
-        street: supplier.address,
-        city: 'Iasi',
+        street: supplier.invoiceAddress.street,
+        city: supplier.invoiceAddress.city,
+        postalCode: supplier.invoiceAddress.postalCode,
+        coutrySubentity: supplier.invoiceAddress.coutrySubentity,
         country: 'RO'
       }
     },
@@ -554,8 +556,10 @@ function createInvoice(order, customer, supplier) {
         email: customer.email
       },
       address: {
-        street: customer.address,
-        city: '-',
+        street: customer.invoiceAddress.street,
+        city: customer.invoiceAddress.city,
+        postalCode: customer.invoiceAddress.postalCode,
+        coutrySubentity: customer.invoiceAddress.coutrySubentity,
         country: 'RO'
       },
     },
@@ -637,8 +641,8 @@ function buildEFacturaHeaderXML(invoice) {
   const suppAddr = supplierParty.ele('cac:PostalAddress');
   suppAddr.ele('cbc:StreetName').txt(invoice.supplier.address.street).up();
   suppAddr.ele('cbc:CityName').txt(invoice.supplier.address.city).up();
-  suppAddr.ele('cbc:PostalZone').txt('700030').up(); 
-  suppAddr.ele('cbc:CountrySubentity').txt('RO-IS').up(); 
+  suppAddr.ele('cbc:PostalZone').txt(nvoice.supplier.address.postalCode).up(); 
+  suppAddr.ele('cbc:CountrySubentity').txt(invoice.supplier.address.coutrySubentity).up(); 
   suppAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.supplier.address.country).up().up();
   supplierParty.ele('cac:PartyTaxScheme')
     .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
@@ -691,20 +695,6 @@ function buildEFacturaHeaderXML(invoice) {
     });
   }
 
-  // Tax Total with example subtotals
-
-  // const taxGroups = {};
-
-  // invoice.products.forEach(p => {
-  //   const rate = p.vatPrecent;
-  //   if (!taxGroups[rate]) {
-  //     taxGroups[rate] = { taxable: 0, tax: 0 };
-  //   }
-  //   taxGroups[rate].taxable += p.totalNoVat;
-  //   taxGroups[rate].tax += (p.total - p.totalNoVat); // assuming `p.total` includes VAT
-  // });
-  
-  // const totalVatAmount = Object.values(taxGroups).reduce((sum, grp) => sum + grp.tax, 0);
 
   const taxTotal = doc.ele('cac:TaxTotal');
   taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(invoice.vatAmount).up();
@@ -721,15 +711,6 @@ function buildEFacturaHeaderXML(invoice) {
       .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
   })
   
-  // Object.entries(taxGroups).forEach(([rate, data]) => {
-  //   const subtotal = taxTotal.ele('cac:TaxSubtotal');
-  //   subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(round(data.taxable)).up();
-  //   subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(round(data.tax)).up();
-  //   subtotal.ele('cac:TaxCategory')
-  //     .ele('cbc:ID').txt('S').up()
-  //     .ele('cbc:Percent').txt(rate).up()
-  //     .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
-  // });
 
   // LegalMonetaryTotal
   const total = doc.ele('cac:LegalMonetaryTotal');
@@ -858,9 +839,10 @@ async function transformXmlToPdf(xml, res) {
       console.log(resp.data)
       const head = await parseHeaderFromXml(resp.data);
       const eFacturaStatus = head.$.stare;
+      const downloadId = head.$.id_descarcare
       return {
           eFacturaStatus: eFacturaStatus,
-          eFacturaId: indexIncarcare,
+          eFacturaId: downloadId ? downloadId : indexIncarcare,
           eFacturaError: '',
           message: 'Fișierul a fost încărcat cu success!'
         }
