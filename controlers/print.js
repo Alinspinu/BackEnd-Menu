@@ -1068,7 +1068,20 @@ module.exports.factura = async (req, res, next) => {
       size: "A4",
       layout: "portrait",
   });
-
+  if(invoice.discount.length){
+    const discounts = invoice.discount
+    discounts.forEach(d => {
+      invoice.products.push({
+        name: d.reason + ' ' + d.precent * 100 + '%',
+        quantity: 1,
+        unitCode: 'Buc',
+        price: -d.value,
+        totalNoVat: -d.value,
+        total: -d.value -d.vat,
+        vatPrecent: d.precent
+      })
+    })
+  }
 
   //HEADER FURNIZOR
 
