@@ -1078,7 +1078,7 @@ module.exports.factura = async (req, res, next) => {
         price: -d.value,
         totalNoVat: -d.value,
         total: -d.value -d.vat,
-        vatPrecent: d.precent
+        vatPrecent: d.precent * 100
       })
     })
   }
