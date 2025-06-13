@@ -1143,7 +1143,7 @@ module.exports.factura = async (req, res, next) => {
   //date client
   doc.fontSize(10);
   // doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text(`${invoice.client.name}`, 485 - 20, 50, { width: 215, align: "left" });
+  doc.text(`${invoice.client.name}`, 485 - 60, 50, { width: 215, align: "left" });
   doc.font("public/font/Montserrat-Regular.ttf");
   doc.text(`${invoice.client.vatNumber}`, 485  - 40, 82 , { width: 145, align: "left" });
   doc.text(`${invoice.client.registration}`, 485  - 40, 94 , { width: 105, align: "left" });
@@ -1338,8 +1338,8 @@ module.exports.factura = async (req, res, next) => {
       //   doc.text(`-${round((d.value * (1 + (el.vatPrecent / 100))) - d.value)}0`, 523, newValue + 10, { width: 30, align: "right" })
       //   heghtValue += ((rowHeigth*2) - (rowHeigth / 4))
       // } else {
-      //   heghtValue += rowHeigth
-      // }
+        // }
+        heghtValue += rowHeigth
   })
 
   doc.fontSize(10)
