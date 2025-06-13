@@ -27,6 +27,7 @@ module.exports.createOrderInvoice = async (req, res) => {
     const client = await Client.findById(clientId)
     const invoice = createInvoice(order, client, loc)
     const newInvoice = new Invoice(invoice)
+    console.log(newInvoice)
     const savedInvoice = await newInvoice.save()
     res.status(200).json(savedInvoice)
   } catch(error) {
@@ -278,80 +279,6 @@ module.exports.getInvoice = async (req, res) => {
   }
 
 
-
-// async function downloadZipFileCheck(id) {
-//   try {
-    
-//     const response = await axios.get(`https://api.anaf.ro/test/FCTEL/rest/descarcare?id=${id}`, {
-//       responseType: 'arraybuffer',
-//       headers: {
-//         'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
-//         'Accept': 'application/zip',
-//       },
-//     });
-
-//     const zip = new AdmZip(response.data);
-//     const zipEntries = zip.getEntries();
-
-//     const files = zipEntries
-//       .filter(entry => !entry.entryName.toLowerCase().includes('semnatura'))
-//       .map(entry => ({
-//         name: entry.entryName,
-//         content: entry.getData().toString('utf8') // or 'base64' if binary
-//       }));
-
-//     return files; // Array of { name, content }
-
-//   } catch (error) {
-//     console.error('❌ Failed to download or process ZIP:', error.message);
-//     throw error;
-//   }
-// }
-
-
-// async function downloadZipFileCheck(id) {
-//   try {
-//     const response = await axios.get(`${process.env.ANAF_DOWNLOAD_BASE_URL}?id=${id}`, {
-//       responseType: 'arraybuffer',
-//       headers: {
-//         'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
-//         'Accept': 'application/zip',
-//       },
-//     });
-
-//     const contentType = response.headers['content-type'];
-//     console.log('📦 Content-Type:', contentType);
-
-//     // If it's not actually a zip, parse it as XML
-//     if (!contentType.includes('application/zip')) {
-//       const text = response.data.toString('utf8');
-//       console.log('⚠️ Not a ZIP. Response:', text);
-
-//       // Try parsing XML to extract error
-//       const parsed = await xml2js.parseStringPromise(text, { explicitArray: false });
-//       const error = parsed?.header?.Errors?.$?.errorMessage || 'Unknown error';
-//       throw new Error(`ANAF returned an error: ${error}`);
-//     }
-
-//     console.log(response.data)
-//     // Proceed if it's a ZIP
-//     const zip = new AdmZip(response.data);
-//     const zipEntries = zip.getEntries();
-
-//     const files = zipEntries
-//       .filter(entry => !entry.entryName.toLowerCase().includes('semnatura'))
-//       .map(entry => ({
-//         name: entry.entryName,
-//         content: entry.getData().toString('utf8')
-//       }));
-
-//     return files;
-
-//   } catch (error) {
-//     console.error('❌ Failed to download or process ZIP:', error.message);
-//     throw error;
-//   }
-// }
 
 
 
