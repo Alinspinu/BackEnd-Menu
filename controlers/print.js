@@ -1143,12 +1143,12 @@ module.exports.factura = async (req, res, next) => {
   //date client
   doc.fontSize(10);
   // doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text(`${invoice.client.name}`, 485 - 40, 50, { width: 215, align: "left" });
+  doc.text(`${invoice.client.name}`, 485 - 20, 50, { width: 215, align: "left" });
   doc.font("public/font/Montserrat-Regular.ttf");
-  doc.text(`${invoice.client.vatNumber}`, 485  - 40, 62 , { width: 145, align: "left" });
-  doc.text(`${invoice.client.registration}`, 485  - 40, 74 , { width: 105, align: "left" });
+  doc.text(`${invoice.client.vatNumber}`, 485  - 40, 82 , { width: 145, align: "left" });
+  doc.text(`${invoice.client.registration}`, 485  - 40, 94 , { width: 105, align: "left" });
   // doc.font("Courier");
-  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 92 + 5, { width: 215, align: "left" })
+  doc.text(`${invoice.client.address.street || ''}`, 395 - 40, 102 + 5, { width: 215, align: "left" })
 
 
 
@@ -1331,16 +1331,15 @@ module.exports.factura = async (req, res, next) => {
       doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
       doc.text(`${round(el.total - el.totalNoVat)}0`, 523, newValue, { width: 30, align: "right" })
   
-      if(el.discount){
-        const d = el.discount
-        doc.text(`Discount client ${d.precent}%`, 50, newValue + 10, { width: 225, align: 'left' })
-        doc.text(`1.00`, 304, newValue + 10, { width: 58, align: "center" })
-        doc.text(`-${d.value}`, 424, newValue + 10, { width: 58, align: "center" })
-        doc.text(`-${round((d.value * (1 + (el.vatPrecent / 100))) - d.value)}0`, 523, newValue + 10, { width: 30, align: "right" })
-        heghtValue += ((rowHeigth*2) - (rowHeigth / 4))
-      } else {
-        heghtValue += rowHeigth
-      }
+      // if(el.discount){
+      //   const d = el.discount
+      //   doc.text(`Discount client ${d.precent}%`, 50, newValue + 10, { width: 225, align: 'left' })
+      //   doc.text(`-${d.value}`, 424, newValue + 10, { width: 58, align: "center" })
+      //   doc.text(`-${round((d.value * (1 + (el.vatPrecent / 100))) - d.value)}0`, 523, newValue + 10, { width: 30, align: "right" })
+      //   heghtValue += ((rowHeigth*2) - (rowHeigth / 4))
+      // } else {
+      //   heghtValue += rowHeigth
+      // }
   })
 
   doc.fontSize(10)
