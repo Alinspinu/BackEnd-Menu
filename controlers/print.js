@@ -1075,9 +1075,9 @@ module.exports.factura = async (req, res, next) => {
         name: d.reason + ' ' + d.precent * 100 + '%',
         quantity: 1,
         unitCode: 'Buc',
-        price: -d.value,
-        totalNoVat: -d.value,
-        total: -d.value -d.vat,
+        price: d.value,
+        totalNoVat: d.value,
+        total: d.value + d.vat,
         vatPrecent: d.precent * 100
       })
     })
