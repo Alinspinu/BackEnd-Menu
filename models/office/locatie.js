@@ -23,6 +23,7 @@ const locatieSchema = new Schema({
       bank: {
         type: String,
       },
+      contactName: String,
       email: String,
       telephone: String,
       address: {
