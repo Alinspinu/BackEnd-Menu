@@ -99,7 +99,8 @@ const invoiceSchema = new Schema({
         reason: String,
         vat: Number,
         value: Number,
-        precent: Number
+        precent: Number,
+        baseAmount: Number,
         }
     ],
     vatAmount: Number,

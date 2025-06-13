@@ -637,6 +637,7 @@ function buildEFacturaHeaderXML(invoice) {
       if (d.reason) ac.ele('cbc:AllowanceChargeReason').txt(d.reason);
       if (d.precent != null) ac.ele('cbc:MultiplierFactorNumeric').txt(d.precent.toString());
       ac.ele('cbc:Amount', { currencyID: invoice.currencyId }).txt(d.value.toFixed(2));
+      ac.ele('cbc:BaseAmount', { currencyID: invoice.currencyId }).txt(d.baseAmount.toFixed(2));
       const taxCategory = ac.ele('cac:TaxCategory');
       taxCategory.ele('cbc:ID').txt('S');
       taxCategory.ele('cbc:Percent').txt(d.vat.toString());
