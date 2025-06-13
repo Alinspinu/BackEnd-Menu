@@ -1336,8 +1336,8 @@ module.exports.factura = async (req, res, next) => {
         doc.text(`Discount client ${d.precent}%`, 50, newValue + heghtValue, { width: 225, align: 'left' })
         doc.text(`Buc`, 274, newValue + heghtValue, { width: 28, align: "center" })
         doc.text(`1.00`, 304, newValue + heghtValue, { width: 58, align: "center" })
-        doc.text(`${r.value}`, 364, newValue + heghtValue, { width: 58, align: "center" })
-        doc.text(`${r.value}`, 424, newValue + heghtValue, { width: 58, align: "center" })
+        doc.text(`${d.value}`, 364, newValue + heghtValue, { width: 58, align: "center" })
+        doc.text(`${d.value}`, 424, newValue + heghtValue, { width: 58, align: "center" })
         doc.text(`${el.vatPrecent}%`, 486, newValue + heghtValue, { width: 35, align: "left" })
         // doc.text(`${round(el.total - el.totalNoVat)}0`, 523, newValue, { width: 30, align: "right" })
       }
