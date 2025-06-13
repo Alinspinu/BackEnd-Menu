@@ -635,33 +635,6 @@ function createInvoice(order, customer, supplier) {
 }
 
 
-  calcTotals(){
-    this.bill.vatGroups = []
-    this.bill.taxExclusiveAmount = 0
-    this.bill.taxInclusiveAmount = 0
-    for(let product of this.bill.products){
-      this.bill.taxExclusiveAmount += product.totalNoVat
-      this.bill.taxInclusiveAmount += product.total
-      const existingRate = this.bill.vatGroups.find(r => r.rate === product.vatPrecent)
-      if(existingRate){
-        existingRate.taxable += product.totalNoVat
-        existingRate.tax += product.total
-      } else {
-        this.bill.vatGroups.push({rate: product.vatPrecent, tax: product.total, taxable: product.totalNoVat})
-      }
-    }
-
-    this.bill.vatGroups.forEach(v => {
-      v.tax = round(v.tax - v.taxable)
-      v.taxable = round(v.taxable)
-    })
-
-    this.bill.taxExclusiveAmount = round(this.bill.taxExclusiveAmount)
-    this.bill.taxInclusiveAmount = round( this.bill.taxInclusiveAmount)
-    this.bill.payableAmount = this.bill.taxInclusiveAmount
-    this.bill.vatAmount = round(this.bill.taxInclusiveAmount - this.bill.taxExclusiveAmount)
-    console.log(this.bill)
-  }
 
 
 
