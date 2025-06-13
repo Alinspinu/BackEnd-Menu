@@ -595,6 +595,7 @@ function createInvoice(order, customer, supplier) {
       return product
     }),
     vatAmount: 0,
+    vatGroups: [],
     taxExclusiveAmount: 0,
     taxInclusiveAmount: order.total,
     payableAmount: order.total,
@@ -606,13 +607,61 @@ function createInvoice(order, customer, supplier) {
     salePoint: order.salePoint
   }
 
+
+
+
+
+
   invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
-    return round(sum + (p.totalNoVat || 0))
+    const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
+    if(existingRate){
+      existingRate.taxable += p.totalNoVat
+      existingRate.tax += p.total
+    } else {
+      invoice.vatGroups.push({rate: p.vatPrecent, tax: p.total, taxable: p.totalNoVat})
+    }
+    return sum + (p.totalNoVat || 0)
   }, 0)
+
+  invoice.taxExclusiveAmount = round(invoice.taxExclusiveAmount)
+
+  invoice.vatGroups.forEach(v => {
+    v.tax = round(v.tax - v.taxable)
+    v.taxable = round(v.taxable)
+  })
+  
   invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
   return invoice
 }
 
+
+  calcTotals(){
+    this.bill.vatGroups = []
+    this.bill.taxExclusiveAmount = 0
+    this.bill.taxInclusiveAmount = 0
+    for(let product of this.bill.products){
+      this.bill.taxExclusiveAmount += product.totalNoVat
+      this.bill.taxInclusiveAmount += product.total
+      const existingRate = this.bill.vatGroups.find(r => r.rate === product.vatPrecent)
+      if(existingRate){
+        existingRate.taxable += product.totalNoVat
+        existingRate.tax += product.total
+      } else {
+        this.bill.vatGroups.push({rate: product.vatPrecent, tax: product.total, taxable: product.totalNoVat})
+      }
+    }
+
+    this.bill.vatGroups.forEach(v => {
+      v.tax = round(v.tax - v.taxable)
+      v.taxable = round(v.taxable)
+    })
+
+    this.bill.taxExclusiveAmount = round(this.bill.taxExclusiveAmount)
+    this.bill.taxInclusiveAmount = round( this.bill.taxInclusiveAmount)
+    this.bill.payableAmount = this.bill.taxInclusiveAmount
+    this.bill.vatAmount = round(this.bill.taxInclusiveAmount - this.bill.taxExclusiveAmount)
+    console.log(this.bill)
+  }
 
 
 
