@@ -357,7 +357,7 @@ module.exports.getInvoice = async (req, res) => {
 
 async function downloadZipFileCheck(id) {
   try {
-    const response = await axios.get(`https://api.anaf.ro/test/FCTEL/rest/descarcare?id=${'3037683970'}`, {
+    const response = await axios.get(`https://api.anaf.ro/test/FCTEL/rest/descarcare?id=${id}`, {
       responseType: 'arraybuffer',
       headers: {
         'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
