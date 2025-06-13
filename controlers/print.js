@@ -1077,8 +1077,8 @@ module.exports.factura = async (req, res, next) => {
         unitCode: 'Buc',
         price: d.value,
         totalNoVat: d.value,
-        total: d.value + d.vat,
-        vatPrecent: d.precent * 100
+        total: round(d.value * (1 + ( d.vat / 100 ) )),
+        vatPrecent: d.vat
       })
     })
   }
