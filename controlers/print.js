@@ -1083,6 +1083,8 @@ module.exports.factura = async (req, res, next) => {
     })
   }
 
+  console.log(invoice.discount)
+
   //HEADER FURNIZOR
 
   //Nume furnizor
