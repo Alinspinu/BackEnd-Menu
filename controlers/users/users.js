@@ -201,6 +201,18 @@ module.exports.sendLocatie = async (req, res, next) => {
     }
 }
 
+
+module.exports.editLocatieData = async (req, res) => {
+    const {loc} = req.body
+    try{
+        const locToEdit = await Locatie.findByIdAndUpdate(loc._id, loc, {new: true})
+        res.status(200).json({message: 'Datele au fost actualizate', locatie: locToEdit})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 module.exports.editLocatie = async (req, res, next) => {
     try{
         const {email, appKey, locId} = req.body;

@@ -31,7 +31,7 @@ router.route('/loc')
     .put(users.editLocatie)
     .post(users.updateVivaData)
 
-
+router.route('/locatie').put(users.editLocatieData)
 
 router.route('/get-cash').get(users.sendUserCashback)
 
