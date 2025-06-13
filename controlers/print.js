@@ -1338,7 +1338,7 @@ module.exports.factura = async (req, res, next) => {
         doc.text(`1.00`, 304, newValue + 10, { width: 58, align: "center" })
         doc.text(`${d.value}`, 424, newValue + 10, { width: 58, align: "center" })
         doc.text(`${round(d.value * (1 + (el.vatPrecent / 100)))}0`, 523, newValue + 10, { width: 30, align: "right" })
-        heghtValue += (rowHeigth*2)
+        heghtValue += ((rowHeigth*2) - 2)
       } else {
         heghtValue += rowHeigth
       }
