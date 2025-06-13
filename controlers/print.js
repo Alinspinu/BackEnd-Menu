@@ -1129,8 +1129,9 @@ module.exports.factura = async (req, res, next) => {
   doc.fontSize(12);
   doc.font('public/font/Montserrat-Bold.ttf')
 
-  let rh = 0
+  let rh = 2
   if(invoice.client.name.split('').length > 22) rh = 12
+  if(invoice.client.name.split('').length > 44) rh = 24
   // header date client
   doc.fontSize(10);
   // doc.font('Courier-Bold')
