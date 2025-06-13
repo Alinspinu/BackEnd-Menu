@@ -1333,12 +1333,12 @@ module.exports.factura = async (req, res, next) => {
   
       if(el.discount){
         const d = el.discount
-        doc.text(`Discount client ${d.precent}%`, 50, newValue + heghtValue, { width: 225, align: 'left' })
-        doc.text(`Buc`, 274, newValue + heghtValue, { width: 28, align: "center" })
-        doc.text(`1.00`, 304, newValue + heghtValue, { width: 58, align: "center" })
-        doc.text(`${d.value}`, 364, newValue + heghtValue, { width: 58, align: "center" })
-        doc.text(`${d.value}`, 424, newValue + heghtValue, { width: 58, align: "center" })
-        doc.text(`${el.vatPrecent}%`, 486, newValue + heghtValue, { width: 35, align: "left" })
+        doc.text(`Discount client ${d.precent}%`, 50, newValue , { width: 225, align: 'left' })
+        doc.text(`Buc`, 274, newValue , { width: 28, align: "center" })
+        doc.text(`1.00`, 304, newValue , { width: 58, align: "center" })
+        doc.text(`${d.value}`, 364, newValue , { width: 58, align: "center" })
+        doc.text(`${d.value}`, 424, newValue, { width: 58, align: "center" })
+        doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
         // doc.text(`${round(el.total - el.totalNoVat)}0`, 523, newValue, { width: 30, align: "right" })
         heghtValue += (rowHeigth*2)
       } else {
