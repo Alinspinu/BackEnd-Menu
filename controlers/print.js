@@ -1266,8 +1266,8 @@ module.exports.factura = async (req, res, next) => {
   doc.stroke()
 
   doc.text('6', 484, 315, { width: 75, align: "center" })
-  y = 317
-  let heghtValue = 12
+
+
   //Body produse
   doc.rect(25, 327, 18, 330)
   doc.lineWidth(0.5);
@@ -1297,7 +1297,8 @@ module.exports.factura = async (req, res, next) => {
   doc.lineWidth(0.5);
   doc.stroke()
   // radare produse
-
+  y = 317
+  let heghtValue = 12
   // doc.font("Courier");
   doc.fontSize(9)
   const productsCount = invoice.products.length
@@ -1330,6 +1331,16 @@ module.exports.factura = async (req, res, next) => {
       doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
       doc.text(`${round(el.total - el.totalNoVat)}0`, 523, newValue, { width: 30, align: "right" })
       heghtValue += rowHeigth
+      if(el.discount){
+        const d = el.discount
+        doc.text(`Discount client ${d.precent}%`, 50, newValue + heghtValue, { width: 225, align: 'left' })
+        doc.text(`Buc`, 274, newValue + heghtValue, { width: 28, align: "center" })
+        doc.text(`1.00`, 304, newValue + heghtValue, { width: 58, align: "center" })
+        doc.text(`${r.value}`, 364, newValue + heghtValue, { width: 58, align: "center" })
+        doc.text(`${r.value}`, 424, newValue + heghtValue, { width: 58, align: "center" })
+        doc.text(`${el.vatPrecent}%`, 486, newValue + heghtValue, { width: 35, align: "left" })
+        // doc.text(`${round(el.total - el.totalNoVat)}0`, 523, newValue, { width: 30, align: "right" })
+      }
   })
 
   doc.fontSize(10)
