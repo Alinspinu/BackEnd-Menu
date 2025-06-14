@@ -23,7 +23,7 @@ module.exports.createOrderInvoice = async (req, res) => {
     const invoice = createOrderInvoice(order, client, loc)
     const newInvoice = new Invoice(invoice)
     const savedInvoice = await newInvoice.save()
-    res.status(200).json(savedInvoice)
+    res.status(200).json({message: 'Factura a fost salvată cu succes!', invoice: savedInvoice})
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
