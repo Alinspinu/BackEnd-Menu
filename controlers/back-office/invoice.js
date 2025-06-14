@@ -83,7 +83,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     newInv.invoiceNumber = noteNumber
     newInv.invoice = false
     console.log(newInv)
-    res.status(200).json({message: 'success'})
+    res.status(200).json({message: 'success', invoice: newInv})
   } catch(error){
     console.log(error)
     res.status(500).json(error)
