@@ -754,20 +754,18 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
       'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'
     });
 
-  // Meta
-  doc.ele('cbc:CustomizationID').txt('urn:cen.eu:en16931:2017#compliant#urn:efactura.mfinante.ro:CIUS-RO:1.0.1');
-  doc.ele('cbc:ProfileID').txt('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0');
-  doc.ele('cbc:ID').txt(creditNote.id);
-  doc.ele('cbc:IssueDate').txt(creditNote.date);
-  doc.ele('cbc:InvoiceTypeCode').txt('381'); // credit note
-  doc.ele('cbc:DocumentCurrencyCode').txt('RON');
-  doc.ele('cbc:TaxCurrencyCode').txt('RON');
+      doc.ele('cbc:CustomizationID').txt('urn:cen.eu:en16931:2017#compliant#urn:efactura.mfinante.ro:CIUS-RO:1.0.1');
+      doc.ele('cbc:ProfileID').txt('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0');
+      doc.ele('cbc:ID').txt(creditNote.id);
+      doc.ele('cbc:IssueDate').txt(creditNote.date);
+      doc.ele('cbc:CreditNoteTypeCode').txt('381'); // credit note
+      doc.ele('cbc:DocumentCurrencyCode').txt('RON');
+      doc.ele('cbc:TaxCurrencyCode').txt('RON');
 
-  // Reference to original invoice
-  doc.ele('cac:BillingReference')
-    .ele('cac:InvoiceDocumentReference')
-    .ele('cbc:ID').txt(invoice.invoiceNumber).up()
-    .ele('cbc:IssueDate').txt(invoice.issueDate);
+      doc.ele('cac:BillingReference')
+        .ele('cac:InvoiceDocumentReference')
+        .ele('cbc:ID').txt(invoice.invoiceNumber).up()
+        .ele('cbc:IssueDate').txt(invoice.issueDate);
 
 
 
