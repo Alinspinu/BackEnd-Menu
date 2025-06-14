@@ -297,6 +297,7 @@ module.exports.getInvoice = async (req, res) => {
         for (const entry of zipEntries) {
             if (!entry.entryName.includes('semnatura')) {
             const xmlData = entry.getData().toString('utf8'); 
+            console.log(xmlData)
             try {
                 const result = await parseXml(xmlData); 
                 invoice = parseInvoiceData(result, id);
@@ -716,7 +717,7 @@ function buildEFacturaHeaderXML(invoice) {
     line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt(p.quantity);
     line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(p.totalNoVat);
 
-    if (p.discount.value > 0) {
+    if (p.discount && p.discount.value > 0) {
       console.log(p.discount)
       line.ele('cac:AllowanceCharge')
         .ele('cbc:ChargeIndicator').txt('false').up()
@@ -816,9 +817,9 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
 
   // Repeat payment means (optional for credit notes, but allowed)
 
-  // const paymentMeans = doc.ele('cac:PaymentMeans');
-  // paymentMeans.ele('cbc:PaymentMeansCode').txt('10');
-  // paymentMeans.ele('cac:PayeeFinancialAccount').ele('cbc:ID').txt(invoice.paymentMeans.iban);
+  const paymentMeans = doc.ele('cac:PaymentMeans');
+  paymentMeans.ele('cbc:PaymentMeansCode').txt('10');
+  paymentMeans.ele('cac:PayeeFinancialAccount').ele('cbc:ID').txt(invoice.paymentMeans.iban);
 
   // Document-level allowance (negated)
   let totalDiscount = 0;
@@ -863,7 +864,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
     total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId }).txt(totalDiscount.toFixed(2));
   }
   total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt('0.00');
-  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
+  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt((Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
 
   // Invoice lines (negative values)
   invoice.products.forEach((p, i) => {
