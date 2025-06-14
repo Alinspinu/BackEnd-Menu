@@ -88,21 +88,46 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     } = invoice;
     
     // Update relevant fields for credit note
-    invoiceData.invoiceNumber = invoiceData.invoiceNumber + "S" ;
+    invoiceData.invoiceNumber = invoiceData.invoiceNumber + " S" ;
     invoiceData.issueDate = noteDate;
     invoiceData.invoice = false; // Mark as credit note
     invoiceData.eFacturaId = response.eFacturaId;
     invoiceData.eFacturaStatus = response.eFacturaStatus;
     invoiceData.eFacturaError = response.eFacturaError;
     
+    const inv = await chageValues(invoiceData)
     // Save new document
-    const newInvoice = new Invoice(invoiceData);
+    const newInvoice = new Invoice(inv);
     const savedInvoice = await newInvoice.save();
     res.status(200).json({message: 'success', invoice: savedInvoice})
   } catch(error){
     console.log(error)
     res.status(500).json(error)
   }
+}
+
+
+ async function chageValues(invoice){
+  invoice.products.forEach(p => {
+    p.totalNoVat = -Math.abs(p.totalDiscount)
+    p.total = -Math.abs(p.total)
+    p.quantity = -Math.abs(p.quantity)
+    if(p.discount && p.discount.value > 0){
+      p.discount.value = -Math.abs(p.discount.value)
+    }
+  })
+    if(invoice.discounts.length){
+      invoice.discounts.forEach(d => {
+        d.value = -Math.abs(d.value)
+        d.baseAmount = -Math.abs(d.baseAmount)
+      })
+    }
+    invoice.vatAmount = -Math.abs(invoice.vatAmount)
+    invoice.taxExclusiveAmount = -Math.abs(invoice.taxExclusiveAmount)
+    invoice.taxInclusiveAmount = -Math.abs(invoice.taxInclusiveAmount)
+    invoice.payableAmont = -Math.abs(invoice.payableAmont)
+
+    return invoice
 }
 
 
@@ -756,7 +781,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
       });
       doc.ele('cbc:CustomizationID').txt('urn:cen.eu:en16931:2017#compliant#urn:efactura.mfinante.ro:CIUS-RO:1.0.1');
       doc.ele('cbc:ProfileID').txt('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0');
-      doc.ele('cbc:ID').txt(invoice.invoiceNumber + "S");
+      doc.ele('cbc:ID').txt(invoice.invoiceNumber + " S");
       doc.ele('cbc:IssueDate').txt(creditNote.date);
       doc.ele('cbc:InvoiceTypeCode').txt('380'); // credit note
       doc.ele('cbc:DocumentCurrencyCode').txt('RON');
