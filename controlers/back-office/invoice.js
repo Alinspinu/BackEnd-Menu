@@ -200,7 +200,7 @@ module.exports.handleUplodErros = async (req, res) => {
 
     const invoice = await Invoice.findById(invoiceId)
     invoice.eFacturaError = error.errors
-    const updatedInvoice = invoice.save()
+    const updatedInvoice = await invoice.save()
     
     res.status(200).json({message: 'Erorare descată cu success!', invoice: updatedInvoice })
   } catch(error){
