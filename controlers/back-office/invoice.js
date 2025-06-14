@@ -109,7 +109,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
 
  async function chageValues(invoice){
   invoice.products.forEach(p => {
-    p.totalNoVat = -Math.abs(p.totalDiscount)
+    p.totalNoVat = -Math.abs(p.totalNoVat)
     p.total = -Math.abs(p.total)
     p.quantity = -Math.abs(p.quantity)
     if(p.discount && p.discount.value > 0){
