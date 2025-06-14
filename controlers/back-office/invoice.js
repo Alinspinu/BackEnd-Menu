@@ -132,11 +132,11 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
   try{
     const invoice = await Invoice.findById(id)
     if(invoice && invoice.eFacturaId){
-      const response = await checkInvoiceStatus(invoice.eFacturaId)
+      const response = await checkInvoiceStatus('5024951809')
       invoice.eFacturaId = response.eFacturaId
       invoice.eFacturaError = response.eFacturaError
       invoice.eFacturaStatus = response.eFacturaStatus
-      const savedInvoice = await invoice.save()
+      // const savedInvoice = await invoice.save()
       res.status(200).json({message: response.message, invoice: savedInvoice})
     } else {
       res.status(200).josn({message: 'Factura nu a fost găsită', invoice: null})
@@ -248,7 +248,6 @@ module.exports.getInvoice = async (req, res) => {
       if(upload){
         const bills = await Invoice.find({eFacturaId:{$in: ids}})
         const billsIds = bills.map(b => b.eFacturaId)
-        console.log(billsIds)
         res.status(200).json(billsIds)
       } else {
         const nirs = await Nir.find({eFacturaId:{$in: ids}})
@@ -306,7 +305,7 @@ module.exports.getInvoice = async (req, res) => {
 
 async function downloadZipFileCheck(id) {
   try {
-    const response = await axios.get(`https://api.anaf.ro/test/FCTEL/rest/descarcare?id=${'5024951809'}`, {
+    const response = await axios.get(`https://api.anaf.ro/test/FCTEL/rest/descarcare?id=${id}`, {
       responseType: 'arraybuffer',
       headers: {
         'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
