@@ -750,7 +750,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
   doc.ele('cac:BillingReference')
     .ele('cac:InvoiceDocumentReference')
     .ele('cbc:ID').txt(invoice.invoiceNumber).up()
-    .ele('cbc:IssueDate').txt(invoice.invoiceNumber);
+    .ele('cbc:IssueDate').txt(invoice.issueDate);
 
   // Keep supplier and customer blocks unchanged
   // (use your original code from supplierParty and customerParty blocks)
