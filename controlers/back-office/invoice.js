@@ -752,13 +752,57 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
     .ele('cbc:ID').txt(invoice.invoiceNumber).up()
     .ele('cbc:IssueDate').txt(invoice.issueDate);
 
+
+
+
+    const supplierParty = doc.ele('cac:AccountingSupplierParty').ele('cac:Party');
+    supplierParty.ele('cac:PartyIdentification').ele('cbc:ID', { schemeID: '0209' }).txt(invoice.supplier.vatNumber.replace('RO', '') + '99995').up().up();
+    supplierParty.ele('cac:PartyName').ele('cbc:Name').txt(invoice.supplier.name).up().up();
+    const suppAddr = supplierParty.ele('cac:PostalAddress');
+    suppAddr.ele('cbc:StreetName').txt(invoice.supplier.address.street).up();
+    suppAddr.ele('cbc:CityName').txt(invoice.supplier.address.city).up();
+    suppAddr.ele('cbc:PostalZone').txt(invoice.supplier.address.postalCode).up(); 
+    suppAddr.ele('cbc:CountrySubentity').txt(invoice.supplier.address.coutrySubentity).up(); 
+    suppAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.supplier.address.country).up().up();
+    supplierParty.ele('cac:PartyTaxScheme')
+      .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
+      .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.supplier.vat ? 'VAT' : 'NO').up().up().up();
+    supplierParty.ele('cac:PartyLegalEntity')
+      .ele('cbc:RegistrationName').txt(invoice.supplier.name).up()
+      .ele('cbc:CompanyID').txt(invoice.supplier.registration).up().up();
+      const contact = supplierParty.ele('cac:Contact');
+      if (invoice.supplier.contact.name)
+        contact.ele('cbc:Name').txt(invoice.supplier.contact.name).up();
+      if (invoice.supplier.contact.email)
+        contact.ele('cbc:ElectronicMail').txt(invoice.supplier.contact.email).up();
+  
+    // Customer block
+    const customerParty = doc.ele('cac:AccountingCustomerParty').ele('cac:Party');
+    customerParty.ele('cac:PartyName').ele('cbc:Name').txt(invoice.client.name).up().up();
+    const custAddr = customerParty.ele('cac:PostalAddress');
+    custAddr.ele('cbc:StreetName').txt(invoice.client.address.street).up();
+    custAddr.ele('cbc:CityName').txt(invoice.client.address.city).up();
+    custAddr.ele('cbc:PostalZone').txt(invoice.client.address.postalCode).up(); // example
+    custAddr.ele('cbc:CountrySubentity').txt(invoice.client.address.coutrySubentity).up(); // example
+    custAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.client.address.country).up().up();
+    customerParty.ele('cac:PartyTaxScheme')
+      .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
+      .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+    customerParty.ele('cac:PartyLegalEntity')
+      .ele('cbc:RegistrationName').txt(invoice.client.name).up()
+      .ele('cbc:CompanyID').txt(invoice.client.registration).up().up();
+
+
+
+
   // Keep supplier and customer blocks unchanged
   // (use your original code from supplierParty and customerParty blocks)
 
   // Repeat payment means (optional for credit notes, but allowed)
-  const paymentMeans = doc.ele('cac:PaymentMeans');
-  paymentMeans.ele('cbc:PaymentMeansCode').txt('10');
-  paymentMeans.ele('cac:PayeeFinancialAccount').ele('cbc:ID').txt(invoice.paymentMeans.iban);
+
+  // const paymentMeans = doc.ele('cac:PaymentMeans');
+  // paymentMeans.ele('cbc:PaymentMeansCode').txt('10');
+  // paymentMeans.ele('cac:PayeeFinancialAccount').ele('cbc:ID').txt(invoice.paymentMeans.iban);
 
   // Document-level allowance (negated)
   let totalDiscount = 0;
