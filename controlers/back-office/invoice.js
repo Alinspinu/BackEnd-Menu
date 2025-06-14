@@ -376,7 +376,7 @@ async function downloadZipFileCheck(id) {
       files.forEach(async f =>{
         if(!f.fileName.includes('semnatura')){
             header = await parseHeaderFromXml(f.content)
-            const err = header.Errors?.$?.errorMessage;
+            const err = header.Errors
           //  console.log(f.content)
            console.log(err)
         }
