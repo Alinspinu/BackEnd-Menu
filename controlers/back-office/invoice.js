@@ -199,11 +199,11 @@ module.exports.handleUplodErros = async (req, res) => {
     const files = await downloadZipFileCheck(id)
     if(files.length){
       files.forEach(f => {
-        console.log(`📄 File: ${f.name}`);
-        console.log(f.content);
+        // console.log(`📄 File: ${f.name}`);
+        // console.log(f.content);
       })
     } else {
-      console.log(files)
+      // console.log(files)
     }
     res.status(200).json({message: 'ok'})
   } catch(error){
@@ -369,6 +369,15 @@ async function downloadZipFileCheck(id) {
         fileName: entry.entryName,
         content: entry.getData().toString('utf8'),
       }));
+      let header
+      files.files.forEach(f =>{
+        if(!f.fileName.includes('semnatura')){
+           haader = parseHeaderFromXml(f.content)
+        }
+      })
+
+      console.log(header)
+
       return { type: 'zip', files };
     } else {
       // ❌ Not a ZIP – try parsing as JSON error
