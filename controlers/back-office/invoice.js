@@ -67,6 +67,28 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
     res.status(500).json(error)
   }
 }
+module.exports.uploadCreditNoteToEFactura = async (req, res) => {
+  const {id, noteDate, noteNumber} = req.body
+  try{
+    let invoice = await Invoice.findById(id)
+    const xml = buildEFacturaCreditNoteXML(invoice, {id: noteNumber, date: noteDate})
+    console.log(xml)
+    const response = await testInvoice(xml)
+    invoice.eFacturaId = response.eFacturaId
+    invoice.eFacturaError = response.eFacturaError
+    invoice.eFacturaStatus = response.eFacturaStatus
+    delete invoice._id
+    const newInv = new Invoice(invoice)
+    newInv.issueDate = noteDate
+    newInv.invoiceNumber = noteNumber
+    newInv.invoice = false
+    console.log(newInv)
+    res.status(200).json({message: 'success'})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
 
 
 module.exports.getInvoices = async (req, res) => {
@@ -702,6 +724,117 @@ function buildEFacturaHeaderXML(invoice) {
 
   return doc.end({ prettyPrint: true });
 }
+
+
+
+
+
+function buildEFacturaCreditNoteXML(invoice, creditNote) {
+  const doc = create({ version: '1.0' })
+    .ele('Invoice', {
+      xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
+      'xmlns:cac': 'urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2',
+      'xmlns:cbc': 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2'
+    });
+
+  // Meta
+  doc.ele('cbc:CustomizationID').txt('urn:cen.eu:en16931:2017#compliant#urn:efactura.mfinante.ro:CIUS-RO:1.0.1');
+  doc.ele('cbc:ProfileID').txt('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0');
+  doc.ele('cbc:ID').txt(creditNote.id);
+  doc.ele('cbc:IssueDate').txt(creditNote.date);
+  doc.ele('cbc:InvoiceTypeCode').txt('381'); // credit note
+  doc.ele('cbc:DocumentCurrencyCode').txt('RON');
+  doc.ele('cbc:TaxCurrencyCode').txt('RON');
+
+  // Reference to original invoice
+  doc.ele('cac:BillingReference')
+    .ele('cac:InvoiceDocumentReference')
+    .ele('cbc:ID').txt(invoice.invoiceNumber).up()
+    .ele('cbc:IssueDate').txt(invoice.invoiceNumber);
+
+  // Keep supplier and customer blocks unchanged
+  // (use your original code from supplierParty and customerParty blocks)
+
+  // Repeat payment means (optional for credit notes, but allowed)
+  const paymentMeans = doc.ele('cac:PaymentMeans');
+  paymentMeans.ele('cbc:PaymentMeansCode').txt('10');
+  paymentMeans.ele('cac:PayeeFinancialAccount').ele('cbc:ID').txt(invoice.paymentMeans.iban);
+
+  // Document-level allowance (negated)
+  let totalDiscount = 0;
+  if (Array.isArray(invoice.discount)) {
+    invoice.discount.forEach(d => {
+      const discountAmount = -Math.abs(d.value);
+      totalDiscount += discountAmount;
+
+      const ac = doc.ele('cac:AllowanceCharge');
+      ac.ele('cbc:ChargeIndicator').txt('false');
+      if (d.reasonCode != null) ac.ele('cbc:AllowanceChargeReasonCode').txt(d.reasonCode.toString());
+      if (d.reason) ac.ele('cbc:AllowanceChargeReason').txt(d.reason);
+      if (d.precent != null) ac.ele('cbc:MultiplierFactorNumeric').txt(d.precent.toString());
+      ac.ele('cbc:Amount', { currencyID: invoice.currencyId }).txt(discountAmount.toFixed(2));
+      ac.ele('cbc:BaseAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(d.baseAmount)).toFixed(2));
+      const taxCategory = ac.ele('cac:TaxCategory');
+      taxCategory.ele('cbc:ID').txt('S');
+      taxCategory.ele('cbc:Percent').txt(d.vat.toString());
+      taxCategory.ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+    });
+  }
+
+  // Tax Total
+  const taxTotal = doc.ele('cac:TaxTotal');
+  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.vatAmount)).toFixed(2));
+  invoice.vatGroups.forEach(r => {
+    const subtotal = taxTotal.ele('cac:TaxSubtotal');
+    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(r.taxable)).toFixed(2));
+    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(r.tax)).toFixed(2));
+    subtotal.ele('cac:TaxCategory')
+      .ele('cbc:ID').txt('S').up()
+      .ele('cbc:Percent').txt(r.rate).up()
+      .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+  });
+
+  // LegalMonetaryTotal (negative amounts)
+  const total = doc.ele('cac:LegalMonetaryTotal');
+  total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxExclusiveAmount + totalDiscount)).toFixed(2));
+  total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxExclusiveAmount)).toFixed(2));
+  total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
+  if (totalDiscount < 0) {
+    total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId }).txt(totalDiscount.toFixed(2));
+  }
+  total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt('0.00');
+  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
+
+  // Invoice lines (negative values)
+  invoice.products.forEach((p, i) => {
+    const line = doc.ele('cac:InvoiceLine');
+    line.ele('cbc:ID').txt((i + 1).toString());
+    line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt((-Math.abs(p.quantity)).toString());
+    line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(p.totalNoVat)).toFixed(2));
+
+    if (p.discount.value > 0) {
+      line.ele('cac:AllowanceCharge')
+        .ele('cbc:ChargeIndicator').txt('false').up()
+        .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
+        .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
+        .ele('cbc:MultiplierFactorNumeric').txt(p.discount.precent).up()
+        .ele('cbc:Amount', { currencyID: invoice.currencyId }).txt((-Math.abs(p.discount.value)).toFixed(2));
+    }
+
+    line.ele('cac:Item')
+      .ele('cbc:Name').txt(p.name).up()
+      .ele('cac:ClassifiedTaxCategory')
+        .ele('cbc:ID').txt('S').up()
+        .ele('cbc:Percent').txt(p.vatPrecent).up()
+        .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+
+    line.ele('cac:Price')
+      .ele('cbc:PriceAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(p.price)).toFixed(2));
+  });
+
+  return doc.end({ prettyPrint: true });
+}
+
 
 
 

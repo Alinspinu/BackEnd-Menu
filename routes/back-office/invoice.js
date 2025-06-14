@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const invoiceRoutes = require('../../controlers/back-office/invoice.js')
-const printRoutes = require('../../controlers/print')
+const printRoutes = require('../../controlers/print');
+
 
 
 router.route('/get-msg').get(invoiceRoutes.getMessages)
@@ -25,6 +26,8 @@ router.route('/save').post(invoiceRoutes.saveInvoice)
 router.route('/print').post(printRoutes.factura)
 
 router.route('/errors').get(invoiceRoutes.handleUplodErros)
+
+router.route('/credit-note').post(invoiceRoutes.uploadCreditNoteToEFactura)
 
 
 

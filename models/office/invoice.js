@@ -4,6 +4,11 @@ const Schema = mongoose.Schema;
 const Counter = require('../utils/counter')
 
 const invoiceSchema = new Schema({
+    invoice: {
+        type: Boolean,
+        default: true,
+        required: true
+    },
     invoiceNumber: String,
     serie: String,
     index: {
