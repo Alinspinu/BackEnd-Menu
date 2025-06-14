@@ -54,7 +54,7 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
   const {id} = req.body
   try{
     const invoice = await Invoice.findById(id)
-    const xml = buildEFacturaHeaderXML(invoice)
+    const xml = invoice.invoice ? buildEFacturaHeaderXML(invoice) : buildEFacturaHeaderXML(invoice, invoice.issueDate)
     console.log(xml)
     const response = await testInvoice(xml)
     invoice.eFacturaId = response.eFacturaId
@@ -67,41 +67,36 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
     res.status(500).json(error)
   }
 }
+
+
 module.exports.uploadCreditNoteToEFactura = async (req, res) => {
   const {id, noteDate} = req.body
   try{
-    let invoice = await Invoice.findById(id).lean(); // lean() gives you a plain object, not a Mongoose document
-
-    // Generate XML credit note
-    const xml = buildEFacturaCreditNoteXML(invoice, {
-      date: noteDate
-    });
-    
-    console.log(xml);
-    
-    // Send to eFactura validator
-    const response = await testInvoice(xml);
-    
-    // Prepare credit note from original invoice
+    let invoice = await Invoice.findById(id).lean();
     const {
       _id, __v, eFacturaId, eFacturaStatus, eFacturaError, ...invoiceData
     } = invoice;
+
+
+    const inv = await chageValues(invoiceData)
+    // Generate XML credit note
+    const xml = buildEFacturaHeaderXML(inv, noteDate)
     
-    // Update relevant fields for credit note
-    invoiceData.invoiceNumber = invoiceData.invoiceNumber + " S" ;
-    invoiceData.issueDate = noteDate;
-    invoiceData.invoice = false; // Mark as credit note
-    invoiceData.eFacturaId = response.eFacturaId;
-    invoiceData.eFacturaStatus = response.eFacturaStatus;
-    invoiceData.eFacturaError = response.eFacturaError;
+    console.log(xml);
     
-    setTimeout(async () => {
-      const inv = await chageValues(invoiceData)
-      // Save new document
-      const newInvoice = new Invoice(inv);
-      const savedInvoice = await newInvoice.save();
-      res.status(200).json({message: 'success', invoice: savedInvoice})
-    }, 1000)
+    const response = await testInvoice(xml);
+    
+    inv.issueDate = noteDate;
+    inv.eFacturaId = response.eFacturaId;
+    inv.eFacturaStatus = response.eFacturaStatus;
+    inv.eFacturaError = response.eFacturaError;
+    
+
+
+    const newInvoice = new Invoice(inv);
+    const savedInvoice = await newInvoice.save();
+    res.status(200).json({message: 'success', invoice: savedInvoice})
+
   } catch(error){
     console.log(error)
     res.status(500).json(error)
@@ -110,6 +105,8 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
 
 
  async function chageValues(invoice){
+  invoice.invoiceNumber = invoice.invoiceNumber + " S"
+  invoice.invoice = false;
   invoice.products.forEach(p => {
     p.totalNoVat = -Math.abs(p.totalNoVat)
     p.total = -Math.abs(p.total)
@@ -629,7 +626,7 @@ function createInvoice(order, customer, supplier) {
 
 
 
-function buildEFacturaHeaderXML(invoice) {
+function buildEFacturaHeaderXML(invoice, date) {
   const doc = create({ version: '1.0' })
     .ele('Invoice', {
       xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
@@ -638,14 +635,22 @@ function buildEFacturaHeaderXML(invoice) {
     });
 
   // Invoice metadata
-  doc.ele('cbc:CustomizationID').txt('urn:cen.eu:en16931:2017#compliant#urn:efactura.mfinante.ro:CIUS-RO:1.0.1').up();
-  doc.ele('cbc:ProfileID').txt('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0').up();
-  doc.ele('cbc:ID').txt(invoice.invoiceNumber).up(); // ensure this contains digits
-  doc.ele('cbc:IssueDate').txt(invoice.issueDate).up();
-  doc.ele('cbc:DueDate').txt(invoice.dueDate).up();
-  doc.ele('cbc:InvoiceTypeCode').txt('380').up(); // standard invoice
-  doc.ele('cbc:DocumentCurrencyCode').txt('RON').up();
-  doc.ele('cbc:TaxCurrencyCode').txt('RON').up();
+      doc.ele('cbc:CustomizationID').txt('urn:cen.eu:en16931:2017#compliant#urn:efactura.mfinante.ro:CIUS-RO:1.0.1').up();
+      doc.ele('cbc:ProfileID').txt('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0').up();
+      doc.ele('cbc:ID').txt(invoice.invoice ? invoice.invoiceNumber : invoice.invoiceNumber + " S").up(); // ensure this contains digits
+      doc.ele('cbc:IssueDate').txt(invoice.invoice ? invoice.issueDate : date).up();
+      doc.ele('cbc:DueDate').txt(invoice.dueDate).up();
+      doc.ele('cbc:InvoiceTypeCode').txt('380').up(); // standard invoice
+      doc.ele('cbc:DocumentCurrencyCode').txt('RON').up();
+      doc.ele('cbc:TaxCurrencyCode').txt('RON').up();
+
+      if(!invoice.invoice){
+        doc.ele('cac:BillingReference')
+        .ele('cac:InvoiceDocumentReference')
+        .ele('cbc:ID').txt(invoice.invoiceNumber).up()
+        .ele('cbc:IssueDate').txt(invoice.issueDate);
+      }
+
 
   // Supplier block
   const supplierParty = doc.ele('cac:AccountingSupplierParty').ele('cac:Party');
