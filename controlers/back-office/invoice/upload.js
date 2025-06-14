@@ -59,11 +59,14 @@ async function uploadInvoice(xml, cn = false) {
       const head = await parseHeaderFromXml(resp.data);
       const eFacturaStatus = head.$.stare;
       const downloadId = head.$.id_descarcare
+      let status = eFacturaStatus
+      if(status === 'ok') status = 'VALIDAT CU SUCCES!'  
+      if(status === 'nok') status = 'NEVALIDAT (conține erori)!'
       return {
           eFacturaStatus: eFacturaStatus,
           eFacturaId: downloadId ? downloadId : indexIncarcare,
           eFacturaError: '',
-          message: upload ? `Documentul a fost încărcat cu success, STATUS: ${eFacturaStatus.toUpperCase()}!` : `Documentul a fost verificat, STATUS: ${eFacturaStatus.toUpperCase()}!`
+          message: upload ? `Documentul a fost încărcat cu success, STATUS: ${status}!` : `Documentul a fost verificat, STATUS: ${status}!`
         }
     } catch(error) {
       console.error('Error uploading:', err?.response?.data || err.message);
