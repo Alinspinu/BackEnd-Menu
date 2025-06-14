@@ -369,18 +369,18 @@ async function downloadZipFileCheck(id) {
         fileName: entry.entryName,
         content: entry.getData().toString('utf8'),
       }));
-      let header
+      let errorMessage = []
 
-      // console.log(files)
-
-      files.forEach(async f =>{
+      for(let f of files){
         if(!f.fileName.includes('semnatura')){
-            header = await parseHeaderFromXml(f.content)
-            const err = header.Error
-          //  console.log(f.content)
-           console.log(err)
-        }
-      })
+          const header = await parseHeaderFromXml(f.content)
+          const err = header.Error
+          for(let e of err){
+            errorMessage.push(e?.$?.errorMessage)
+          }
+      }
+      }
+      console.log(errorMessage)
 
 
       return { type: 'zip', files };
