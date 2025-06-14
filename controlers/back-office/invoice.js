@@ -846,7 +846,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
     total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId }).txt(totalDiscount.toFixed(2));
   }
   total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt('0.00');
-  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt((Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
+  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
 
   // Invoice lines (negative values)
   invoice.products.forEach((p, i) => {
