@@ -68,20 +68,19 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
   }
 }
 module.exports.uploadCreditNoteToEFactura = async (req, res) => {
-  const {id, noteDate, noteNumber} = req.body
+  const {id, noteDate} = req.body
   try{
     let invoice = await Invoice.findById(id).lean(); // lean() gives you a plain object, not a Mongoose document
 
     // Generate XML credit note
     const xml = buildEFacturaCreditNoteXML(invoice, {
-      id: noteNumber,
       date: noteDate
     });
     
     console.log(xml);
     
     // Send to eFactura validator
-    const response = await testInvoice(xml, true);
+    const response = await testInvoice(xml);
     
     // Prepare credit note from original invoice
     const {
