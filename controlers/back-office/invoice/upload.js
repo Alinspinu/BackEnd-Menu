@@ -63,7 +63,7 @@ async function uploadInvoice(xml, cn = false) {
           eFacturaStatus: eFacturaStatus,
           eFacturaId: downloadId ? downloadId : indexIncarcare,
           eFacturaError: '',
-          message: upload ? 'Documentul a fost încărcat cu success!' : `Documentul a fost verificat, STATUS: ${eFacturaStatus}`
+          message: upload ? 'Documentul a fost încărcat cu success!' : `Documentul a fost verificat, STATUS: `
         }
     } catch(error) {
       console.error('Error uploading:', err?.response?.data || err.message);
