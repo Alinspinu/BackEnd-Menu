@@ -95,11 +95,13 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     invoiceData.eFacturaStatus = response.eFacturaStatus;
     invoiceData.eFacturaError = response.eFacturaError;
     
-    const inv = await chageValues(invoiceData)
-    // Save new document
-    const newInvoice = new Invoice(inv);
-    const savedInvoice = await newInvoice.save();
-    res.status(200).json({message: 'success', invoice: savedInvoice})
+    setTimeout(async () => {
+      const inv = await chageValues(invoiceData)
+      // Save new document
+      const newInvoice = new Invoice(inv);
+      const savedInvoice = await newInvoice.save();
+      res.status(200).json({message: 'success', invoice: savedInvoice})
+    }, 1000)
   } catch(error){
     console.log(error)
     res.status(500).json(error)
