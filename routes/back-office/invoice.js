@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const invoiceRoutes = require('../../controlers/back-office/invoice/invoice.js')
+const invoiceRoutes = require('../../controlers/back-office/invoice/controlers.js')
 const printRoutes = require('../../controlers/print');
 
 
