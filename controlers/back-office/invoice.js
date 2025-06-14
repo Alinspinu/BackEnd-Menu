@@ -117,7 +117,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     }
   })
     if(invoice.discount.length){
-      invoice.discounts.forEach(d => {
+      invoice.discount.forEach(d => {
         d.value = -Math.abs(d.value)
         d.baseAmount = -Math.abs(d.baseAmount)
       })
