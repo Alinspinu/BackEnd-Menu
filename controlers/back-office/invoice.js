@@ -81,7 +81,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     console.log(xml);
     
     // Send to eFactura validator
-    const response = await testInvoice(xml);
+    const response = await testInvoice(xml, true);
     
     // Prepare credit note from original invoice
     const {
@@ -746,7 +746,6 @@ function buildEFacturaHeaderXML(invoice) {
 
 
 function buildEFacturaCreditNoteXML(invoice, creditNote) {
-  console.log(invoice)
   const doc = create({ version: '1.0' })
     .ele('Invoice', {
       xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
@@ -758,7 +757,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
       doc.ele('cbc:ProfileID').txt('urn:fdc:peppol.eu:2017:poacc:billing:01:1.0');
       doc.ele('cbc:ID').txt(creditNote.id);
       doc.ele('cbc:IssueDate').txt(creditNote.date);
-      doc.ele('cbc:CreditNoteTypeCode').txt('381'); // credit note
+      doc.ele('cbc:InvoiceTypeCode').txt('381'); // credit note
       doc.ele('cbc:DocumentCurrencyCode').txt('RON');
       doc.ele('cbc:TaxCurrencyCode').txt('RON');
 
@@ -926,9 +925,9 @@ async function transformXmlToPdf(xml, res) {
 
 
 
-  async function testInvoice(xml) {
+  async function testInvoice(xml, cn = false) {
     const token = process.env.TOKEN_ANAF;
-    const standard = 'UBL';
+    const standard = cn ? 'CN' : 'UBL';
     const cif = '44994432';
     const veryfyBaseUrl = 'https://api.anaf.ro/test/FCTEL/rest/stareMesaj';
     const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/upload';
