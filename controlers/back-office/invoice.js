@@ -116,7 +116,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
       p.discount.value = -Math.abs(p.discount.value)
     }
   })
-    if(invoice.discounts.length){
+    if(invoice.discount.length){
       invoice.discounts.forEach(d => {
         d.value = -Math.abs(d.value)
         d.baseAmount = -Math.abs(d.baseAmount)
