@@ -377,10 +377,10 @@ async function downloadZipFileCheck(id) {
           }
       }
       }
-      console.log(errorMessage.join(' *****END**** <br> <br>'))
+      console.log(errorMessage.join(' <br> *****END**** <br>'))
 
 
-      return { errors: errorMessage.join(' *****END**** <br> <br>')};
+      return { errors: errorMessage.join('<br> *****END**** <br>')};
     } else {
       // ❌ Not a ZIP – try parsing as JSON error
       const text = buffer.toString('utf8');
