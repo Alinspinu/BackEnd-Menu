@@ -1,6 +1,6 @@
 const axios = require('axios')
 const AdmZip = require('adm-zip');
-const {parseXml, parseInvoiceData} = require('./parseXml')
+const {parseXml, parseInvoiceData, parseHeaderFromXml} = require('./parseXml')
 
 
 
