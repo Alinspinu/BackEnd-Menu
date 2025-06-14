@@ -25,7 +25,7 @@ async function uploadInvoice(xml, cn = false) {
       const error = header.Errors?.$?.errorMessage;
   
       if (indexIncarcare) {
-        return checkInvoiceStatus(indexIncarcare, token)
+        return checkInvoiceStatus(indexIncarcare, token, true)
       }
       if (error) {
         return {
@@ -42,7 +42,7 @@ async function uploadInvoice(xml, cn = false) {
   }
 
 
-  async function checkInvoiceStatus(indexIncarcare) {
+  async function checkInvoiceStatus(indexIncarcare, upload = false) {
     const token = process.env.TOKEN_ANAF;
     const veryfyBaseUrl = 'https://api.anaf.ro/test/FCTEL/rest/stareMesaj';
     const verifyUrl = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`;
@@ -63,7 +63,7 @@ async function uploadInvoice(xml, cn = false) {
           eFacturaStatus: eFacturaStatus,
           eFacturaId: downloadId ? downloadId : indexIncarcare,
           eFacturaError: '',
-          message: 'Fișierul a fost încărcat cu success!'
+          message: upload ? 'Documentul a fost încărcat cu success!' : `Documentul a fost verificat, STATUS: ${eFacturaStatus}`
         }
     } catch(error) {
       console.error('Error uploading:', err?.response?.data || err.message);
