@@ -380,7 +380,7 @@ async function downloadZipFileCheck(id) {
           }
       }
       }
-      console.log(errorMessage)
+      console.log(errorMessage.join(' ************* '))
 
 
       return { type: 'zip', files };
