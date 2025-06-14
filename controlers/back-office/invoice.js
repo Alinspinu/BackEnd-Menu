@@ -194,18 +194,15 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
 }
 
 module.exports.handleUplodErros = async (req, res) => {
-  const {id} = req.query 
+  const {id, invoiceId} = req.query 
   try{
-    const files = await downloadZipFileCheck(id)
-    if(files.length){
-      files.forEach(f => {
-        // console.log(`📄 File: ${f.name}`);
-        // console.log(f.content);
-      })
-    } else {
-      // console.log(files)
-    }
-    res.status(200).json({message: 'ok'})
+    const error = await downloadZipFileCheck(id)
+
+    const invoice = await Invoice.findById(invoiceId)
+    invoice.eFacturaError = error
+    const updatedInvoice = invoice.save()
+    
+    res.status(200).json({message: 'Erorare descată cu success!', invoice: updatedInvoice })
   } catch(error){
     console.log(error)
     res.status(500).json(error)
@@ -380,10 +377,10 @@ async function downloadZipFileCheck(id) {
           }
       }
       }
-      console.log(errorMessage.join(' ************* '))
+      console.log(errorMessage.join(' *****END**** <br> <br>'))
 
 
-      return { type: 'zip', files };
+      return { errors: errorMessage.join(' *****END**** <br> <br>')};
     } else {
       // ❌ Not a ZIP – try parsing as JSON error
       const text = buffer.toString('utf8');
