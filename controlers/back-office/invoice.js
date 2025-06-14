@@ -807,7 +807,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
   let totalDiscount = 0;
   if (Array.isArray(invoice.discount)) {
     invoice.discount.forEach(d => {
-      const discountAmount = -Math.abs(d.value);
+      const discountAmount = Math.abs(d.value);
       totalDiscount += discountAmount;
 
       const ac = doc.ele('cac:AllowanceCharge');
@@ -816,7 +816,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
       if (d.reason) ac.ele('cbc:AllowanceChargeReason').txt(d.reason);
       if (d.precent != null) ac.ele('cbc:MultiplierFactorNumeric').txt(d.precent.toString());
       ac.ele('cbc:Amount', { currencyID: invoice.currencyId }).txt(discountAmount.toFixed(2));
-      ac.ele('cbc:BaseAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(d.baseAmount)).toFixed(2));
+      ac.ele('cbc:BaseAmount', { currencyID: invoice.currencyId }).txt((Math.abs(d.baseAmount)).toFixed(2));
       const taxCategory = ac.ele('cac:TaxCategory');
       taxCategory.ele('cbc:ID').txt('S');
       taxCategory.ele('cbc:Percent').txt(d.vat.toString());
@@ -826,11 +826,11 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
 
   // Tax Total
   const taxTotal = doc.ele('cac:TaxTotal');
-  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.vatAmount)).toFixed(2));
+  taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt((Math.abs(invoice.vatAmount)).toFixed(2));
   invoice.vatGroups.forEach(r => {
     const subtotal = taxTotal.ele('cac:TaxSubtotal');
-    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(r.taxable)).toFixed(2));
-    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(r.tax)).toFixed(2));
+    subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt((Math.abs(r.taxable)).toFixed(2));
+    subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt((Math.abs(r.tax)).toFixed(2));
     subtotal.ele('cac:TaxCategory')
       .ele('cbc:ID').txt('S').up()
       .ele('cbc:Percent').txt(r.rate).up()
@@ -839,21 +839,21 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
 
   // LegalMonetaryTotal (negative amounts)
   const total = doc.ele('cac:LegalMonetaryTotal');
-  total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxExclusiveAmount + totalDiscount)).toFixed(2));
-  total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxExclusiveAmount)).toFixed(2));
-  total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
+  total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt((Math.abs(invoice.taxExclusiveAmount + totalDiscount)).toFixed(2));
+  total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId }).txt((Math.abs(invoice.taxExclusiveAmount)).toFixed(2));
+  total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId }).txt((Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
   if (totalDiscount < 0) {
     total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId }).txt(totalDiscount.toFixed(2));
   }
   total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt('0.00');
-  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
+  total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt((Math.abs(invoice.taxInclusiveAmount)).toFixed(2));
 
   // Invoice lines (negative values)
   invoice.products.forEach((p, i) => {
     const line = doc.ele('cac:InvoiceLine');
     line.ele('cbc:ID').txt((i + 1).toString());
-    line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt((-Math.abs(p.quantity)).toString());
-    line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt((-Math.abs(p.totalNoVat)).toFixed(2));
+    line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt((Math.abs(p.quantity)).toString());
+    line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt((Math.abs(p.totalNoVat)).toFixed(2));
 
     if (p.discount.value > 0) {
       line.ele('cac:AllowanceCharge')
@@ -861,7 +861,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
         .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
         .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
         .ele('cbc:MultiplierFactorNumeric').txt(p.discount.precent).up()
-        .ele('cbc:Amount', { currencyID: invoice.currencyId }).txt((-Math.abs(p.discount.value)).toFixed(2));
+        .ele('cbc:Amount', { currencyID: invoice.currencyId }).txt((Math.abs(p.discount.value)).toFixed(2));
     }
 
     line.ele('cac:Item')
