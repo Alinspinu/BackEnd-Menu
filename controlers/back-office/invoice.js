@@ -105,6 +105,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
 
 
  async function chageValues(invoice){
+  invoice.creditNoteRef = invoice.invoiceNumber
   invoice.invoiceNumber = invoice.invoiceNumber + " S"
   invoice.invoice = false;
   invoice.products.forEach(p => {
@@ -115,18 +116,24 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
       p.discount.value = -Math.abs(p.discount.value)
     }
   })
-    if(invoice.discount.length){
-      invoice.discount.forEach(d => {
-        d.value = -Math.abs(d.value)
-        d.baseAmount = -Math.abs(d.baseAmount)
-      })
-    }
-    invoice.vatAmount = -Math.abs(invoice.vatAmount)
-    invoice.taxExclusiveAmount = -Math.abs(invoice.taxExclusiveAmount)
-    invoice.taxInclusiveAmount = -Math.abs(invoice.taxInclusiveAmount)
-    invoice.payableAmont = -Math.abs(invoice.payableAmont)
 
-    return invoice
+  invoice.vatGroups.forEach(v => {
+    v.tax = -Math.abs(v.tax)
+    v.taxable = -Math.abs(v.taxable)
+  })
+
+  if(invoice.discount.length){
+    invoice.discount.forEach(d => {
+      d.value = -Math.abs(d.value)
+      d.baseAmount = -Math.abs(d.baseAmount)
+    })
+  }
+  invoice.vatAmount = -Math.abs(invoice.vatAmount)
+  invoice.taxExclusiveAmount = -Math.abs(invoice.taxExclusiveAmount)
+  invoice.taxInclusiveAmount = -Math.abs(invoice.taxInclusiveAmount)
+  invoice.payableAmont = -Math.abs(invoice.payableAmont)
+
+  return invoice
 }
 
 
@@ -647,7 +654,7 @@ function buildEFacturaHeaderXML(invoice, date) {
       if(!invoice.invoice){
         doc.ele('cac:BillingReference')
         .ele('cac:InvoiceDocumentReference')
-        .ele('cbc:ID').txt(invoice.invoiceNumber).up()
+        .ele('cbc:ID').txt(invoice.creditNoteRef).up()
         .ele('cbc:IssueDate').txt(invoice.issueDate);
       }
 
@@ -737,7 +744,7 @@ function buildEFacturaHeaderXML(invoice, date) {
   total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(round(invoice.taxExclusiveAmount + totalDiscount)).up();
   total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId }).txt(invoice.taxExclusiveAmount).up();  
   total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId }).txt(invoice.taxInclusiveAmount).up();
-  if(totalDiscount > 0) total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId }).txt(round(totalDiscount)).up();
+  if((totalDiscount > 0 && invoice.invoice) || (totalDiscount < 0 || !invoice.invoice)) total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId }).txt(round(totalDiscount)).up();
   total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt(0).up();
   total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId }).txt(invoice.taxInclusiveAmount).up();
 

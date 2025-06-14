@@ -9,6 +9,7 @@ const invoiceSchema = new Schema({
         default: true,
         required: true
     },
+    creditNoteRef: String,
     invoiceNumber: String,
     serie: String,
     index: {
