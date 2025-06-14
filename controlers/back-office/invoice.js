@@ -88,7 +88,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     } = invoice;
     
     // Update relevant fields for credit note
-    invoiceData.invoiceNumber = noteNumber;
+    invoiceData.invoiceNumber = invoiceData.invoiceNumber + "S" ;
     invoiceData.issueDate = noteDate;
     invoiceData.invoice = false; // Mark as credit note
     invoiceData.eFacturaId = response.eFacturaId;
