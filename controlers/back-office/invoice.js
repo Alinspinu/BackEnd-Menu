@@ -370,7 +370,10 @@ async function downloadZipFileCheck(id) {
         content: entry.getData().toString('utf8'),
       }));
       let header
-      files.files.forEach(f =>{
+
+      console.log(files)
+
+      files.forEach(f =>{
         if(!f.fileName.includes('semnatura')){
            haader = parseHeaderFromXml(f.content)
         }
