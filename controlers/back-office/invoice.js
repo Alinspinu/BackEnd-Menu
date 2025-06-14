@@ -70,19 +70,35 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
 module.exports.uploadCreditNoteToEFactura = async (req, res) => {
   const {id, noteDate, noteNumber} = req.body
   try{
-    let invoice = await Invoice.findById(id)
-    const xml = buildEFacturaCreditNoteXML(invoice, {id: noteNumber, date: noteDate})
-    console.log(xml)
-    const response = await testInvoice(xml)
-    invoice.eFacturaId = response.eFacturaId
-    invoice.eFacturaError = response.eFacturaError
-    invoice.eFacturaStatus = response.eFacturaStatus
-    delete invoice._id
-    const newInv = new Invoice(invoice)
-    newInv.issueDate = noteDate
-    newInv.invoiceNumber = noteNumber
-    newInv.invoice = false
-    const savedInvoice = await newInv.save()
+    let invoice = await Invoice.findById(id).lean(); // lean() gives you a plain object, not a Mongoose document
+
+    // Generate XML credit note
+    const xml = buildEFacturaCreditNoteXML(invoice, {
+      id: noteNumber,
+      date: noteDate
+    });
+    
+    console.log(xml);
+    
+    // Send to eFactura validator
+    const response = await testInvoice(xml);
+    
+    // Prepare credit note from original invoice
+    const {
+      _id, __v, eFacturaId, eFacturaStatus, eFacturaError, ...invoiceData
+    } = invoice;
+    
+    // Update relevant fields for credit note
+    invoiceData.invoiceNumber = noteNumber;
+    invoiceData.issueDate = noteDate;
+    invoiceData.invoice = false; // Mark as credit note
+    invoiceData.eFacturaId = response.eFacturaId;
+    invoiceData.eFacturaStatus = response.eFacturaStatus;
+    invoiceData.eFacturaError = response.eFacturaError;
+    
+    // Save new document
+    const newInvoice = new Invoice(invoiceData);
+    const savedInvoice = await newInvoice.save();
     res.status(200).json({message: 'success', invoice: savedInvoice})
   } catch(error){
     console.log(error)
