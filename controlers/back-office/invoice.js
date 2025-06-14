@@ -745,6 +745,7 @@ function buildEFacturaHeaderXML(invoice) {
 
 
 function buildEFacturaCreditNoteXML(invoice, creditNote) {
+  console.log(invoice)
   const doc = create({ version: '1.0' })
     .ele('Invoice', {
       xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
@@ -871,7 +872,7 @@ function buildEFacturaCreditNoteXML(invoice, creditNote) {
     line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt((Math.abs(p.quantity)).toString());
     line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt((Math.abs(p.totalNoVat)).toFixed(2));
 
-    if (p.discount.value > 0) {
+    if (p.discount && p.discount.value > 0) {
       line.ele('cac:AllowanceCharge')
         .ele('cbc:ChargeIndicator').txt('false').up()
         .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
