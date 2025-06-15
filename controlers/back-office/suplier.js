@@ -4,7 +4,7 @@ const Table = require('../../models/utils/table')
 
 
 module.exports.addSuplier = async (req, res, next) => {
-    const {suplier} = req.body;
+    const {suplier, loc} = req.body;
     const {mode} = req.query
     delete suplier._id
     try{
@@ -23,11 +23,11 @@ module.exports.addSuplier = async (req, res, next) => {
             res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`, id: loc._id})
         }
        } else {
-        const check = await Suplier.findOne({vatNumber: suplier.vatNumber})
+        const check = await Suplier.findOne({vatNumber: suplier.vatNumber, locatie: loc})
             if(check){
                 return res.status(200).json({message: `Furnizorul ${check.name} exista in baza de date!`, suplier: check})
             } else {
-                const loc = req.body.loc
+        
                  const newSuplier = new Suplier(suplier);
                  newSuplier.name = suplier.bussinessName
                  newSuplier.locatie = loc
