@@ -1,3 +1,4 @@
+const subProduct = require('../../../models/office/product/sub-product');
 const {round, formatDateEFactura} = require('../../../utils/functions')
 
 
@@ -50,6 +51,8 @@ function createOrderInvoice(order, customer, supplier) {
       iban: supplier.account,
       swift: supplier.switf
     },
+
+
     products: order.products.map(p => {
       const price = p.price;
       const vatRate = 1 + (p.tva / 100);
@@ -61,7 +64,10 @@ function createOrderInvoice(order, customer, supplier) {
         price: priceNoVat,
         vatPrecent: p.tva,
         total: +p.total-p.discount, 
-        totalNoVat: round(priceNoVat * p.quantity)
+        totalNoVat: round(priceNoVat * p.quantity),
+        productId: p._id,
+        subProductId: p.subProductId,
+        ings: p.ings
       };
       if(p.discount > 0){
         const discount = p.discount;
@@ -75,6 +81,7 @@ function createOrderInvoice(order, customer, supplier) {
       }
       return product
     }),
+    
     vatAmount: 0,
     vatGroups: [],
     taxExclusiveAmount: 0,
