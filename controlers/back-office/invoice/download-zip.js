@@ -2,7 +2,8 @@ const axios = require('axios')
 const AdmZip = require('adm-zip');
 const {parseXml, parseInvoiceData, parseHeaderFromXml} = require('./parseXml')
 
-
+const mode = 'test'
+// const mode = 'prod'
 
   async function downloadZipFile(id) {
     try {
@@ -37,7 +38,7 @@ const {parseXml, parseInvoiceData, parseHeaderFromXml} = require('./parseXml')
 
   async function downloadZipFileCheck(id) {
     try {
-      const response = await axios.get(`https://api.anaf.ro/test/FCTEL/rest/descarcare?id=${id}`, {
+      const response = await axios.get(`https://api.anaf.ro/${mode}/FCTEL/rest/descarcare?id=${id}`, {
         responseType: 'arraybuffer',
         headers: {
           'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,

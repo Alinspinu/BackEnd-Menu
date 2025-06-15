@@ -2,12 +2,14 @@ const axios = require('axios')
 const {parseHeaderFromXml} = require('./parseXml')
 
 
-async function uploadInvoice(xml, cn = false) {
+const mode = 'test'
+// const mode = 'prod'
+
+
+async function uploadInvoice(xml, cif, cn = false) {
     const token = process.env.TOKEN_ANAF;
     const standard = cn ? 'CN' : 'UBL';
-    const cif = '44994432';
-    const veryfyBaseUrl = 'https://api.anaf.ro/test/FCTEL/rest/stareMesaj';
-    const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/upload';
+    const baseUrl = `https://api.anaf.ro/${mode}/FCTEL/rest/upload`;
     const url = `${baseUrl}?standard=${standard}&cif=${cif}`;
   
     try {
@@ -44,7 +46,7 @@ async function uploadInvoice(xml, cn = false) {
 
   async function checkInvoiceStatus(indexIncarcare, upload = false) {
     const token = process.env.TOKEN_ANAF;
-    const veryfyBaseUrl = 'https://api.anaf.ro/test/FCTEL/rest/stareMesaj';
+    const veryfyBaseUrl = `https://api.anaf.ro/${mode}/FCTEL/rest/stareMesaj`;
     const verifyUrl = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`;
     try{
       const resp = await axios.get(verifyUrl, {

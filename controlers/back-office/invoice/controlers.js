@@ -51,7 +51,11 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
     const invoice = await Invoice.findById(id)
     const xml = invoice.invoice ? buildEFacturaHeaderXML(invoice) : buildEFacturaHeaderXML(invoice, invoice.issueDate)
     // console.log(xml)
-    const response = await uploadInvoice(xml)
+    let vatNumber = invoice.supplier.vatNumber;
+    if (vatNumber.startsWith('RO')) {
+      vatNumber = vatNumber.slice(2);
+    }
+    const response = await uploadInvoice(xml, vatNumber)
     invoice.eFacturaId = response.eFacturaId
     invoice.eFacturaError = response.eFacturaError
     invoice.eFacturaStatus = response.eFacturaStatus
@@ -75,7 +79,12 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     const inv = await chageValues(invoiceData)
     const xml = buildEFacturaHeaderXML(inv, noteDate)
     // console.log(xml);
-    const response = await uploadInvoice(xml);
+    let vatNumber = invoiceData.supplier.vatNumber;
+    if (vatNumber.startsWith('RO')) {
+      vatNumber = vatNumber.slice(2);
+    }
+
+    const response = await uploadInvoice(xml, vatNumber);
     
     inv.issueDate = noteDate;
     inv.eFacturaId = response.eFacturaId;
