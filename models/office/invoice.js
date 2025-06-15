@@ -15,7 +15,10 @@ const invoiceSchema = new Schema({
         default: true,
         required: true
     },
-    unload: Boolean,
+    unload: {
+        type: Boolean,
+        required: true
+    },
     creditNoteRef: String,
     invoiceNumber: String,
     serie: String,
@@ -207,8 +210,11 @@ invoiceSchema.pre('save', async function (next){
     );
     doc.index = counter.value;
 
-    for(let p of doc.products){
-        await unloadIngs(p.ings, p.quantity)
+    
+    if(doc.unload){
+        for(let p of doc.products){
+            await unloadIngs(p.ings, p.quantity)
+        }
     }
 
     // const billProducts = doc.products.map(p => {
@@ -264,10 +270,12 @@ invoiceSchema.pre('findOneAndDelete', async function(next){
           }
       }
 
+      if(doc.unload){
+          for(let p of doc.products){
+            await uploadIngs(p.ings, p.quantity)
+        }
+      }
 
-      for(let p of doc.products){
-        await uploadIngs(p.ings, p.quantity)
-    }
 
       const counter = await Counter.findOneAndUpdate( 
         { locatie: doc.locatie, model: "Invoice", salePoint: doc.salePoint },
