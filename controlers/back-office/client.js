@@ -42,7 +42,7 @@ module.exports.getClient = async (req, res) => {
     const {id} = req.query
     try{
         const client = await Client.findById(id)
-        res,status(200).json(client)
+        res.status(200).json(client)
     } catch(error){
         console.log(error)
         res.status(500).json(error)
