@@ -200,6 +200,8 @@ invoiceSchema.pre('save', async function (next){
           } else {
             console.error('ERROR record not found, Client unchanged!')
           }
+
+          console.log(client)
       }
 
     const counter = await Counter.findOneAndUpdate(
@@ -267,6 +269,8 @@ invoiceSchema.pre('findOneAndDelete', async function(next){
           } else {
             console.error('ERROR! Record not found! Suplier unchanged!')
           }
+
+          console.log(client)
       }
 
       if(doc.unload){
