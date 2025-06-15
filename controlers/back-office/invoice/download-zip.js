@@ -57,12 +57,14 @@ const {parseXml, parseInvoiceData, parseHeaderFromXml} = require('./parseXml')
         for(let f of files){
           if(!f.fileName.includes('semnatura')){
             const header = await parseHeaderFromXml(f.content)
-            console.log(header)
             const err = header.Error
-            console.log(err)
-            // for(let e of err){
-            //   errorMessage.push(e?.$?.errorMessage)
-            // }
+            if(Array.isArray(err)){
+                for(let e of err){
+                  errorMessage.push(e?.$?.errorMessage)
+                }
+            } else {
+                errorMessage.push(err.$?.errorMessage)
+            }
         }
         }
         return { errors: errorMessage.join('<br> *****END**** <br>')};
