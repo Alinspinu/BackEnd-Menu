@@ -201,7 +201,6 @@ invoiceSchema.pre('save', async function (next){
             console.error('ERROR record not found, Client unchanged!')
           }
 
-          console.log(client)
       }
 
     const counter = await Counter.findOneAndUpdate(
@@ -246,8 +245,6 @@ invoiceSchema.pre('save', async function (next){
 invoiceSchema.pre('findOneAndDelete', async function(next){
   try{
     const doc = await this.model.findOne(this.getQuery());
-    console.log('doc in pre delete', doc)
-
     const client = await Client.findById(doc.customer);
 
       if (client) {
@@ -269,8 +266,6 @@ invoiceSchema.pre('findOneAndDelete', async function(next){
           } else {
             console.error('ERROR! Record not found! Suplier unchanged!')
           }
-
-          console.log(client)
       }
 
       if(doc.unload){
