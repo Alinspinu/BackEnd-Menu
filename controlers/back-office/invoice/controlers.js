@@ -84,7 +84,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     const newInvoice = new Invoice(inv);
     const savedInvoice = await newInvoice.save();
 
-    res.status(200).json({message: 'success', invoice: savedInvoice})
+    res.status(200).json({message: 'Factura de retur a fost încarcată cu success!', invoice: savedInvoice})
 
   } catch(error){
     console.log(error)
@@ -101,6 +101,17 @@ module.exports.getInvoices = async (req, res) => {
   } catch(error) {
     res.status(500).json(error)
     console.log(error)
+  }
+}
+
+module.exports.getInvoicesByClient = async (req, res) => {
+  const {id} = req.query
+  try{
+    const invoices = await Invoice.find({customer: id})
+    res.status(200).json(invoices)
+  } catch(error){
+    console.log(error)
+    res.status(200).json(error)
   }
 }
 

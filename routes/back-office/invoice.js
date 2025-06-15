@@ -13,6 +13,8 @@ router.route('/check')
 
 router.route('/get-date-msg').post(invoiceRoutes.getMessagesByDate)
 
+router.route('/client').get(invoiceRoutes.getInvoicesByClient)
+
 router.route('/')
     .get(invoiceRoutes.getInvoices)
     .put(invoiceRoutes.editInvoice)
