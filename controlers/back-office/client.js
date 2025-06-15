@@ -121,7 +121,7 @@ module.exports.getClient = async (req, res) => {
    module.exports.removeRecord = async (req, res) => {
     const {clientId, docId, amount} = req.body
     try{
-        const client = await client.findById(clientId);
+        const client = await Client.findById(clientId);
             if (client) {
                 const sortedRecords = client.records.sort((a, b) => {
                     const aDate = new Date(a.date).getTime() 
