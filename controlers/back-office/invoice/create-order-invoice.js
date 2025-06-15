@@ -5,6 +5,7 @@ const {round, formatDateEFactura} = require('../../../utils/functions')
 function createOrderInvoice(order, customer, supplier) {
   const invoice = {
     serie: 'CAMPUS',
+    unload: false,
     issueDate: formatDateEFactura(order.updatedAt),
     dueDate: formatDateEFactura(order.updatedAt),
     currencyId: 'RON',
@@ -81,7 +82,7 @@ function createOrderInvoice(order, customer, supplier) {
       }
       return product
     }),
-    
+
     vatAmount: 0,
     vatGroups: [],
     taxExclusiveAmount: 0,

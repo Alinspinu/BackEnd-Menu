@@ -7,7 +7,6 @@ const Client = require('../office/client')
 
 
 const {unloadIngs, createProductSaleReport, uploadIngs} = require('../../utils/inventary');
-const product = require("./product/product");
 
 const invoiceSchema = new Schema({
     invoice: {
@@ -210,7 +209,7 @@ invoiceSchema.pre('save', async function (next){
     );
     doc.index = counter.value;
 
-    
+
     if(doc.unload){
         for(let p of doc.products){
             await unloadIngs(p.ings, p.quantity)

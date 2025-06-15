@@ -34,6 +34,7 @@ module.exports.createOrderInvoice = async (req, res) => {
 module.exports.saveInvoice = async (req, res) => {
   const {invoice} = req.body
   try{
+    invoice.unload = true
     const newInvoice = new Invoice(invoice)
     const savedInvoice = await newInvoice.save()
     res.status(200).json({message: 'Factura a fost savată cu succes!', invoice: savedInvoice})
