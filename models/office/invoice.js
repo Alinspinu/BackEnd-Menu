@@ -183,7 +183,7 @@ invoiceSchema.pre('save', async function (next){
     }
       if (client) {
         client.records.push(record)
-        const sortedRecords = sup.records.sort((a, b) => {
+        const sortedRecords = client.records.sort((a, b) => {
           const aDate = new Date(a.date).getTime() 
           const bDate = new Date(b.date).getTime()
           return aDate - bDate
