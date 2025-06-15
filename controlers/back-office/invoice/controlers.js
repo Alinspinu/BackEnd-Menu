@@ -248,7 +248,6 @@ module.exports.getInvoice = async (req, res) => {
     const {id} = req.query;
     try{
         const invoice = await downloadZipFile(id)
-        console.log(invoice)
         res.status(200).json(invoice)
     } catch(err) {
         console.log(err)

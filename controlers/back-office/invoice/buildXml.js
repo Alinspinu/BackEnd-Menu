@@ -124,7 +124,6 @@ function buildEFacturaHeaderXML(invoice, date) {
       line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(p.totalNoVat);
   
       if (p.discount && p.discount.value > 0) {
-        console.log(p.discount)
         line.ele('cac:AllowanceCharge')
           .ele('cbc:ChargeIndicator').txt('false').up()
           .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
