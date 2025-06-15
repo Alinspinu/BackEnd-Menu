@@ -167,41 +167,6 @@ const invoiceSchema = new Schema({
 invoiceSchema.pre('save', async function (next){
   try{
     const doc = this
-    const client = await Client.findById(doc.customer)
-
-    const record = {
-      typeOf: 'intrare',
-      document: {
-        typeOf: 'Factura',
-        docId: doc.invoiceNumber,
-        amount: doc.taxInclusiveAmount,
-      },
-      sold: client.sold,
-      date: doc.issueDate,
-      invoice: doc._id, 
-      salePoint: doc.salePoint
-    }
-      if (client) {
-        client.records.push(record)
-        const sortedRecords = client.records.sort((a, b) => {
-          const aDate = new Date(a.date).getTime() 
-          const bDate = new Date(b.date).getTime()
-          return aDate - bDate
-      })
-          const recordIndex = sortedRecords.findIndex(r => r.invoice.toString() === doc._id.toString());
-          if (recordIndex !== -1) {
-              for (let i = recordIndex; i < sortedRecords.length; i++) {
-                  sortedRecords[i].sold += doc.taxInclusiveAmount;
-              }
-              client.sold = client.sold + doc.taxInclusiveAmount
-              client.records = sortedRecords
-              await client.save();
-              console.log("Client update:", client.name);
-          } else {
-            console.error('ERROR record not found, Client unchanged!')
-          }
-
-      }
 
     const counter = await Counter.findOneAndUpdate(
       { locatie: doc.locatie, model: "Invoice", salePoint: doc.salePoint },
@@ -211,11 +176,44 @@ invoiceSchema.pre('save', async function (next){
     doc.index = counter.value;
 
 
-    if(doc.unload){
-        for(let p of doc.products){
-            await unloadIngs(p.ings, p.quantity)
-        }
+ if(doc.unload){
+    for(let p of doc.products){
+        await unloadIngs(p.ings, p.quantity)
     }
+    const client = await Client.findById(doc.customer)
+    if (client) {
+        const record = {
+            typeOf: 'iesire',
+            document: {
+                typeOf: 'Factura',
+                docId: doc.invoiceNumber,
+                amount: doc.taxInclusiveAmount,
+            },
+            sold: client.sold,
+            date: doc.issueDate,
+            invoice: doc._id, 
+            salePoint: doc.salePoint
+            }
+        client.records.push(record)
+        const sortedRecords = client.records.sort((a, b) => {
+        const aDate = new Date(a.date).getTime() 
+        const bDate = new Date(b.date).getTime()
+        return aDate - bDate
+    })
+    const recordIndex = sortedRecords.findIndex(r => r.invoice.toString() === doc._id.toString());
+    if (recordIndex !== -1) {
+        for (let i = recordIndex; i < sortedRecords.length; i++) {
+            sortedRecords[i].sold += doc.taxInclusiveAmount;
+        }
+        client.sold = client.sold + doc.taxInclusiveAmount
+        client.records = sortedRecords
+        await client.save();
+        console.log("Client update:", client.name);
+    } else {
+        console.error('ERROR record not found, Client unchanged!')
+    }
+   }
+ }
 
     // const billProducts = doc.products.map(p => {
     //     const product = {
@@ -245,34 +243,34 @@ invoiceSchema.pre('save', async function (next){
 invoiceSchema.pre('findOneAndDelete', async function(next){
   try{
     const doc = await this.model.findOne(this.getQuery());
-    const client = await Client.findById(doc.customer);
-
-      if (client) {
-        const sortedRecords = client.records.sort((a, b) => {
-          const aDate = new Date(a.date).getTime() 
-          const bDate = new Date(b.date).getTime()
-          return aDate - bDate
-      })
-          const recordIndex = sortedRecords.findIndex(r => r.invoice.toString() === doc._id.toString());
-          if (recordIndex !== -1) {
-              sortedRecords.splice(recordIndex, 1);
-              for (let i = recordIndex; i < sortedRecords.length; i++) {
-                  sortedRecords[i].sold -= doc.taxInclusiveAmount;
-              }
-              client.sold = client.sold - doc.taxInclusiveAmount
-              client.records = sortedRecords
-              await client.save();
-              console.log('furnizorul a fos actualizat', client.name)
-          } else {
-            console.error('ERROR! Record not found! Suplier unchanged!')
-          }
-      }
-
-      if(doc.unload){
-          for(let p of doc.products){
+    
+    if(doc.unload){
+        for(let p of doc.products){
             await uploadIngs(p.ings, p.quantity)
         }
-      }
+        
+    const client = await Client.findById(doc.customer);
+    if (client) {
+        const sortedRecords = client.records.sort((a, b) => {
+            const aDate = new Date(a.date).getTime() 
+            const bDate = new Date(b.date).getTime()
+            return aDate - bDate
+        })
+        const recordIndex = sortedRecords.findIndex(r => r.invoice.toString() === doc._id.toString());
+        if (recordIndex !== -1) {
+            sortedRecords.splice(recordIndex, 1);
+            for (let i = recordIndex; i < sortedRecords.length; i++) {
+                sortedRecords[i].sold -= doc.taxInclusiveAmount;
+            }
+            client.sold = client.sold - doc.taxInclusiveAmount
+            client.records = sortedRecords
+            await client.save();
+            console.log('furnizorul a fos actualizat', client.name)
+        } else {
+        console.error('ERROR! Record not found! Suplier unchanged!')
+        }
+        }
+    }
 
 
       const counter = await Counter.findOneAndUpdate( 

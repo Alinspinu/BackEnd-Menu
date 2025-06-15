@@ -24,6 +24,9 @@ const suplierSchema = new Schema({
     type: String,
     required: true
   },
+  VAT: {
+    type: Boolean
+  },
   locatie: {
     type: Schema.Types.ObjectId,
     ref: 'Locatie'

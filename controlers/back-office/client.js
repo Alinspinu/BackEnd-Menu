@@ -56,7 +56,7 @@ module.exports.deleteClient = async (req, res) => {
     const {id} = req.query
     try{
         await Client.findByIdAndDelete(id)
-        res.status(200).json({message: 'Cliemtul a fost șters cu succes!'})
+        res.status(200).json({message: 'Clientul a fost șters cu succes!'})
     } catch(error) {
         console.log(error)
         res.status(500).json(error)
