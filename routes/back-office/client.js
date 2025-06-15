@@ -8,6 +8,7 @@ router.route('/')
     .post(clients.addClient)
     .get(clients.getClients)
     .put(clients.editClient)
+    .delete(clients.deleteClient)
 
 router.route('/get-one')
     .get(clients.getClient)

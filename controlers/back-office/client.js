@@ -52,6 +52,18 @@ module.exports.getClient = async (req, res) => {
 }
 
 
+module.exports.deleteClient = async (req, res) => {
+    const {id} = req.query
+    try{
+        await Client.findByIdAndDelete(id)
+        res.status(200).json({message: 'Cliemtul a fost șters cu succes!'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
    module.exports.addRecord = async (req, res) => {
     const {clientId, record} = req.body
     try{
