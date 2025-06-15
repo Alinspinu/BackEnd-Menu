@@ -23,7 +23,7 @@ module.exports.addSuplier = async (req, res, next) => {
             res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`, id: loc._id})
         }
        } else {
-        const check = await Locatie.findOne({vatNumber: suplier.vatNumber})
+        const check = await Suplier.findOne({vatNumber: suplier.vatNumber})
             if(check){
                 return res.status(200).json({message: `Furnizorul ${check.name} exista in baza de date!`, suplier: check})
             } else {
