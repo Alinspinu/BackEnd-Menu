@@ -36,3 +36,125 @@ module.exports.editClient = async (req, res) => {
         res.status(200).json(error)
     }
 }
+
+
+module.exports.getClient = async (req, res) => {
+    const {id} = req.query
+    try{
+        const client = await Client.findById(id)
+        res,status(200).json(client)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
+   module.exports.addRecord = async (req, res) => {
+    const {clientId, record} = req.body
+    try{
+        let sum = record.document.amount
+        const client = await Client.findById(clientId)
+        if(client){
+            record.sold = client.sold 
+            client.records.push(record)
+            const sortedRecords = client.records.sort((a, b) => {
+                const aDate = new Date(a.date).getTime() 
+                const bDate = new Date(b.date).getTime()
+                return aDate - bDate
+            })
+            const recordIndex = sortedRecords.findIndex(r => 
+                r.document.docId === record.document.docId && 
+                r.document.amount === record.document.amount && 
+                r.document.typeOf === record.document.typeOf
+            );
+            if (recordIndex !== -1) {
+                if(record.typeOf === 'iesire'){
+                    for (let i = recordIndex; i < sortedRecords.length; i++) {
+                        sortedRecords[i].sold -= sum;
+                    }
+                    client.sold = client.sold - sum
+                    client.records = sortedRecords
+                } else {
+                    for (let i = recordIndex; i < sortedRecords.length; i++) {
+                        sortedRecords[i].sold += sum;
+                    }
+                    client.sold = client.sold + sum
+                    client.records = sortedRecords
+                }
+                await client.save();
+                res.status(200).json({message: 'Inregistrare reusita!'})
+            } else {
+                res.status(200).json({message: 'Intrarea nu a fost inregistrată corect!'})
+            }
+        } else {
+            res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
+        }
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+   }
+
+
+   module.exports.updateClientRecords = async (req, res) => {
+    const {id, record} = req.body
+    try{
+
+       const client = await Client.findByIdAndUpdate(id, {$push: {records: record}}, {new: true})
+        if(!client){
+            res.status(404).json({message: 'Furnizorul nu a fost găsit!'})
+        } else {
+            res.status(200).json({message: 'Inregistrare reusita!', suplier: client})
+        }
+    } catch(err){
+        console.log(err)
+        res.status(500).json(err)
+    }
+
+   }
+
+
+   
+   module.exports.removeRecord = async (req, res) => {
+    const {clientId, docId, amount} = req.body
+    try{
+        const client = await client.findById(clientId);
+            if (client) {
+                const sortedRecords = client.records.sort((a, b) => {
+                    const aDate = new Date(a.date).getTime() 
+                    const bDate = new Date(b.date).getTime()
+                    return aDate - bDate
+                })
+                const recordIndex = sortedRecords.findIndex(r => r._id.toString() === docId.toString());
+                if (recordIndex !== -1) {
+                    const record = sortedRecords[recordIndex]
+                    sortedRecords.splice(recordIndex, 1);
+                    if(record.typeOf === 'iesire'){
+                        for (let i = recordIndex; i < sortedRecords.length; i++) {
+                            sortedRecords[i].sold += amount;
+                        }
+                        client.sold = client.sold + amount
+                        client.records = sortedRecords
+                    } else {
+                        for (let i = recordIndex; i < sortedRecords.length; i++) {
+                            sortedRecords[i].sold -= amount;
+                        }
+                        client.sold = client.sold - amount
+                        client.records = sortedRecords
+                    }
+                    await suplier.save();
+                }
+
+             res.status(200).json({ message: 'Record removed!' });
+
+            } else {
+
+              res.status(404).json({ message: 'Furnizorul nu a fost găsit!' });
+            }
+
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+   }
