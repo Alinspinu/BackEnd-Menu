@@ -145,14 +145,14 @@ module.exports.getClient = async (req, res) => {
                         client.sold = client.sold - amount
                         client.records = sortedRecords
                     }
-                    await suplier.save();
+                    await client.save();
                 }
 
              res.status(200).json({ message: 'Record removed!' });
 
             } else {
 
-              res.status(404).json({ message: 'Furnizorul nu a fost găsit!' });
+              res.status(404).json({ message: 'Clientul nu a fost găsit!' });
             }
 
     } catch(error) {
