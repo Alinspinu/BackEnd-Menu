@@ -209,7 +209,7 @@ invoiceSchema.pre('save', async function (next){
         client.sold = client.sold + doc.taxInclusiveAmount
         client.records = sortedRecords
         await client.save();
-        console.log("Client update:", client.name);
+        console.log("Client update:", client.name, 'SOLD:', client.sold);
     } else {
         console.error('ERROR record not found, Client unchanged!')
     }
@@ -267,7 +267,7 @@ invoiceSchema.pre('findOneAndDelete', async function(next){
             client.sold = client.sold - doc.taxInclusiveAmount
             client.records = sortedRecords
             await client.save();
-            console.log('furnizorul a fos actualizat', client.name)
+            console.log('Clientul a fos actualizat', client.name, 'SOLD:', client.sold)
         } else {
         console.error('ERROR! Record not found! Suplier unchanged!')
         }
