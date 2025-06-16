@@ -41,6 +41,7 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
 
 async  function sendBillToCustomer(buffer, email, gmail) {
 
+    console.log(buffer)
     const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);
 
           const transporter = nodemailer.createTransport({
