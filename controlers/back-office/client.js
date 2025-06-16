@@ -85,15 +85,15 @@ module.exports.deleteClient = async (req, res) => {
             if (recordIndex !== -1) {
                 if(record.typeOf === 'iesire'){
                     for (let i = recordIndex; i < sortedRecords.length; i++) {
-                        sortedRecords[i].sold -= sum;
-                    }
-                    client.sold = client.sold - sum
-                    client.records = sortedRecords
-                } else {
-                    for (let i = recordIndex; i < sortedRecords.length; i++) {
                         sortedRecords[i].sold += sum;
                     }
                     client.sold = client.sold + sum
+                    client.records = sortedRecords
+                } else {
+                    for (let i = recordIndex; i < sortedRecords.length; i++) {
+                        sortedRecords[i].sold -= sum;
+                    }
+                    client.sold = client.sold - sum
                     client.records = sortedRecords
                 }
                 await client.save();
@@ -146,15 +146,15 @@ module.exports.deleteClient = async (req, res) => {
                     sortedRecords.splice(recordIndex, 1);
                     if(record.typeOf === 'iesire'){
                         for (let i = recordIndex; i < sortedRecords.length; i++) {
-                            sortedRecords[i].sold += amount;
-                        }
-                        client.sold = client.sold + amount
-                        client.records = sortedRecords
-                    } else {
-                        for (let i = recordIndex; i < sortedRecords.length; i++) {
                             sortedRecords[i].sold -= amount;
                         }
                         client.sold = client.sold - amount
+                        client.records = sortedRecords
+                    } else {
+                        for (let i = recordIndex; i < sortedRecords.length; i++) {
+                            sortedRecords[i].sold += amount;
+                        }
+                        client.sold = client.sold + amount
                         client.records = sortedRecords
                     }
                     await client.save();
