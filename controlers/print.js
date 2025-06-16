@@ -1375,7 +1375,6 @@ module.exports.factura = async (req, res, next) => {
     const pdfBuffer = Buffer.concat(buffers);
     if (mode) {
       // Email mode
-      console.log(invoice.locatie)
       const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail);
       res.status(200).json(message);
     } else {
