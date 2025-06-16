@@ -160,6 +160,7 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
       invoice.eFacturaId = response.eFacturaId
       invoice.eFacturaError = response.eFacturaError
       invoice.eFacturaStatus = response.eFacturaStatus
+      console.log(response)
       const savedInvoice = await invoice.save()
       res.status(200).json({message: response.message, invoice: savedInvoice})
     } else {
