@@ -1331,7 +1331,7 @@ module.exports.factura = async (req, res, next) => {
       doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
       doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
       doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
-      doc.text(`${round(el.total - el.totalNoVat)}0`, 523, newValue, { width: 30, align: "right" })
+      doc.text(`${round(el.total - el.totalNoVat)}.0`, 523, newValue, { width: 30, align: "right" })
   
       // if(el.discount){
       //   const d = el.discount
