@@ -204,6 +204,7 @@ invoiceSchema.pre('save', async function (next){
     if (recordIndex !== -1) {
         for (let i = recordIndex; i < sortedRecords.length; i++) {
             sortedRecords[i].sold += doc.taxInclusiveAmount;
+            console.log('hit the add loop')
         }
         client.sold = client.sold + doc.taxInclusiveAmount
         client.records = sortedRecords
@@ -261,6 +262,7 @@ invoiceSchema.pre('findOneAndDelete', async function(next){
             sortedRecords.splice(recordIndex, 1);
             for (let i = recordIndex; i < sortedRecords.length; i++) {
                 sortedRecords[i].sold -= doc.taxInclusiveAmount;
+                console.log('hit the delete loop')
             }
             client.sold = client.sold - doc.taxInclusiveAmount
             client.records = sortedRecords
