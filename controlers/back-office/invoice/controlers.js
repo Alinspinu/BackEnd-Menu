@@ -56,6 +56,7 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
       vatNumber = vatNumber.slice(2);
     }
     const response = await uploadInvoice(xml, vatNumber)
+    console.log(response)
     invoice.eFacturaId = response.eFacturaId
     invoice.eFacturaError = response.eFacturaError
     invoice.eFacturaStatus = response.eFacturaStatus
