@@ -1418,8 +1418,8 @@ function createRecipt(recipt){
   doc.text(`S.C. ${recipt.locatie.bussinessName}`, 40, height + 5)
   doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
-  doc.text(`CIF  ${recipt.locatie.valDiscount}`, 40, height + 15)
-  doc.text(`R.C.  ${recipt.locatie.register}`, 40, height + 27)
+  doc.text(`CIF  ${recipt.locatie.vatNumber}`, 40, height + 20)
+  doc.text(`R.C.  ${recipt.locatie.register}`, 40, height + 33)
   
 
 
