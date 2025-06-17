@@ -1484,7 +1484,7 @@ function createRecipt(recipt){
 
     doc.lineWidth(0.8);
     doc.moveTo(400, height)
-       .lineTo(400, height + 85)
+       .lineTo(400, height + 130)
        .stroke();
 
 
