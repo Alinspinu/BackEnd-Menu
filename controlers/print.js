@@ -1482,6 +1482,11 @@ function createRecipt(recipt){
     doc.fontSize(14)
     doc.text(`${recipt.value} Lei`, 90, height + 42 + 24)
 
+    doc.lineWidth(0.8);
+    doc.moveTo(400, height)
+       .lineTo(400, height + 245)
+       .stroke();
+
 
   height = height + 260 - 120
   doc.dash(2, { space: 2 });
