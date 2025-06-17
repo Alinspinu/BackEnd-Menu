@@ -1509,6 +1509,79 @@ function createRecipt(recipt){
   doc.lineWidth(1.1);
   doc.stroke()
 
+  doc.rect(35, height, 525, 250)
+  doc.lineWidth(1.1);
+  doc.stroke()
+
+  doc.fontSize(12)
+  doc.font('public/font/Montserrat-Bold.ttf')
+  doc.text(`S.C. ${recipt.locatie.bussinessName}`, 40, height + 5)
+  doc.fontSize(10)
+  doc.font('public/font/Montserrat-Regular.ttf')
+  doc.text(`CIF  ${recipt.locatie.vatNumber}`, 40, height + 25)
+  doc.text(`R.C.   ${recipt.locatie.register}`, 40, height + 37)
+  doc.text(`Capital Social 200 lei`, 40, height + 49)
+  doc.text(`Adresă`, 40, height + 61)
+  doc.fontSize(8)
+  doc.text(`${recipt.locatie.address}`, 40, height + 73, {width: 200, align: 'left'})
+  doc.fontSize(10)
+  doc.text(`Banca ${recipt.locatie.bank}`, 40, height + 93)
+  doc.text(`Cont ${recipt.locatie.account}`, 40, height + 105)
+
+  doc.fontSize(20)
+  doc.font('public/font/Montserrat-Bold.ttf')
+  doc.text('CHITANȚĂ', 350, height + 35)
+  doc.fontSize(10)
+  doc.font('public/font/Montserrat-Regular.ttf')
+  doc.text('Serie', 340, height + 70)
+  doc.text('Număr', 405, height + 70)
+  doc.text('Data', 340, height + 86)
+  doc.fontSize(11)
+  doc.font('public/font/Montserrat-Bold.ttf')
+  doc.text(`${recipt.serie}`, 370, height + 70)
+  doc.text(`${recipt.number.toString().padStart(4, '0')}`, 445, height + 70)
+  doc.text(`${formatedDateToShow(recipt.issueDate).split('ora')[0]}`, 370, height + 85)
+
+  height = height + 120
+
+  doc.lineWidth(0.6);
+  doc.moveTo(35, height)
+     .lineTo(560, height)
+     .stroke();
+  
+    doc.fontSize(10)
+    doc.font('public/font/Montserrat-Regular.ttf')
+    doc.text('Am primit de la', 40, height + 6)
+    doc.text(`CIF  ${recipt.client.customer.vatNumber}`, 40, height + 19)
+    doc.text(`R.C.   ${recipt.client.customer.register}`, 40, height + 31)
+    doc.text('Adresă:', 40, height + 19 + 24)
+    doc.text('Suma de', 40, height + 46 + 24)
+    doc.text('Adică', 40, height + 58 + 24)
+    doc.text(`Reprezentând`, 40, height + 72 +24)
+    doc.fontSize(9)
+    doc.text(`${description} / 0023 din 2025-05-12 / 0023 din 2025-05-12 / 0023 din 2025-05-12`, 115, height + 72 +24, {width: 280, align: 'left'})
+
+    doc.fontSize(7)
+    doc.text(`${recipt.client.customer.address}`, 80, height + 22 +24, {width: 220, align: 'left'})
+    doc.fontSize(11)
+    doc.font('public/font/Montserrat-Bold.ttf')
+    doc.text(`${recipt.client.name}`, 124, height + 5)
+    doc.fontSize(10)
+    doc.text(`${numarInLitereCompactCuLeiBani(recipt.value)}`, 70, height + 58 +24)
+    doc.fontSize(14)
+    doc.text(`${recipt.value} Lei`, 90, height + 42 + 24)
+
+    doc.dash(3, { space: 3 });
+    doc.lineWidth(0.8);
+    doc.moveTo(400, height)
+       .lineTo(400, height + 130)
+       .stroke();
+    doc.undash();
+    doc.fontSize(12)
+    doc.font('public/font/Montserrat-Regular.ttf')
+    doc.text('Casier,', 415, height + 20)
+    doc.text('Semnătură', 415, height + 70)
+
 
 
 
