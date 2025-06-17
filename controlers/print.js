@@ -1413,7 +1413,7 @@ function createRecipt(recipt, mode){
   }
 
   const doc = new PDFDocument({
-    size: "A4",
+    size: mode ? 'A5' : "A4",
     layout: "portrait",
 });
 
