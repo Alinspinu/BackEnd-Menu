@@ -1406,16 +1406,32 @@ function createRecipt(recipt){
     layout: "portrait",
 });
 
+
+  doc.rect(35, 45, 525, 250)
+  doc.lineWidth(1.3);
+  doc.stroke()
+
+  doc.dash(5, { space: 3 });
+
+  doc.moveTo(35, 260)
+     .lineTo(35, 525)
+     .stroke();
+  doc.undash();
+
+  // doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
+
+  doc.rect(35, 280, 525, 250)
+  doc.lineWidth(1.3);
+  doc.stroke()
+
   doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
   doc.text('Furnizor', 25 + 10, 10)
   doc.fontSize(18);
   doc.font('public/font/Montserrat-Bold.ttf')
   doc.text(`${recipt.locatie.bussinessName}`, 25 + 10, 25);
-  doc.rect(35, 45, 525, 250)
-  doc.lineWidth(1.3);
-  doc.stroke()
-  // doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
+
+
 
 
   // doc.lineWidth(0.5);
