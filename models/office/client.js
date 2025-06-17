@@ -79,12 +79,14 @@ const clientSchema = new Schema({
       sold: {
         type: Number
       },
-      invoice: [
-        {
+      recipt: {
+        type: Schema.Types.ObjectId,
+        ref: 'Recipt'
+      },
+      invoice:{
           type: Schema.Types.ObjectId,
           ref: 'Invoice'
-        }
-      ],
+        },
       description: {
         type: String
       },

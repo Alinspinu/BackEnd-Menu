@@ -38,6 +38,7 @@ router.route('/recipt')
     .get(reciptRoutes.getRecipts)
     .post(reciptRoutes.addRecipt)
     .put(reciptRoutes.editReipt)
+    .delete(reciptRoutes.deleteRecipt)
 
 
 

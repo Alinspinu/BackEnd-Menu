@@ -31,8 +31,20 @@ module.exports.editReipt = async (req, res) => {
     const {recipt} = req.body
     try{
         const editedRecipt = await Recipt.findByIdAndUpdate(recipt._id, recipt, {new: true})
-        res.status(200).json(editedRecipt)
+        res.status(200).json({recipt: editedRecipt, message: 'Chitanța a fost actualizată'})
     } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.deleteRecipt = async (req, res) => {
+    const {id} = req.query
+    try{
+        await Recipt.findByIdAndDelete(id)
+        res.status(200).json({message: 'Chitanța a fost șteasă cu succes!'})
+
+    } catch(error){
         console.log(error)
         res.status(500).json(error)
     }
