@@ -1424,7 +1424,7 @@ function createRecipt(recipt){
   doc.text(`Capital Social 200 lei`, 40, height + 49)
   doc.text(`Adresă`, 40, height + 61)
   doc.fontSize(8)
-  doc.text(`${recipt.locatie.address}`, 40, height + 73)
+  doc.text(`${recipt.locatie.address}`, 40, height + 73, {with: 300, align: 'left'})
   
 
 
