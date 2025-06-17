@@ -3,6 +3,7 @@ const exceljs = require('exceljs');
 const Ingredient = require('../models/office/inv-ingredient')
 const Locatie = require('../models/office/locatie')
 const Suplier = require('../models/office/suplier')
+const Recipt = require('../models/office/recipt')
 const Order = require('../models/office/product/order')
 const Invoice = require('../models/office/invoice')
 const User = require('../models/users/user')
@@ -13,7 +14,8 @@ const { getProducts } = require('./back-office/product');
 const { saveProductIngredient } = require('./nutrition');
 const {createRaortXml} = require('../utils/print/printOrders');
 
-const {sendBillToCustomer} = require('../utils/mail')
+const {sendBillToCustomer} = require('../utils/mail');
+const invoice = require('../models/office/invoice');
 
 
 module.exports.printNir = async (req, res, next) => {
@@ -1063,6 +1065,9 @@ module.exports.printConsum = async (req, res) => {
 module.exports.factura = async (req, res, next) => {
   const {id, email, mode} = req.body
 
+
+  try{
+
   const invoice = await Invoice.findById(id).populate({path: 'locatie'})
   const doc = new PDFDocument({
       size: "A4",
@@ -1083,7 +1088,6 @@ module.exports.factura = async (req, res, next) => {
     })
   }
 
-  console.log(invoice.discount)
 
   //HEADER FURNIZOR
 
@@ -1386,9 +1390,74 @@ module.exports.factura = async (req, res, next) => {
 
 
   doc.end()
+
+} catch(error){
+  console.log(error)
+  res.status(500).json(error)
+}
   
 }
 
+
+function createRecipt(recipt){
+
+  const doc = new PDFDocument({
+    size: "A4",
+    layout: "portrait",
+});
+
+  doc.fontSize(10)
+  doc.font('public/font/Montserrat-Regular.ttf')
+  doc.text('Furnizor', 25 + 10, 10)
+  doc.fontSize(18);
+  doc.font('public/font/Montserrat-Bold.ttf')
+  doc.text(`${recipt.locatie.bussinessName}`, 25 + 10, 25);
+  doc.lineWidth(1.3);
+  doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
+
+  doc.rect(363, 311, 60, 15)
+
+  return doc
+}
+
+
+
+module.exports.printOrEmailRecipt = async (req, res) => {
+  const {id, mode, email} = req.body
+  try{
+    const recipt = await Recipt.findById(id).populate({path: 'locatie'}).populate({path: 'client.customer'}).populate({path: 'invoice', select: 'invoiceNumber'})
+
+
+     const doc = createRecipt(recipt)
+
+
+
+    const buffers = [];
+    doc.on("data", (chunk) => {
+        buffers.push(chunk);
+    });
+    doc.on("end", async () => {
+      const pdfBuffer = Buffer.concat(buffers);
+      if (mode) {
+        // Email mode
+        const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail);
+        res.status(200).json(message);
+      } else {
+        // Send as PDF response
+        res.type("application/pdf");
+        res.send(pdfBuffer);
+      }
+    });
+  
+  
+    doc.end()
+
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+
+}
 
 
 

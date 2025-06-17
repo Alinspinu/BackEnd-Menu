@@ -40,6 +40,8 @@ router.route('/recipt')
     .put(reciptRoutes.editReipt)
     .delete(reciptRoutes.deleteRecipt)
 
+router.route('/print-recipt').post(printRoutes.printOrEmailRecipt)
+
 
 
 module.exports = router
