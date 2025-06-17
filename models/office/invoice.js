@@ -147,6 +147,10 @@ const invoiceSchema = new Schema({
     eFacturaId: String,
     eFacturaStatus: String,
     eFacturaError: String,
+    payd: {
+        type: Boolean,
+        default: false
+    },
     customer: {
         type: Schema.Types.ObjectId,
         ref: 'Suplier'

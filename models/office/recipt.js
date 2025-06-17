@@ -12,6 +12,7 @@ const reciptSchema = new Schema({
             ref: 'Client'
         }
     },
+    issueDate: Date,
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
@@ -23,7 +24,7 @@ const reciptSchema = new Schema({
         }
     ],
     description: String,
-    Value: Number,
+    value: Number,
     number: Number,
     serie: String,
     index: {
@@ -44,7 +45,13 @@ reciptSchema.pre("save", async function (next) {
           { $inc: { value: 1 } },
           { upsert: true, new: true }
         );
-        doc.index = counter.value;
+        if(counter){
+           doc.index = counter.value;
+        } else {
+            const newCounter = new Counter({locatie: doc.locatie, model: 'Recipt', value: 1})
+            await newCounter.save()
+            doc.index = 1
+        }
       }
       next();
     } catch (error) {
