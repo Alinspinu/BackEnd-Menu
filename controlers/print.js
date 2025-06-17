@@ -1416,6 +1416,8 @@ function createRecipt(recipt){
   doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
 
   doc.rect(363, 311, 60, 15)
+  doc.lineWidth(0.5);
+  doc.stroke()
 
   return doc
 }
