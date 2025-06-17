@@ -1413,14 +1413,14 @@ function createRecipt(recipt){
 
   doc.dash(5, { space: 3 });
 
-  doc.moveTo(35, 300)
-     .lineTo(35, 300)
+  doc.moveTo(35, 305)
+     .lineTo(525, 305)
      .stroke();
   doc.undash();
 
   // doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
 
-  doc.rect(35, 305, 525, 250)
+  doc.rect(35, 315, 525, 250)
   doc.lineWidth(1.3);
   doc.stroke()
 
