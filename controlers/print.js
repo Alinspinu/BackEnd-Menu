@@ -1462,7 +1462,7 @@ function createRecipt(recipt){
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
-    doc.text(`${numarInLitereCuZecimale(recipt.value)}`, 230, height + 45)
+    doc.text(`${numarInLitereCompactCuLeiBani(recipt.value)}`, 230, height + 45)
     doc.fontSize(14)
     doc.text(`${recipt.value} Lei`, 90, height + 42)
 
@@ -1500,12 +1500,12 @@ function createRecipt(recipt){
 
 
 
-function numarInLitereCuZecimale(input) {
+function numarInLitereCompactCuLeiBani(input) {
   input = input.toString().replace(',', '.');
   let [intPart, fracPart] = input.split('.');
 
   intPart = parseInt(intPart, 10);
-  fracPart = parseInt((fracPart || '0').padEnd(2, '0').slice(0, 2), 10); 
+  fracPart = parseInt((fracPart || '0').padEnd(2, '0').slice(0, 2), 10); // max 2 cifre
 
   const numarInLitere = (n) => {
     const unitati = ['', 'unu', 'doi', 'trei', 'patru', 'cinci', 'șase', 'șapte', 'opt', 'nouă'];
@@ -1517,38 +1517,38 @@ function numarInLitereCuZecimale(input) {
 
     if (n >= 1000) {
       let mii = Math.floor(n / 1000);
-      litere += (mii === 1 ? 'o mie' : (mii === 2 ? 'două mii' : `${numarInLitere(mii)} mii`)) + ' ';
+      litere += (mii === 1 ? 'omie' : (mii === 2 ? 'douămii' : `${numarInLitere(mii)}mii`));
       n %= 1000;
     }
 
     if (n >= 100) {
       let sute = Math.floor(n / 100);
-      litere += (sute === 1 ? 'o sută' : `${unitati[sute]} sute`) + ' ';
+      litere += (sute === 1 ? 'osută' : `${unitati[sute]}sute`);
       n %= 100;
     }
 
     if (n >= 20) {
       let z = Math.floor(n / 10);
-      litere += zeci[z] + ' ';
+      litere += zeci[z];
       n %= 10;
-      if (n > 0) litere += 'și ' + unitati[n];
+      if (n > 0) litere += 'și' + unitati[n];
     } else if (n >= 10) {
       litere += speciale[n - 10];
     } else if (n > 0) {
       litere += unitati[n];
     }
 
-    return litere.trim();
+    return litere;
   };
 
-  let rezultat = numarInLitere(intPart) + ' lei RON';
+  let rezultat = numarInLitere(intPart) + 'lei';
   if (fracPart > 0) {
-    rezultat += ' și ' + numarInLitere(fracPart) + ' bani RON';
+    rezultat += 'și' + numarInLitere(fracPart) + 'bani';
   }
 
-  // Prima literă mare
   return rezultat.charAt(0).toUpperCase() + rezultat.slice(1);
 }
+
 
 
 
