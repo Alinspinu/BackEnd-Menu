@@ -1400,7 +1400,7 @@ module.exports.factura = async (req, res, next) => {
 }
 
 
-function createRecipt(recipt){
+function createRecipt(recipt, mode){
 
   let description = recipt.description
   if(recipt.invoice.length) {
@@ -1502,8 +1502,7 @@ function createRecipt(recipt){
      .stroke();
   doc.undash();
 
-
-
+  if(!mode){
   height = height + 10
   doc.rect(35, height, 525, 250)
   doc.lineWidth(1.1);
@@ -1583,9 +1582,6 @@ function createRecipt(recipt){
     doc.text('Semnătură', 415, height + 70)
 
 
-
-
-
   height = height + 260
   doc.dash(2, { space: 2 });
   doc.lineWidth(0.8);
@@ -1594,6 +1590,7 @@ function createRecipt(recipt){
      .stroke();
   doc.undash();
 
+  }
 
   return doc
 }
@@ -1657,12 +1654,7 @@ module.exports.printOrEmailRecipt = async (req, res) => {
   const {id, mode, email} = req.body
   try{
     const recipt = await Recipt.findById(id).populate({path: 'locatie'}).populate({path: 'client.customer'}).populate({path: 'invoice', select: 'invoiceNumber issueDate'})
-
-
      const doc = createRecipt(recipt)
-
-
-
     const buffers = [];
     doc.on("data", (chunk) => {
         buffers.push(chunk);
