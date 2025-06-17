@@ -1456,11 +1456,13 @@ function createRecipt(recipt){
     doc.text('Am primit de la', 40, height + 6)
     doc.text('Adresă:', 40, height + 19)
     doc.text('Suma de', 40, height + 46)
+    doc.text('adică', 190, height + 46)
     doc.fontSize(7)
     doc.text(`${recipt.client.customer.address}`, 80, height + 22, {width: 220, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
+    doc.text(`${numarInLitereCuZecimale(recipt.value)}`, 230, height + 45)
     doc.fontSize(14)
     doc.text(`${recipt.value} Lei`, 90, height + 42)
 
