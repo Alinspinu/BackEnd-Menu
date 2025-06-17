@@ -1407,37 +1407,44 @@ function createRecipt(recipt){
 });
 
 
-  doc.rect(35, 45, 525, 250)
+  let height = 45
+
+  doc.rect(35, height, 525, 250)
   doc.lineWidth(1.1);
   doc.stroke()
 
-  doc.dash(2, { space: 2 });
-  doc.lineWidth(0.8);
-  doc.moveTo(20, 305)
-     .lineTo(575, 305)
-     .stroke();
-  doc.undash();
-
-  // doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
-
-  doc.rect(35, 315, 525, 250)
-  doc.lineWidth(1.1);
-  doc.stroke()
-
-
-  doc.dash(2, { space: 2 });
-  doc.lineWidth(0.8);
-  doc.moveTo(20, 580)
-     .lineTo(575, 580)
-     .stroke();
-  doc.undash();
-
-  doc.fontSize(10)
+  doc.fontSize(12)
   doc.font('public/font/Montserrat-Regular.ttf')
-  doc.text('Furnizor', 25 + 10, 10)
+  doc.text('Societatea', 25 + 10, 10)
   doc.fontSize(18);
   doc.font('public/font/Montserrat-Bold.ttf')
   doc.text(`${recipt.locatie.bussinessName}`, 25 + 10, 25);
+
+  height = height + 260
+
+  doc.dash(2, { space: 2 });
+  doc.lineWidth(0.8);
+  doc.moveTo(20, height)
+     .lineTo(575, height)
+     .stroke();
+  doc.undash();
+
+
+
+  height = height + 10
+  doc.rect(35, height, 525, 250)
+  doc.lineWidth(1.1);
+  doc.stroke()
+
+
+  doc.dash(2, { space: 2 });
+  doc.lineWidth(0.8);
+  doc.moveTo(20, height + 10)
+     .lineTo(575, height + 10)
+     .stroke();
+  doc.undash();
+
+
 
 
 
