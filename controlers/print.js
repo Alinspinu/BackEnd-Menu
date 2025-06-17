@@ -1443,6 +1443,11 @@ function createRecipt(recipt){
   doc.text(`${recipt.serie}`, 370, height + 70)
   doc.text(`${recipt.number.toString().padStart(4, '0')}`, 445, height + 70)
   doc.text(`${formatedDateToShow(recipt.issueDate).split('ora')[0]}`, 370, height + 85)
+
+  doc.lineWidth(0.8);
+  doc.moveTo(35, height + 120)
+     .lineTo(560, height + 128)
+     .stroke();
   
 
 
