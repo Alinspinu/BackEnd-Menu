@@ -1409,7 +1409,7 @@ function createRecipt(recipt){
       textArray.push(inv.invoiceNumber +  ' din ' + inv.issueDate)
     }
     let singular = recipt.invoice.length === 1 ? 'factură' : 'facturi'
-    description =`CV ${singular}: ${textArray.join(', ')}`
+    description =`CV ${singular}: ${textArray.join(' / ')}`
   }
 
   const doc = new PDFDocument({
@@ -1470,7 +1470,7 @@ function createRecipt(recipt){
     doc.text('Adică', 40, height + 58 + 24)
     doc.text(`Reprezentând`, 40, height + 72 +24)
     doc.fontSize(9)
-    doc.text(`${description}, 0023 din 2025-05-12, 0023 din 2025-05-12, 0023 din 2025-05-12`, 115, height + 72 +24, {width: 350, align: 'left'})
+    doc.text(`${description} / 0023 din 2025-05-12 / 0023 din 2025-05-12 / 0023 din 2025-05-12`, 115, height + 72 +24, {width: 280, align: 'left'})
 
     doc.fontSize(7)
     doc.text(`${recipt.client.customer.address}`, 80, height + 22 +24, {width: 220, align: 'left'})
