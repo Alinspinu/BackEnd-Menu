@@ -1456,7 +1456,7 @@ function createRecipt(recipt){
     doc.text('Am primit de la', 40, height + 7)
     doc.text('Adresa', 40, height + 19)
     doc.fontSize(7)
-    doc.text(`${recipt.client.customer.address}`, 40, height + 31, {width: 250, align: 'left'})
+    doc.text(`${recipt.client.customer.address}`, 40, height + 20, {width: 180, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
@@ -1492,6 +1492,59 @@ function createRecipt(recipt){
 
   return doc
 }
+
+
+
+function numarInLitereCuZecimale(input) {
+  input = input.toString().replace(',', '.');
+  let [intPart, fracPart] = input.split('.');
+
+  intPart = parseInt(intPart, 10);
+  fracPart = parseInt((fracPart || '0').padEnd(2, '0').slice(0, 2), 10); 
+
+  const numarInLitere = (n) => {
+    const unitati = ['', 'unu', 'doi', 'trei', 'patru', 'cinci', 'șase', 'șapte', 'opt', 'nouă'];
+    const zeci = ['', 'zece', 'douăzeci', 'treizeci', 'patruzeci', 'cincizeci', 'șaizeci', 'șaptezeci', 'optzeci', 'nouăzeci'];
+    const speciale = ['zece', 'unsprezece', 'doisprezece', 'treisprezece', 'paisprezece', 'cincisprezece', 'șaisprezece', 'șaptesprezece', 'optsprezece', 'nouăsprezece'];
+
+    if (n === 0) return 'zero';
+    let litere = '';
+
+    if (n >= 1000) {
+      let mii = Math.floor(n / 1000);
+      litere += (mii === 1 ? 'o mie' : (mii === 2 ? 'două mii' : `${numarInLitere(mii)} mii`)) + ' ';
+      n %= 1000;
+    }
+
+    if (n >= 100) {
+      let sute = Math.floor(n / 100);
+      litere += (sute === 1 ? 'o sută' : `${unitati[sute]} sute`) + ' ';
+      n %= 100;
+    }
+
+    if (n >= 20) {
+      let z = Math.floor(n / 10);
+      litere += zeci[z] + ' ';
+      n %= 10;
+      if (n > 0) litere += 'și ' + unitati[n];
+    } else if (n >= 10) {
+      litere += speciale[n - 10];
+    } else if (n > 0) {
+      litere += unitati[n];
+    }
+
+    return litere.trim();
+  };
+
+  let rezultat = numarInLitere(intPart) + ' lei RON';
+  if (fracPart > 0) {
+    rezultat += ' și ' + numarInLitere(fracPart) + ' bani RON';
+  }
+
+  // Prima literă mare
+  return rezultat.charAt(0).toUpperCase() + rezultat.slice(1);
+}
+
 
 
 
