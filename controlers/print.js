@@ -1456,10 +1456,10 @@ function createRecipt(recipt){
     doc.text('Am primit de la', 40, height + 5)
     doc.text('Adresa', 40, height + 17)
     doc.fontSize(8)
-    doc.text(`${recipt.client.address}`, 40, height + 29, {width: 200, align: 'left'})
+    doc.text(`${recipt.client.customer.address}`, 40, height + 29, {width: 200, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
-    doc.text(`${recipt.client.name}`, 150, height + 5)
+    doc.text(`${recipt.client.name}`, 120, height + 5)
 
 
   height = height + 260
