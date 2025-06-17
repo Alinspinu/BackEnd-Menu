@@ -1435,11 +1435,11 @@ function createRecipt(recipt){
   doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
   doc.text('Serie', 340, height + 60)
-  doc.text('Număr', 420, height + 60)
+  doc.text('Număr', 405, height + 60)
   doc.fontSize(11)
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text(`${recipt.serie}`, 380, height + 60)
-  doc.text(`${recipt.number}`, 470, height + 60)
+  doc.text(`${recipt.serie}`, 370, height + 60)
+  doc.text(`${recipt.number.toString().padStart(4, '0')}`, 440, height + 60)
   
 
 
