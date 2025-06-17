@@ -1411,7 +1411,7 @@ function createRecipt(recipt){
   doc.lineWidth(1.3);
   doc.stroke()
 
-  doc.dash(5, { space: 3 });
+  doc.dash(2, { space: 2 });
   doc.lineWidth(0.8);
   doc.moveTo(20, 305)
      .lineTo(575, 305)
