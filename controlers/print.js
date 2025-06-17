@@ -1569,7 +1569,7 @@ function numarInLitereCompactCuLeiBani(input) {
 module.exports.printOrEmailRecipt = async (req, res) => {
   const {id, mode, email} = req.body
   try{
-    const recipt = await Recipt.findById(id).populate({path: 'locatie'}).populate({path: 'client.customer'}).populate({path: 'invoice', select: 'invoiceNumber'})
+    const recipt = await Recipt.findById(id).populate({path: 'locatie'}).populate({path: 'client.customer'}).populate({path: 'invoice', select: 'invoiceNumber issueDate'})
 
 
      const doc = createRecipt(recipt)
