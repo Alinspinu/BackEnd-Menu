@@ -1663,7 +1663,7 @@ module.exports.printOrEmailRecipt = async (req, res) => {
       const pdfBuffer = Buffer.concat(buffers);
       if (mode) {
         // Email mode
-        const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail, false);
+        const message = await sendBillToCustomer(pdfBuffer, email, recipt.locatie.gmail, false);
         res.status(200).json(message);
       } else {
         // Send as PDF response
