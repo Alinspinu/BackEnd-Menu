@@ -1460,9 +1460,9 @@ function createRecipt(recipt){
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
-    doc.text('SUMA DE', 40, height + 60)
+    doc.text('Suma de', 40, height + 44)
     doc.fontSize(14)
-    doc.text(`${recipt.value} Lei`, 90, height + 55)
+    doc.text(`${recipt.value} Lei`, 100, height + 42)
 
 
   height = height + 260
