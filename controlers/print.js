@@ -1427,7 +1427,18 @@ function createRecipt(recipt){
   doc.text(`${recipt.locatie.address}`, 40, height + 73, {width: 200, align: 'left'})
   doc.fontSize(10)
   doc.text(`Banca ${recipt.locatie.bank}`, 40, height + 93)
-  doc.text(`Cont ${recipt.locatie.iban}`, 40, height + 105)
+  doc.text(`Cont ${recipt.locatie.account}`, 40, height + 105)
+
+  doc.fontSize(16)
+  doc.font('public/font/Montserrat-Bold.ttf')
+  doc.text('CHITANȚĂ', 400, height + 35)
+  doc.fontSize(12)
+  doc.font('public/font/Montserrat-Regular.ttf')
+  doc.text('Serie', 400, height + 65)
+  doc.text('Număr', 500, height + 65)
+  doc.font('public/font/Montserrat-Bold.ttf')
+  doc.text(`${recipt.serie}`, 450, height + 65)
+  doc.text(`${recipt.number}`, 550, height + 65)
   
 
 
@@ -1447,21 +1458,6 @@ function createRecipt(recipt){
   doc.stroke()
 
 
-  doc.fontSize(12)
-  doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text(`S.C. ${recipt.locatie.bussinessName}`, 40, height + 5)
-  doc.fontSize(10)
-  doc.font('public/font/Montserrat-Regular.ttf')
-  doc.text(`CIF  ${recipt.locatie.vatNumber}`, 40, height + 25)
-  doc.text(`R.C.   ${recipt.locatie.register}`, 40, height + 37)
-  doc.text(`R.C.   ${recipt.locatie.register}`, 40, height + 37)
-  doc.text(`Capital Social 200 lei`, 40, height + 49)
-  doc.text(`Adresă`, 40, height + 61)
-  doc.fontSize(8)
-  doc.text(`${recipt.locatie.address}`, 40, height + 73, {width: 200, align: 'left'})
-  doc.fontSize(10)
-  doc.text(`Banca ${recipt.locatie.bank}`, 40, height + 93)
-  doc.text(`Cont ${recipt.locatie.iban}`, 40, height + 105)
 
 
 
