@@ -1470,7 +1470,7 @@ function createRecipt(recipt){
     doc.text('Adică', 40, height + 58 + 24)
     doc.text(`Reprezentând`, 40, height + 72 +24)
     doc.fontSize(8)
-    doc.text(`${description}`, 110, height + 73 +24, {widith: 250, align: 'left'})
+    doc.text(`${description}, 0023 / 2025-05-12, 0023 / 2025-05-12, 0023 / 2025-05-12`, 115, height + 74 +24, {widith: 250, align: 'left'})
 
     doc.fontSize(7)
     doc.text(`${recipt.client.customer.address}`, 80, height + 22 +24, {width: 220, align: 'left'})
