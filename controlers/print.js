@@ -1414,14 +1414,14 @@ function createRecipt(recipt){
   doc.stroke()
 
   doc.fontSize(12)
-  doc.font('public/font/Montserrat-Regular.ttf')
-  doc.text('Societatea', 25 + 10, 10)
-  doc.fontSize(18);
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text(`${recipt.locatie.bussinessName}`, 25 + 10, 25);
+  doc.text('Societatea', 40, height + 5, {with: 50, align: 'left'})
+  doc.text(`${recipt.locatie.bussinessName}`, 90, height + 5);
+  
+  doc.font('public/font/Montserrat-Regular.ttf')
+
 
   height = height + 260
-
   doc.dash(2, { space: 2 });
   doc.lineWidth(0.8);
   doc.moveTo(20, height)
@@ -1437,19 +1437,15 @@ function createRecipt(recipt){
   doc.stroke()
 
 
+
+  height = height + 260
   doc.dash(2, { space: 2 });
   doc.lineWidth(0.8);
-  doc.moveTo(20, height + 10)
-     .lineTo(575, height + 10)
+  doc.moveTo(20, height)
+     .lineTo(575, height)
      .stroke();
   doc.undash();
 
-
-
-
-
-
-  // doc.lineWidth(0.5);
 
   return doc
 }
