@@ -39,8 +39,7 @@ const reciptSchema = new Schema({
 reciptSchema.pre("save", async function (next) {
     try {
       const doc = this;
-      if(doc.index > 0){
-      } else {
+
         const counter = await Counter.findOneAndUpdate(
           { locatie: doc.locatie, model: "Recipt", },
           { $inc: { value: 1 } },
@@ -53,7 +52,7 @@ reciptSchema.pre("save", async function (next) {
             await newCounter.save()
             doc.index = 1
         }
-      }
+        console.log(counter)
 
           const client = await Client.findById(doc.client.customer)
           if (client) {
