@@ -1413,16 +1413,16 @@ function createRecipt(recipt){
 
   doc.dash(5, { space: 3 });
 
-  doc.moveTo(35, 260)
-     .lineTo(35, 525)
+  doc.moveTo(55, 280)
+     .lineTo(100, 200)
      .stroke();
   doc.undash();
 
   // doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
 
-  doc.rect(35, 280, 525, 250)
-  doc.lineWidth(1.3);
-  doc.stroke()
+  // doc.rect(35, 280, 525, 250)
+  // doc.lineWidth(1.3);
+  // doc.stroke()
 
   doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
