@@ -1431,14 +1431,15 @@ function createRecipt(recipt){
 
   doc.fontSize(16)
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text('CHITANȚĂ', 400, height + 35)
-  doc.fontSize(12)
+  doc.text('CHITANȚĂ', 300, height + 35)
+  doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
-  doc.text('Serie', 400, height + 65)
-  doc.text('Număr', 500, height + 65)
+  doc.text('Serie', 280, height + 60)
+  doc.text('Număr', 350, height + 60)
+  doc.fontSize(11)
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text(`${recipt.serie}`, 450, height + 65)
-  doc.text(`${recipt.number}`, 550, height + 65)
+  doc.text(`${recipt.serie}`, 310, height + 60)
+  doc.text(`${recipt.number}`, 380, height + 60)
   
 
 
