@@ -16,6 +16,7 @@ const {createRaortXml} = require('../utils/print/printOrders');
 
 const {sendBillToCustomer} = require('../utils/mail');
 const invoice = require('../models/office/invoice');
+const { formatedDateToShow } = require('../utils/functions');
 
 
 module.exports.printNir = async (req, res, next) => {
@@ -24,7 +25,7 @@ module.exports.printNir = async (req, res, next) => {
   
   const nir = await Nir.findById(id)
   .populate({
-    path: "suplier",
+  path: "suplier",
     select: "name vatNumber",
   })
   .populate({
@@ -1436,10 +1437,12 @@ function createRecipt(recipt){
   doc.font('public/font/Montserrat-Regular.ttf')
   doc.text('Serie', 340, height + 70)
   doc.text('Număr', 405, height + 70)
+  doc.text('Data', 340, height + 80)
   doc.fontSize(11)
   doc.font('public/font/Montserrat-Bold.ttf')
   doc.text(`${recipt.serie}`, 370, height + 70)
   doc.text(`${recipt.number.toString().padStart(4, '0')}`, 445, height + 70)
+  doc.text(`${formatedDateToShow(recipt.issueDate).split('ora')[0]}`, 370, height + 78)
   
 
 
