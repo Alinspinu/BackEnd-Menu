@@ -1434,12 +1434,12 @@ function createRecipt(recipt){
   doc.text('CHITANȚĂ', 350, height + 35)
   doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
-  doc.text('Serie', 330, height + 70)
-  doc.text('Număr', 395, height + 70)
+  doc.text('Serie', 340, height + 70)
+  doc.text('Număr', 405, height + 70)
   doc.fontSize(11)
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text(`${recipt.serie}`, 360, height + 70)
-  doc.text(`${recipt.number.toString().padStart(4, '0')}`, 435, height + 70)
+  doc.text(`${recipt.serie}`, 370, height + 70)
+  doc.text(`${recipt.number.toString().padStart(4, '0')}`, 445, height + 70)
   
 
 
