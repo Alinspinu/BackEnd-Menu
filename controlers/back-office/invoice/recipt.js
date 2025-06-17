@@ -6,7 +6,7 @@ module.exports.addRecipt = async (req, res) => {
     try{
         const newRecipt = new Recipt(recipt)
         const savedRecipt = await newRecipt.save()
-        res.status(200).json(savedRecipt)
+        res.status(200).json({recipt: savedRecipt, message: 'Chitanța a fost savată cu success!'})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
