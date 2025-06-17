@@ -1408,8 +1408,8 @@ function createRecipt(recipt){
     for(let inv of recipt.invoice){
       textArray.push(inv.invoiceNumber)
     }
-    let singular = recipt.invoice.length === 0 ? 'Factură' : 'Facturi'
-    description =`Contravaloare ${singular}: ${textArray.join(', ')}`
+    let singular = recipt.invoice.length === 1 ? 'factură' : 'facturi'
+    description =`CV ${singular}: ${textArray.join(', ')}`
   }
 
   const doc = new PDFDocument({
@@ -1467,7 +1467,7 @@ function createRecipt(recipt){
     doc.text('Adresă:', 40, height + 19)
     doc.text('Suma de', 40, height + 46)
     doc.text('Adică', 40, height + 58)
-    doc.text(`${description}`, 40, height + 70)
+    doc.text(`Reprezentând ${description}`, 40, height + 72)
 
     doc.fontSize(7)
     doc.text(`${recipt.client.customer.address}`, 80, height + 22, {width: 220, align: 'left'})
