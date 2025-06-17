@@ -1406,7 +1406,7 @@ function createRecipt(recipt){
   if(recipt.invoice.length) {
     let textArray = []
     for(let inv of recipt.invoice){
-      textArray.push(inv.invoiceNumber)
+      textArray.push(inv.invoiceNumber +  ' / ' + inv.issueDate)
     }
     let singular = recipt.invoice.length === 1 ? 'factură' : 'facturi'
     description =`CV ${singular}: ${textArray.join(', ')}`
