@@ -1408,7 +1408,7 @@ function createRecipt(recipt){
 
 
   doc.rect(35, 45, 525, 250)
-  doc.lineWidth(1.3);
+  doc.lineWidth(1.1);
   doc.stroke()
 
   doc.dash(2, { space: 2 });
@@ -1421,8 +1421,16 @@ function createRecipt(recipt){
   // doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
 
   doc.rect(35, 315, 525, 250)
-  doc.lineWidth(1.3);
+  doc.lineWidth(1.1);
   doc.stroke()
+
+
+  doc.dash(2, { space: 2 });
+  doc.lineWidth(0.8);
+  doc.moveTo(20, 580)
+     .lineTo(575, 580)
+     .stroke();
+  doc.undash();
 
   doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
