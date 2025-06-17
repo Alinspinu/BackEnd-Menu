@@ -1380,7 +1380,7 @@ module.exports.factura = async (req, res, next) => {
     const pdfBuffer = Buffer.concat(buffers);
     if (mode) {
       // Email mode
-      const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail);
+      const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail, true);
       res.status(200).json(message);
     } else {
       // Send as PDF response
@@ -1654,7 +1654,7 @@ module.exports.printOrEmailRecipt = async (req, res) => {
   const {id, mode, email} = req.body
   try{
     const recipt = await Recipt.findById(id).populate({path: 'locatie'}).populate({path: 'client.customer'}).populate({path: 'invoice', select: 'invoiceNumber issueDate'})
-     const doc = createRecipt(recipt)
+     const doc = createRecipt(recipt, mode)
     const buffers = [];
     doc.on("data", (chunk) => {
         buffers.push(chunk);
@@ -1663,7 +1663,7 @@ module.exports.printOrEmailRecipt = async (req, res) => {
       const pdfBuffer = Buffer.concat(buffers);
       if (mode) {
         // Email mode
-        const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail);
+        const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail, false);
         res.status(200).json(message);
       } else {
         // Send as PDF response

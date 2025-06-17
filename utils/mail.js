@@ -39,9 +39,9 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
           };
 };
 
-async  function sendBillToCustomer(buffer, email, gmail) {
+async  function sendBillToCustomer(buffer, email, gmail, inv) {
 
-    console.log(gmail)
+    let text  = inv ?  'Factura' :  'Chitanța'
     const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);
 
           const transporter = nodemailer.createTransport({
@@ -54,8 +54,8 @@ async  function sendBillToCustomer(buffer, email, gmail) {
           const mailOptions = {
               from: gmail.email,
               to: email, 
-              subject: 'Factura True Fine Coffee',
-              text: 'Gasiți facura dumneavoastră atașată.',
+              subject: `${text} True Fine Coffee`,
+              text: `Gasiți ${text.toLowerCase()} dumneavoastră atașată.`,
               attachments: [
                 {
                   filename: 'factura.pdf',
