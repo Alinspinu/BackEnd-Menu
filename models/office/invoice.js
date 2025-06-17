@@ -204,7 +204,7 @@ invoiceSchema.pre('save', async function (next){
         const bDate = new Date(b.date).getTime()
         return aDate - bDate
     })
-    const recordIndex = sortedRecords.findIndex(r => r.invoice.toString() === doc._id.toString());
+    const recordIndex = sortedRecords.findIndex(r => r.invoice && r.invoice.toString() === doc._id.toString());
     if (recordIndex !== -1) {
         for (let i = recordIndex; i < sortedRecords.length; i++) {
             sortedRecords[i].sold += doc.taxInclusiveAmount;
@@ -261,7 +261,7 @@ invoiceSchema.pre('findOneAndDelete', async function(next){
             const bDate = new Date(b.date).getTime()
             return aDate - bDate
         })
-        const recordIndex = sortedRecords.findIndex(r => r.invoice.toString() === doc._id.toString());
+        const recordIndex = sortedRecords.findIndex(r => r.invoice && r.invoice.toString() === doc._id.toString());
         if (recordIndex !== -1) {
             sortedRecords.splice(recordIndex, 1);
             for (let i = recordIndex; i < sortedRecords.length; i++) {

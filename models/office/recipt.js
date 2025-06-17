@@ -73,7 +73,7 @@ reciptSchema.pre("save", async function (next) {
               const bDate = new Date(b.date).getTime()
               return aDate - bDate
           })
-          const recordIndex = sortedRecords.findIndex(r => r.recipt.toString() === doc._id.toString());
+          const recordIndex = sortedRecords.findIndex(r =>  r.recipt && r.recipt.toString() === doc._id.toString());
           if (recordIndex !== -1) {
               for (let i = recordIndex; i < sortedRecords.length; i++) {
                   sortedRecords[i].sold -= doc.value;
@@ -109,7 +109,7 @@ reciptSchema.pre("save", async function (next) {
               const bDate = new Date(b.date).getTime()
               return aDate - bDate
           })
-          const recordIndex = sortedRecords.findIndex(r => r.recipt.toString() === doc._id.toString());
+          const recordIndex = sortedRecords.findIndex(r => r.recipt && r.recipt.toString() === doc._id.toString());
           if (recordIndex !== -1) {
               sortedRecords.splice(recordIndex, 1);
               for (let i = recordIndex; i < sortedRecords.length; i++) {
