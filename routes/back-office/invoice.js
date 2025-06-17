@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const invoiceRoutes = require('../../controlers/back-office/invoice/controlers.js')
 const printRoutes = require('../../controlers/print');
+const reciptRoutes = require('../../controlers/back-office/invoice/recipt.js')
 
 
 
@@ -31,6 +32,12 @@ router.route('/errors').get(invoiceRoutes.handleUplodErros)
 
 router.route('/credit-note').post(invoiceRoutes.uploadCreditNoteToEFactura)
 
+
+
+router.route('/recipt')
+    .get(reciptRoutes.getRecipts)
+    .post(reciptRoutes.addRecipt)
+    .put(reciptRoutes.editReipt)
 
 
 
