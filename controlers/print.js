@@ -1491,7 +1491,7 @@ function createRecipt(recipt){
     doc.fontSize(12)
     doc.font('public/font/Montserrat-Regular.ttf')
     doc.text('Casier,', 415, height + 20)
-    doc.text('Semnătură', 415, height + 80)
+    doc.text('Semnătură', 415, height + 70)
 
 
   height = height + 260 - 120
