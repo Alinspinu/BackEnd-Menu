@@ -1402,6 +1402,16 @@ module.exports.factura = async (req, res, next) => {
 
 function createRecipt(recipt){
 
+  let description = recipt.description
+  if(recipt.invoice.length) {
+    let textArray = []
+    for(let inv of recipt.invoice){
+      textArray.push(inv.invoiceNumber)
+    }
+    let singular = recipt.invoice.length === 0 ? 'Factură' : 'Facturi'
+    description =`Contravaloare ${singular}: ${textArray.join(', ')}`
+  }
+
   const doc = new PDFDocument({
     size: "A4",
     layout: "portrait",
@@ -1457,6 +1467,8 @@ function createRecipt(recipt){
     doc.text('Adresă:', 40, height + 19)
     doc.text('Suma de', 40, height + 46)
     doc.text('Adică', 40, height + 58)
+    doc.text(`${description}`, 40, height + 70)
+
     doc.fontSize(7)
     doc.text(`${recipt.client.customer.address}`, 80, height + 22, {width: 220, align: 'left'})
     doc.fontSize(11)
@@ -1468,7 +1480,7 @@ function createRecipt(recipt){
     doc.text(`${recipt.value} Lei`, 90, height + 42)
 
 
-  height = height + 260
+  height = height + 260 - 120
   doc.dash(2, { space: 2 });
   doc.lineWidth(0.8);
   doc.moveTo(20, height)
@@ -1547,7 +1559,7 @@ function numarInLitereCompactCuLeiBani(input) {
     rezultat += 'și' + numarInLitere(fracPart) + 'bani';
   }
 
-  return rezultat.charAt(0).toUpperCase() + rezultat.slice(1);
+  return rezultat;
 }
 
 
