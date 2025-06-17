@@ -1482,12 +1482,16 @@ function createRecipt(recipt){
     doc.fontSize(14)
     doc.text(`${recipt.value} Lei`, 90, height + 42 + 24)
 
-    doc.dash(3, { space: 5 });
+    doc.dash(3, { space: 3 });
     doc.lineWidth(0.8);
     doc.moveTo(400, height)
        .lineTo(400, height + 130)
        .stroke();
     doc.undash();
+    doc.fontSize(12)
+    doc.font('public/font/Montserrat-Regular.ttf')
+    doc.text('Casier,', 415, height + 20)
+    doc.text('Semnătură,', 415, height + 60)
 
 
   height = height + 260 - 120
