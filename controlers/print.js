@@ -1418,8 +1418,11 @@ function createRecipt(recipt){
   doc.text(`S.C. ${recipt.locatie.bussinessName}`, 40, height + 5)
   doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
-  doc.text(`CIF  ${recipt.locatie.vatNumber}`, 40, height + 20)
-  doc.text(`R.C.  ${recipt.locatie.register}`, 40, height + 33)
+  doc.text(`CIF  ${recipt.locatie.vatNumber}`, 40, height + 25)
+  doc.text(`R.C.   ${recipt.locatie.register}`, 40, height + 37)
+  doc.text(`R.C.   ${recipt.locatie.register}`, 40, height + 37)
+  doc.text(`Capital Social 200 lei`, 40, height + 49)
+  doc.text(`Adresă ${recipt.locatie.address}`, 40, height + 61)
   
 
 
