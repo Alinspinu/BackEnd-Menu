@@ -1415,10 +1415,12 @@ function createRecipt(recipt){
 
   doc.fontSize(12)
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text('S.C.', 40, height + 5, {with: 30, align: 'left'})
-  doc.text(`${recipt.locatie.bussinessName}`, 70, height + 5);
-  
+  doc.text(`S.C. ${recipt.locatie.bussinessName}`, 40, height + 5)
+  doc.fontSize(10)
   doc.font('public/font/Montserrat-Regular.ttf')
+  doc.text(`CIF  ${recipt.locatie.valDiscount}`, 40, height + 15)
+  doc.text(`R.C.  ${recipt.locatie.register}`, 40, height + 27)
+  
 
 
   height = height + 260
