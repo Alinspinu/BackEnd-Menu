@@ -1415,8 +1415,8 @@ function createRecipt(recipt){
 
   doc.fontSize(12)
   doc.font('public/font/Montserrat-Bold.ttf')
-  doc.text('Societatea', 40, height + 5, {with: 50, align: 'left'})
-  doc.text(`${recipt.locatie.bussinessName}`, 90, height + 5);
+  doc.text('S.C.', 40, height + 5, {with: 30, align: 'left'})
+  doc.text(`${recipt.locatie.bussinessName}`, 70, height + 5);
   
   doc.font('public/font/Montserrat-Regular.ttf')
 
