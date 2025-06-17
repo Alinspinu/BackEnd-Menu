@@ -1412,9 +1412,9 @@ function createRecipt(recipt){
   doc.stroke()
 
   doc.dash(5, { space: 3 });
-
-  doc.moveTo(5, 305)
-     .lineTo(590, 305)
+  doc.lineWidth(0.8);
+  doc.moveTo(20, 305)
+     .lineTo(575, 305)
      .stroke();
   doc.undash();
 
