@@ -1412,7 +1412,7 @@ function createRecipt(recipt){
   doc.fontSize(18);
   doc.font('public/font/Montserrat-Bold.ttf')
   doc.text(`${recipt.locatie.bussinessName}`, 25 + 10, 25);
-  doc.rect(35, 45, 600, 250)
+  doc.rect(35, 45, 400, 250)
   doc.lineWidth(1.3);
   doc.stroke()
   // doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
