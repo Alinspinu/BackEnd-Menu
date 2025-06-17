@@ -1444,11 +1444,22 @@ function createRecipt(recipt){
   doc.text(`${recipt.number.toString().padStart(4, '0')}`, 445, height + 70)
   doc.text(`${formatedDateToShow(recipt.issueDate).split('ora')[0]}`, 370, height + 85)
 
+  height = height + 120
+
   doc.lineWidth(0.6);
-  doc.moveTo(35, height + 120)
-     .lineTo(560, height + 120)
+  doc.moveTo(35, height)
+     .lineTo(560, height)
      .stroke();
   
+    doc.fontSize(10)
+    doc.font('public/font/Montserrat-Regular.ttf')
+    doc.text('Am primit de la', 40, height + 5)
+    doc.text('Adresa', 40, height + 17)
+    doc.fontSize(8)
+    doc.text(`${recipt.client.address}`, 40, height + 29, {width: 200, align: 'left'})
+    doc.fontSize(11)
+    doc.font('public/font/Montserrat-Bold.ttf')
+    doc.text(`${recipt.client.name}`, 150, height + 5)
 
 
   height = height + 260
