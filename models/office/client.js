@@ -103,4 +103,4 @@ const clientSchema = new Schema({
 
 });
 
-module.exports = mongoose.model("CLient", clientSchema);
+module.exports = mongoose.model("Client", clientSchema);
