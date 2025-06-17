@@ -1455,14 +1455,14 @@ function createRecipt(recipt){
     doc.font('public/font/Montserrat-Regular.ttf')
     doc.text('Am primit de la', 40, height + 6)
     doc.text('Adresă:', 40, height + 19)
+    doc.text('Suma de', 40, height + 44)
     doc.fontSize(7)
     doc.text(`${recipt.client.customer.address}`, 80, height + 22, {width: 220, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
-    doc.text('Suma de', 40, height + 44)
     doc.fontSize(14)
-    doc.text(`${recipt.value} Lei`, 100, height + 42)
+    doc.text(`${recipt.value} Lei`, 85, height + 42)
 
 
   height = height + 260
