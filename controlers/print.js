@@ -1470,10 +1470,10 @@ function createRecipt(recipt, mode){
     doc.text('Adică', 40, height + 58 + 12)
     doc.text(`Reprezentând`, 40, height + 72 +12)
     doc.fontSize(9)
-    doc.text(`${description} / 0023 din 2025-05-12 / 0023 din 2025-05-12 / 0023 din 2025-05-12`, 115, height + 72 +24, {width: 300, align: 'left'})
+    doc.text(`${description} / 0023 din 2025-05-12 / 0023 din 2025-05-12 / 0023 din 2025-05-12`, 115, height + 72 +24, {width: 320, align: 'left'})
 
     doc.fontSize(7)
-    doc.text(`${recipt.client.customer.address} dsakdal; dasdasdkj dsad`, 80, height + 22 +24, {width: 320, align: 'left'})
+    doc.text(`${recipt.client.customer.address} dsakdal; dasdasdkj dsad`, 80, height + 22 +24, {width: 360, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
