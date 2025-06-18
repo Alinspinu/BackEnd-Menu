@@ -1484,18 +1484,18 @@ function createRecipt(recipt, mode){
 
     doc.dash(3, { space: 3 });
     doc.lineWidth(0.6);
-    doc.moveTo(425, height)
-       .lineTo(425, height + 130)
+    doc.moveTo(445, height)
+       .lineTo(445, height + 130)
        .stroke();
     doc.lineWidth(0.6);
-        doc.moveTo(425, height + 80)
+        doc.moveTo(445, height + 80)
         .lineTo(560, height + 80)
         .stroke();
     doc.undash();
-    doc.image('public/icons/logo_true.png', 445, height + 5, {width: 80})
-    doc.fontSize(10)
+    doc.image('public/icons/logo_true.png', 485, height + 15, {width: 80})
+    doc.fontSize(8)
     doc.font('public/font/Montserrat-Regular.ttf')
-    doc.text('Semnătură', 435, height + 85)
+    doc.text('Semnătură', 460, height + 85)
 
 
   height = height + 260 - 120
