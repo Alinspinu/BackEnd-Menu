@@ -1473,14 +1473,14 @@ function createRecipt(recipt, mode){
     doc.text(`${description} / 0023 din 2025-05-12 / 0023 din 2025-05-12 / 0023 din 2025-05-12`, 115, height + 72 +24, {width: 280, align: 'left'})
 
     doc.fontSize(7)
-    doc.text(`${recipt.client.customer.address}`, 80, height + 22 +24, {width: 220, align: 'left'})
+    doc.text(`${recipt.client.customer.address}`, 80, height + 22 +24, {width: 300, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
     doc.fontSize(10)
     doc.text(`${numarInLitereCompactCuLeiBani(recipt.value)}`, 70, height + 58 +24)
-    doc.fontSize(14)
-    doc.text(`${recipt.value} Lei`, 90, height + 42 + 24)
+    doc.fontSize(16)
+    doc.text(`${recipt.value} Lei`, 90, height + 40 + 24)
 
     doc.dash(3, { space: 3 });
     doc.lineWidth(0.6);
@@ -1495,7 +1495,6 @@ function createRecipt(recipt, mode){
     doc.image('public/icons/logo_true.png', 420, height + 5, {width: 100})
     doc.fontSize(10)
     doc.font('public/font/Montserrat-Regular.ttf')
-    // doc.text('Casier,', 415, height + 20)
     doc.text('Semnătură', 410, height + 85)
 
 
@@ -1576,15 +1575,19 @@ function createRecipt(recipt, mode){
     doc.text(`${recipt.value} Lei`, 90, height + 42 + 24)
 
     doc.dash(3, { space: 3 });
-    doc.lineWidth(0.8);
+    doc.lineWidth(0.6);
     doc.moveTo(400, height)
        .lineTo(400, height + 130)
        .stroke();
+    doc.lineWidth(0.6);
+        doc.moveTo(400, height + 80)
+        .lineTo(560, height + 80)
+        .stroke();
     doc.undash();
-    doc.fontSize(12)
+    doc.image('public/icons/logo_true.png', 420, height + 5, {width: 100})
+    doc.fontSize(10)
     doc.font('public/font/Montserrat-Regular.ttf')
-    doc.text('Casier,', 415, height + 20)
-    doc.text('Semnătură', 415, height + 70)
+    doc.text('Semnătură', 410, height + 85)
 
 
   height = height + 260 -120
