@@ -1492,7 +1492,7 @@ function createRecipt(recipt, mode){
         .lineTo(560, height + 80)
         .stroke();
     doc.undash();
-    doc.image('public/icons/logo_true.png', 485, height + 15, {width: 80})
+    doc.image('public/icons/logo_true.png', 455, height + 15, {width: 80})
     doc.fontSize(8)
     doc.font('public/font/Montserrat-Regular.ttf')
     doc.text('Semnătură', 460, height + 85)
