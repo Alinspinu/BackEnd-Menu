@@ -1472,7 +1472,7 @@ function createRecipt(recipt, mode){
     doc.fontSize(9)
     doc.text(`${description}`, 115, height + 72 +20, {width: 338, align: 'left'})
 
-    doc.fontSize(8)
+    doc.fontSize(7)
     doc.text(`${recipt.client.customer.address}`, 80, height + 22 +24, {width: 353, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
@@ -1558,36 +1558,36 @@ function createRecipt(recipt, mode){
     doc.text(`CIF  ${recipt.client.customer.vatNumber}`, 40, height + 19)
     doc.text(`R.C.   ${recipt.client.customer.register}`, 40, height + 31)
     doc.text('Adresă:', 40, height + 19 + 24)
-    doc.text('Suma de', 40, height + 46 + 24)
-    doc.text('Adică', 40, height + 58 + 24)
-    doc.text(`Reprezentând`, 40, height + 72 +24)
+    doc.text('Suma de', 40, height + 46 + 18)
+    doc.text('Adică', 40, height + 58 + 20)
+    doc.text(`Reprezentând`, 40, height + 72 +20)
     doc.fontSize(9)
-    doc.text(`${description} / 0023 din 2025-05-12 / 0023 din 2025-05-12 / 0023 din 2025-05-12`, 115, height + 72 +24, {width: 280, align: 'left'})
+    doc.text(`${description}`, 115, height + 72 +20, {width: 338, align: 'left'})
 
     doc.fontSize(7)
-    doc.text(`${recipt.client.customer.address}`, 80, height + 22 +24, {width: 220, align: 'left'})
+    doc.text(`${recipt.client.customer.address}`, 80, height + 22 +24, {width: 353, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
     doc.fontSize(10)
-    doc.text(`${numarInLitereCompactCuLeiBani(recipt.value)}`, 70, height + 58 +24)
-    doc.fontSize(14)
-    doc.text(`${recipt.value} Lei`, 90, height + 42 + 24)
+    doc.text(`${numarInLitereCompactCuLeiBani(recipt.value)}`, 70, height + 58 +20)
+    doc.fontSize(16)
+    doc.text(`${recipt.value} Lei`, 90, height + 40 + 18)
 
     doc.dash(3, { space: 3 });
     doc.lineWidth(0.6);
-    doc.moveTo(400, height)
-       .lineTo(400, height + 130)
+    doc.moveTo(445, height)
+       .lineTo(445, height + 130)
        .stroke();
     doc.lineWidth(0.6);
-        doc.moveTo(400, height + 80)
+        doc.moveTo(445, height + 80)
         .lineTo(560, height + 80)
         .stroke();
     doc.undash();
-    doc.image('public/icons/logo_true.png', 420, height + 5, {width: 100})
-    doc.fontSize(10)
+    doc.image('public/icons/logo_true.png', 460, height + 15, {width: 80})
+    doc.fontSize(8)
     doc.font('public/font/Montserrat-Regular.ttf')
-    doc.text('Semnătură', 410, height + 85)
+    doc.text('Semnătură', 455, height + 85)
 
 
   height = height + 260 -120
