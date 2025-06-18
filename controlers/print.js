@@ -1492,7 +1492,7 @@ function createRecipt(recipt, mode){
         .lineTo(560, height + 80)
         .stroke();
     doc.undash();
-    doc.image('public/icons/favicon.png', 420, height + 20, {width: 60})
+    doc.image('public/icons/favicon.png', 460, height + 5, {width: 60})
     doc.fontSize(12)
     doc.font('public/font/Montserrat-Regular.ttf')
     // doc.text('Casier,', 415, height + 20)
