@@ -19,6 +19,7 @@ const SheduleSchema = new Schema({
                         position: String,
                         concediu: Boolean,
                         medical: Boolean,
+                        freePayd: Boolean,
                     },
                     employee: {
                         type: Schema.Types.ObjectId,

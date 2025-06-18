@@ -150,6 +150,7 @@ const UserTrueSchema = new Schema({
                 position: String,
                 concediu: Boolean,
                 medical: Boolean,
+                freePayd: Boolean,
                 salePoint: {
                     type: Schema.Types.ObjectId,
                     ref: 'SalePoint'
