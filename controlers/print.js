@@ -1466,9 +1466,9 @@ function createRecipt(recipt, mode){
     doc.text(`CIF  ${recipt.client.customer.vatNumber}`, 40, height + 19)
     doc.text(`R.C.   ${recipt.client.customer.register}`, 40, height + 31)
     doc.text('Adresă:', 40, height + 19 + 24)
-    doc.text('Suma de', 40, height + 46 + 24)
-    doc.text('Adică', 40, height + 58 + 24)
-    doc.text(`Reprezentând`, 40, height + 72 +24)
+    doc.text('Suma de', 40, height + 46 + 12)
+    doc.text('Adică', 40, height + 58 + 12)
+    doc.text(`Reprezentând`, 40, height + 72 +12)
     doc.fontSize(9)
     doc.text(`${description} / 0023 din 2025-05-12 / 0023 din 2025-05-12 / 0023 din 2025-05-12`, 115, height + 72 +24, {width: 280, align: 'left'})
 
@@ -1478,9 +1478,9 @@ function createRecipt(recipt, mode){
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
     doc.fontSize(10)
-    doc.text(`${numarInLitereCompactCuLeiBani(recipt.value)}`, 70, height + 58 +24)
+    doc.text(`${numarInLitereCompactCuLeiBani(recipt.value)}`, 70, height + 58 +12)
     doc.fontSize(16)
-    doc.text(`${recipt.value} Lei`, 90, height + 40 + 24)
+    doc.text(`${recipt.value} Lei`, 90, height + 40 + 12)
 
     doc.dash(3, { space: 3 });
     doc.lineWidth(0.6);
