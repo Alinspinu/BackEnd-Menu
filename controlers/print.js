@@ -1483,16 +1483,16 @@ function createRecipt(recipt, mode){
     doc.text(`${recipt.value} Lei`, 90, height + 42 + 24)
 
     doc.dash(3, { space: 3 });
-    doc.lineWidth(0.8);
+    doc.lineWidth(0.6);
     doc.moveTo(400, height)
        .lineTo(400, height + 130)
        .stroke();
-    doc.lineWidth(0.8);
+    doc.lineWidth(0.6);
         doc.moveTo(400, height + 80)
         .lineTo(560, height + 80)
         .stroke();
     doc.undash();
-    doc.image('public/icons/favicon.png', 460, height + 5, {width: 60})
+    doc.image('public/icons/favicon.png', 450, height + 5, {width: 60})
     doc.fontSize(12)
     doc.font('public/font/Montserrat-Regular.ttf')
     // doc.text('Casier,', 415, height + 20)
