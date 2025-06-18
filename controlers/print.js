@@ -1473,7 +1473,7 @@ function createRecipt(recipt, mode){
     doc.text(`${description} / 0023 din 2025-05-12 / 0023 din 2025-05-12 / 0023 din 2025-05-12`, 115, height + 72 +20, {width: 320, align: 'left'})
 
     doc.fontSize(7)
-    doc.text(`${recipt.client.customer.address} dsakdal; dasdasdkj dsad`, 80, height + 22 +24, {width: 350, align: 'left'})
+    doc.text(`${recipt.client.customer.address} dsakdal; dasdasdkj dsad`, 80, height + 22 +24, {width: 370, align: 'left'})
     doc.fontSize(11)
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`${recipt.client.name}`, 124, height + 5)
@@ -1484,18 +1484,18 @@ function createRecipt(recipt, mode){
 
     doc.dash(3, { space: 3 });
     doc.lineWidth(0.6);
-    doc.moveTo(415, height)
-       .lineTo(415, height + 130)
+    doc.moveTo(425, height)
+       .lineTo(425, height + 130)
        .stroke();
     doc.lineWidth(0.6);
-        doc.moveTo(415, height + 80)
+        doc.moveTo(425, height + 80)
         .lineTo(560, height + 80)
         .stroke();
     doc.undash();
-    doc.image('public/icons/logo_true.png', 435, height + 5, {width: 100})
+    doc.image('public/icons/logo_true.png', 445, height + 5, {width: 80})
     doc.fontSize(10)
     doc.font('public/font/Montserrat-Regular.ttf')
-    doc.text('Semnătură', 425, height + 85)
+    doc.text('Semnătură', 435, height + 85)
 
 
   height = height + 260 - 120
