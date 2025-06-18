@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const printRoutes = require('../controlers/print')
+const printRoutes = require('../controlers/print/print')
 
 
 router.route('/products').post(printRoutes.saleProducts)

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const invoiceRoutes = require('../../controlers/back-office/invoice/controlers.js')
-const printRoutes = require('../../controlers/print');
+const printRoutes = require('../../controlers/print/print.js');
 const reciptRoutes = require('../../controlers/back-office/invoice/recipt.js')
 
 

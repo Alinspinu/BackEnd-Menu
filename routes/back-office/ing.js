@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const ingRoutes = require('../../controlers/back-office/ing')
-const printRoutes = require('../../controlers/print')
+const printRoutes = require('../../controlers/print/print')
 const depsRoutes = require('../../controlers/back-office/deps')
 
 

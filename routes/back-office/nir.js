@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const nirRoutes = require('../../controlers/back-office/nir')
-const printRoutes = require('../../controlers/print')
+const printRoutes = require('../../controlers/print/print')
 
 
 router.route('/save-nir').post(nirRoutes.saveNir);
