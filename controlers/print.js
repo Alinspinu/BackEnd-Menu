@@ -1414,7 +1414,7 @@ function createRecipt(recipt, mode){
 
   const doc = new PDFDocument({
     size: mode ? 'A5' : "A4",
-    layout: "portrait",
+    layout: mode ? 'landscape' :  "portrait",
 });
 
 
