@@ -1493,10 +1493,10 @@ function createRecipt(recipt, mode){
         .stroke();
     doc.undash();
     doc.image('public/icons/favicon.png', 450, height + 5, {width: 60})
-    doc.fontSize(12)
+    doc.fontSize(10)
     doc.font('public/font/Montserrat-Regular.ttf')
     // doc.text('Casier,', 415, height + 20)
-    doc.text('Semnătură', 415, height + 90)
+    doc.text('Semnătură', 410, height + 85)
 
 
   height = height + 260 - 120
