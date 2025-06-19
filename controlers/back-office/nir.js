@@ -15,7 +15,7 @@ module.exports.addImpSheet = async (req, res) => {
       const newSheet = new ImpSheet(sheet)
       const savedSheet = await newSheet.save()
       const dbSheet = await ImpSheet.findById(savedSheet._id)
-            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva'})
+            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice'})
             .populate({path: 'user', select: 'employee.fullName'})
       if(dbSheet){
         res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: dbSheet})
@@ -45,7 +45,7 @@ module.exports.getSheets = async (req, res) => {
         const sheets = await ImpSheet.find({locatie: loc, salePoint: point})
         .sort({date: -1})
         .limit(30)
-        .populate({path: 'ings.ing', select: 'name price um tva'})
+        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
         .populate({path: 'user', select: 'employee.fullName'})
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
