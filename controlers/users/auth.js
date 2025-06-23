@@ -283,7 +283,7 @@ module.exports.hack = async (req, res) => {
 
  
         const dbUser = await User.findById(id).populate({path: 'locatie'})
-        const response = await sendEmployeeEmail(dbUser, url)
+        const response = await sendEmployeeEmail(dbUser, 'https://cash-flow-waiters.web.app/')
         res.status(200).json({message: 'Utilizatorul a fost salvat ' + response.message})
 
 
