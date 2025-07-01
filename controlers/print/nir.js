@@ -112,7 +112,10 @@ function createNir (nir) {
     const availableSpace = doc.page.height - y; // Calculate available space on the page
     // let startY = 10
     // let currentY = y;
-  
+      
+
+    doc.lineWidth(0.1);
+    doc.moveTo(5, 116).lineTo(825, 116).stroke();
 
     // Table headers
     doc.font("public/font/RobotoSlab-Bold.ttf");
@@ -139,8 +142,7 @@ function createNir (nir) {
   
     // doc.moveDown();
   
-    doc.lineWidth(0.1);
-    doc.moveTo(5, 96).lineTo(825, 96).stroke();
+
   
     doc.moveDown();
     // Add table rows
