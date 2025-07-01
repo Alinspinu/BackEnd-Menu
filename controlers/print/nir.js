@@ -143,8 +143,13 @@ function createNir (nir) {
       );
     });
 
+    let pageCount = ingChunks.length
+    if(ingChunks[ingChunks.length -1].length > 30 || (ingChunks[ingChunks.length -1].length > 24) && ingChunks.length === 1 ) {
+        pageCount = pageCount + 1
+    }
+
     ingChunks.forEach((ch, i) => {
-        doc = addIngredients(doc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT, date)
+        doc = addIngredients(doc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT, date, pageCount)
     })
 
 
@@ -152,7 +157,7 @@ function createNir (nir) {
 }
 
 
-function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date) {
+function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date, pageCount) {
        doc.fillColor('black')
     if(page !== 1) {
         y = y - 80
@@ -249,14 +254,14 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     if(page < pageLenght){
         doc.fontSize(10)
           .fillColor('gray')
-          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
+          .text(`Page ${page} of ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
         doc.addPage()
     } else {
         let extraPage = 0
         if(ingredients.length > 30 || (ingredients.length > 24 && page === 1)) {
             doc.fontSize(10)
               .fillColor('gray')
-              .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
+              .text(`Page ${page} of ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
             doc.addPage()
             height = 20
             extraPage = 1
@@ -315,7 +320,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(10)
           .fillColor('gray')
-          .text(`Page ${page + extraPage} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
+          .text(`Page ${page + extraPage} of ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
 
     }
     return doc
