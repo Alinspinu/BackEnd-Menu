@@ -241,7 +241,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           { width: 60, align: "center" }
         );
     })
+    const pageWidth = doc.page.width;
+    const pageHeight = doc.page.height;
+      
     if(page < pageLenght){
+        doc.fontSize(10)
+        //   .fillColor('gray')
+          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 20);
         doc.addPage()
     } else {
         let height = ingredients.length * lineHeigth;
@@ -301,15 +307,11 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
         doc.text(`${date}`, 400, y + height + 55);
 
+        doc.fontSize(10)
+        //   .fillColor('gray')
+          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 20);
+
     }
-
-    const pageWidth = doc.page.width;
-    const pageHeight = doc.page.height;
-  
-    doc.fontSize(10)
-    //   .fillColor('gray')
-      .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 20);
-
     return doc
 }
 
