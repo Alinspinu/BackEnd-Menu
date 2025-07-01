@@ -248,7 +248,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     if(page < pageLenght){
         doc.fontSize(10)
         //   .fillColor('gray')
-          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
+          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 70);
         doc.addPage()
     } else {
         if(ingredients.length > 30 || (ingredients.length > 24 && page === 1)) {
@@ -309,13 +309,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(10)
         //   .fillColor('gray')
-          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
+          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 70);
 
     }
     return doc
 }
 
-  function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 30) {
+  function splitIngredients(arr, firstChunkSize = 28, otherChunkSize = 33) {
     const result = [];
   
     // First chunk
