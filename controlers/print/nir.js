@@ -176,71 +176,13 @@ function createNir (nir) {
     //   lineHeigth = 7
     // }
 
-    const ingChunks = splitIngredients(nir.ingredients, 25)
+    const ingChunks = splitIngredients(nir.ingredients, 10)
 
     const newDoc = addIngredients(doc, ingChunks[0], lineHeigth, y)
 
     
 
     nir.ingredients.forEach((produs, i) => {
-    //   doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
-    //   doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
-    //   doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 25, align: "center" });
-    //   doc.text(round(produs.qty).toString(), 250, y + i * lineHeigth + lineHeigth, {
-    //     width: 30,
-    //     align: "center",
-    //   });
-    //   doc.text(produs.dep.split(' ')[0], 270, y + i * lineHeigth + lineHeigth, {
-    //     width: 65,
-    //     align: "center",
-    //   });
-    //   doc.text(cap(produs.gestiune), 340, y + i * lineHeigth + lineHeigth, {
-    //     width: 50,
-    //     align: "center",
-    //   });
-    //   doc.text(round(produs.price), 390, y + i * lineHeigth + lineHeigth, {
-    //     width: 70,
-    //     align: "center",
-    //   });
-    //   doc.text(round(produs.value), 460, y + i * lineHeigth + lineHeigth, {
-    //     width: 50,
-    //     align: "center",
-    //   });
-    //   doc.text(produs.tva + "%", 510, y + i * lineHeigth + lineHeigth, {
-    //     width: 25,
-    //     align: "center",
-    //   });
-    //   doc.text(round(produs.tvaValue), 535, y + i * lineHeigth + lineHeigth, {
-    //     width: 40,
-    //     align: "center",
-    //   });
-    //   doc.text(round(produs.total), 590, y + i * lineHeigth + lineHeigth, {
-    //     width: 45,
-    //     align: "center",
-    //   });
-    //   doc.text(
-    //     `${produs.sellPrice? produs.sellPrice : 0}`,
-    //     640,
-    //     y + i * lineHeigth + lineHeigth,
-    //     { width: 60, align: "center" }
-    //   );
-    //   doc.text(
-    //     `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
-    //     705,
-    //     y + i * lineHeigth + lineHeigth,
-    //     { width: 60, align: "center" }
-    //   );
-    //   doc.text(
-    //     `${produs.sellPrice
-    //       ? round(
-    //         produs.sellPrice * produs.qty * (produs.tva / 100)
-    //       )
-    //       : "0"
-    //     }`,
-    //     770,
-    //     y + i * lineHeigth + lineHeigth,
-    //     { width: 60, align: "center" }
-    //   );
       valTotal +=  parseFloat(produs.total);
       valoareIntTotal += parseFloat(produs.value);
       valTvaTotal += parseFloat(produs.tvaValue);
@@ -250,8 +192,6 @@ function createNir (nir) {
         parseFloat(produs.qty) *
         (parseFloat(produs.tva) / 100)
       );
-
-      // y += 5
     });
     const height = nir.ingredients.length * lineHeigth;
     newDoc.lineWidth(0.4);
