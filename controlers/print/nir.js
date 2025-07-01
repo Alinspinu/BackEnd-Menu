@@ -73,7 +73,7 @@ function createNir (nir) {
     // doc.moveTo(5, 30).lineTo(340, 30).stroke();
     let titleHeigth = 40
     let headHeigth = titleHeigth + 30
-    let headerHeigth = titleHeigth + 57
+    let headerHeigth = titleHeigth + 77
   
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Bold.ttf");
@@ -124,7 +124,7 @@ function createNir (nir) {
     doc.font("public/font/RobotoSlab-Bold.ttf");
     doc.fontSize(9);
     doc.text("Nr.", 10, headerHeigth, { width: 15 });
-    doc.text("Denumire Articol", 30, headHeigth, { width: 210 });
+    doc.text("Denumire Articol", 30, headerHeigth, { width: 210 });
     doc.text("UM", 215, headerHeigth, { width: 25, align: "center" });
     doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
     doc.text("Tip", 270, headerHeigth, { width: 65, align: "center" });
