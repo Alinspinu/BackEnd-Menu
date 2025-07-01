@@ -307,13 +307,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     const pageHeight = doc.page.height;
   
     doc.fontSize(10)
-      .fillColor('gray')
-      .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 50);
+    //   .fillColor('gray')
+      .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 20);
 
     return doc
 }
 
-  function splitIngredients(arr, firstChunkSize = 28, otherChunkSize = 33) {
+  function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 30) {
     const result = [];
   
     // First chunk
