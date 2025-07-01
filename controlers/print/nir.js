@@ -137,33 +137,9 @@ function createNir (nir) {
     let valTvaVanzare = 0;
     let valTotal = 0;
     let lineHeigth = 14
-    // const ingCount = nir.ingredients.length
-    // if(ingCount >= 10 && ingCount <= 20){
-    //   doc.fontSize(8);
-    //   lineHeigth = 12
-    // }
-    // if(ingCount >= 21 && ingCount <= 30){
-    //   doc.fontSize(7);
-    //   lineHeigth = 10
-    // }
-    // if(ingCount >= 31 && ingCount <= 40){
-    //   doc.fontSize(6);
-    //   lineHeigth = 9
-    // }
-    // if(ingCount > 40){
-    //   doc.fontSize(5);
-    //   lineHeigth = 7
-    // }
-
     const ingChunks = splitIngredients(nir.ingredients)
 
     let pages = ingChunks.length
-
-    let newDoc = doc
-
-
-
-    
 
     nir.ingredients.forEach((produs, i) => {
       valTotal +=  parseFloat(produs.total);
@@ -178,11 +154,11 @@ function createNir (nir) {
     });
 
     ingChunks.forEach((ch, i) => {
-        newDoc = addIngredients(newDoc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT, date)
+        doc = addIngredients(doc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT, date)
     })
 
 
-    return newDoc
+    return doc
 }
 
 
@@ -279,7 +255,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.addPage()
     } else {
         let height = ingredients.length * lineHeigth;
-        if(ingredients.length > 29) {
+        if(ingredients.length > 30 || (ingredients.length > 24 && page === 1)) {
             doc.addPage()
             height = 20
         }
