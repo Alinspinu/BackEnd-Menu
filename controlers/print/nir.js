@@ -199,58 +199,7 @@ function createNir (nir) {
         (parseFloat(produs.tva) / 100)
       );
     });
-    const height = nir.ingredients.length * lineHeigth;
-    newDoc.lineWidth(0.4);
-    newDoc
-      .moveTo(10, y + height + 14)
-      .lineTo(830, y + height + 14)
-      .stroke();
-    newDoc.font("public/font/RobotoSlab-Bold.ttf");
-    newDoc.fontSize(9);
-    newDoc.text("Total:", 370, y + height + 20);
-    newDoc.text(`${round(valoareIntTotal)}`, 460, y + height + 20, {
-      width: 50,
-      align: "center",
-    });
-    newDoc.text(`${round(valTvaTotal)}`, 530, y + height + 20, {
-      width: 50,
-      align: "center",
-    });
-    if (firma.VAT) {
-    newDoc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 20, {
-        width: 50,
-        align: "center",
-      });
-    } else if (!firma.VAT) {
-    newDoc.text(`${round(valTotal)}`, 585, y + height + 20, {
-        width: 50,
-        align: "center",
-      });
-    }
-    newDoc.text(`${round(valVanzare)}`, 705, y + height + 20, {
-      width: 60,
-      align: "center",
-    });
-    newDoc.text(`${round(valTvaVanzare)}`, 770, y + height + 20, {
-      width: 60,
-      align: "center",
-    });
-  
-    newDoc.lineWidth(0.5);
-    newDoc
-      .moveTo(365, y + height + 35)
-      .lineTo(830, y + height + 35)
-      .stroke();
-  
-    // doc.font("Helvetica-Bold");
-    newDoc.fontSize(9);
-    newDoc.text("Responsabil", 80, y + height + 45);
-    newDoc.text(`Data`, 400, y + height + 45);
-    newDoc.text("Semnatura", 680, y + height + 45);
-    newDoc.font("public/font/RobotoSlab-Regular.ttf");
-    newDoc.fontSize(9);
-    // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
-    newDoc.text(`${date}`, 400, y + height + 55);
+
 
     return newDoc
 }
@@ -318,7 +267,63 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght) {
           { width: 60, align: "center" }
         );
     })
-    if(page < pageLenght) doc.addPage()
+    if(page < pageLenght){
+        doc.addPage()
+    } else {
+        const height = ingredients.length * lineHeigth;
+        doc.lineWidth(0.4);
+        doc
+          .moveTo(10, y + height + 14)
+          .lineTo(830, y + height + 14)
+          .stroke();
+        doc.font("public/font/RobotoSlab-Bold.ttf");
+        doc.fontSize(9);
+        doc.text("Total:", 370, y + height + 20);
+        doc.text(`${round(valoareIntTotal)}`, 460, y + height + 20, {
+          width: 50,
+          align: "center",
+        });
+        doc.text(`${round(valTvaTotal)}`, 530, y + height + 20, {
+          width: 50,
+          align: "center",
+        });
+        if (firma.VAT) {
+        doc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 20, {
+            width: 50,
+            align: "center",
+          });
+        } else if (!firma.VAT) {
+        doc.text(`${round(valTotal)}`, 585, y + height + 20, {
+            width: 50,
+            align: "center",
+          });
+        }
+        doc.text(`${round(valVanzare)}`, 705, y + height + 20, {
+          width: 60,
+          align: "center",
+        });
+        doc.text(`${round(valTvaVanzare)}`, 770, y + height + 20, {
+          width: 60,
+          align: "center",
+        });
+      
+        doc.lineWidth(0.5);
+        newDoc
+          .moveTo(365, y + height + 35)
+          .lineTo(830, y + height + 35)
+          .stroke();
+      
+        // doc.font("Helvetica-Bold");
+        doc.fontSize(9);
+        doc.text("Responsabil", 80, y + height + 45);
+        doc.text(`Data`, 400, y + height + 45);
+        doc.text("Semnatura", 680, y + height + 45);
+        doc.font("public/font/RobotoSlab-Regular.ttf");
+        doc.fontSize(9);
+        // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
+        doc.text(`${date}`, 400, y + height + 55);
+
+    }
     return doc
 }
 
