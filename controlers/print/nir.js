@@ -71,44 +71,47 @@ function createNir (nir) {
   
     // doc.lineWidth(0.4);
     // doc.moveTo(5, 30).lineTo(340, 30).stroke();
+    let titleHeigth = 40
+    let headHeigth = titleHeigth + 20
+    let headerHeigth = titleHeigth + 57
   
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Bold.ttf");
     doc
       .fontSize(12)
-      .text("Nota de receptie si constatare de diferente", 275, 35, {
+      .text("Nota de receptie si constatare de diferente", 275, titleHeigth, {
         underline: true,
       });
   
     doc.moveDown();
     // doc.font("Helvetica-Bold");
     doc.fontSize(9);
-    doc.text("Nr. NIR", 20, 70, { width: 80, align: "center" });
-    doc.text("Data Document", 110, 70, { width: 120, align: "center" });
-    doc.text("Data Receptie", 230, 70, { width: 120, align: "center" });
+    doc.text("Nr. NIR", 20, headHeigth, { width: 80, align: "center" });
+    doc.text("Data Document", 110, headHeigth, { width: 120, align: "center" });
+    doc.text("Data Receptie", 230, headHeigth, { width: 120, align: "center" });
 
-    doc.text("Furnizor", 370, 70, { width: 220, align: "center" });
-    doc.text("CIF", 590, 70, { width: 120, align: "center" });
-    doc.text("Nr.Doc", 710, 70, { width: 80, align: "center" });
+    doc.text("Furnizor", 370, headHeigth, { width: 220, align: "center" });
+    doc.text("CIF", 590, headHeigth, { width: 120, align: "center" });
+    doc.text("Nr.Doc", 710, headHeigth, { width: 80, align: "center" });
   
     doc.moveDown();
     doc.lineWidth(0.3);
     doc.moveTo(10, 82).lineTo(800, 82).stroke();
-  
+    
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Regular.ttf");
     doc.fontSize(9);
-    doc.text(nir.index, 20, 83, { width: 80, align: "center" });
-    doc.text(date, 110, 83, { width: 120, align: "center" });
-    doc.text(recDate, 230, 83, { width: 120, align: "center" });
+    doc.text(nir.index, 20, headHeigth + 23, { width: 80, align: "center" });
+    doc.text(date, 110, headHeigth + 23, { width: 120, align: "center" });
+    doc.text(recDate, 230, headHeigth + 23, { width: 120, align: "center" });
 
-    doc.text(nir.suplier.name, 370, 83, { width: 220, align: "center" });
-    doc.text(nir.suplier.vatNumber, 590, 83, { width: 120, align: "center" });
-    doc.text(nir.nrDoc, 710, 83, { width: 80, align: "center" });
+    doc.text(nir.suplier.name, 370, headHeigth + 23, { width: 220, align: "center" });
+    doc.text(nir.suplier.vatNumber, 590, headHeigth + 23, { width: 120, align: "center" });
+    doc.text(nir.nrDoc, 710, headHeigth + 23, { width: 100, align: "center" });
   
     doc.moveDown();
-      let headerHeigth = 117
-    let y = 120;
+  
+    let y = 115;
     const availableSpace = doc.page.height - y; // Calculate available space on the page
     // let startY = 10
     // let currentY = y;
