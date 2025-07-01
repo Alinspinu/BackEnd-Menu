@@ -716,10 +716,14 @@ module.exports.printInventary = async(req, res, next) => {
   let fapticValue = 0
 
    sortedIngs.forEach((el, i) => {
+    if(!el.ing) {
+      console.log(el)
+    } else {
       const faptic = round(el.faptic * el.ing.price)
       const scriptic = round(el.scriptic * el.ing.price)
       scripticValue += scriptic
       fapticValue += faptic
+    }
     worksheet.addRow(
       [
         `${i+1}`,

@@ -277,20 +277,6 @@ module.exports.registerNewEmployee = async (req, res) => {
         console.log(error)
     }
 }
-module.exports.hack = async (req, res) => {
-    try{
-        const {id} = req.query
-
- 
-        const dbUser = await User.findById(id).populate({path: 'locatie'})
-        const response = await sendEmployeeEmail(dbUser, 'https://cash-flow-waiters.web.app/')
-        res.status(200).json({message: 'Utilizatorul a fost salvat ' + response.message})
-
-
-    } catch(error){
-        console.log(error)
-    }
-}
 
 
 module.exports.registerIn = async (req, res) => {
