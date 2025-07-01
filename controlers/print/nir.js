@@ -41,7 +41,7 @@ function createNir (nir) {
       .toLocaleDateString("en-GB", options)
       .replace(/\//g, "-");
 
-    const doc = new PDFDocument({
+    let doc = new PDFDocument({
       size: "A4",
       layout: "landscape",
     });
@@ -140,6 +140,8 @@ function createNir (nir) {
     const ingChunks = splitIngredients(nir.ingredients)
 
     let pages = ingChunks.length
+
+    
 
     nir.ingredients.forEach((produs, i) => {
       valTotal +=  parseFloat(produs.total);
