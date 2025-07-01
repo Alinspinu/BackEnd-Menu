@@ -118,13 +118,13 @@ function createNir (nir) {
       
 
     doc.lineWidth(0.1);
-    doc.moveTo(5, headHeigth + 23).lineTo(825, headHeigth + 23).stroke();
+    doc.moveTo(5, headerHeigth - 2).lineTo(825, headerHeigth - 2).stroke();
 
     // Table headers
     doc.font("public/font/RobotoSlab-Bold.ttf");
     doc.fontSize(9);
-    doc.text("Nr.", 10, y, { width: 15 });
-    doc.text("Denumire Articol", 30, y, { width: 210 });
+    doc.text("Nr.", 10, headerHeigth, { width: 15 });
+    doc.text("Denumire Articol", 30, headHeigth, { width: 210 });
     doc.text("UM", 215, headerHeigth, { width: 25, align: "center" });
     doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
     doc.text("Tip", 270, headerHeigth, { width: 65, align: "center" });
