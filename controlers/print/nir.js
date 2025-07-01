@@ -153,6 +153,7 @@ function createNir (nir) {
 
 
 function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date) {
+       doc.fillColor('black')
     if(page !== 1) {
         y = y - 80
     } 
@@ -247,13 +248,18 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     let height = ingredients.length * lineHeigth;
     if(page < pageLenght){
         doc.fontSize(10)
-        //   .fillColor('gray')
+          .fillColor('gray')
           .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
         doc.addPage()
     } else {
+        let extraPage = 0
         if(ingredients.length > 30 || (ingredients.length > 24 && page === 1)) {
+            doc.fontSize(10)
+              .fillColor('gray')
+              .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
             doc.addPage()
             height = 20
+            extraPage = 1
         }
         doc.lineWidth(0.4);
         doc
@@ -308,14 +314,14 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.text(`${date}`, 400, y + height + 55);
 
         doc.fontSize(10)
-        //   .fillColor('gray')
-          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
+          .fillColor('gray')
+          .text(`Page ${page + extraPage} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 90);
 
     }
     return doc
 }
 
-  function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 32) {
+  function splitIngredients(arr, firstChunkSize = 28, otherChunkSize = 33) {
     const result = [];
   
     // First chunk
