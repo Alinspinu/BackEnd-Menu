@@ -257,6 +257,7 @@ function createNir (nir) {
 
 
 function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght) {
+    if(page !== 1) y = y - 60
     ingredients.forEach((produs, i) => {
         doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
         doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
