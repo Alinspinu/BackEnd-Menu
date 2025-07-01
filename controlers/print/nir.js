@@ -278,8 +278,11 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     if(page < pageLenght){
         doc.addPage()
     } else {
-        if(ingredients.length > 29) doc.addPage()
-        const height = ingredients.length * lineHeigth;
+        let height = ingredients.length * lineHeigth;
+        if(ingredients.length > 29) {
+            doc.addPage()
+            height = 20
+        }
         doc.lineWidth(0.4);
         doc
           .moveTo(10, y + height + 14)
