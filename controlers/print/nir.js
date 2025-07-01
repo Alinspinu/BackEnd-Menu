@@ -310,7 +310,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         });
       
         doc.lineWidth(0.5);
-        newDoc
+        doc
           .moveTo(365, y + height + 35)
           .lineTo(830, y + height + 35)
           .stroke();
