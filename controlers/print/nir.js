@@ -112,23 +112,11 @@ function createNir (nir) {
     doc.moveDown();
   
     let y = headerHeigth;
-    const availableSpace = doc.page.height - y; // Calculate available space on the page
-    // let startY = 10
-    // let currentY = y;
-      
-
+ 
     doc.lineWidth(0.1);
     doc.moveTo(5, headerHeigth - 2).lineTo(825, headerHeigth - 2).stroke();
-
-    // Table headers
-
-  
-    // doc.moveDown();
-  
-
   
     doc.moveDown();
-    // Add table rows
   
     doc.fontSize(9);
     let valoareIntTotal = 0;
@@ -314,6 +302,14 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.text(`${date}`, 400, y + height + 55);
 
     }
+
+    const pageWidth = doc.page.width;
+    const pageHeight = doc.page.height;
+  
+    doc.fontSize(10)
+      .fillColor('gray')
+      .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 50);
+
     return doc
 }
 
