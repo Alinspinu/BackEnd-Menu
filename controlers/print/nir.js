@@ -93,7 +93,7 @@ function createNir (nir) {
   
     doc.moveDown();
     doc.lineWidth(0.3);
-    doc.moveTo(10, 62).lineTo(800, 82).stroke();
+    doc.moveTo(10, 82).lineTo(800, 82).stroke();
   
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Regular.ttf");
@@ -108,7 +108,7 @@ function createNir (nir) {
   
     doc.moveDown();
       let headerHeigth = 117
-    let y = 100;
+    let y = 120;
     const availableSpace = doc.page.height - y; // Calculate available space on the page
     // let startY = 10
     // let currentY = y;
