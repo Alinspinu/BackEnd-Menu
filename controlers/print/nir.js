@@ -254,14 +254,14 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     if(page < pageLenght){
         doc.fontSize(10)
           .fillColor('gray')
-          .text(`Page ${page} of ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
+          .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
         doc.addPage()
     } else {
         let extraPage = 0
         if(ingredients.length > 30 || (ingredients.length > 24 && page === 1)) {
             doc.fontSize(10)
               .fillColor('gray')
-              .text(`Page ${page} of ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
+              .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
             doc.addPage()
             height = 20
             extraPage = 1
@@ -320,7 +320,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(10)
           .fillColor('gray')
-          .text(`Page ${page + extraPage} of ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
+          .text(`Pagina ${page + extraPage} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
 
     }
     return doc
