@@ -121,27 +121,7 @@ function createNir (nir) {
     doc.moveTo(5, headerHeigth - 2).lineTo(825, headerHeigth - 2).stroke();
 
     // Table headers
-    doc.font("public/font/RobotoSlab-Bold.ttf");
-    doc.fontSize(9);
-    doc.text("Nr.", 10, headerHeigth, { width: 15 });
-    doc.text("Denumire Articol", 30, headerHeigth, { width: 210 });
-    doc.text("UM", 215, headerHeigth, { width: 25, align: "center" });
-    doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
-    doc.text("Tip", 270, headerHeigth, { width: 65, align: "center" });
-    doc.text("Gestiune", 340, headerHeigth, { width: 50, align: "center" });
-  
-    if (firma.VAT) {
-      doc.text("Pret/F/Tva", 390, headerHeigth, { width: 70, align: "center" });
-    } else if (!firma.VAT) {
-      doc.text("Pret", 390, headerHeigth, { width: 50, align: "center" });
-    }
-    doc.text("Valoare", 460, headerHeigth, { width: 50, align: "center" });
-    doc.text("Tva%", 510, headerHeigth, { width: 30, align: "center" });
-    doc.text("Val Tva", 540, headerHeigth, { width: 40, align: "center" });
-    doc.text("Total", 590, headerHeigth, { width: 50, align: "center" });
-    doc.text("Pret Vanzare", 640, headerHeigth, { width: 65, align: "center" });
-    doc.text("Val Vanzare", 705, headerHeigth, { width: 60, align: "center" });
-    doc.text("Total Tva", 770, headerHeigth, { width: 60, align: "center" });
+
   
     // doc.moveDown();
   
@@ -208,7 +188,33 @@ function createNir (nir) {
 
 
 function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date) {
-    if(page !== 1) y = y - 60
+    if(page !== 1) {
+        y = y - 60
+    } 
+       let headerHeigth = y
+        doc.font("public/font/RobotoSlab-Bold.ttf");
+        doc.fontSize(9);
+        doc.text("Nr.", 10, headerHeigth, { width: 15 });
+        doc.text("Denumire Articol", 30, headerHeigth, { width: 210 });
+        doc.text("UM", 215, headerHeigth, { width: 25, align: "center" });
+        doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
+        doc.text("Tip", 270, headerHeigth, { width: 65, align: "center" });
+        doc.text("Gestiune", 340, headerHeigth, { width: 50, align: "center" });
+    
+        if (firma.VAT) {
+        doc.text("Pret/F/Tva", 390, headerHeigth, { width: 70, align: "center" });
+        } else if (!firma.VAT) {
+        doc.text("Pret", 390, headerHeigth, { width: 50, align: "center" });
+        }
+        doc.text("Valoare", 460, headerHeigth, { width: 50, align: "center" });
+        doc.text("Tva%", 510, headerHeigth, { width: 30, align: "center" });
+        doc.text("Val Tva", 540, headerHeigth, { width: 40, align: "center" });
+        doc.text("Total", 590, headerHeigth, { width: 50, align: "center" });
+        doc.text("Pret Vanzare", 640, headerHeigth, { width: 65, align: "center" });
+        doc.text("Val Vanzare", 705, headerHeigth, { width: 60, align: "center" });
+        doc.text("Total Tva", 770, headerHeigth, { width: 60, align: "center" });
+
+
     ingredients.forEach((produs, i) => {
         doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
         doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
