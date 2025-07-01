@@ -49,17 +49,17 @@ function createNir (nir) {
     // Add header
     doc.font("public/font/RobotoSlab-Regular.ttf")
     doc
-      .fontSize(6)
+      .fontSize(8)
       .text(
         `${firma.bussinessName} ${firma.vatNumber} ${firma.register} `,
         10,
         10,
         {
-          width: 280,
+          width: 380,
         }
       );
-    doc.fontSize(6).text(`${firma.address}`, 10, 15, {
-      width: 280,
+    doc.fontSize(6).text(`${firma.address}`, 10, 20, {
+      width: 380,
     });
 
     doc.fontSize(9).text(`Punct de lucru: ${nir.salePoint.name.toUpperCase()}`, 600, 15, {
@@ -69,7 +69,7 @@ function createNir (nir) {
     doc.moveDown();
   
     doc.lineWidth(0.4);
-    doc.moveTo(5, 22).lineTo(280, 22).stroke();
+    doc.moveTo(5, 30).lineTo(380, 30).stroke();
   
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Bold.ttf");
