@@ -199,7 +199,7 @@ function createNir (nir) {
     });
 
     ingChunks.forEach((ch, i) => {
-        newDoc = addIngredients(newDoc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT)
+        newDoc = addIngredients(newDoc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT, date)
     })
 
 
@@ -207,7 +207,7 @@ function createNir (nir) {
 }
 
 
-function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat) {
+function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date) {
     if(page !== 1) y = y - 60
     ingredients.forEach((produs, i) => {
         doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
