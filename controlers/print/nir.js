@@ -175,70 +175,76 @@ function createNir (nir) {
     //   doc.fontSize(5);
     //   lineHeigth = 7
     // }
+
+    const ingChunks = splitIngredients(nir.ingredients, 25)
+
+    const newDoc = addIngredients(doc, ingChunks[0], lineHeigth, y)
+
+    
+
     nir.ingredients.forEach((produs, i) => {
-      doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
-      doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
-      doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 25, align: "center" });
-      doc.text(round(produs.qty).toString(), 250, y + i * lineHeigth + lineHeigth, {
-        width: 30,
-        align: "center",
-      });
-      doc.text(produs.dep.split(' ')[0], 270, y + i * lineHeigth + lineHeigth, {
-        width: 65,
-        align: "center",
-      });
-      doc.text(cap(produs.gestiune), 340, y + i * lineHeigth + lineHeigth, {
-        width: 50,
-        align: "center",
-      });
-      doc.text(round(produs.price), 390, y + i * lineHeigth + lineHeigth, {
-        width: 70,
-        align: "center",
-      });
-      doc.text(round(produs.value), 460, y + i * lineHeigth + lineHeigth, {
-        width: 50,
-        align: "center",
-      });
-      doc.text(produs.tva + "%", 510, y + i * lineHeigth + lineHeigth, {
-        width: 25,
-        align: "center",
-      });
-      doc.text(round(produs.tvaValue), 535, y + i * lineHeigth + lineHeigth, {
-        width: 40,
-        align: "center",
-      });
-      doc.text(round(produs.total), 590, y + i * lineHeigth + lineHeigth, {
-        width: 45,
-        align: "center",
-      });
-      doc.text(
-        `${produs.sellPrice? produs.sellPrice : 0}`,
-        640,
-        y + i * lineHeigth + lineHeigth,
-        { width: 60, align: "center" }
-      );
-      doc.text(
-        `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
-        705,
-        y + i * lineHeigth + lineHeigth,
-        { width: 60, align: "center" }
-      );
-      doc.text(
-        `${produs.sellPrice
-          ? round(
-            produs.sellPrice * produs.qty * (produs.tva / 100)
-          )
-          : "0"
-        }`,
-        770,
-        y + i * lineHeigth + lineHeigth,
-        { width: 60, align: "center" }
-      );
+    //   doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
+    //   doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
+    //   doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 25, align: "center" });
+    //   doc.text(round(produs.qty).toString(), 250, y + i * lineHeigth + lineHeigth, {
+    //     width: 30,
+    //     align: "center",
+    //   });
+    //   doc.text(produs.dep.split(' ')[0], 270, y + i * lineHeigth + lineHeigth, {
+    //     width: 65,
+    //     align: "center",
+    //   });
+    //   doc.text(cap(produs.gestiune), 340, y + i * lineHeigth + lineHeigth, {
+    //     width: 50,
+    //     align: "center",
+    //   });
+    //   doc.text(round(produs.price), 390, y + i * lineHeigth + lineHeigth, {
+    //     width: 70,
+    //     align: "center",
+    //   });
+    //   doc.text(round(produs.value), 460, y + i * lineHeigth + lineHeigth, {
+    //     width: 50,
+    //     align: "center",
+    //   });
+    //   doc.text(produs.tva + "%", 510, y + i * lineHeigth + lineHeigth, {
+    //     width: 25,
+    //     align: "center",
+    //   });
+    //   doc.text(round(produs.tvaValue), 535, y + i * lineHeigth + lineHeigth, {
+    //     width: 40,
+    //     align: "center",
+    //   });
+    //   doc.text(round(produs.total), 590, y + i * lineHeigth + lineHeigth, {
+    //     width: 45,
+    //     align: "center",
+    //   });
+    //   doc.text(
+    //     `${produs.sellPrice? produs.sellPrice : 0}`,
+    //     640,
+    //     y + i * lineHeigth + lineHeigth,
+    //     { width: 60, align: "center" }
+    //   );
+    //   doc.text(
+    //     `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
+    //     705,
+    //     y + i * lineHeigth + lineHeigth,
+    //     { width: 60, align: "center" }
+    //   );
+    //   doc.text(
+    //     `${produs.sellPrice
+    //       ? round(
+    //         produs.sellPrice * produs.qty * (produs.tva / 100)
+    //       )
+    //       : "0"
+    //     }`,
+    //     770,
+    //     y + i * lineHeigth + lineHeigth,
+    //     { width: 60, align: "center" }
+    //   );
       valTotal +=  parseFloat(produs.total);
       valoareIntTotal += parseFloat(produs.value);
       valTvaTotal += parseFloat(produs.tvaValue);
-      valVanzare +=
-        parseFloat(produs.sellPrice) * parseFloat(produs.qty);
+      valVanzare += parseFloat(produs.sellPrice) * parseFloat(produs.qty);
       valTvaVanzare += round(
         parseFloat(produs.sellPrice) *
         parseFloat(produs.qty) *
@@ -248,60 +254,134 @@ function createNir (nir) {
       // y += 5
     });
     const height = nir.ingredients.length * lineHeigth;
-    doc.lineWidth(0.4);
-    doc
+    newDoc.lineWidth(0.4);
+    newDoc
       .moveTo(10, y + height + 14)
       .lineTo(830, y + height + 14)
       .stroke();
-    doc.font("public/font/RobotoSlab-Bold.ttf");
-    doc.fontSize(9);
-    doc.text("Total:", 370, y + height + 20);
-    doc.text(`${round(valoareIntTotal)}`, 460, y + height + 20, {
+    newDoc.font("public/font/RobotoSlab-Bold.ttf");
+    newDoc.fontSize(9);
+    newDoc.text("Total:", 370, y + height + 20);
+    newDoc.text(`${round(valoareIntTotal)}`, 460, y + height + 20, {
       width: 50,
       align: "center",
     });
-    doc.text(`${round(valTvaTotal)}`, 530, y + height + 20, {
+    newDoc.text(`${round(valTvaTotal)}`, 530, y + height + 20, {
       width: 50,
       align: "center",
     });
     if (firma.VAT) {
-      doc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 20, {
+    newDoc.text(`${round(valTvaTotal + valoareIntTotal)}`, 585, y + height + 20, {
         width: 50,
         align: "center",
       });
     } else if (!firma.VAT) {
-      doc.text(`${round(valTotal)}`, 585, y + height + 20, {
+    newDoc.text(`${round(valTotal)}`, 585, y + height + 20, {
         width: 50,
         align: "center",
       });
     }
-    doc.text(`${round(valVanzare)}`, 705, y + height + 20, {
+    newDoc.text(`${round(valVanzare)}`, 705, y + height + 20, {
       width: 60,
       align: "center",
     });
-    doc.text(`${round(valTvaVanzare)}`, 770, y + height + 20, {
+    newDoc.text(`${round(valTvaVanzare)}`, 770, y + height + 20, {
       width: 60,
       align: "center",
     });
   
-    doc.lineWidth(0.5);
-    doc
+    newDoc.lineWidth(0.5);
+    newDoc
       .moveTo(365, y + height + 35)
       .lineTo(830, y + height + 35)
       .stroke();
   
     // doc.font("Helvetica-Bold");
-    doc.fontSize(9);
-    doc.text("Responsabil", 80, y + height + 45);
-    doc.text(`Data`, 400, y + height + 45);
-    doc.text("Semnatura", 680, y + height + 45);
-    doc.font("public/font/RobotoSlab-Regular.ttf");
-    doc.fontSize(9);
+    newDoc.fontSize(9);
+    newDoc.text("Responsabil", 80, y + height + 45);
+    newDoc.text(`Data`, 400, y + height + 45);
+    newDoc.text("Semnatura", 680, y + height + 45);
+    newDoc.font("public/font/RobotoSlab-Regular.ttf");
+    newDoc.fontSize(9);
     // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
-    doc.text(`${date}`, 400, y + height + 55);
+    newDoc.text(`${date}`, 400, y + height + 55);
 
+    return newDoc
+}
+
+
+function addIngredients(doc, ingredients, lineHeigth, y) {
+
+    ingredients.forEach((produs, i) => {
+        doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
+        doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
+        doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 25, align: "center" });
+        doc.text(round(produs.qty).toString(), 250, y + i * lineHeigth + lineHeigth, {
+          width: 30,
+          align: "center",
+        });
+        doc.text(produs.dep.split(' ')[0], 270, y + i * lineHeigth + lineHeigth, {
+          width: 65,
+          align: "center",
+        });
+        doc.text(cap(produs.gestiune), 340, y + i * lineHeigth + lineHeigth, {
+          width: 50,
+          align: "center",
+        });
+        doc.text(round(produs.price), 390, y + i * lineHeigth + lineHeigth, {
+          width: 70,
+          align: "center",
+        });
+        doc.text(round(produs.value), 460, y + i * lineHeigth + lineHeigth, {
+          width: 50,
+          align: "center",
+        });
+        doc.text(produs.tva + "%", 510, y + i * lineHeigth + lineHeigth, {
+          width: 25,
+          align: "center",
+        });
+        doc.text(round(produs.tvaValue), 535, y + i * lineHeigth + lineHeigth, {
+          width: 40,
+          align: "center",
+        });
+        doc.text(round(produs.total), 590, y + i * lineHeigth + lineHeigth, {
+          width: 45,
+          align: "center",
+        });
+        doc.text(
+          `${produs.sellPrice? produs.sellPrice : 0}`,
+          640,
+          y + i * lineHeigth + lineHeigth,
+          { width: 60, align: "center" }
+        );
+        doc.text(
+          `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
+          705,
+          y + i * lineHeigth + lineHeigth,
+          { width: 60, align: "center" }
+        );
+        doc.text(
+          `${produs.sellPrice
+            ? round(
+              produs.sellPrice * produs.qty * (produs.tva / 100)
+            )
+            : "0"
+          }`,
+          770,
+          y + i * lineHeigth + lineHeigth,
+          { width: 60, align: "center" }
+        );
+    })
     return doc
 }
+
+function splitIngredients(arr, chunkSize = 25) {
+    const result = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+      result.push(arr.slice(i, i + chunkSize));
+    }
+    return result;
+  }
 
 
 function cap(value) {
