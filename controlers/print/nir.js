@@ -152,23 +152,23 @@ function createNir (nir) {
     let valTvaVanzare = 0;
     let valTotal = 0;
     let lineHeigth = 14
-    const ingCount = nir.ingredients.length
-    if(ingCount >= 10 && ingCount <= 20){
-      doc.fontSize(8);
-      lineHeigth = 12
-    }
-    if(ingCount >= 21 && ingCount <= 30){
-      doc.fontSize(7);
-      lineHeigth = 10
-    }
-    if(ingCount >= 31 && ingCount <= 40){
-      doc.fontSize(6);
-      lineHeigth = 9
-    }
-    if(ingCount > 40){
-      doc.fontSize(5);
-      lineHeigth = 7
-    }
+    // const ingCount = nir.ingredients.length
+    // if(ingCount >= 10 && ingCount <= 20){
+    //   doc.fontSize(8);
+    //   lineHeigth = 12
+    // }
+    // if(ingCount >= 21 && ingCount <= 30){
+    //   doc.fontSize(7);
+    //   lineHeigth = 10
+    // }
+    // if(ingCount >= 31 && ingCount <= 40){
+    //   doc.fontSize(6);
+    //   lineHeigth = 9
+    // }
+    // if(ingCount > 40){
+    //   doc.fontSize(5);
+    //   lineHeigth = 7
+    // }
     nir.ingredients.forEach((produs, i) => {
       doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
       doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
