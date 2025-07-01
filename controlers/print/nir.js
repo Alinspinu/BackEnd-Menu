@@ -72,7 +72,7 @@ function createNir (nir) {
     // doc.lineWidth(0.4);
     // doc.moveTo(5, 30).lineTo(340, 30).stroke();
     let titleHeigth = 40
-    let headHeigth = titleHeigth + 20
+    let headHeigth = titleHeigth + 30
     let headerHeigth = titleHeigth + 57
   
     doc.moveDown();
@@ -96,22 +96,22 @@ function createNir (nir) {
   
     doc.moveDown();
     doc.lineWidth(0.3);
-    doc.moveTo(10, 82).lineTo(800, 82).stroke();
+    doc.moveTo(10, 82).lineTo(800, headHeigth + 12).stroke();
     
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Regular.ttf");
     doc.fontSize(9);
-    doc.text(nir.index, 20, headHeigth + 23, { width: 80, align: "center" });
-    doc.text(date, 110, headHeigth + 23, { width: 120, align: "center" });
-    doc.text(recDate, 230, headHeigth + 23, { width: 120, align: "center" });
+    doc.text(nir.index, 20, headHeigth + 13, { width: 80, align: "center" });
+    doc.text(date, 110, headHeigth + 13, { width: 120, align: "center" });
+    doc.text(recDate, 230, headHeigth + 13, { width: 120, align: "center" });
 
-    doc.text(nir.suplier.name, 370, headHeigth + 23, { width: 220, align: "center" });
-    doc.text(nir.suplier.vatNumber, 590, headHeigth + 23, { width: 120, align: "center" });
-    doc.text(nir.nrDoc, 710, headHeigth + 23, { width: 100, align: "center" });
+    doc.text(nir.suplier.name, 370, headHeigth + 13, { width: 220, align: "center" });
+    doc.text(nir.suplier.vatNumber, 590, headHeigth + 13, { width: 120, align: "center" });
+    doc.text(nir.nrDoc, 710, headHeigth + 13, { width: 100, align: "center" });
   
     doc.moveDown();
   
-    let y = 115;
+    let y = headerHeigth;
     const availableSpace = doc.page.height - y; // Calculate available space on the page
     // let startY = 10
     // let currentY = y;
