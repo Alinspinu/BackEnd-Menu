@@ -244,13 +244,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     const pageWidth = doc.page.width;
     const pageHeight = doc.page.height;
       
+    let height = ingredients.length * lineHeigth;
     if(page < pageLenght){
         doc.fontSize(10)
         //   .fillColor('gray')
-          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 20);
+          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, height + 20);
         doc.addPage()
     } else {
-        let height = ingredients.length * lineHeigth;
         if(ingredients.length > 30 || (ingredients.length > 24 && page === 1)) {
             doc.addPage()
             height = 20
@@ -309,7 +309,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(10)
         //   .fillColor('gray')
-          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, pageHeight - 20);
+          .text(`Page ${page} of ${pageLenght}`, pageWidth / 2 - 40, height + 20);
 
     }
     return doc
