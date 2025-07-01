@@ -183,7 +183,7 @@ function createNir (nir) {
     let newDoc = doc
 
     ingChunks.forEach((ch, i) => {
-        newDoc = addIngredients(newDoc, ch, lineHeigth, y, i, pages)
+        newDoc = addIngredients(newDoc, ch, lineHeigth, y, i+1, pages)
     })
 
     
