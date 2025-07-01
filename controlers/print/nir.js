@@ -177,7 +177,7 @@ function createNir (nir) {
         width: 30,
         align: "center",
       });
-      doc.text(produs.dep, 270, y + i * lineHeigth + lineHeigth, {
+      doc.text(produs.dep.split(' ')[0], 270, y + i * lineHeigth + lineHeigth, {
         width: 65,
         align: "center",
       });
