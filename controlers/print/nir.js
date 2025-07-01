@@ -299,4 +299,8 @@ function createNir (nir) {
 }
 
 
+function cap(value) {
+    return String(value).charAt(0).toUpperCase() + String(value).slice(1);
+  }
+
 module.exports = {createNir}
