@@ -178,7 +178,13 @@ function createNir (nir) {
 
     const ingChunks = splitIngredients(nir.ingredients, 10)
 
-    const newDoc = addIngredients(doc, ingChunks[0], lineHeigth, y)
+    let pages = ingChunks.length
+
+    let newDoc = doc
+
+    ingChunks.forEach((ch, i) => {
+        newDoc = addIngredients(newDoc, ch, lineHeigth, y, i, pages)
+    })
 
     
 
@@ -250,8 +256,7 @@ function createNir (nir) {
 }
 
 
-function addIngredients(doc, ingredients, lineHeigth, y) {
-
+function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght) {
     ingredients.forEach((produs, i) => {
         doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
         doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
@@ -312,6 +317,7 @@ function addIngredients(doc, ingredients, lineHeigth, y) {
           { width: 60, align: "center" }
         );
     })
+    if(page < pageLenght) doc.addPage()
     return doc
 }
 
