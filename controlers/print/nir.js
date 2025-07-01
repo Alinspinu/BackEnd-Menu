@@ -201,9 +201,9 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.text("Tip", 270, headerHeigth, { width: 65, align: "center" });
         doc.text("Gestiune", 340, headerHeigth, { width: 50, align: "center" });
     
-        if (firma.VAT) {
+        if (vat) {
         doc.text("Pret/F/Tva", 390, headerHeigth, { width: 70, align: "center" });
-        } else if (!firma.VAT) {
+        } else {
         doc.text("Pret", 390, headerHeigth, { width: 50, align: "center" });
         }
         doc.text("Valoare", 460, headerHeigth, { width: 50, align: "center" });
