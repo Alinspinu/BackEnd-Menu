@@ -155,7 +155,7 @@ function createNir (nir) {
     //   lineHeigth = 7
     // }
 
-    const ingChunks = splitIngredients(nir.ingredients, 25)
+    const ingChunks = splitIngredients(nir.ingredients)
 
     let pages = ingChunks.length
 
@@ -335,7 +335,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     return doc
 }
 
-  function splitIngredients(arr, firstChunkSize = 28, otherChunkSize = 35) {
+  function splitIngredients(arr, firstChunkSize = 28, otherChunkSize = 33) {
     const result = [];
   
     // First chunk
