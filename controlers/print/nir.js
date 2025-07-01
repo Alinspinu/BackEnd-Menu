@@ -58,8 +58,9 @@ function createNir (nir) {
           width: 380,
         }
       );
-    doc.fontSize(6).text(`${firma.address}`, 10, 20, {
+    doc.fontSize(7).text(`${firma.address}`, 10, 20, {
       width: 380,
+      underline: true
     });
 
     doc.fontSize(9).text(`Punct de lucru: ${nir.salePoint.name.toUpperCase()}`, 600, 15, {
@@ -68,45 +69,45 @@ function createNir (nir) {
   
     doc.moveDown();
   
-    doc.lineWidth(0.4);
-    doc.moveTo(5, 30).lineTo(380, 30).stroke();
+    // doc.lineWidth(0.4);
+    // doc.moveTo(5, 30).lineTo(340, 30).stroke();
   
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Bold.ttf");
     doc
       .fontSize(12)
-      .text("Nota de receptie si constatare de diferente", 275, 25, {
+      .text("Nota de receptie si constatare de diferente", 275, 35, {
         underline: true,
       });
   
     doc.moveDown();
     // doc.font("Helvetica-Bold");
     doc.fontSize(9);
-    doc.text("Nr. NIR", 20, 50, { width: 80, align: "center" });
-    doc.text("Data Document", 110, 50, { width: 120, align: "center" });
-    doc.text("Data Receptie", 230, 50, { width: 120, align: "center" });
+    doc.text("Nr. NIR", 20, 70, { width: 80, align: "center" });
+    doc.text("Data Document", 110, 70, { width: 120, align: "center" });
+    doc.text("Data Receptie", 230, 70, { width: 120, align: "center" });
 
-    doc.text("Furnizor", 370, 50, { width: 220, align: "center" });
-    doc.text("CIF", 590, 50, { width: 120, align: "center" });
-    doc.text("Nr.Doc", 710, 50, { width: 80, align: "center" });
+    doc.text("Furnizor", 370, 70, { width: 220, align: "center" });
+    doc.text("CIF", 590, 70, { width: 120, align: "center" });
+    doc.text("Nr.Doc", 710, 70, { width: 80, align: "center" });
   
     doc.moveDown();
     doc.lineWidth(0.3);
-    doc.moveTo(10, 62).lineTo(800, 62).stroke();
+    doc.moveTo(10, 62).lineTo(800, 82).stroke();
   
     doc.moveDown();
     doc.font("public/font/RobotoSlab-Regular.ttf");
     doc.fontSize(9);
-    doc.text(nir.index, 20, 63, { width: 80, align: "center" });
-    doc.text(date, 110, 63, { width: 120, align: "center" });
-    doc.text(recDate, 230, 63, { width: 120, align: "center" });
+    doc.text(nir.index, 20, 83, { width: 80, align: "center" });
+    doc.text(date, 110, 83, { width: 120, align: "center" });
+    doc.text(recDate, 230, 83, { width: 120, align: "center" });
 
-    doc.text(nir.suplier.name, 370, 63, { width: 220, align: "center" });
-    doc.text(nir.suplier.vatNumber, 590, 63, { width: 120, align: "center" });
-    doc.text(nir.nrDoc, 710, 63, { width: 80, align: "center" });
+    doc.text(nir.suplier.name, 370, 83, { width: 220, align: "center" });
+    doc.text(nir.suplier.vatNumber, 590, 83, { width: 120, align: "center" });
+    doc.text(nir.nrDoc, 710, 83, { width: 80, align: "center" });
   
     doc.moveDown();
-      let headerHeigth = 97
+      let headerHeigth = 117
     let y = 100;
     const availableSpace = doc.page.height - y; // Calculate available space on the page
     // let startY = 10
