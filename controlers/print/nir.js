@@ -335,7 +335,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     return doc
 }
 
-  function splitIngredients(arr, firstChunkSize = 25, otherChunkSize = 30) {
+  function splitIngredients(arr, firstChunkSize = 28, otherChunkSize = 35) {
     const result = [];
   
     // First chunk
