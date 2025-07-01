@@ -176,7 +176,7 @@ function createNir (nir) {
     //   lineHeigth = 7
     // }
 
-    const ingChunks = splitIngredients(nir.ingredients, 30)
+    const ingChunks = splitIngredients(nir.ingredients, 25)
 
     let pages = ingChunks.length
 
