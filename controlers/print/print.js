@@ -723,21 +723,21 @@ module.exports.printInventary = async(req, res, next) => {
       const scriptic = round(el.scriptic * el.ing.price)
       scripticValue += scriptic
       fapticValue += faptic
+      worksheet.addRow(
+        [
+          `${i+1}`,
+          `${el.name}`,
+          `${el.ing.um}`,
+          `${el.ing.price}`,
+          `${el.gestiune}`,
+          `${el.dep}`,
+          `${round(el.faptic)}`,
+          `${round(el.scriptic)}`,
+          `${round(el.faptic - el.scriptic)}`,
+          `${round((el.faptic - el.scriptic) * el.ing.price)} Lei`,
+        ]
+        )
     }
-    worksheet.addRow(
-      [
-        `${i+1}`,
-        `${el.name}`,
-        `${el.ing.um}`,
-        `${el.ing.price}`,
-        `${el.gestiune}`,
-        `${el.dep}`,
-        `${round(el.faptic)}`,
-        `${round(el.scriptic)}`,
-        `${round(el.faptic - el.scriptic)}`,
-        `${round((el.faptic - el.scriptic) * el.ing.price)} Lei`,
-      ]
-      )
   })
   worksheet.addRow(
       [
