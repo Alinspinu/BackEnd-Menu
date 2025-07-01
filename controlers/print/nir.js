@@ -30,7 +30,6 @@ function createNir (nir) {
         }
         nir.ingredients.push(ingredient)
       })
-        console.log(nir.discount)
       }
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
 
@@ -146,13 +145,13 @@ function createNir (nir) {
     // Add table rows
   
     doc.font("public/font/RobotoSlab-Regular.ttf");
-    doc.fontSize(10);
+    doc.fontSize(9);
     let valoareIntTotal = 0;
     let valTvaTotal = 0;
     let valVanzare = 0;
     let valTvaVanzare = 0;
     let valTotal = 0;
-    let lineHeigth = 16
+    let lineHeigth = 14
     const ingCount = nir.ingredients.length
     if(ingCount >= 10 && ingCount <= 20){
       doc.fontSize(8);
