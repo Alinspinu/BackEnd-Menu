@@ -118,7 +118,7 @@ function createNir (nir) {
       
 
     doc.lineWidth(0.1);
-    doc.moveTo(5, 116).lineTo(825, 116).stroke();
+    doc.moveTo(5, headHeigth + 23).lineTo(825, headHeigth + 23).stroke();
 
     // Table headers
     doc.font("public/font/RobotoSlab-Bold.ttf");
