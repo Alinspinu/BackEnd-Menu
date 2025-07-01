@@ -275,9 +275,10 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           { width: 60, align: "center" }
         );
     })
-    if(page < pageLenght || ingredients > 30){
+    if(page < pageLenght){
         doc.addPage()
     } else {
+        if(ingredients.length > 29) doc.addPage()
         const height = ingredients.length * lineHeigth;
         doc.lineWidth(0.4);
         doc
