@@ -275,7 +275,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           { width: 60, align: "center" }
         );
     })
-    if(page < pageLenght){
+    if(page < pageLenght || ingredients > 30){
         doc.addPage()
     } else {
         const height = ingredients.length * lineHeigth;
@@ -335,7 +335,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     return doc
 }
 
-  function splitIngredients(arr, firstChunkSize = 28, otherChunkSize = 33) {
+  function splitIngredients(arr, firstChunkSize = 28, otherChunkSize = 31) {
     const result = [];
   
     // First chunk
