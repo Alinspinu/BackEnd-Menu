@@ -130,7 +130,6 @@ function createNir (nir) {
     doc.moveDown();
     // Add table rows
   
-    doc.font("public/font/RobotoSlab-Regular.ttf");
     doc.fontSize(9);
     let valoareIntTotal = 0;
     let valTvaTotal = 0;
@@ -189,7 +188,7 @@ function createNir (nir) {
 
 function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date) {
     if(page !== 1) {
-        y = y - 60
+        y = y - 80
     } 
        let headerHeigth = y
         doc.font("public/font/RobotoSlab-Bold.ttf");
@@ -214,6 +213,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.text("Val Vanzare", 705, headerHeigth, { width: 60, align: "center" });
         doc.text("Total Tva", 770, headerHeigth, { width: 60, align: "center" });
 
+        doc.font("public/font/RobotoSlab-Regular.ttf");
 
     ingredients.forEach((produs, i) => {
         doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
@@ -335,11 +335,17 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     return doc
 }
 
-function splitIngredients(arr, chunkSize = 25) {
+  function splitIngredients(arr, firstChunkSize = 25, otherChunkSize = 30) {
     const result = [];
-    for (let i = 0; i < arr.length; i += chunkSize) {
-      result.push(arr.slice(i, i + chunkSize));
+  
+    // First chunk
+    result.push(arr.slice(0, firstChunkSize));
+  
+    // Remaining chunks
+    for (let i = firstChunkSize; i < arr.length; i += otherChunkSize) {
+      result.push(arr.slice(i, i + otherChunkSize));
     }
+  
     return result;
   }
 
