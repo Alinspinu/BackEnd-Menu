@@ -56,7 +56,7 @@ module.exports.getBankAccounts = async (req, res) => {
 }
 
 function clean(input) {
-    return input.replace(/(SC|SRL|S\.R\.L\.|SA|S\.A\.|\s+)/gi, '');
+    return input.replace(/(SC|SRL|S\.R\.L\.|SRL|S\.R\.L|SA|S\.A\.|S\.C\.|S\.C|\s+)/gi, '');
   }
 
 
