@@ -65,9 +65,10 @@ async function getAccessToken() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        params: {
-        maxResults: 100,
-        }
+        // params: {
+        // skip: 0,
+        // maxResults: 100,
+        // }
       });
   
       console.log('Bank Accounts:', response.data);
