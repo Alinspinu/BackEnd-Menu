@@ -58,6 +58,9 @@ async function getAccessToken() {
     const apiUrl = 'https://api.vivapayments.com/banktransfers/v1/bankaccounts'
     const token = await getAccessToken();
     if (!token) return;
+
+    const params = new URLSearchParams();
+    params.append('maxResults', 100);
   
     try {
       const response = await axios.get(apiUrl, {
@@ -65,10 +68,7 @@ async function getAccessToken() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        // params: {
-        // skip: 0,
-        // maxResults: 10,
-        // }
+        params
       });
   
       console.log('Bank Accounts:', response);
