@@ -40,7 +40,7 @@ module.exports.getBankAccounts = async (req, res) => {
         const supliers = await Suplier.find()
         for(let ac of acc){
             for(let s of supliers) {
-                if(s.name === ac.beneficiaryName){
+                if(s.name.toUpperCase().trim() === ac.beneficiaryName){
                     s.account = ac.iban
                     s.vivaAccountId = ac.bankAccountId
                     const ss = await s.save()
