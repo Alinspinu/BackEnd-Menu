@@ -24,28 +24,25 @@ const {createNir} = require('./nir')
 
 
 module.exports.printNir = async (req, res, next) => {
-  // const firma = await Locatie.findById(loc)
   const {id} = req.query
-  
-  const nir = await Nir.findById(id)
-  .populate({
-  path: "suplier",
-    select: "name vatNumber",
-  })
-  .populate({
-    path: 'locatie'
-  })
-  .populate({
-    path: 'salePoint'
-  })
+  try{
+    const nir = await Nir.findById(id)
+    .populate({
+    path: "suplier",
+      select: "name vatNumber",
+    })
+    .populate({
+      path: 'locatie'
+    })
+    .populate({
+      path: 'salePoint'
+    })
 
   const doc = createNir(nir)
-  
+
     doc.end();
-  
     res.type("application/pdf");
     doc.pipe(res);
-  
     res.once("finish", () => {
       const chunks = [];
       doc.on("data", (chunk) => {
@@ -57,6 +54,12 @@ module.exports.printNir = async (req, res, next) => {
         res.status(200).send(base64String)
       });
     });
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+
   };
 
 

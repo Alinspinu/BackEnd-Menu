@@ -129,7 +129,6 @@ function createNir (nir) {
 
     let pages = ingChunks.length
 
-    
 
     nir.ingredients.forEach((produs, i) => {
       valTotal +=  parseFloat(produs.total);
@@ -152,9 +151,9 @@ function createNir (nir) {
         doc = addIngredients(doc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT, date, pageCount)
     })
 
-
     return doc
 }
+
 
 
 function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date, pageCount) {

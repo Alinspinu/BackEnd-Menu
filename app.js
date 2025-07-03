@@ -41,7 +41,9 @@ const gbtRoutes = require('./routes/gbt.js')
 const reservationRoutes = require('./routes/reservation.js')
 const testRoutes = require('./routes/test.js')
 const clientsRoutes = require('./routes/back-office/client.js')
+const vivaWebhooks = require('./routes/viva-wbhooks.js') 
 const cron = require('node-cron');
+
 
 const {authApi} = require('./auth/auth')
 
@@ -149,6 +151,9 @@ app.use('/clients', authApi, clientsRoutes);
 app.use('/invoice', authApi, invoiceRoutes)
 app.use('/gbt', gbtRoutes)
 app.use('/reservation', reservationRoutes)
+app.use('/viva-web', vivaWebhooks)
+
+
 
 app.use('/test', testRoutes)
 
