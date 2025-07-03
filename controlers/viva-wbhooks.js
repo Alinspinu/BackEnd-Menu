@@ -33,7 +33,7 @@ module.exports.getBankAccounts = async (req, res) => {
             } else {
                 acc = [...acc, ...accounts]
             }
-            skip +20
+            skip +=20
         }
 
         res.status(200).json({data: acc})
