@@ -67,11 +67,11 @@ async function getAccessToken() {
         },
         // params: {
         // skip: 0,
-        // maxResults: 100,
+        // maxResults: 10,
         // }
       });
   
-      console.log('Bank Accounts:', response.data);
+      console.log('Bank Accounts:', response);
       return response.data
     } catch (error) {
       console.error('Error fetching bank accounts:', error.response?.data || error.message);
