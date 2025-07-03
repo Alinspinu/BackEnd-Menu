@@ -3,6 +3,8 @@ const axios = require('axios');
 
 const Viva = require('../models/office/viva-data')
 
+const Suplier = require('../models/office/suplier')
+
 
 module.exports.transactionCreated = async (req, res) => {
     console.log(req.body)
@@ -35,7 +37,17 @@ module.exports.getBankAccounts = async (req, res) => {
             }
             skip +=20
         }
-
+        const supliers = await Suplier.find()
+        for(let ac of acc){
+            for(let s of supliers) {
+                if(s.name === ac.beneficiaryName){
+                    s.account = ac.iban
+                    s.vivaAccountId = ac.bankAccountId
+                    const ss = await s.save()
+                    console.log('Furnizor actualizat ' ,ss.name, 'IBAN', ss.account, 'VIVA ID', ss.vivaAccountId)
+                }
+            }
+        }
         res.status(200).json({data: acc})
     } catch(error) {
         console.log(error)
@@ -85,7 +97,6 @@ async function getAccessToken() {
         params
       });
   
-      console.log('Bank Accounts:', response.data);
       return response.data
     } catch (error) {
       console.error('Error fetching bank accounts:', error.response?.data || error.message);

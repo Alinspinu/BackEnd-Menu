@@ -24,6 +24,9 @@ const suplierSchema = new Schema({
     type: String,
     required: true
   },
+  vivaAccountId: {
+    type: String
+  },
   VAT: {
     type: Boolean
   },
