@@ -7,7 +7,7 @@ module.exports.transactionCreated = async (req, res) => {
 
     const url = 'https://www.vivapayments.com/api/messages/config/token'
     try {
-        const credentials = Buffer.from(`${process.env.VIVA_MERCHANT_ID}:${process.env.VIVA.APY_KEY}`).toString('base64');
+        const credentials = Buffer.from(`${process.env.VIVA_MERCHANT_ID}:${process.env.VIVA_APY_KEY}`).toString('base64');
         const response = await axios.get(url, {
           headers: {
             'Authorization': `Basic ${credentials}`
