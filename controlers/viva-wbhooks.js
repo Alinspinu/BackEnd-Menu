@@ -1,9 +1,25 @@
 
 const axios = require('axios');
 
+const Viva = require('../models/office/viva-data')
+
 
 module.exports.transactionCreated = async (req, res) => {
     console.log(req.body)
+    try{
+       const data = new Viva({data: req.body})
+       const savedData =  await data.save()
+       console.log(savedData)
+    } catch(error){
+        console.log(error)
+    }
+
+    res.status(200).json({Key: '9F11E6672096B03EC72519550A131B78765C3E09'})
+}
+
+
+
+
 
     // const url = 'https://www.vivapayments.com/api/messages/config/token'
     // try {
@@ -19,12 +35,3 @@ module.exports.transactionCreated = async (req, res) => {
     //     console.error('Error fetching token:', error.response ? error.response.data : error.message);
     //     res.status(500).json({message: error})
     //   }
-
-
-    res.status(200).json({Key: '9F11E6672096B03EC72519550A131B78765C3E09'})
-
-
-}
-
-
-
