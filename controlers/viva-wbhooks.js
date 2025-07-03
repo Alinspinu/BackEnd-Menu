@@ -60,7 +60,7 @@ async function getAccessToken() {
     if (!token) return;
 
     const params = {
-        skip: 113,
+        skip: 114,
       };
   
     try {
@@ -72,7 +72,7 @@ async function getAccessToken() {
         params
       });
   
-      console.log('Bank Accounts:', response);
+      console.log('Bank Accounts:', response.data);
       return response.data
     } catch (error) {
       console.error('Error fetching bank accounts:', error.response?.data || error.message);
