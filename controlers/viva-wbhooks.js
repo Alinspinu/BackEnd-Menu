@@ -66,7 +66,7 @@ async function getAccessToken() {
           'Content-Type': 'application/json'
         },
         params: {
-          maxResults: 100,
+        isArchived: true
         }
       });
   
