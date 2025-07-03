@@ -26,7 +26,7 @@ module.exports.getBankAccounts = async (req, res) => {
         let acc = []
 
         while (skip < 121){
-            const accounts = await getBankAccounts()
+            const accounts = await getBankAccounts(skip)
             if(!accounts){
                 console.log('HIT BRAKE')
                 break
