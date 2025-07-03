@@ -59,8 +59,9 @@ async function getAccessToken() {
     const token = await getAccessToken();
     if (!token) return;
 
-    const params = new URLSearchParams();
-    params.append('maxResults', 100);
+    const params = {
+        maxResults: 100
+      };
   
     try {
       const response = await axios.get(apiUrl, {
