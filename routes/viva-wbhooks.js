@@ -8,5 +8,7 @@ router.route('/tr-c')
     .post(hooks.transactionCreated)
     .get(hooks.transactionCreated)
 
+router.route('/get-accounts').get(hooks.getBankAccounts)
+
 
 module.exports = router
