@@ -22,8 +22,21 @@ module.exports.transactionCreated = async (req, res) => {
 
 module.exports.getBankAccounts = async (req, res) => {
     try{
-        const accounts = await getBankAccounts()
-        res.status(200).json({data: accounts})
+        let skip = 0
+        let acc = []
+
+        while (skip < 121){
+            const accounts = await getBankAccounts()
+            if(!accounts){
+                console.log('HIT BRAKE')
+                break
+            } else {
+                acc = [...acc, ...accounts]
+            }
+            skip +20
+        }
+
+        res.status(200).json({data: acc})
     } catch(error) {
         console.log(error)
         res.status(500).json(error)
@@ -54,13 +67,13 @@ async function getAccessToken() {
   }
 
 
-  async function getBankAccounts() {
+  async function getBankAccounts(skip) {
     const apiUrl = 'https://api.vivapayments.com/banktransfers/v1/bankaccounts'
     const token = await getAccessToken();
     if (!token) return;
 
     const params = {
-        skip: 114,
+        skip: skip,
       };
   
     try {
