@@ -53,7 +53,7 @@ const compression = require('compression');
 const {checkAndNotifyReservations} = require('./controlers/notification.js')
 
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV !== 'production') {
     const heapdump = require('heapdump');
   
     process.on('SIGUSR2', () => {
