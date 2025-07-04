@@ -7,13 +7,13 @@ module.exports.sendCats = async (req, res, next) => {
     try {
         const { loc, point } = req.query;
         const cats = await Cat.find({locatie: loc, salePoint: point}).populate({
-            path: 'product',
+            path: 'product', select: '-saleLog',
             populate: [
                 { path: 'category' },
                 {
-                    path: 'subProducts',
+                    path: 'subProducts', select: '-saleLog',
                     populate: [
-                        {path: 'product'},
+                        {path: 'product', select: '-saleLog'},
                         {
                             path: 'ings.ing', select: 'name um ings productIngredient qty', 
                                 populate: {

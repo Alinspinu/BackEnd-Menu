@@ -241,7 +241,6 @@ module.exports.updateVivaData = async (req, res, next) => {
                     }
                 }
             const locToEdit = await Locatie.findByIdAndUpdate(locId, {pos: pos}, {new: true})
-            console.log(locToEdit)
             res.status(200).json({message: 'Datele au fost actualizate'})
         } else {
             throw new Error('Date incomplete')

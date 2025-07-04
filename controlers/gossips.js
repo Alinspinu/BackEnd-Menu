@@ -16,8 +16,6 @@ module.exports.new = async (req, res, next) => {
         newGossip.user = user._id
         user.gossips.push(newGossip)
         const savedGossip = await newGossip.save()
-        console.log(req.body)
-        console.log(savedGossip)
         await user.save()
         const gossip = await Gossip.findById(savedGossip._id)
                 .populate({ path: 'user', select: '-password' })
@@ -309,7 +307,6 @@ module.exports.newLike = async (req, res, next) => {
     if (req.body) {
         try {
             const { user, gossip } = req.body
-            console.log(req.body)
             const userId = new mongoose.Types.ObjectId(user)
             const gossipId = new mongoose.Types.ObjectId(gossip)
             const dbGossip = await Gossip.findById(gossip).populate({path: 'likes'})
