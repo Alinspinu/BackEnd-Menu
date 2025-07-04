@@ -2,6 +2,7 @@ if (process.env.NODE_ENV !== "production") {
     require("dotenv").config();
 }
 
+
 const express = require("express");
 const app = express();
 const cors = require('cors');
@@ -52,6 +53,17 @@ const compression = require('compression');
 const {checkAndNotifyReservations} = require('./controlers/notification.js')
 
 
+if (process.env.NODE_ENV === 'production') {
+    const heapdump = require('heapdump');
+  
+    process.on('SIGUSR2', () => {
+      const filename = path.resolve(__dirname, `heap-${Date.now()}.heapsnapshot`);
+      heapdump.writeSnapshot(filename, (err, filename) => {
+        if (err) console.error('Heapdump failed:', err);
+        else console.log('Heapdump written to', filename);
+      });
+    });
+  }
 
 
 cron.schedule('*/5 8-20 * * *', async () => {
