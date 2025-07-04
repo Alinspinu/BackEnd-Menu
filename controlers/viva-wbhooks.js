@@ -7,16 +7,38 @@ const Suplier = require('../models/office/suplier')
 
 
 module.exports.transactionCreated = async (req, res) => {
-    console.log(req.body)
+
+    const webHookData = req.body
+
     try{
-       const data = new Viva({data: req.body})
-       const savedData =  await data.save()
-       console.log(savedData)
+    if(webHookData.EventData.Description !== 'Sales Clearance Commission Cards' || webHookData.EventData.Description !== 'Sales Clearance Cards'){
+        const data = new Viva({data: webHookData})
+        const savedData =  await data.save()
+        console.log(savedData)
+    }
     } catch(error){
         console.log(error)
     }
 
     res.status(200).json({Key: '9F11E6672096B03EC72519550A131B78765C3E09'})
+}
+
+
+module.exports.devWeb = async(req, res) => {
+    try{
+        let dd = []
+        const data = Viva.find()
+        for(let d of data){
+            if(d.data.EventData.Description !== 'Sales Clearance Commission Cards' || d.data.EventData.Description !== 'Sales Clearance Cards'){
+                console.log(d)
+                dd.push(d)
+            }
+        }
+        res.status(200).json(dd)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
 }
 
 
@@ -27,33 +49,39 @@ module.exports.getBankAccounts = async (req, res) => {
         let skip = 0
         let acc = []
 
-        while (skip < 121){
-            const accounts = await getBankAccounts(skip)
-            if(!accounts){
-                console.log('HIT BRAKE')
-                break
-            } else {
-                acc = [...acc, ...accounts]
-            }
-            skip +=20
-        }
-        const supliers = await Suplier.find()
-        for(let ac of acc){
-            for(let s of supliers) {
-                if(clean(s.name) === clean(ac.beneficiaryName)){
-                    s.account = ac.iban
-                    s.vivaAccountId = ac.bankAccountId
-                    const ss = await s.save()
-                    console.log('Furnizor actualizat ' ,ss.name, 'IBAN', ss.account, 'VIVA ID', ss.vivaAccountId)
-                }
-            }
-        }
+        // while (skip < 121){
+        //     const accounts = await getBankAccounts(skip)
+        //     if(!accounts){
+        //         console.log('HIT BRAKE')
+        //         break
+        //     } else {
+        //         acc = [...acc, ...accounts]
+        //     }
+        //     skip +=20
+        // }
+        // const supliers = await Suplier.find()
+        // for(let ac of acc){
+        //     for(let s of supliers) {
+        //         if(clean(s.name) === clean(ac.beneficiaryName)){
+        //             s.account = ac.iban
+        //             s.vivaAccountId = ac.bankAccountId
+        //             const ss = await s.save()
+        //             console.log('Furnizor actualizat ' ,ss.name, 'IBAN', ss.account, 'VIVA ID', ss.vivaAccountId)
+        //         }
+        //     }
+        // }
+
         res.status(200).json({data: acc})
     } catch(error) {
         console.log(error)
         res.status(500).json(error)
     }
 }
+
+
+
+
+
 
 function clean(input) {
     return input.replace(/(SC|SRL|S\.R\.L\.|SRL|S\.R\.L|SA|S\.A\.|S\.C\.|S\.C|\s+)/gi, '');

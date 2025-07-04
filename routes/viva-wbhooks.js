@@ -10,5 +10,7 @@ router.route('/tr-c')
 
 router.route('/get-accounts').get(hooks.getBankAccounts)
 
+router.route('/viva-dev').get(hooks.devWeb)
+
 
 module.exports = router
