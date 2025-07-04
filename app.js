@@ -58,6 +58,32 @@ cron.schedule('*/5 8-20 * * *', async () => {
     await checkAndNotifyReservations();
   });
 
+try{
+
+    const AWS = require('aws-sdk');
+
+    AWS.config.update({ region: 'eu-central-1a' }); 
+    
+    const ssm = new AWS.SSM();
+    
+    async function getSecret(name) {
+      const param = await ssm.getParameter({
+        Name: name,
+        WithDecryption: true
+      }).promise();
+    
+      return param.Parameter.Value;
+    }
+    
+    (async () => {
+      const mongoUri = await getSecret('/cloudinary/name');
+      console.log('Cloudinary name:', mongoUri);
+    })();
+
+} catch(error){
+    console.log(error)
+}
+
 
 
 const dbUrl = process.env.LOCAL
