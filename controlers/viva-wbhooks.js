@@ -11,7 +11,7 @@ module.exports.transactionCreated = async (req, res) => {
     const webHookData = req.body
 
     try{
-    if(webHookData.EventData.Description !== 'Sales Clearance Commission Cards' || webHookData.EventData.Description !== 'Sales Clearance Cards'){
+    if(webHookData.EventData.Description !== 'Sales Clearance Commission Cards' && webHookData.EventData.Description !== 'Sales Clearance Cards'){
         const data = new Viva({data: webHookData})
         const savedData =  await data.save()
         console.log(savedData)
@@ -29,7 +29,7 @@ module.exports.devWeb = async(req, res) => {
         let dd = []
         const data = await Viva.find()
         for(let d of data){
-            if(d.data.EventData.Description !== 'Sales Clearance Commission Cards' || d.data.EventData.Description !== 'Sales Clearance Cards'){
+            if(d.data.EventData.Description !== 'Sales Clearance Commission Cards' && d.data.EventData.Description !== 'Sales Clearance Cards'){
                 console.log(d)
                 dd.push(d)
             }
