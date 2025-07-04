@@ -12,18 +12,13 @@ module.exports.sendCats = async (req, res, next) => {
                 { path: 'category' },
                 {
                     path: 'subProducts', select: '-saleLog',
-                    populate: [
-                        // {path: 'product', select: '-saleLog'},
-                        {
-                            path: 'ings.ing', select: 'name um ings productIngredient qty', 
-                                populate: {
-                                    path: 'ings.ing', select: 'name um qty' 
-                                }
+                    populate: {
+                        path: 'ings.ing', select: 'name um ings productIngredient qty', 
+                            populate: {
+                                path: 'ings.ing', select: 'name um qty' 
+                            }
                         }
-                    ],
                 },
-                // { path: 'paring', populate: { path: 'category', select: 'name' } },
-                // { path: 'ingredients.ingredient' },
                 { 
                     path: 'ings.ing', select: 'name qty um productIngredient ings',
                         populate: {
@@ -31,7 +26,9 @@ module.exports.sendCats = async (req, res, next) => {
                         } 
                 }
             ]
-        }).maxTimeMS(20000);
+        })
+        .lean({ virtuals: false })
+        .maxTimeMS(20000);
         res.status(200).json(cats);
     } catch (err) {
         console.log(err)
