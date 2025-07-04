@@ -175,7 +175,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
                                                 select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog", 
                                                 }
                                             }
-                                        })    
+                                        }).lean({virtuals: false})    
              console.log('comenzi', orders.length)                                   
             const result = await getBillProducts(orders, filter)
             const ingredients = await getIngredients(result.allProd)
