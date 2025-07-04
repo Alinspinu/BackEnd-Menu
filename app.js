@@ -45,7 +45,7 @@ const vivaWebhooks = require('./routes/viva-wbhooks.js')
 const cron = require('node-cron');
 
 
-const {authApi} = require('./auth/auth')
+const {authApi, authApiAdmin} = require('./auth/auth')
 
 const compression = require('compression');
 
@@ -57,32 +57,6 @@ const {checkAndNotifyReservations} = require('./controlers/notification.js')
 cron.schedule('*/5 8-20 * * *', async () => {
     await checkAndNotifyReservations();
   });
-
-try{
-
-    const AWS = require('aws-sdk');
-
-    AWS.config.update({ region: 'eu-central-1' }); 
-    
-    const ssm = new AWS.SSM();
-    
-    async function getSecret(name) {
-      const param = await ssm.getParameter({
-        Name: name,
-        WithDecryption: true
-      }).promise();
-    
-      return param.Parameter.Value;
-    }
-    
-    (async () => {
-      const mongoUri = await getSecret('/cloudinary/name');
-      console.log('Cloudinary name:', mongoUri);
-    })();
-
-} catch(error){
-    console.log(error)
-}
 
 
 
@@ -146,7 +120,7 @@ app.use('/clients', authApi, clientsRoutes);
 app.use('/invoice', authApi, invoiceRoutes)
 app.use('/gbt', gbtRoutes)
 app.use('/reservation', reservationRoutes)
-app.use('/viva-web', vivaWebhooks)
+app.use('/viva-web', authApiAdmin, vivaWebhooks)
 
 
 

@@ -24,7 +24,6 @@ module.exports.addDep = async (req, res) => {
     try{
         const newDep = new Dep(dep)
         const savedDep = await newDep.save()
-        console.log(savedDep)
         res.status(200).json({message: 'Departamentul a fost adaugat', dep: savedDep})
     } catch(error){
         console.log(error)
@@ -75,7 +74,6 @@ module.exports.addGest = async (req, res) => {
     try{ 
         const newGest = new Gest(gest)
         const savedGest = await newGest.save()
-        console.log(savedGest)
         res.status(200).json({message: 'Gesiunea a fost adăugată cu succes!', gest: savedGest})
     } catch(error) {
         console.log(error)

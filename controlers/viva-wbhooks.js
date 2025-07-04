@@ -62,27 +62,6 @@ module.exports.getBankAccounts = async (req, res) => {
         let skip = 0
         let acc = []
 
-        // while (skip < 121){
-        //     const accounts = await getBankAccounts(skip)
-        //     if(!accounts){
-        //         console.log('HIT BRAKE')
-        //         break
-        //     } else {
-        //         acc = [...acc, ...accounts]
-        //     }
-        //     skip +=20
-        // }
-        // const supliers = await Suplier.find()
-        // for(let ac of acc){
-        //     for(let s of supliers) {
-        //         if(clean(s.name) === clean(ac.beneficiaryName)){
-        //             s.account = ac.iban
-        //             s.vivaAccountId = ac.bankAccountId
-        //             const ss = await s.save()
-        //             console.log('Furnizor actualizat ' ,ss.name, 'IBAN', ss.account, 'VIVA ID', ss.vivaAccountId)
-        //         }
-        //     }
-        // }
         const accounts = await getBankAccounts(20)
 
         res.status(200).json({data: accounts})
@@ -106,7 +85,6 @@ function clean(input) {
 async function getAccessToken() {
     const id =  await getSecret('/account/id')
     const secret =  await getSecret('/account/secret')
-    console.log(id, secret)
     const tokenUrl = 'https://accounts.vivapayments.com/connect/token';
     const basicAuth = Buffer.from(`${id}:${secret}`).toString('base64');
     const params = new URLSearchParams();
@@ -164,19 +142,3 @@ async function getAccessToken() {
 
 
 
-
-
-    // const url = 'https://www.vivapayments.com/api/messages/config/token'
-    // try {
-    //     const credentials = Buffer.from(`${process.env.VIVA_MERCHANT_ID}:${process.env.VIVA_APY_KEY}`).toString('base64');
-    //     const response = await axios.get(url, {
-    //       headers: {
-    //         'Authorization': `Basic ${credentials}`
-    //       }
-    //     });
-    //     console.log('Response data:', response.data);
-    //     res.status(200).json({message: response.data})
-    //   } catch (error) {
-    //     console.error('Error fetching token:', error.response ? error.response.data : error.message);
-    //     res.status(500).json({message: error})
-    //   }

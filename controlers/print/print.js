@@ -389,7 +389,6 @@ module.exports.printInventary = async(req, res, next) => {
     .toLocaleDateString("en-GB", options)
     .replace(/\//g, "-");
 
-  console.log(id)
   const workbook = new exceljs.Workbook();
   const worksheet = workbook.addWorksheet(`Inventar din ${date}`);
   const sortedIngs = inventary.ingredients.sort((a, b) => a.name.localeCompare(b.name))
@@ -1088,7 +1087,7 @@ module.exports.printProductRecipes = async (req, res, next) => {
         .populate({path: 'locatie', select: 'bussinessName'})
         .populate({path: 'category', select: 'name'})
         .populate({path: 'subProducts', select: 'name price qty description ings', populate: {path: 'ings.ing', select: 'name price tvaPrice um'}})
-        console.log('product', products[0])
+
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Produse');
         const docTitle =  [
@@ -1350,7 +1349,7 @@ module.exports.printProduction = async (req, res, next) => {
       totalSale += total
       const ings =  showProduction(product)
       let totalRecipe = 0
-      console.log(ings.length)
+
       ings.forEach((ing, i) => {
         const tot = round(ing.qty * ing.ing.tvaPrice * product.quantity)
         worksheet.addRow(
@@ -1560,7 +1559,6 @@ module.exports.report = async (req, res) => {
         if(topping.ing){
           if(topping.ing.ings.length){
             topping.ing.ings.forEach((ing) => {
-              console.log(ing)
               if(ing.ing){
                 const existingIng = this.productIngredients.find((p) => p.ing._id === ing.ing._id)
                 if(existingIng){

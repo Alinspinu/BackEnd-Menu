@@ -158,8 +158,6 @@ module.exports.sendGreating = async () => {
           .sort({_id: -1})
           .limit(3)
       const shedule = getNowShedule(shedules)
-      console.log(shedule.days[6].users[3])
-      console.log(new Date(shedule.days[6].users[2].workPeriod.start).toLocaleString())
     } catch(error){
       console.log(error)
     }

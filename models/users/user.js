@@ -34,6 +34,10 @@ const UserTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+    power: {
+        type: Boolean,
+        default: false
+    },
     cashBackProcent: {
         type: Number,
         default: 5

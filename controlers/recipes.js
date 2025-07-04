@@ -34,7 +34,6 @@ module.exports.createRecipe = async (req, res) => {
             garnish,
             shop
         } = req.body.recipe
-        console.log(req.body)
         const newRecipe = new Recipe({
             name: name,
             totalVolume: totalVolume,
@@ -61,12 +60,10 @@ module.exports.createRecipe = async (req, res) => {
             newRecipe.ingredients.push(ingredients)
         }
         if (req.file) {
-            console.log(req.file)
             const { fieldname, path } = req.file
             newRecipe.image.filename = fieldname
             newRecipe.image.path = path
         }
-        console.log(newRecipe)
         await newRecipe.save()
         res.redirect('back')
     } catch (err) {

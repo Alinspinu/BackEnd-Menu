@@ -145,7 +145,6 @@ module.exports.resendOTP = async (req, res) => {
     try{
         const otp = generateSoketId(4)
         const user = await User.findByIdAndUpdate(id, {otp: {code: otp, date: new Date()}}, {new: true}).populate({path: 'locatie'})
-        console.log(user)
         if(user){
         sendVerificationEmail(user).then(response => {
             if (response.message === 'Email sent') {
@@ -219,7 +218,6 @@ module.exports.getHoroscop = async (req, res, next) => {
     const { id } = req.query
     try{
         const user = await User.findById(id)
-        console.log(id)
         const userAge = (new Date().getTime() - new Date(user.employee.birthDate).getTime()) /1000/60/60/24/365
         const messageData = {
             name: user.employee.fullName.split(' ')[0],

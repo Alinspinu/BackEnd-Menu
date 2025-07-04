@@ -41,9 +41,7 @@ module.exports.editClient = async (req, res) => {
 module.exports.getClient = async (req, res) => {
     const {id} = req.query
     try{
-        console.log(id)
         const client = await Client.findById(id)
-        console.log(client)
         res.status(200).json(client)
     } catch(error){
         console.log(error)

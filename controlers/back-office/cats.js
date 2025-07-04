@@ -32,8 +32,6 @@ module.exports.sendCats = async (req, res, next) => {
                 }
             ]
         }).maxTimeMS(20000);
-        console.log(point)
-        console.log('categorii', cats.length)
         res.status(200).json(cats);
     } catch (err) {
         console.log(err)
@@ -47,7 +45,6 @@ module.exports.searchCats = async (req, res, next) => {
         const cats = await Cat.find({locatie: loc})
         const sortedCats = cats.sort((a, b) => a.name.localeCompare(b.name))
         let filterCats = []
-        console.log(search)
         filterCats = sortedCats.filter((object) =>
         object.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
         res.status(200).json(filterCats)
@@ -76,7 +73,6 @@ module.exports.addCat = async (req, res, next) => {
 
 module.exports.editCategory = async (req, res, next) => {
     const { categoryId, name, mainCat, order } = req.body
-    console.log('hit the edit function')
     if (categoryId) {
         const category = await Cat.findById(categoryId).populate({
             path: 'product',
@@ -99,7 +95,6 @@ module.exports.editCategory = async (req, res, next) => {
                 await cloudinary.uploader.destroy(category.image.filename)
                 category.image.path = path
                 category.image.filename = filename
-                console.log('saved cat', category)
                 await category.save();
                 res.status(200).json({ message: `Categoria a fost modificată!`, category: category })
             } else {

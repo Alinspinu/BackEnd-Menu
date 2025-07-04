@@ -44,6 +44,27 @@ const authApi = (req, res, next) => {
     });
   };
 
+const authApiAdmin = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ error: 'Access token is missing' });
+    }
+  
+    // Verify the token
+    jwt.verify(token, process.env.AUTH_SECRET, (err, user) => {
+      if (err) {
+        return res.status(403).json({ error: 'Invalid or expired token' });
+      }
+      if(!user.power){
+        return res.status(403).json({ error: 'Acceess denied!' });
+      }
+      req.user = user; // Attach user information to the request
+      next();
+    });
+  };
 
 
-module.exports = { basicAuth, authApi };
+
+module.exports = { basicAuth, authApi, authApiAdmin };
