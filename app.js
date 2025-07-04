@@ -57,6 +57,7 @@ if (process.env.NODE_ENV === 'production') {
     const heapdump = require('heapdump');
   
     process.on('SIGUSR2', () => {
+        console.log('hit signal')
       const filename = path.resolve(__dirname, `heap-${Date.now()}.heapsnapshot`);
       heapdump.writeSnapshot(filename, (err, filename) => {
         if (err) console.error('Heapdump failed:', err);
