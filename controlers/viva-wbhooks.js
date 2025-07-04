@@ -27,7 +27,7 @@ module.exports.transactionCreated = async (req, res) => {
 module.exports.devWeb = async(req, res) => {
     try{
         let dd = []
-        const data = Viva.find()
+        const data = await Viva.find()
         for(let d of data){
             if(d.data.EventData.Description !== 'Sales Clearance Commission Cards' || d.data.EventData.Description !== 'Sales Clearance Cards'){
                 console.log(d)
