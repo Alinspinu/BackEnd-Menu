@@ -154,7 +154,6 @@ async function getIngredients(products){
 
 
     async function pushIngredients(inx, prodQty){
-        console.log(inx)
         const ing = inx
         if(ing.ing){
             if(ing.ing.productIngredient){
