@@ -108,7 +108,7 @@ async function getBillProducts(orders, filter) {
 
     async function processBill(bill, department) {
         for (const prod of bill.products) {
-            const product = prod._doc
+            const product = prod
             if (product.dep === department) {
                 const existingProduct = products.find(p => p.name === product.name && arraysAreEqual(p.toppings, product.toppings));
                 if (existingProduct) {
@@ -154,6 +154,7 @@ async function getIngredients(products){
 
 
     async function pushIngredients(inx, prodQty){
+        console.log(inx)
         const ing = inx._doc
         if(ing.ing){
             if(ing.ing.productIngredient){
