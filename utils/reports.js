@@ -155,15 +155,15 @@ async function getIngredients(products){
 
     async function pushIngredients(inx, prodQty){
         console.log(inx)
-        const ing = inx._doc
+        const ing = inx
         if(ing.ing){
             if(ing.ing.productIngredient){
                 for (let ingx of ing.ing.ings){
-                    const ingg = ingx._doc
+                    const ingg = ingx
                     if(ingg.ing){
                         if(ingg.ing.productIngredient){
                             for (let inggx of ingg.ing.ings){
-                                const inggg = inggx._doc
+                                const inggg = inggx
                                 if(inggg.ing){
                                     const existingIng = ingredients.find(p => p.ing._id === inggg.ing._id)
                                     if(existingIng){
