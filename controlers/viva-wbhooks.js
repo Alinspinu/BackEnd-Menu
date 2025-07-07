@@ -27,7 +27,6 @@ module.exports.transactionCreated = async (req, res) => {
     ){
         const data = new Viva({data: webHookData})
         const savedData =  await data.save()
-        console.log(savedData)
     }
     } catch(error){
         console.log(error)
@@ -39,15 +38,17 @@ module.exports.transactionCreated = async (req, res) => {
 
 module.exports.devWeb = async(req, res) => {
     try{
-        let dd = []
+        let cardPurchase = []
+        let ibanTransfer = []
         const data = await Viva.find()
+        console.log(data)
         for(let d of data){
-            if(d.data.EventData.Description !== 'Sales Clearance Commission Cards' && d.data.EventData.Description !== 'Sales Clearance Cards' && d.data.EventData.Description !== 'Viva Cashback'){
-                console.log(d)
-                dd.push(d)
+            if(d.data.EventData.Description.includes('Viva Wallet Card Purchase')){
+                cardPurchase.push(d)
             }
+            
         }
-        res.status(200).json(dd)
+        res.status(200).json({card: cardPurchase, iban: ibanTransfer})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
