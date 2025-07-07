@@ -42,7 +42,7 @@ module.exports.devWeb = async(req, res) => {
         let ibanTransfer = []
         const data = await Viva.find()
         for(let d of data){
-            console.log(d.EventData)
+            console.log(d.data.EventData)
             if(d.data.EventData.Description.includes('Viva Wallet Card Purchase')){
                 cardPurchase.push(d)
             }
