@@ -4,7 +4,21 @@ const Schema = mongoose.Schema;
 
 const vivaSchema = new Schema({
 
-    data: Schema.Types.Mixed
+   transactionType: String,
+   date: Date,
+   description: String,
+   amount: Number,
+   iban: String,
+   vivaAccountId: String,
+   transactionId: String,
+   asociat: {
+    type: Boolean,
+    default: false
+   },
+   locatie: {
+    type: Schema.Types.ObjectId,
+    ref: 'Locatie'
+   }
 
 })
 

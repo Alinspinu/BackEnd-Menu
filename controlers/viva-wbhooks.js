@@ -2,7 +2,9 @@
 const axios = require('axios');
 const Viva = require('../models/office/viva-data')
 const Suplier = require('../models/office/suplier')
+const Nir = require('../models/office/nir')
 const AWS = require('aws-sdk');
+
 
 
 AWS.config.update({ region: 'eu-central-1' }); 
@@ -19,20 +21,70 @@ module.exports.transactionCreated = async (req, res) => {
 
     const webHookData = req.body
 
+    const locatie = "655e2e7c5a3d53943c6b7c53"
+
     try{
-    if(
-        webHookData.EventData.Description !== 'Sales Clearance Commission Cards' && 
-        webHookData.EventData.Description !== 'Sales Clearance Cards' && 
-        webHookData.EventData.Description !== 'Viva Cashback'
-    ){
-        const data = new Viva({data: webHookData})
+
+    const subId = webHookData.EventData.SubTypeId
+    if(subId === 100 || subId === 30){
+        let transactionType = subId === 100 ? 'card' : 'transfer'
+        let iban = subId === 30 ? webHookData.EventData.Iban : ''
+        let vivaAccountId = subId === 30 ? webHookData.EventData.BankAccountId : ''
+        let date = subId === 100 ? new Date(webHookData.EventData.ValueDate) : new Date (webHookData.EventData.Created)
+        const data = new Viva({
+            transactionType: transactionType,
+            date: date,
+            description: webHookData.EventData.Description,
+            amount: Math.abs(webHookData.EventData.amount),
+            iban: iban,
+            vivaAccountId: vivaAccountId,
+            transactionId: webHookData.EventData.WalletTransactionId,
+            locatie: locatie,
+        })
         const savedData =  await data.save()
+        const string = subId === 100 ? savedData.description.split('-')[1].trim().split(' ')[0] : savedData.description.split('-')[1].trim()
+        const query = subId === 100 ? {name: {$regex: string, $options: 'i'}, locatie: locatie } : {account: {$regex: string, $options: 'i'}, locatie: locatie }
+        const suplier = await Suplier.findOne(query)
+        if(suplier){
+            const nir = await Nir.findOne({suplier: suplier._id, totalDoc: savedData.amount, locatie: locatie})
+            const record = {
+                typeof: 'iesire',
+                document: {
+                    typeOf: transactionType,
+                    docId: savedData.transactionId,
+                    amount: savedData.amount,
+                    asociat: nir ? true : false
+                },
+                sold: suplier.sold - savedData.amount,
+                nir: nir ? [nir._id] : [],
+                description: savedData.description,
+                date: savedData.date,
+                salePoint: nir ? nir.salePoint : null
+            }
+            suplier.records.push(record)
+            suplier.sold = record.sold
+            await suplier.save()
+            if(nir){
+               await Nir.findByIdAndUpdate(nir._id, {payd: true})
+            }
+        }
     }
     } catch(error){
         console.log(error)
     }
-
     res.status(200).json({Key: '9F11E6672096B03EC72519550A131B78765C3E09'})
+}
+
+
+module.exports.getViva = async (req, res) => {
+    const {loc} = req.query
+    try{
+        const vivas = await Viva.find({locatie: loc})
+        res.status(200).json(vivas)
+    } catch(error) {
+        res.status(500).json(error)
+        console.log(error)
+    }
 }
 
 

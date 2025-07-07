@@ -9,6 +9,7 @@ router.route('/tr-c')
     .get(hooks.transactionCreated)
 
 router.route('/get-accounts').get(hooks.getBankAccounts)
+router.route('get-viva-data').get(hooks.getViva)
 
 router.route('/dev').get(hooks.devWeb)
 
