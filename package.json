@@ -12,7 +12,6 @@
   "dependencies": {
     "@tillpos/xml-escpos-helper": "^0.2.9",
     "adm-zip": "^0.5.16",
-    "aws-sdk": "^2.1692.0",
     "axios": "^1.4.0",
     "body-parser": "^1.20.2",
     "cloudinary": "^1.39.0",

@@ -3,12 +3,10 @@ const axios = require('axios');
 const Viva = require('../models/office/viva-data')
 const Suplier = require('../models/office/suplier')
 const Nir = require('../models/office/nir')
-const AWS = require('aws-sdk');
 
 
 
-AWS.config.update({ region: 'eu-central-1' }); 
-const ssm = new AWS.SSM();
+
 
 
 
@@ -125,7 +123,7 @@ module.exports.getBankAccounts = async (req, res) => {
         let skip = 0
         let acc = []
 
-        const accounts = await getBankAccounts(20)
+        // const accounts = await getBankAccounts(20)
 
         res.status(200).json({data: accounts})
     } catch(error) {
@@ -146,8 +144,8 @@ function clean(input) {
 
 
 async function getAccessToken() {
-    const id =  await getSecret('/account/id')
-    const secret =  await getSecret('/account/secret')
+    // const id =  await getSecret('/account/id')
+    // const secret =  await getSecret('/account/secret')
     const tokenUrl = 'https://accounts.vivapayments.com/connect/token';
     const basicAuth = Buffer.from(`${id}:${secret}`).toString('base64');
     const params = new URLSearchParams();
@@ -171,7 +169,7 @@ async function getAccessToken() {
 
   async function getBankAccounts(skip) {
     const apiUrl = 'https://api.vivapayments.com/banktransfers/v1/bankaccounts'
-    const token = await getAccessToken();
+    // const token = await getAccessToken();
     if (!token) return;
 
     const params = {
@@ -194,14 +192,14 @@ async function getAccessToken() {
   }
 
 
-  async function getSecret(name) {
-    const param = await ssm.getParameter({
-      Name: name,
-      WithDecryption: true
-    }).promise();
+//   async function getSecret(name) {
+//     const param = await ssm.getParameter({
+//       Name: name,
+//       WithDecryption: true
+//     }).promise();
   
-    return param.Parameter.Value;
-  }
+//     return param.Parameter.Value;
+//   }
 
 
 
