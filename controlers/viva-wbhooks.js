@@ -42,17 +42,18 @@ module.exports.devWeb = async(req, res) => {
         let ibanTransfer = []
         const data = await Viva.find()
         for(let d of data){
-            if(d.data.EventData.Description.includes('POLIDOM SERVICE')){
+            if(d.data.EventData.SubTypeId === 100){
                 cardPurchase.push(d)
                 console.log(d.data.EventData)
             }
             if(d.data.EventData.SubTypeId === 30){
                 ibanTransfer.push(d)
+                console.log(d.data.EventData)
             }
             
         }
-        console.log('Card', cardPurchase)
-        console.log('Transfer', ibanTransfer)
+        // console.log('Card', cardPurchase)
+        // console.log('Transfer', ibanTransfer)
         res.status(200).json({card: cardPurchase, iban: ibanTransfer})
     } catch(error){
         console.log(error)
