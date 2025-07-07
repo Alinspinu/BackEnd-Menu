@@ -51,7 +51,7 @@ module.exports.devWeb = async(req, res) => {
             
         }
         console.log('Card', cardPurchase)
-        console.log('Transfer', ibanPurchase)
+        console.log('Transfer', ibanTransfer)
         res.status(200).json({card: cardPurchase, iban: ibanTransfer})
     } catch(error){
         console.log(error)
