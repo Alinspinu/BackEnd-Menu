@@ -44,8 +44,9 @@ module.exports.devWeb = async(req, res) => {
         for(let d of data){
             if(d.data.EventData.Description.includes('POLIDOM SERVICE')){
                 cardPurchase.push(d)
+                console.log(d.data.EventData)
             }
-            if(d.data.SubTypeId === 30){
+            if(d.data.EventData.SubTypeId === 30){
                 ibanTransfer.push(d)
             }
             
