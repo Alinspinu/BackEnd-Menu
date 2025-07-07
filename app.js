@@ -133,7 +133,7 @@ app.use('/clients', authApi, clientsRoutes);
 app.use('/invoice', authApi, invoiceRoutes)
 app.use('/gbt', gbtRoutes)
 app.use('/reservation', reservationRoutes)
-app.use('/viva-web', vivaWebhooks)
+app.use('/viva', vivaWebhooks)
 
 
 
