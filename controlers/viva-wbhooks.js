@@ -46,6 +46,8 @@ module.exports.transactionCreated = async (req, res) => {
         const query = subId === 100 ? {name: {$regex: string, $options: 'i'}, locatie: locatie } : {account: {$regex: string, $options: 'i'}, locatie: locatie }
         const suplier = await Suplier.findOne(query)
         if(suplier){
+            savedData.asociat = {}
+            savedData.asociat.suplier = suplier._id
             const nir = await Nir.findOne({suplier: suplier._id, totalDoc: savedData.amount, locatie: locatie})
             const record = {
                 typeof: 'iesire',
@@ -65,8 +67,10 @@ module.exports.transactionCreated = async (req, res) => {
             suplier.sold = record.sold
             await suplier.save()
             if(nir){
+               savedData.asociat.nir = nir._id
                await Nir.findByIdAndUpdate(nir._id, {payd: true})
             }
+            await savedData.save()
         }
     }
     } catch(error){

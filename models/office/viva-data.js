@@ -12,8 +12,14 @@ const vivaSchema = new Schema({
    vivaAccountId: String,
    transactionId: String,
    asociat: {
-    type: Boolean,
-    default: false
+        suplier: {
+            type: Schema.Types.ObjectId,
+            ref: 'Suplier'
+        },
+        nir: {
+            type: Schema.Types.ObjectId,
+            ref: 'Nir'
+        }
    },
    locatie: {
     type: Schema.Types.ObjectId,
