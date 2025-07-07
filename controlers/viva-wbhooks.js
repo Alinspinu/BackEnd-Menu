@@ -42,10 +42,10 @@ module.exports.devWeb = async(req, res) => {
         let ibanTransfer = []
         const data = await Viva.find()
         for(let d of data){
-            if(d.data.EventData.Description.includes('Viva Wallet Card Purchase')){
+            if(d.data.EventData.Description.includes('POLIDOM SERVICE')){
                 cardPurchase.push(d)
             }
-            if(d.data.EventData.Description.includes('Money out to IBAN')){
+            if(d.data.SubTypeId === 30){
                 ibanTransfer.push(d)
             }
             
