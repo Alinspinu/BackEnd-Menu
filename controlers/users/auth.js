@@ -266,7 +266,7 @@ module.exports.registerNewEmployee = async (req, res) => {
             const newUser = new User(user)
             const savedUser = await newUser.save()
             const dbUser = await User.findById(savedUser._id).populate({path: 'locatie'})
-            // const response = await sendEmployeeEmail(dbUser, url)
+            const response = await sendEmployeeEmail(dbUser, url)
             res.status(200).json({message: 'Utilizatorul a fost salvat ' + response.message})
         }
 
@@ -306,7 +306,7 @@ module.exports.registerIn = async (req, res) => {
                 await user.save()
                 const data = {name: user.name, action: 's-a inregistrat'}
                 const gmail = {app: user.locatie.gmail.app, email: user.locatie.gmail.email} 
-                await sendInfoAdminEmail(data, adminEmail ,gmail)
+                // await sendInfoAdminEmail(data, adminEmail ,gmail)
                 res.status(200).json({ message: "Datele au fost actualizate.", user: user});
             } else {
                 return res.status(401).json({ message: "Passwords don't match!" });
