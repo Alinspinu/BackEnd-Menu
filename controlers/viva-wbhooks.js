@@ -8,18 +8,13 @@ const Nir = require('../models/office/nir')
 
 
 
-
-
-    
-
-
-
-
 module.exports.transactionCreated = async (req, res) => {
 
     const webHookData = req.body
 
     const locatie = "655e2e7c5a3d53943c6b7c53"
+
+    console.log(webHookData)
 
     try{
 
