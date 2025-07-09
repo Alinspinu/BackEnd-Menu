@@ -266,7 +266,7 @@ module.exports.registerNewEmployee = async (req, res) => {
             const newUser = new User(user)
             const savedUser = await newUser.save()
             const dbUser = await User.findById(savedUser._id).populate({path: 'locatie'})
-            const response = await sendEmployeeEmail(dbUser, url)
+            // const response = await sendEmployeeEmail(dbUser, url)
             res.status(200).json({message: 'Utilizatorul a fost salvat ' + response.message})
         }
 
