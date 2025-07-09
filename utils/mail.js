@@ -130,21 +130,21 @@ async function sendEmployeeEmail(newUser, baseUrlRedirect) {
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
     
-    // const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
-    const appKey = decryptData('277f0c1e6a48ff27ab8bdcbeaa3917e914d4d1d5988c814127aa3ca3c9d94556', 'DX7droMGD0FBGUdLCY2yl/WdmA9qaqDy1AogHom2Bqg=', '694c0d5cb9f5190b1a768025b232c94b');
+    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
+    // const appKey = decryptData('277f0c1e6a48ff27ab8bdcbeaa3917e914d4d1d5988c814127aa3ca3c9d94556', 'DX7droMGD0FBGUdLCY2yl/WdmA9qaqDy1AogHom2Bqg=', '694c0d5cb9f5190b1a768025b232c94b');
 
       if(appKey !== "0") {
           const transporter = nodemailer.createTransport({
               service: 'Gmail',
               auth: {
-                //   user: newUser.locatie.gmail.email,
-                 user: 'truefinecoffee@gmail.com',
+                  user: newUser.locatie.gmail.email,
+                //  user: 'truefinecoffee@gmail.com',
                   pass: appKey
               }
           });
           const mailOptions = {
-            //   from: newUser.locatie.gmail.email,
-              from: 'truefinecoffee@gmail.com',
+              from: newUser.locatie.gmail.email,
+            //   from: 'truefinecoffee@gmail.com',
               to: newUser.email, // Assuming the email is present in the newUser object
               subject: 'Bine ai venit',
               html: renderedTemplate
