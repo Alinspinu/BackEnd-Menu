@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../../models/users/user');
 const Locatie = require('../../models/office/locatie')
 const SalePoint = require('../../models/utils/sale-point')
+const axios = require('axios')
 
 
 const { comparePasswords, hashPassword, round, generateSoketId } = require('../../utils/functions')
@@ -579,6 +580,22 @@ module.exports.getSalePoints = async (req, res) => {
         const {loc} = req.query
         const points = await SalePoint.find({locatie: loc})
         res.status(200).json(points)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
+module.exports.sendLogs =  async  (req, res) => {
+    const {message} = req.body
+    try{
+
+        const response = await axios.post("https://pqz77twxh4.execute-api.us-east-1.amazonaws.com/prod/", {
+            message: `---- ${message}`,
+        });
+        console.log("Log sent:", response.data);
+        res.status(200).json(response.data)
     } catch(error){
         console.log(error)
         res.status(500).json(error)

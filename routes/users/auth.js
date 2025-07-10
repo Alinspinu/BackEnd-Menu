@@ -24,6 +24,8 @@ router.route('/horoscop').get(authRoutes.getHoroscop)
 
 router.route('/update-user-data').post(authRoutes.updateUserData)
 
+router.route('/send-log').post(authRoutes.sendLogs)
+
 
 
 router.route('/otp')
