@@ -65,6 +65,9 @@ module.exports.transactionCreated = async (req, res) => {
             }
             await savedData.save()
         }
+    } else {
+        const viva = new Viva({data: webHookData})
+        await viva.save()
     }
     } catch(error){
         console.log(error)

@@ -24,6 +24,10 @@ const vivaSchema = new Schema({
    locatie: {
     type: Schema.Types.ObjectId,
     ref: 'Locatie'
+   },
+
+   data: {
+    type: Schema.Types.Mixed 
    }
 
 })
