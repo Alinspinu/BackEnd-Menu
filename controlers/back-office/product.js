@@ -3,12 +3,15 @@ const Product = require('../../models/office/product/product')
 const Cat = require('../../models/office/product/cat')
 const SubProduct = require('../../models/office/product/sub-product')
 const Ingredient = require('../../models/office/inv-ingredient')
+const Section = require('../../models/office/product/print-section')
 const Dep = require('../../models/office/product/dep')
 const Gestiune = require('../../models/office/product/gestiune')
 const mongoose = require('mongoose')
 const cloudinary = require('cloudinary').v2;
 
 const {checkTopping, round} = require('../../utils/functions')
+
+
 
 
 module.exports.updateProducts = async (req, res) => {
@@ -446,6 +449,65 @@ module.exports.removeParingProduct = async (req, res, next) => {
     } catch (err) {
         console.log("Error", err)
         res.status(500).json({ messaje: err.error.error.message })
+    }
+}
+
+
+
+
+module.exports.addSection = async (req, res) => {
+    const {section} = req.body
+    try{
+
+        const newSection = new Section(section)
+        const savedSection = await newSection.save()
+        res.status(200).json({message: 'Secția a fost salvată cu success!', section: savedSection})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.getSections = async (req, res) => {
+    const {loc, point} = req.query;
+    try{
+        const sections = await Section.find({locatie: loc, salePoint: point})
+        res.status(200).json(sections) 
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.editSection = async (req, res) => {
+    const {section} = req.body
+    try{
+
+        const updatedSection = await Section.findByIdAndUpdate(section._id, section, {new: true})
+        res.status(200).json({message: 'Secția a fost actualizată', section: updatedSection})
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.deleteSection = async (req, res) => {
+    const {id} = req.query;
+    try{
+        const section = await Section.findById(id)
+
+        if (!section) {
+            return res.status(404).json({ message: 'Secția nu a fost găsită.' });
+          }
+    
+        await Product.updateMany({printSection: section._id},   { $unset: { printSection: "" } })
+        await section.deleteOne()
+        
+        res.status(200).json({message: 'Secția a fost șteasă și produsele au fost actualizate!'})
+    } catch(error){
+        console.error('Error deleting section:', error);
+        res.status(500).json({ message: 'Eroare la ștergerea secției.', error });
     }
 }
 

@@ -191,6 +191,10 @@ const orderTrueSchema = new Schema({
                 //     type: Schema.Types.ObjectId,
                 //     ref: 'Dep'
                 // },
+                printSection: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Section'
+                },
                 sub: Boolean,
                 qty: String,
                 section: String,

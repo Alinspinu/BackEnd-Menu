@@ -20,8 +20,41 @@ const printServerSchema = new Schema({
     },
     status: {
         type: Boolean,
-        default: true,
+        default: true, 
     },
+    fiscalPrinter: {
+        name: String,
+        brand: String,
+        model: String,
+        driver: {
+            type: String,
+            enum: ['FiscalNet'],
+            default: 'FiscalNet'
+        },
+        driverAddress: String,
+        orders: Boolean,
+        section: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Section'
+            }
+        ]
+    },
+    thermalPrinters: [
+        {
+            name: String,
+            brand: String,
+            model: String,
+            ip: String,
+            port: Number,
+            section: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Section'
+                }
+            ]
+        }
+    ]
 });
 
 module.exports = mongoose.model('PrintServer', printServerSchema);

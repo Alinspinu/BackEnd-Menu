@@ -206,7 +206,11 @@ const productTrueSchema = new Schema({
     salePoint: {
         type: Schema.Types.ObjectId,
         ref: 'SalePoint'
-        }
+        },
+    printSection: {
+        type: Schema.Types.ObjectId,
+        ref: 'Section'
+    }
 
 })
 

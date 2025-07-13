@@ -32,4 +32,9 @@ router.route('/disc-prod', authApi).post(productRoutes.setDiscountProd)
 
 router.route('/up').get(productRoutes.updateProducts)
 
+router.route('/section', authApi)
+    .get(productRoutes.getSections)
+    .post(productRoutes.addSection)
+    .put(productRoutes.editSection)
+    .delete(productRoutes.deleteSection)
 module.exports = router
