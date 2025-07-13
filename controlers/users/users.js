@@ -406,3 +406,14 @@ module.exports.getServers = async (req, res) => {
         res.status(500).json(error)
     }
 }
+
+module.exports.editPrintServer = async (req, res) => {
+    const {server} = req.body
+    try{
+        const updatedServer = await PrintServer.findByIdAndUpdate(server._id, server, {new: true})
+        res.status(200).json({message: 'Serverul de print a fost actualizat cu success', server: updatedServer})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}

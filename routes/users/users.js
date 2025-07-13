@@ -53,6 +53,7 @@ router.route('/sale-point')
 router.route('/server')
     .get(users.getServers)
     .post(users.savePrintServer)
+    .put(users.editPrintServer)
 
 
 module.exports = router  

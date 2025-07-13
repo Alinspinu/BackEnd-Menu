@@ -208,7 +208,6 @@ module.exports.addProd = async (req, res, next) => {
 module.exports.editProduct = async (req, res, next) => {
     const { product } = req.body
     const parsedProduct = JSON.parse(product)
-    console.log('SEction ID',parsedProduct.printSection)
     try{
             const oldProduct = await Product.findById(parsedProduct._id)
             if (oldProduct.category.toString() !== parsedProduct.category) {
