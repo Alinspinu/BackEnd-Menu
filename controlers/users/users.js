@@ -400,6 +400,8 @@ module.exports.getServers = async (req, res) => {
     const {loc, point} = req.query
     try{    
         const printServers = await PrintServer.find({locatie: loc, salePoint: point})
+                                .populate({path: 'fiscalPrinter.section'})
+                                .populate({path: 'thermalPrinters.section'})
         res.status(200).json({servers: printServers})
     } catch(error){
         console.log(error)
