@@ -9,6 +9,7 @@ const Voucher = require('../../models/utils/voucher')
 const Order = require('../../models/office/product/order')
 const Table = require('../../models/utils/table')
 const RepBill = require('../../models/office/reprintedBill')
+const PrintServer = require('../../models/utils/print-server')
 
 const { round, sendToPrint, handleError } = require('../../utils/functions')
 const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
@@ -16,7 +17,6 @@ const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
 
 const io = require('socket.io-client')
 const socket = io("https://socket.flowmanager.ro")
-// const socket = io("http://localhost:8090")
 
 module.exports.getToken = async (req, res, next) => {
     const {code} = req.query
@@ -186,13 +186,12 @@ module.exports.useVoucher = async (req, res, next) => {
 }
 
 
-const PrintServer = require('../../models/utils/print-server')
 
 module.exports.reports = async (req, res, next) => {
     try{
         const {value, serverId} = req.query;
-        const server = await PrintServer.findById(serverId)
-        socket.emit('reports', JSON.stringify({value: value, serverKey: server.key, mainServer: server}))
+    const server = await PrintServer.findById(serverId)
+        socket.emit('reports', JSON.stringify({value: value, serverKey: server.key, address: server.fiscalPrinter.driverAddress}))
         res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
         handleError(err, res)
@@ -203,7 +202,7 @@ module.exports.reports = async (req, res, next) => {
 module.exports.cashInandOut = async (req, res, next) =>{
     try{
         const {data, mainServer} = req.body;
-        socket.emit('inOut', JSON.stringify({data: data, serverKey: mainServer.key, mainServer: mainServer}))
+        socket.emit('inOut', JSON.stringify({data: data, serverKey: mainServer.key, address: mainServer.fiscalPrinter.driverAddress}))
         res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
        handleError(err, res)
@@ -216,7 +215,7 @@ module.exports.reprinFiscal = async (req, res, next) => {
         const {bill, mainServer} = req.body
         const newRep = new RepBill({fiscal: true, bill: bill._id})
         await newRep.save()
-        socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key, mainServer: mainServer}))
+        socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key, address: mainServer.fiscalPrinter.driverAddress}))
         res.status(200).json({message: 'Bonul a fost retipărit!'})
      
     } catch(err){
@@ -233,7 +232,7 @@ module.exports.printBill = async (req, res, next) => {
         bill.pending = false
         const email = bill.clientInfo.email
         if(mode && bill.total > 0 && mainServer){
-           socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key, mainServer: mainServer}))
+           socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key, address: mainServer.fiscalPrinter.driverAddress}))
         } 
         if(email && email.length){
             const client = await User.findOne({email: email, locatie: bill.locatie})
@@ -279,22 +278,18 @@ module.exports.printBill = async (req, res, next) => {
     }
 }
 
-
-
 module.exports.printUnreg = async (req, res, next) => {
     try{
         const {bill, mainServer} = req.body
         const billl = JSON.parse(bill)
         const newRep = new RepBill({fiscal: false, bill: billl._id})
         await newRep.save()
-        socket.emit('nefiscal', JSON.stringify({bill: billl, serverKey: mainServer.key, mainServer: mainServer}))
+        socket.emit('nefiscal', JSON.stringify({bill: billl, serverKey: mainServer.key, address: mainServer.fiscalPrinter.driverAddress}))
         res.status(200).json({message: 'Bonul a fost tipărit!'})
     } catch(err){
         handleError(err, res)
     }
 }
-
-
 
 module.exports.changePaymentMethod = async (req, res, next) => {
     try{
@@ -323,8 +318,6 @@ module.exports.posPaymentCheck = async (req, res, next) => {
     }   
 }
 
-
-
 module.exports.fixBul = async (req, res, next) => {
     try{
         const startD = new Date('2024-01-05')
@@ -344,87 +337,3 @@ module.exports.fixBul = async (req, res, next) => {
 }
 
 
-// module.exports.fixBul = async (req, res, next) => {
-//     try{
-//           const {orders} = req.body
-          
-//           const pOrders = JSON.parse(orders)
-//           for( const o of pOrders){
-//             const ord = Order.findOne({soketId: o.soketId})
-//             if(!ord){
-//                 const or = new Order(o)
-//                 await or.save()
-//                 console.log('order saved', o.soketId)
-//             } else {
-//                 console.log('order found', ord.soketId)
-//             }
-//           }
-        
-//         res.status(200)
-//     } catch(err){
-//         console.log(err)
-//     }
-// }
-
-
-
-
-// module.exports.saveBillInCloud = async (req, res, next) => {
-//     try{
-//         const {bill} = req.body
-//         bill.status = 'done'
-//         bill.pending = false
-//         const email = bill.clientInfo.email
-//         // await createProductSaleReport(bill.products)
-//         if(email && email.length){
-//             const client = await User.findOne({email: email})
-//             if(client){
-//                 client.orders.push(bill)
-//                 client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
-//             }
-//             await client.save()
-//         }
-    
-//         const billl = await Order.findOne({soketId: bill.soketId})
-    
-//         if(!billl){
-//             // console.log('bill not found')
-//             delete bill._id
-//             const order = new Order(bill);
-//             const savedBill = await order.save()
-//             if(savedBill){
-//                 savedBill.products.map(async (el) => {
-//                 if (el.toppings.length) {
-//                   await unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-//                 }
-//                 if (el.ings.length) {
-//                    await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-//                 }
-//             });
-//             res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-//             } else {
-//                 throw new Error('Nota de plată nu a putut fi salvată!')
-//             }
-//         } else {
-//             billl.status = 'done'
-//             billl.pending = false
-//             billl.tips = bill.tips
-//             billl.total = bill.total
-//             billl.payment = bill.payment
-//             const savedBill = await billl.save()
-//             console.log('saved bill in cloud-- STATUS-', savedBill.status, 'payment---', savedBill.payment )
-//             billl.products.map(async (el) => {
-//                 if (el.toppings.length) {
-//                   await  unloadIngs(el.toppings, el.quantity, { name: 'vanzare', details: el.name });
-//                 }
-//                 if (el.ings.length) {
-//                    await unloadIngs(el.ings, el.quantity, { name: 'vanzare', details: el.name });
-//                 }
-//             });
-//             res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
-//         }
-//     } catch(err) {
-//         console.log(err)
-//         res.status(500).json(err)
-//     }
-// }
