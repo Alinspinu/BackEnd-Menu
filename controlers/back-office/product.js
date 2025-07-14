@@ -47,6 +47,7 @@ module.exports.updateProducts = async (req, res) => {
       const {loc, point} = req.body
       const products = await Product.find({locatie: loc, salePoint: point}).populate([
         {path: 'category', select: 'name'}, 
+        {path: 'printSection', select: 'name'},
         {
             path: 'subProducts', populate: {
                 path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
@@ -74,6 +75,13 @@ module.exports.updateProducts = async (req, res) => {
                 }
         },
     ])
+        for(let p of products){
+            if(p.printer === 'barista') p.printSection = '6873d22b0b1fad2b73e05804'
+            if(p.printer === 'main') p.printSection = '6873d5120a11b83e02bd113f'
+            if(p.printer === 'kitchen') p.printSection = '6873d2b50b1fad2b73e2eeca'
+            await p.save()
+            console.log(p.printer + ' ' + p.printSection)
+        }
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -93,6 +101,7 @@ module.exports.updateProducts = async (req, res) => {
                     }
             }
         },
+        {path: 'printSection', select: 'name'},
         {path: "category", select: 'name'},
         {
             path: 'toppings', select: 'qty name ing price um', 
@@ -176,6 +185,7 @@ module.exports.addProd = async (req, res, next) => {
                 }
             },
             {path: "category", select: 'name'},
+            {path: 'printSection', select: 'name'},
             {
                 path: 'toppings', select: 'qty name ing price um', 
                 populate: {
@@ -244,6 +254,7 @@ module.exports.editProduct = async (req, res, next) => {
                     }
                 },
                 {path: "category", select: 'name'},
+                {path: 'printSection', select: 'name'},
                 {
                     path: 'toppings', select: 'qty name ing um', 
                     populate: {
