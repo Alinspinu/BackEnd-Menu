@@ -44,7 +44,6 @@ const printServerSchema = new Schema({
         {
             name: String,
             brand: String,
-            model: String,
             ip: String,
             port: Number,
             section: [
