@@ -75,13 +75,6 @@ module.exports.updateProducts = async (req, res) => {
                 }
         },
     ])
-        for(let p of products){
-            if(p.printer === 'barista') p.printSection = '6873d22b0b1fad2b73e05804'
-            if(p.printer === 'main') p.printSection = '6873d5120a11b83e02bd113f'
-            if(p.printer === 'kitchen') p.printSection = '6873d2b50b1fad2b73e2eeca'
-            await p.save()
-            console.log(p.printer + ' ' + p.printSection)
-        }
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
