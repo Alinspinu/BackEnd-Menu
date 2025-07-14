@@ -413,6 +413,9 @@ module.exports.editPrintServer = async (req, res) => {
     const {server} = req.body
     try{
         const updatedServer = await PrintServer.findByIdAndUpdate(server._id, server, {new: true})
+        await updatedServer
+                .populate({path: 'fiscalPrinter.section'})
+                .populate({path: 'thermalPrinters.section'})
         res.status(200).json({message: 'Serverul de print a fost actualizat cu success', server: updatedServer})
     } catch(error) {
         console.log(error)
