@@ -47,7 +47,6 @@ module.exports.updateProducts = async (req, res) => {
       const {loc, point} = req.body
       const products = await Product.find({locatie: loc, salePoint: point}).populate([
         {path: 'category', select: 'name'}, 
-        {path: 'printSection', select: 'name'},
         {
             path: 'subProducts', populate: {
                 path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
@@ -94,7 +93,6 @@ module.exports.updateProducts = async (req, res) => {
                     }
             }
         },
-        {path: 'printSection', select: 'name'},
         {path: "category", select: 'name'},
         {
             path: 'toppings', select: 'qty name ing price um', 
@@ -178,7 +176,6 @@ module.exports.addProd = async (req, res, next) => {
                 }
             },
             {path: "category", select: 'name'},
-            {path: 'printSection', select: 'name'},
             {
                 path: 'toppings', select: 'qty name ing price um', 
                 populate: {
@@ -247,7 +244,6 @@ module.exports.editProduct = async (req, res, next) => {
                     }
                 },
                 {path: "category", select: 'name'},
-                {path: 'printSection', select: 'name'},
                 {
                     path: 'toppings', select: 'qty name ing um', 
                     populate: {
