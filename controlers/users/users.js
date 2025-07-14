@@ -417,3 +417,14 @@ module.exports.editPrintServer = async (req, res) => {
         res.status(500).json(error)
     }
 }
+
+module.exports.deletePrintServer = async (req, res) => {
+    const {id} = req.query
+    try{
+        await PrintServer.findByIdAndDelete(id)
+        res.status(200).json({message: 'Serverul a fost șters cu success!'})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
