@@ -306,7 +306,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 newBill.user = parsedBill.clientInfo._id
                 newBill.clientInfo.userId = newBill.user
             }
-            if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: newBill, serverKey: mainServer.key, secondaryServer: secondaryServer}))   
+            if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: newBill, serverKey: mainServer.key, secondaryServer: secondaryServer, mainServer: mainServer}))   
 
             newBill.products.forEach(el => {
                 if(el.sentToPrint){
@@ -323,7 +323,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 
         } else {
 
-           if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: parsedBill, serverKey: mainServer.key, secondaryServer: secondaryServer}))  
+           if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: parsedBill, serverKey: mainServer.key, secondaryServer: secondaryServer, mainServer: mainServer}))  
             let productsToPrint = false
             parsedBill.products.forEach(el => {
                 if(el.sentToPrint){

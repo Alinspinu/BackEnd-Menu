@@ -192,7 +192,7 @@ module.exports.reports = async (req, res, next) => {
     try{
         const {value, serverId} = req.query;
         const server = await PrintServer.findById(serverId)
-        socket.emit('reports', JSON.stringify({value: value, serverKey: server.key}))
+        socket.emit('reports', JSON.stringify({value: value, serverKey: server.key, mainServer: server}))
         res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
         handleError(err, res)
@@ -203,7 +203,7 @@ module.exports.reports = async (req, res, next) => {
 module.exports.cashInandOut = async (req, res, next) =>{
     try{
         const {data, mainServer} = req.body;
-        socket.emit('inOut', JSON.stringify({data: data, serverKey: mainServer.key}))
+        socket.emit('inOut', JSON.stringify({data: data, serverKey: mainServer.key, mainServer: mainServer}))
         res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
        handleError(err, res)
@@ -216,7 +216,7 @@ module.exports.reprinFiscal = async (req, res, next) => {
         const {bill, mainServer} = req.body
         const newRep = new RepBill({fiscal: true, bill: bill._id})
         await newRep.save()
-        socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key}))
+        socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key, mainServer: mainServer}))
         res.status(200).json({message: 'Bonul a fost retipărit!'})
      
     } catch(err){
@@ -233,7 +233,7 @@ module.exports.printBill = async (req, res, next) => {
         bill.pending = false
         const email = bill.clientInfo.email
         if(mode && bill.total > 0 && mainServer){
-           socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key}))
+           socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key, mainServer: mainServer}))
         } 
         if(email && email.length){
             const client = await User.findOne({email: email, locatie: bill.locatie})
@@ -287,7 +287,7 @@ module.exports.printUnreg = async (req, res, next) => {
         const billl = JSON.parse(bill)
         const newRep = new RepBill({fiscal: false, bill: billl._id})
         await newRep.save()
-        socket.emit('nefiscal', JSON.stringify({bill: billl, serverKey: mainServer.key}))
+        socket.emit('nefiscal', JSON.stringify({bill: billl, serverKey: mainServer.key, mainServer: mainServer}))
         res.status(200).json({message: 'Bonul a fost tipărit!'})
     } catch(err){
         handleError(err, res)
