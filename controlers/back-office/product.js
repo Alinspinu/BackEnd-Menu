@@ -311,9 +311,9 @@ module.exports.setDiscountProd = async (req, res, next) => {
 module.exports.checkProductStatus = async (req, res) => {
     try{
         const {id} = req.query
-
+        console.log(id)
         const product = await Product.findById(id)
-        if(product.available){
+        if(product && product.available){
             res.status(200).json({av: true})
         } else {
             res.status(200).json({av: false})
