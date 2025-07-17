@@ -19,7 +19,7 @@ module.exports.transactionCreated = async (req, res) => {
     try{
 
     const subId = webHookData.EventData.SubTypeId
-    if(subId === 100 || subId === 30){
+    if(subId === 101 || subId === 30){
         let transactionType = subId === 100 ? 'card' : 'transfer'
         let iban = subId === 30 ? webHookData.EventData.Iban : ''
         let vivaAccountId = subId === 30 ? webHookData.EventData.BankAccountId : ''
@@ -80,6 +80,7 @@ module.exports.getViva = async (req, res) => {
     const {loc} = req.query
     try{
         const vivas = await Viva.find({locatie: loc})
+        console.log(vivas)
         res.status(200).json(vivas)
     } catch(error) {
         res.status(500).json(error)
