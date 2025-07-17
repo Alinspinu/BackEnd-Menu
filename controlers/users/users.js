@@ -149,14 +149,14 @@ module.exports.sendCustomer = async (req, res, next) => {
       const {id, loc, mode} = req.query;
       if(mode === 'card'){
         if(id.length < 22){
-            const customer = await User.findOne({cardIndex:  id, locatie: loc}).select('name email cashBack discount cardIndex');
+            const customer = await User.findOne({cardIndex:  id, locatie: loc}).select('name email cashBack discount cardIndex telephone');
             if(customer){
                 res.status(200).json({message: 'All good', customer: customer})
             } else {
                 res.status(404).json({message: 'Clientul nu a fost găsit în baza de date'})
             }
         } else {
-            const customer = await User.findById(id).select('name email cashBack discount cardIndex');
+            const customer = await User.findById(id).select('name email cashBack discount cardIndex telephone');
             if(customer){
                 res.status(200).json({message: 'All good', customer: customer})
             } else {
@@ -165,7 +165,7 @@ module.exports.sendCustomer = async (req, res, next) => {
         }
       } 
       if(mode === 'email') {
-          const customer = await User.findOne({email: id}).select('name email cashBack  discount cardIndex');
+          const customer = await User.findOne({email: id}).select('name email cashBack  discount cardIndex telephone');
           if(customer){
               res.status(200).json({message: 'All good', customer})
           } else {
