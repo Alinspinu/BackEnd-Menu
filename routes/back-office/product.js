@@ -32,6 +32,8 @@ router.route('/disc-prod', authApi).post(productRoutes.setDiscountProd)
 
 router.route('/up').get(productRoutes.updateProducts)
 
+router.route('/status').get(productRoutes.checkProductStatus)
+
 router.route('/section', authApi)
     .get(productRoutes.getSections)
     .post(productRoutes.addSection)
