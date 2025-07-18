@@ -67,7 +67,8 @@ module.exports.transactionCreated = async (req, res) => {
         }
     } else {
         const viva = new Viva({data: webHookData})
-        await viva.save()
+        if(subId !== 83 || subId !== 13) await viva.save()
+       
     }
     } catch(error){
         console.log(error)
