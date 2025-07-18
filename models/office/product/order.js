@@ -239,6 +239,7 @@ const orderTrueSchema = new Schema({
                         }
                       },
                 ],
+                energy: Number,
                 comment: String,
                 tva: Number,
             }
