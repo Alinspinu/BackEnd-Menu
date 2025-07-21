@@ -20,10 +20,10 @@ module.exports.transactionCreated = async (req, res) => {
 
     const subId = webHookData.EventData.SubTypeId
     if(subId === 101 || subId === 30){
-        let transactionType = subId === 100 ? 'card' : 'transfer'
+        let transactionType = subId === 101 ? 'card' : 'transfer'
         let iban = subId === 30 ? webHookData.EventData.Iban : ''
         let vivaAccountId = subId === 30 ? webHookData.EventData.BankAccountId : ''
-        let date = subId === 100 ? new Date(webHookData.EventData.ValueDate) : new Date (webHookData.EventData.Created)
+        let date = subId === 101 ? new Date(webHookData.EventData.ValueDate) : new Date (webHookData.EventData.Created)
         const data = new Viva({
             transactionType: transactionType,
             date: date,
@@ -35,8 +35,8 @@ module.exports.transactionCreated = async (req, res) => {
             locatie: locatie,
         })
         const savedData =  await data.save()
-        const string = subId === 100 ? savedData.description.split('-')[1].trim().split(' ')[0] : savedData.description.split('-')[1].trim()
-        const query = subId === 100 ? {name: {$regex: string, $options: 'i'}, locatie: locatie } : {account: {$regex: string, $options: 'i'}, locatie: locatie }
+        const string = subId === 101 ? savedData.description.split('-')[1].trim().split(' ')[0] : savedData.description.split('-')[1].trim()
+        const query = subId === 101 ? {name: {$regex: string, $options: 'i'}, locatie: locatie } : {account: {$regex: string, $options: 'i'}, locatie: locatie }
         const suplier = await Suplier.findOne(query)
         if(suplier){
             savedData.asociat = {}
