@@ -251,13 +251,7 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.addRow(header)
 
         days.reverse().forEach((el, i) => {
-        //   const head =  worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
-          const head = worksheet.addRow([]);
-            head.getCell(1).value = `${i + 1}`;
-            head.getCell(2).value = el.date.toISOString().split('T')[0];
-            head.getCell(3).value = 'Numerar din ziua precedentă';
-            head.getCell(4).value = 'Intrare';
-            head.getCell(5).value = round(el.cashIn);
+          const head =  worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
             head.eachCell((cell) => {
                 cell.font = {
                 size: 13,
@@ -278,10 +272,7 @@ module.exports.createXcel = async (req, res, next) => {
             });
             worksheet.addRow([])
         })
-        // const sortedEntries = entryArr.sort((a,b) => b.index - a.index)
-        // sortedEntries.forEach(el => {
-        //     worksheet.addRow([`${el.index}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Cheltuiala'}`,`${el.amount}`])
-        // })
+
    
         worksheet.getRow(1).eachCell((cell)=>{
             cell.font = {
@@ -289,19 +280,7 @@ module.exports.createXcel = async (req, res, next) => {
                 size: 13
             }
         })
-        worksheet.getRow(4).eachCell((cell)=>{
-            cell.font = {
-                bold: true,
-                size: 14
-            }
-        })
-        worksheet.getRow(5).eachCell((cell)=>{
-            cell.font = {
-                bold: true,
-                size: 14
-            }
-        })
-        worksheet.lastRow.eachCell((cell)=>{
+        worksheet.getRow(3).eachCell((cell)=>{
             cell.font = {
                 bold: true,
                 size: 14
