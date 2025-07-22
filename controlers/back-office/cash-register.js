@@ -256,18 +256,23 @@ module.exports.createXcel = async (req, res, next) => {
                 cell.font = {
                 size: 13,
                 bold: true,
-                color: { argb: 'FF0000' },
+                // color: { argb: 'FF0000' },
                 };
             });
             el.entry.forEach((el, i) => {
-                worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Ieșire'}`,`${el.amount}`])
+               const e = worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Ieșire'}`,`${el.amount}`])
+               e.eachCell((cell) => {
+                cell.font = {
+                color: { argb: el.tip === 'income' ?  'FF00B050' : 'FF0000' },
+                };
+            });
             })
            const foot =  worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${round(el.cashOut)}`])
             foot.eachCell((cell) => {
                 cell.font = {
                 size: 13,
                 bold: true,
-                color: { argb: 'FF0000' },
+                // color: { argb: 'FF0000' },
                 };
             });
             worksheet.addRow([])
@@ -280,7 +285,7 @@ module.exports.createXcel = async (req, res, next) => {
                 size: 13
             }
         })
-        worksheet.getRow(3).eachCell((cell)=>{
+        worksheet.getRow(4).eachCell((cell)=>{
             cell.font = {
                 bold: true,
                 size: 14
