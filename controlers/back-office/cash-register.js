@@ -271,8 +271,8 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.addRow(header)
         const entryArr = []
         days.reverse().forEach((el, i) => {
-          const header =  worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
-            header.eachCell((cell) => {
+          const head =  worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
+            head.eachCell((cell) => {
                 cell.font = {
                 size: 13,
                 bold: true,
