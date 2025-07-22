@@ -246,12 +246,18 @@ module.exports.createXcel = async (req, res, next) => {
             `${days[0].locatie.bussinessName}`,'',`Registru de casă perioadă ${startDateToShow} -- ${endDateToShow}`,'','']
         const header = ['Nr',`Data`,'Descriere','Tip', `Lei`]
         worksheet.addRow(docTitle)
-        worksheet.addRow([])
+        worksheet.addRow([])``
         worksheet.addRow([])
         worksheet.addRow(header)
-        const entryArr = []
+        
         days.reverse().forEach((el, i) => {
-          const head =  worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
+        //   const head =  worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
+          const head = worksheet.addRow([]);
+            head.getCell(1).value = `${i + 1}`;
+            head.getCell(2).value = el.date.toISOString().split('T')[0];
+            head.getCell(3).value = 'Numerar din ziua precedentă';
+            head.getCell(4).value = 'Intrare';
+            head.getCell(5).value = round(el.cashIn);
             head.eachCell((cell) => {
                 cell.font = {
                 size: 13,
