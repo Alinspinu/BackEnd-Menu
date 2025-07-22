@@ -276,7 +276,7 @@ module.exports.createXcel = async (req, res, next) => {
                 };
             });
             worksheet.addRow([])
-        })
+        
 
    
         worksheet.getRow(1).eachCell((cell)=>{
