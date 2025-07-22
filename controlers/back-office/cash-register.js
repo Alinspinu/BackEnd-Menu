@@ -267,7 +267,7 @@ module.exports.createXcel = async (req, res, next) => {
                const tip = e.getCell(4)
                tip.font = { color:  {argb: el.tip === 'income' ?  'FF00B050' : 'FF0000'} }
             });
-            })
+         
            const foot =  worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${round(el.cashOut)}`])
             foot.eachCell((cell) => {
                 cell.font = {
@@ -278,7 +278,7 @@ module.exports.createXcel = async (req, res, next) => {
             });
             worksheet.addRow([])
         
-
+        })
    
         worksheet.getRow(1).eachCell((cell)=>{
             cell.font = {
