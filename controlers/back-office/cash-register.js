@@ -275,11 +275,11 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.addRow(header)
         const entryArr = []
         days.reverse().forEach(el => {
-            worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${el.cashIn}`])
+            worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
             el.entry.forEach((el, i) => {
-                worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Cheltuiala'}`,`${el.amount}`])
+                worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Ieșire'}`,`${el.amount}`])
             })
-            worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${el.cashOut}`])
+            worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${round(el.cashOut)}`])
             worksheet.addRow([])
         })
         // const sortedEntries = entryArr.sort((a,b) => b.index - a.index)
@@ -314,7 +314,7 @@ module.exports.createXcel = async (req, res, next) => {
         })
         worksheet.getColumn(1).width = 7;
         worksheet.getColumn(2).width = 12; 
-        worksheet.getColumn(3).width = 30; 
+        worksheet.getColumn(3).width = 60; 
         worksheet.getColumn(4).width = 10; 
         worksheet.getColumn(5).width = 10; 
         worksheet.mergeCells('A1:B2')
