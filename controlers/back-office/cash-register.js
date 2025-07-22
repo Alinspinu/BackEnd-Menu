@@ -265,22 +265,18 @@ module.exports.createXcel = async (req, res, next) => {
         const docTitle =  [
             `${days[0].locatie.bussinessName}`,'',`Registru de casă perioadă ${startDateToShow} -- ${endDateToShow}`,'','']
         const header = ['Nr',`Data`,'Descriere','Tip', `Lei`]
-        const cashIn = ['Sold Ințial',``,'','', `${round(day1.cashIn)}`]
-        const footer = ['Sold Final','','',' ', `${round(lastDay.cashOut)}`] 
-        const inAndOut = [`Total Intrat ${round(totalIn)}`,'',`Total cheltuit ${round(totalOut)}`, ""]
         worksheet.addRow(docTitle)
         worksheet.addRow([])
         worksheet.addRow([])
-        worksheet.addRow(cashIn)
         worksheet.addRow(header)
         const entryArr = []
         days.reverse().forEach((el, i) => {
           const header =  worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
             header.eachCell((cell) => {
                 cell.font = {
-                size: 14,
+                size: 13,
                 bold: true,
-                // color: { argb: 'FF0000' },
+                color: { argb: 'FF0000' },
                 };
             });
             el.entry.forEach((el, i) => {
@@ -289,9 +285,9 @@ module.exports.createXcel = async (req, res, next) => {
            const foot =  worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${round(el.cashOut)}`])
             foot.eachCell((cell) => {
                 cell.font = {
-                size: 14,
+                size: 13,
                 bold: true,
-                // color: { argb: 'FF0000' },
+                color: { argb: 'FF0000' },
                 };
             });
             worksheet.addRow([])
@@ -300,8 +296,7 @@ module.exports.createXcel = async (req, res, next) => {
         // sortedEntries.forEach(el => {
         //     worksheet.addRow([`${el.index}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Cheltuiala'}`,`${el.amount}`])
         // })
-        worksheet.addRow(footer)
-        worksheet.addRow(inAndOut)
+   
         worksheet.getRow(1).eachCell((cell)=>{
             cell.font = {
                 bold: true,
@@ -317,7 +312,7 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.getRow(5).eachCell((cell)=>{
             cell.font = {
                 bold: true,
-                size: 13
+                size: 14
             }
         })
         worksheet.lastRow.eachCell((cell)=>{
