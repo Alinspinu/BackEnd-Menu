@@ -27,6 +27,26 @@ module.exports.sendEntry = async (req, res, next) => {
             }
 }
 
+module.exports.getDocumentsByDate = async (req, res) => {
+    const {loc, point, start, end} = req.body
+    try{
+        const startDate = new Date(start).getTime()
+        const endDate = new Date(end).getTime()
+        const documents = await Day.find({locatie: loc, salePoint: point, date: {$gte: startDate, $lte: endDate}})
+        .populate({path: "entry"})
+        .sort({ date: -1});
+        const sortedDocs = documents.sort((a,b) => {
+            const aDate = new Date(a.date).getTime()
+            const bDate = new Date(b.date).getTime()
+            return aDate-bDate
+        })
+        res.status(200).json({message: 'all good', documents: sortedDocs})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 
 module.exports.creataDaty = async (req, res) => {
     try{
