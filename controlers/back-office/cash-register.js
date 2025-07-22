@@ -263,9 +263,9 @@ module.exports.createXcel = async (req, res, next) => {
                const e = worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Ieșire'}`,`${el.amount}`])
                const sum = e.getCell(5)
                console.log(sum)
-               sum.font.color = { argb: el.tip === 'income' ?  'FF00B050' : 'FF0000' }
+               sum.font =  { color:  {argb: el.tip === 'income' ?  'FF00B050' : 'FF0000'} }
                const tip = e.getCell(4)
-               tip.font.color = { argb: el.tip === 'income' ?  'FF00B050' : 'FF0000' }
+               tip.font = { color:  {argb: el.tip === 'income' ?  'FF00B050' : 'FF0000'} }
             });
             })
            const foot =  worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${round(el.cashOut)}`])
