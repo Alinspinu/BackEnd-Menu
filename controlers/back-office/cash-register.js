@@ -274,12 +274,26 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.addRow(cashIn)
         worksheet.addRow(header)
         const entryArr = []
-        days.reverse().forEach(el => {
-            worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
+        days.reverse().forEach((el, i) => {
+          const header =  worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${round(el.cashIn)}`])
+            header.eachCell((cell) => {
+                cell.font = {
+                size: 14,
+                bold: true,
+                // color: { argb: 'FF0000' },
+                };
+            });
             el.entry.forEach((el, i) => {
                 worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Ieșire'}`,`${el.amount}`])
             })
-            worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${round(el.cashOut)}`])
+           const foot =  worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${round(el.cashOut)}`])
+            foot.eachCell((cell) => {
+                cell.font = {
+                size: 14,
+                bold: true,
+                // color: { argb: 'FF0000' },
+                };
+            });
             worksheet.addRow([])
         })
         // const sortedEntries = entryArr.sort((a,b) => b.index - a.index)
