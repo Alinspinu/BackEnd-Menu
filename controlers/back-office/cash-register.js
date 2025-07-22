@@ -241,27 +241,7 @@ module.exports.createXcel = async (req, res, next) => {
     try{
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Sheet 1');
-        const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end}, salePoint: point }).populate({ path: 'entry' }).populate({path: 'locatie'})
-        const day1 = days[0]
-        const lastDay = days.at(-1)
-        let totalIn = 0
-        let totalOut = 0
-        days.forEach(day=> {
-            let dayIn = 0
-            let dayOut = 0
-           day.entry.forEach(entry => {
-               if(entry.tip === "income"){
-                   dayIn += entry.amount
-               } 
-               if(entry.tip === "expense"){
-                   dayOut += entry.amount
-               }
-               
-           })
-           totalIn += dayIn
-           totalOut += dayOut
-        })
-      
+        const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end}, salePoint: point }).populate({ path: 'entry' }).populate({path: 'locatie'})      
         const docTitle =  [
             `${days[0].locatie.bussinessName}`,'',`Registru de casă perioadă ${startDateToShow} -- ${endDateToShow}`,'','']
         const header = ['Nr',`Data`,'Descriere','Tip', `Lei`]
@@ -328,13 +308,6 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.getColumn(5).width = 10; 
         worksheet.mergeCells('A1:B2')
         worksheet.mergeCells('C1:E2')
-        worksheet.mergeCells('A3:E3')
-        worksheet.mergeCells('A4:D4')
-        const lastRowNumber = worksheet.lastRow.number -1;
-        const inOutRow = worksheet.lastRow.number
-        worksheet.mergeCells(`A${lastRowNumber}:D${lastRowNumber}`)
-        worksheet.mergeCells(`A${inOutRow}:B${inOutRow}`)
-        worksheet.mergeCells(`C${inOutRow}:D${inOutRow}`)
 
           res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
           res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
