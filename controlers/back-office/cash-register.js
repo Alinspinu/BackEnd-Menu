@@ -30,8 +30,8 @@ module.exports.sendEntry = async (req, res, next) => {
 module.exports.getDocumentsByDate = async (req, res) => {
     const {loc, point, start, end} = req.body
     try{
-        const startDate = new Date(start).getTime()
-        const endDate = new Date(end).getTime()
+        const startDate = new Date(start).setUTCHours(0,0,0,0)
+        const endDate = new Date(end).setUTCHours(0,0,0,0)
         const documents = await Day.find({locatie: loc, salePoint: point, date: {$gte: startDate, $lte: endDate}})
         .populate({path: "entry"})
         .sort({ date: -1});
