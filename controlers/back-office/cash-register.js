@@ -274,12 +274,13 @@ module.exports.createXcel = async (req, res, next) => {
         worksheet.addRow(cashIn)
         worksheet.addRow(header)
         const entryArr = []
-        days.forEach(el => {
+        days.reverse().forEach(el => {
             worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar din ziua precedentă`,`Intrare`,`${el.cashIn}`])
             el.entry.forEach((el, i) => {
                 worksheet.addRow([`${i+1}`,`${el.date.toISOString().split('T')[0]}`,`${el.description}`,`${el.tip === 'income' ?'Intrare': 'Cheltuiala'}`,`${el.amount}`])
             })
             worksheet.addRow(['',`${el.date.toISOString().split('T')[0]}`,`Numerar la sfârșit de zi`,`Ieșire`,`${el.cashOut}`])
+            worksheet.addRow([])
         })
         // const sortedEntries = entryArr.sort((a,b) => b.index - a.index)
         // sortedEntries.forEach(el => {
