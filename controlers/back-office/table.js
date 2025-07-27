@@ -10,7 +10,6 @@ module.exports.sendTables = async (req, res, next) => {
          const tables = await Table.find({locatie: loc, salePoint: point}).populate({
             path: 'bills', 
             model: "Order", 
-            match: {status: "open", locatie: loc, salePoint: point}, 
             populate: {path: 'masaRest', select: 'index'}
         })
         console.log(tables)
