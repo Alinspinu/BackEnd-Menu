@@ -504,7 +504,11 @@ module.exports.endPending = async (req, res, next) => {
         for(let m of order.monitors){
             if(m.section.toString() === section){
                 m.pending = false
-                m.products.forEach(p => p.prep = 'accepted')
+                m.products.forEach(p => {
+                    if(p.prep === 'pending'){
+                        p.prep = 'accepted'
+                    }
+                }) 
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
@@ -512,17 +516,6 @@ module.exports.endPending = async (req, res, next) => {
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder})
     } catch(err){
         console.log(err.message)
-    }
-}
-
-module.exports.resetOrderCounter = async (req, res) => {
-    const {point, loc} = req.query
-    try{
-        await Counter.findOneAndUpdate({locatie: loc, salePoint: point, model: 'DayOrder'}, {$set: {value: 0}})
-        res.status(200).json({message: 'Numarul de ordine a fost resetat!'})
-    } catch(error) {
-        console.log(error)
-        res.status(500).json(error)
     }
 }
 
@@ -543,6 +536,19 @@ module.exports.prepStatusDone = async (req, res, next) => {
         console.log(err.message)
     }
 }
+
+module.exports.resetOrderCounter = async (req, res) => {
+    const {point, loc} = req.query
+    try{
+        await Counter.findOneAndUpdate({locatie: loc, salePoint: point, model: 'DayOrder'}, {$set: {value: 0}})
+        res.status(200).json({message: 'Numarul de ordine a fost resetat!'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
 
 
 
