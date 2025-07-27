@@ -9,6 +9,10 @@ const orderTrueSchema = new Schema({
         type: Number,
         index: true
     },
+    dayCounter: {
+        type: Number,
+        index: true
+    },
     soketId: {
         type: String,
         index: true
@@ -294,6 +298,21 @@ orderTrueSchema.pre("save", async function (next) {
             ).exec();
     
             doc.index = counter.value;
+
+            const dayCounter = await Counter.findByIdAndUpdate(
+                { locatie: this.locatie, model: "DayOrder", salePoint: this.salePoint },
+                { $inc: { value: 1 } },
+                { upsert: true, new: true }
+            ).exec()
+            
+            if(dayCounter){
+                doc.dayCounter = dayCounter.value
+            } else {
+                const c = new Counter({locatie: this.locatie, salePoint: this.salePoint, model: 'DayOrder', value: 1})
+                const sc = await c.save()
+                doc.dayCounter = sc.value
+            }
+
             next();
     } catch (error) {
         next(error);
