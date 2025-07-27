@@ -262,9 +262,6 @@ module.exports.getAllOrders = async (req, res, next) => {
 
 
 
-
-
-
 module.exports.orderDone = async (req, res, next) => {
     try{
         const { cmdId } = req.query
@@ -288,9 +285,6 @@ module.exports.sendOrderTime = async (req, res, next) => {
 }
 
 //************************SAVE ORDERS********************** */
-
-
-
 
 module.exports.saveOrEditBill = async (req, res, next) => {
     const {bill, mode, mainServer, secondaryServer} = req.body;
@@ -445,10 +439,6 @@ module.exports.saveOrder = async (req, res, next) => {
 }
 
 
-
-
- 
-
 //************************UPDATE ORDERS********************** */
 
 
@@ -512,6 +502,8 @@ module.exports.endPending = async (req, res, next) => {
         const {id, section} = req.body;
         const order = await Order.findById(id)
         for(let m of order.monitors){
+            console.log(m.section)
+            console.log(section)
             if(m.section === section){
                 m.pending = false
             }
