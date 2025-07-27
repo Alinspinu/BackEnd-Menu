@@ -11,6 +11,7 @@ router.route('/get-ice-orders', authApi).post(orderRoutes.getIceCreamOrders)
 router.route('/order-done').get(orderRoutes.orderDone);
 router.route('/set-order-time').get(orderRoutes.setOrderTime);
 router.route('/pending').post(orderRoutes.endPending);
+router.route('/prep-status').post(orderRoutes.prepStatusDone)
 router.route('/finished-orders').get(orderRoutes.getOrderDone);
 router.route('/move').post(orderRoutes.changeBillTable)
 
