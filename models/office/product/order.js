@@ -299,7 +299,7 @@ orderTrueSchema.pre("save", async function (next) {
     
             doc.index = counter.value;
 
-            const dayCounter = await Counter.findByIdAndUpdate(
+            const dayCounter = await Counter.findOneAndUpdate(
                 { locatie: this.locatie, model: "DayOrder", salePoint: this.salePoint },
                 { $inc: { value: 1 } },
                 { upsert: true, new: true }
