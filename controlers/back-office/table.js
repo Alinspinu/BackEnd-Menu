@@ -13,7 +13,6 @@ module.exports.sendTables = async (req, res, next) => {
             match: {status: "open", locatie: loc, salePoint: point}, 
             populate: {path: 'masaRest', select: 'index'}
         })
-        console.log(tables)
         const sortedTables = tables.sort((a,b) => a.index - b.index)
         res.status(200).json(sortedTables)
     } catch(err){
