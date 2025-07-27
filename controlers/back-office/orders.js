@@ -4,6 +4,7 @@ const User = require ('../../models/users/user')
 const DelProd = require('../../models/office/product/deletetProduct')
 const Ingredient = require('../../models/office/inv-ingredient')
 const Product = require('../../models/office/product/product')
+const Counter = require('../../models/utils/counter')
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
 const {generateSoketId} = require('../../utils/functions')
@@ -519,6 +520,17 @@ module.exports.endPending = async (req, res, next) => {
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder})
     } catch(err){
         console.log(err.message)
+    }
+}
+
+module.exports.resetOrderCounter = async (req, res) => {
+    const {point, loc} = req.query
+    try{
+        await Counter.findOneAndUpdate({locatie: loc, salePoint: point, model: 'DayOrder'}, {$set: {value: 0}})
+        res.status(200).json({message: 'Numarul de ordine a fost resetat!'})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
     }
 }
 

@@ -33,6 +33,8 @@ router.route('/dep', authApi).get(orderRoutes.calcDep)
 
 router.route('/test-rep').get(orderRoutes.testRaport)
 
+router.route('/reset-counter').get(orderRoutes.resetOrderCounter)
+
 // router.route('/fix-bull').get(orderRoutes.fixBul)
 
 // router.route('/update-bills').get(orderRoutes.updateProducts)
