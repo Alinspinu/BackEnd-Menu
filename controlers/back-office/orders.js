@@ -508,10 +508,10 @@ module.exports.getOrderDone = async (req, res, next) => {
 
 module.exports.endPending = async (req, res, next) => {
     try{
-        const {id} = req.query;
-        const doc = await Order.findByIdAndUpdate(id, { pending: false })
+        const {id} = req.body;
+        const doc = await Order.findByIdAndUpdate(id, { pending: false }, {new: true})
         console.log(` Success! Order ${id} - pending - false`)
-        res.status(200).json({message: 'pending is done'})
+        res.status(200).json({message: 'pending is done', order: doc})
     } catch(err){
         console.log(err.message)
     }
