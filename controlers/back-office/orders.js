@@ -529,7 +529,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
         const {id, section} = req.body;
         const order = await Order.findById(id)
         for(let m of order.monitors){
-            if(m.section === section){
+            if(m.section.toString() === section){
                 m.prep = false
             }
         }
