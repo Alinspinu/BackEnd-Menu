@@ -151,6 +151,22 @@ const orderTrueSchema = new Schema({
         ref: 'User'
     },
     },
+    monitors: [
+        {
+            section: {
+                type: Schema.Types.ObjectId,
+                ref: 'Section'
+            },
+            prep: {
+                type: Boolean,
+                default: true
+            },
+            pending: {
+                type: Boolean,
+                default: true
+            }
+        }
+    ],
     products:
         [
             {

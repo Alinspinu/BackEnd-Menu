@@ -511,7 +511,7 @@ module.exports.endPending = async (req, res, next) => {
         const {id} = req.body;
         const doc = await Order.findByIdAndUpdate(id, { pending: false }, {new: true})
         console.log(` Success! Order ${id} - pending - false`)
-        res.status(200).json({message: 'pending is done', order: doc})
+        res.status(200).json({message: 'Comanda a fost acceptată!', order: doc})
     } catch(err){
         console.log(err.message)
     }
