@@ -164,7 +164,20 @@ const orderTrueSchema = new Schema({
             pending: {
                 type: Boolean,
                 default: true
-            }
+            },
+            products: [
+                {
+                    name: String,
+                    qty: Number,
+                    toppings: [
+                        {
+                            name: String,
+                            qty: Number,
+                        }
+                    ],
+                    comment: String
+                }
+            ]
         }
     ],
     products:
