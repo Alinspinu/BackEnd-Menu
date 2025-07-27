@@ -504,6 +504,7 @@ module.exports.endPending = async (req, res, next) => {
         for(let m of order.monitors){
             if(m.section.toString() === section){
                 m.pending = false
+                m.products.forEach(p => p.prep = 'accepted')
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
@@ -532,6 +533,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
         for(let m of order.monitors){
             if(m.section.toString() === section){
                 m.prep = false
+                m.products.forEach(p => p.prep = 'done')
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})

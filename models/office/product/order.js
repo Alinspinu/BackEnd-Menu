@@ -173,6 +173,7 @@ const orderTrueSchema = new Schema({
                 {
                     name: String,
                     qty: Number,
+                    prep: String,
                     toppings: [
                         {
                             name: String,
