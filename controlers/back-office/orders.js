@@ -506,7 +506,7 @@ module.exports.endPending = async (req, res, next) => {
                 m.pending = false
             }
         }
-        const newOrder = await order.save()
+        const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder})
     } catch(err){
         console.log(err.message)
@@ -533,7 +533,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
                 m.prep = false
             }
         }
-        const newOrder = await order.save()
+        const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
         res.status(200).json({message: 'Comanda a fost marcată ca si terminată!', order: newOrder})
     } catch(err){
         console.log(err.message)
