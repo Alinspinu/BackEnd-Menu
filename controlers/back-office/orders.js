@@ -502,9 +502,7 @@ module.exports.endPending = async (req, res, next) => {
         const {id, section} = req.body;
         const order = await Order.findById(id)
         for(let m of order.monitors){
-            console.log(m.section)
-            console.log(section)
-            if(m.section === section){
+            if(m.section.toString() === section){
                 m.pending = false
             }
         }
