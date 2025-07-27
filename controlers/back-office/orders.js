@@ -309,7 +309,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                     console.log("new",el.sentToPrint)
                 }
             })
-            newBill.monitors.forEach(e => e.pending = false)
             newBill.soketId = generateSoketId(16)
             const savedBill = await newBill.save();
             table.bills.push(savedBill);
@@ -327,7 +326,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                     el.sentToPrint = false
                 }
             })
-            parsedBill.monitors.forEach(e => e.pending = false)
             if(productsToPrint){
                 socket.emit('billl', JSON.stringify(parsedBill))
             }
@@ -509,6 +507,7 @@ module.exports.endPending = async (req, res, next) => {
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
+        socket.emit('billl', JSON.stringify(newOrder))
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder})
     } catch(err){
         console.log(err.message)
@@ -536,6 +535,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
+        socket.emit('billl', JSON.stringify(newOrder))
         res.status(200).json({message: 'Comanda a fost marcată ca si terminată!', order: newOrder})
     } catch(err){
         console.log(err.message)
