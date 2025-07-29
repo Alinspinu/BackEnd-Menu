@@ -135,42 +135,94 @@ function getDaysInMonth(year, month) {
   }
 
 
-module.exports.addPontaj = async (req, res, next) => {
-    const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
-    const {loc, year, month, salePoint} = req.body
+// module.exports.addPontaj = async (req, res, next) => {
+//     const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
+//     const {loc, year, month, salePoint} = req.body
 
-    try{
+//     try{
 
-        const daysInMonth = getDaysInMonth(year, month);
-        const days = []
-        for(let i = 1; i<=daysInMonth; i++){
-            const date = new Date(year, month, i)
-            date.setUTCHours(0,0,0,0)
-            const dates = new Date(date)
-            const newDate = new Date(dates.setDate(dates.getDate())).setUTCHours(0,0,0,0);
-            const day = {
-                 date: newDate,
-                 number: i,
-                 users: [],
-                 workValue: 0,
-            }
-             days.push(day)
-         }
+//         const daysInMonth = getDaysInMonth(year, month);
+//         const days = []
+//         for(let i = 1; i<=daysInMonth; i++){
+//             const date = new Date(year, month, i)
+//             date.setUTCHours(0,0,0,0)
+//             const dates = new Date(date)
+//             const newDate = new Date(dates.setDate(dates.getDate())).setUTCHours(0,0,0,0);
+//             const day = {
+//                  date: newDate,
+//                  number: i,
+//                  users: [],
+//                  workValue: 0,
+//             }
+//              days.push(day)
+//          }
     
-         const pontaj = new Pontaj({
-            days: days,
-            month: `${months[month]} - ${year}`,
-            workValue: 0,
-            locatie: loc,
-            salePoint: salePoint
-         })
-         const newPontaj = await pontaj.save()
-         res.status(200).json(newPontaj)
-    } catch(err){
-        console.log(err)
-        res.status(500).json({message: err.message})
+//          const pontaj = new Pontaj({
+//             days: days,
+//             month: `${months[month]} - ${year}`,
+//             workValue: 0,
+//             locatie: loc,
+//             salePoint: salePoint
+//          })
+//          const newPontaj = await pontaj.save()
+//          res.status(200).json(newPontaj)
+//     } catch(err){
+//         console.log(err)
+//         res.status(500).json({message: err.message})
+//     }
+// }
+
+module.exports.addPontaj = async (req, res, next) => {
+    const months = [
+      'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
+      'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'
+    ];
+  
+    const { loc, year: inputYear, month: inputMonth, salePoint } = req.body;
+  
+    try {
+      let year = inputYear;
+      let month = inputMonth;
+  
+      // Fallback to current UTC month/year if not provided
+      if (typeof year !== 'number' || typeof month !== 'number') {
+        const now = new Date();
+        now.setUTCHours(0, 0, 0, 0);
+        year = now.getUTCFullYear();
+        month = now.getUTCMonth(); // 0-indexed
+      }
+  
+      const daysInMonth = new Date(year, month + 1, 0).getUTCDate(); // Last day of month
+  
+      const days = [];
+  
+      for (let i = 1; i <= daysInMonth; i++) {
+        const date = new Date(Date.UTC(year, month, i)); // Always UTC
+        days.push({
+          date: date.getTime(),
+          number: i,
+          users: [],
+          workValue: 0
+        });
+      }
+  
+      const pontaj = new Pontaj({
+        days,
+        month: `${months[month]} - ${year}`,
+        workValue: 0,
+        locatie: loc,
+        salePoint: salePoint
+      });
+  
+      const newPontaj = await pontaj.save();
+      res.status(200).json(newPontaj);
+  
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message });
     }
-}
+  };
+  
 
 module.exports.getPontaj = async (req, res, next) => {
     const {loc, pont, month, point} = req.query
