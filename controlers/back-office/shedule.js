@@ -8,51 +8,126 @@ const salePoint = require('../../models/utils/sale-point');
 
 
 
-module.exports.addShedule = async (req, res, next) => {
-    const {loc, salePoint} = req.body
-    try{   
-        const lastShedule = await Shedule.findOne({locatie: loc, salePoint: salePoint}, {}, { sort: { '_id': -1 } })
-        const date = new Date(lastShedule.days[6].date)
+// module.exports.addShedule = async (req, res, next) => {
+//     const {loc, salePoint} = req.body
+//     try{   
+//         const lastShedule = await Shedule.findOne({locatie: loc, salePoint: salePoint}, {}, { sort: { '_id': -1 } })
+//         const date = new Date(lastShedule.days[6].date)
         
-        let days = []
-        const weekdays = ['Duminica', 'Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata'];
-        for(let i = 1; i<=7; i++){
-           const newDate = new Date(date.setDate(date.getDate() + 1)).setUTCHours(0,0,0,0);
-           const dat = new Date(newDate);
-           const weekdayNumber = dat.getDay();
-           const day = {
-                date: newDate,
-                day: weekdays[weekdayNumber],
-                users: [],
-                workValue: 0,
-           }
-            days.push(day)
-        }
-        const startDate = new Date(days[0].date);
-        const endDate = new Date(days[days.length -1].date);
-        const options = {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          timeZone: "UTC"
-        };
+//         let days = []
+//         const weekdays = ['Duminica', 'Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata'];
+//         for(let i = 1; i<=7; i++){
+//            const newDate = new Date(date.setDate(date.getDate() + 1)).setUTCHours(0,0,0,0);
+//            const dat = new Date(newDate);
+//            const weekdayNumber = dat.getDay();
+//            const day = {
+//                 date: newDate,
+//                 day: weekdays[weekdayNumber],
+//                 users: [],
+//                 workValue: 0,
+//            }
+//             days.push(day)
+//         }
+//         const startDate = new Date(days[0].date);
+//         const endDate = new Date(days[days.length -1].date);
+//         const options = {
+//           year: "numeric",
+//           month: "short",
+//           day: "numeric",
+//           timeZone: "UTC"
+//         };
         
-        const start = startDate.toLocaleString("ro-RO", options);
-        const end = endDate.toLocaleString("ro-RO", options);
-        const shedule = new Shedule({
-                days: days,
-                period: `${start} - ${end}`,
-                locatie: loc,
-                salePoint: salePoint
-        })  
-        const savedShedule = await shedule.save()
-        res.status(200).json(savedShedule)
+//         const start = startDate.toLocaleString("ro-RO", options);
+//         const end = endDate.toLocaleString("ro-RO", options);
+//         const shedule = new Shedule({
+//                 days: days,
+//                 period: `${start} - ${end}`,
+//                 locatie: loc,
+//                 salePoint: salePoint
+//         })  
+//         const savedShedule = await shedule.save()
+//         res.status(200).json(savedShedule)
 
-    } catch(err){
-        console.log(err)
-        res.status(500).json({message: err.message})
+//     } catch(err){
+//         console.log(err)
+//         res.status(500).json({message: err.message})
+//     }
+// }
+
+
+module.exports.addShedule = async (req, res, next) => {
+    const { loc, salePoint } = req.body;
+  
+    try {
+      const lastShedule = await Shedule.findOne(
+        { locatie: loc, salePoint: salePoint },
+        {},
+        { sort: { _id: -1 } }
+      );
+  
+      const weekdays = ['Duminica', 'Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata'];
+  
+      let baseDate;
+  
+      if (lastShedule) {
+        // Continue from the last schedule
+        baseDate = new Date(lastShedule.days[6].date);
+        baseDate.setDate(baseDate.getDate() + 1);
+        baseDate.setUTCHours(0, 0, 0, 0);
+      } else {
+        // First schedule → start from current Monday
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+  
+        const dayOfWeek = today.getUTCDay(); // 0 (Sun) - 6 (Sat)
+        const daysSinceMonday = (dayOfWeek + 6) % 7;
+  
+        baseDate = new Date(today);
+        baseDate.setDate(today.getDate() - daysSinceMonday); // go back to this week's Monday
+      }
+  
+      // Generate 7 days starting from baseDate
+      let days = [];
+  
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(baseDate);
+        date.setDate(baseDate.getDate() + i);
+  
+        days.push({
+          date: date.setUTCHours(0, 0, 0, 0),
+          day: weekdays[date.getUTCDay()],
+          users: [],
+          workValue: 0
+        });
+      }
+  
+      const startDate = new Date(days[0].date);
+      const endDate = new Date(days[6].date);
+  
+      const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        timeZone: 'UTC'
+      };
+  
+      const period = `${startDate.toLocaleString('ro-RO', options)} - ${endDate.toLocaleString('ro-RO', options)}`;
+  
+      const shedule = new Shedule({
+        days,
+        period,
+        locatie: loc,
+        salePoint
+      });
+  
+      const savedShedule = await shedule.save();
+      res.status(200).json(savedShedule);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message });
     }
-}
+  };
+  
 
 
 function getDaysInMonth(year, month) {
