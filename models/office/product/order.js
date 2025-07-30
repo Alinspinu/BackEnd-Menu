@@ -169,6 +169,10 @@ const orderTrueSchema = new Schema({
                 type: Boolean,
                 default: true
             },
+            lifted: {
+                type: Boolean,
+                default: false
+            },
             products: [
                 {
                     name: String,

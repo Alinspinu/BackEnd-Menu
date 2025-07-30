@@ -8,52 +8,6 @@ const salePoint = require('../../models/utils/sale-point');
 
 
 
-// module.exports.addShedule = async (req, res, next) => {
-//     const {loc, salePoint} = req.body
-//     try{   
-//         const lastShedule = await Shedule.findOne({locatie: loc, salePoint: salePoint}, {}, { sort: { '_id': -1 } })
-//         const date = new Date(lastShedule.days[6].date)
-        
-//         let days = []
-//         const weekdays = ['Duminica', 'Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata'];
-//         for(let i = 1; i<=7; i++){
-//            const newDate = new Date(date.setDate(date.getDate() + 1)).setUTCHours(0,0,0,0);
-//            const dat = new Date(newDate);
-//            const weekdayNumber = dat.getDay();
-//            const day = {
-//                 date: newDate,
-//                 day: weekdays[weekdayNumber],
-//                 users: [],
-//                 workValue: 0,
-//            }
-//             days.push(day)
-//         }
-//         const startDate = new Date(days[0].date);
-//         const endDate = new Date(days[days.length -1].date);
-//         const options = {
-//           year: "numeric",
-//           month: "short",
-//           day: "numeric",
-//           timeZone: "UTC"
-//         };
-        
-//         const start = startDate.toLocaleString("ro-RO", options);
-//         const end = endDate.toLocaleString("ro-RO", options);
-//         const shedule = new Shedule({
-//                 days: days,
-//                 period: `${start} - ${end}`,
-//                 locatie: loc,
-//                 salePoint: salePoint
-//         })  
-//         const savedShedule = await shedule.save()
-//         res.status(200).json(savedShedule)
-
-//     } catch(err){
-//         console.log(err)
-//         res.status(500).json({message: err.message})
-//     }
-// }
-
 
 module.exports.addShedule = async (req, res, next) => {
     const { loc, salePoint } = req.body;
@@ -135,43 +89,7 @@ function getDaysInMonth(year, month) {
   }
 
 
-// module.exports.addPontaj = async (req, res, next) => {
-//     const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
-//     const {loc, year, month, salePoint} = req.body
-
-//     try{
-
-//         const daysInMonth = getDaysInMonth(year, month);
-//         const days = []
-//         for(let i = 1; i<=daysInMonth; i++){
-//             const date = new Date(year, month, i)
-//             date.setUTCHours(0,0,0,0)
-//             const dates = new Date(date)
-//             const newDate = new Date(dates.setDate(dates.getDate())).setUTCHours(0,0,0,0);
-//             const day = {
-//                  date: newDate,
-//                  number: i,
-//                  users: [],
-//                  workValue: 0,
-//             }
-//              days.push(day)
-//          }
-    
-//          const pontaj = new Pontaj({
-//             days: days,
-//             month: `${months[month]} - ${year}`,
-//             workValue: 0,
-//             locatie: loc,
-//             salePoint: salePoint
-//          })
-//          const newPontaj = await pontaj.save()
-//          res.status(200).json(newPontaj)
-//     } catch(err){
-//         console.log(err)
-//         res.status(500).json({message: err.message})
-//     }
-// }
-
+  
 module.exports.addPontaj = async (req, res, next) => {
     const months = [
       'Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie',
