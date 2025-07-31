@@ -31,13 +31,13 @@ module.exports.changeVat = async (req, res) => {
             }
         }
 
-        for(let p of products){
-            if(p.category.name === 'COCKTAILS' || p.mainCat === 'coffee'){
-                p.price = p.price + 1
-                console.log(p.name, '---', p.price)
-                await p.save()
-            }
-        }
+        // for(let p of products){
+        //     if(p.category.name === 'COCKTAILS' || p.mainCat === 'coffee'){
+        //         p.price = p.price + 1
+        //         console.log(p.name, '---', p.price)
+        //         await p.save()
+        //     }
+        // }
         
         console.log('Numar de produse', products.length)
         console.log('Numar de sub', subP.length)
