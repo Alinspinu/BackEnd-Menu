@@ -142,6 +142,7 @@ const redirectUri = 'https://flowmanager.ro/anaf-callback'
 
 app.get('/anaf-callback', async (req, res) => {
     const { code, state } = req.query;
+    console.log(code)
   
     if (!code) {
       return res.status(400).send('Missing code in query.');
