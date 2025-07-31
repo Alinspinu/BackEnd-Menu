@@ -20,10 +20,14 @@ module.exports.changeVat = async (req, res) => {
         const products = await Product.find({locatie: "655e2e7c5a3d53943c6b7c53"}).populate({path: 'category', select: 'name'})
         
         for(let s of subP){
-            if(s.product.mainCat === 'coffee'){
-                s.price = s.price + 1
-                console.log(s.product.name, ' ',  s.name, '---', s.price)
-                await s.save()
+            if(!s.product){
+                console.log(s.name)
+            } else {
+                if(s.product.mainCat === 'coffee'){
+                    s.price = s.price + 1
+                    console.log(s.product.name, ' ',  s.name, '---', s.price)
+                    await s.save()
+                }
             }
         }
 
