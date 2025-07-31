@@ -33,9 +33,12 @@ module.exports.changeVat = async (req, res) => {
 
         for(let p of products){
             if(p.category.name === 'COCKTAILS' || p.mainCat === 'coffee'){
-                p.price = p.price + 1
-                console.log(p.name, '---', p.price)
-                await p.save()
+                if(!p.category){
+                    console.log(p.name)
+                }
+                // p.price = p.price + 1
+                // console.log(p.name, '---', p.price)
+                // await p.save()
             }
         }
         
