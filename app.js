@@ -136,6 +136,52 @@ app.use('/reservation', reservationRoutes)
 app.use('/viva', vivaWebhooks)
 
 
+const Locatie = require('./models/office/locatie.js')
+const redirectUri = 'https://flowmanager.ro/anaf-callback'
+
+app.get('/anaf-callback', async (req, res) => {
+    const { code, state } = req.query;
+  
+    if (!code) {
+      return res.status(400).send('Missing code in query.');
+    }
+  
+    try {
+      const auth = Buffer.from(`${process.env.ANAF_CLIENT_ID}:${process.env.ANAF_CLIENT_SECRET}`).toString('base64');
+  
+      const response = await axios.post(process.env.ANAF_TOKEN_URL,
+        qs.stringify({
+          grant_type: 'authorization_code',
+          code,
+          redirect_uri: redirectUri,
+        }),
+        {
+          headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
+      console.log(state)
+      const loc = await Locatie.findById(state)
+      if(loc){
+        loc.anafToken = response.data.access_token
+        loc.anafRefreshToken = response.data.refresh_token
+        await loc.save()
+      }
+  
+      // Tokens received
+      console.log('Access Token:', response.data.access_token);
+      console.log('Refresh Token:', response.data.refresh_token);
+  
+      res.status(200).json( {message: 'Token received. You can close this page.'});
+    } catch (error) {
+      console.error('Token request error:', error.response?.data || error.message);
+      res.status(500).send('Token exchange failed.');
+    }
+  });
+
+
 
 app.use('/test', testRoutes)
 
