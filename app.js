@@ -169,6 +169,7 @@ app.get('/anaf-callback', async (req, res) => {
       if(response.data.access_token && response.data.refresh_token){
           const token = new AnafToken({token: response.data.access_token, refresh: response.data.refresh_token})
           const savedToken = await token.save()
+          console.log(savedToken)
           res.send(`Intodu acest cod ** ${savedToken._id} ** in casuta "COD ANAF" si salveaza datele`)
       } else {
         res.status(200).json( {message: 'Something went wrong!!' });
