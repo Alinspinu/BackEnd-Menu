@@ -140,6 +140,7 @@ const Locatie = require('./models/office/locatie.js')
 const AnafToken = require('./models/utils/anaf-token.js')
 const redirectUri = 'https://flowmanager.ro/anaf-callback'
 const axios = require('axios')
+const qs = require('qs')
 app.get('/anaf-callback', async (req, res) => {
     const { code, state } = req.query;
     console.log(code)
