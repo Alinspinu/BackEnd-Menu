@@ -16,7 +16,7 @@ const {checkTopping, round} = require('../../utils/functions')
 module.exports.changeVat = async (req, res) => {
     try{
 
-        const subP = await SubProduct.find({locatie: "655e2e7c5a3d53943c6b7c53"}).populate({path: 'product', select: 'mainCat'})
+        const subP = await SubProduct.find({locatie: "655e2e7c5a3d53943c6b7c53"}).populate({path: 'product', select: 'name mainCat'})
         const products = await Product.find({locatie: "655e2e7c5a3d53943c6b7c53"}).populate({path: 'category', select: 'name'})
         
         for(let s of subP){
