@@ -31,7 +31,7 @@ module.exports.changeVat = async (req, res) => {
             console.log(p.name, ' ---- ', p.tva)
             await p.save()
         }
-
+        res.status(200).json({message: 'all done'})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
