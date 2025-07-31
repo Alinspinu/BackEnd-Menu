@@ -16,7 +16,7 @@ const {checkTopping, round} = require('../../utils/functions')
 module.exports.changeVat = async (req, res) => {
     try{
 
-        const products = await Product.find({locatie: "655e2e7c5a3d53943c6b7c53"})
+        const products = await SubProduct.find({locatie: "655e2e7c5a3d53943c6b7c53"})
   
         for(let p of products){
             if(p.tva === 9){
