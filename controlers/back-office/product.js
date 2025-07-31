@@ -13,6 +13,30 @@ const {checkTopping, round} = require('../../utils/functions')
 
 
 
+module.exports.changeVat = async (req, res) => {
+    try{
+
+        const products = await Product.find({locatie: "655e2e7c5a3d53943c6b7c53"})
+        console.log('Numar de produse', products.length)
+        for(let p of products){
+            if(p.tva === 9){
+                p.tva = 11
+            }
+            if(p.tva === 19){
+                p.tva = 21
+            }
+            if(p.tva === 5){
+                p.tva = 11
+            }
+            console.log(p.name, ' ---- ', p.tva)
+            await p.save()
+        }
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
 
 module.exports.updateProducts = async (req, res) => {
     try{    
