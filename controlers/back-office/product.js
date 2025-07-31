@@ -32,14 +32,14 @@ module.exports.changeVat = async (req, res) => {
         // }
 
         for(let p of products){
-            if(p.category.name === 'COCKTAILS' || p.mainCat === 'coffee'){
-                if(!p.category){
-                    console.log(p.name)
-                }
+            if(!p.category){
+                console.log(p.name)
+            }
+            // if(p.category.name === 'COCKTAILS' || p.mainCat === 'coffee'){
                 // p.price = p.price + 1
                 // console.log(p.name, '---', p.price)
                 // await p.save()
-            }
+            // }
         }
         
         console.log('Numar de produse', products.length)
