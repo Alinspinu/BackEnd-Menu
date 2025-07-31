@@ -17,7 +17,7 @@ module.exports.changeVat = async (req, res) => {
     try{
 
         const products = await Product.find({locatie: "655e2e7c5a3d53943c6b7c53"})
-        console.log('Numar de produse', products.length)
+  
         for(let p of products){
             if(p.tva === 9){
                 p.tva = 11
@@ -31,6 +31,7 @@ module.exports.changeVat = async (req, res) => {
             console.log(p.name, ' ---- ', p.tva)
             await p.save()
         }
+        console.log('Numar de produse', products.length)
         res.status(200).json({message: 'all done'})
     } catch(error){
         console.log(error)
