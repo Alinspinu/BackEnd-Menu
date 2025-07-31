@@ -23,6 +23,10 @@ const locatieSchema = new Schema({
       bank: {
         type: String,
       },
+      anafToken: {
+        type: Schema.Types.ObjectId,
+        ref: 'AnafToken'
+      },
       contactName: String,
       email: String,
       telephone: String,

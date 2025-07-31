@@ -137,6 +137,7 @@ app.use('/viva', vivaWebhooks)
 
 
 const Locatie = require('./models/office/locatie.js')
+const AnafToken = require('./models/utils/anaf-token.js')
 const redirectUri = 'https://flowmanager.ro/anaf-callback'
 
 app.get('/anaf-callback', async (req, res) => {
@@ -162,19 +163,17 @@ app.get('/anaf-callback', async (req, res) => {
           },
         }
       );
-      console.log(state)
-      const loc = await Locatie.findById(state)
-      if(loc){
-        loc.anafToken = response.data.access_token
-        loc.anafRefreshToken = response.data.refresh_token
-        await loc.save()
-      }
-  
-      // Tokens received
       console.log('Access Token:', response.data.access_token);
       console.log('Refresh Token:', response.data.refresh_token);
-  
-      res.status(200).json( {message: 'Token received. You can close this page.'});
+
+      if(response.data.access_token && response.data.refresh_token){
+          const token = new AnafToken({token: response.data.access_token, refresh: response.data.refresh_token})
+          const savedToken = await token.save()
+          res.send(`Intodu acest cod ** ${savedToken._id} ** in casuta "COD ANAF" si salveaza datele`)
+      } else {
+        res.status(200).json( {message: 'Something went wrong!!' });
+      }
+
     } catch (error) {
       console.error('Token request error:', error.response?.data || error.message);
       res.status(500).send('Token exchange failed.');
