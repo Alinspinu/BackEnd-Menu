@@ -34,7 +34,7 @@ router.route('/up').get(productRoutes.updateProducts)
 
 router.route('/status').get(productRoutes.checkProductStatus)
 
-router.route('/change-vat').get(productRoutes.changeVat)
+// router.route('/change-vat').get(productRoutes.changeVat)
 
 router.route('/section', authApi)
     .get(productRoutes.getSections)
