@@ -16,30 +16,35 @@ const {checkTopping, round} = require('../../utils/functions')
 module.exports.changeVat = async (req, res) => {
     try{
 
-        // const subP = await SubProduct.find({locatie: "655e2e7c5a3d53943c6b7c53"}).populate({path: 'product', select: 'name mainCat'})
+        const subP = await SubProduct.find({locatie: "655e2e7c5a3d53943c6b7c53"}).populate({path: 'product', select: 'name category', populate: {path: 'category', select: 'name'}})
         const products = await Product.find({locatie: "655e2e7c5a3d53943c6b7c53"}).populate({path: 'category', select: 'name'})
         
-        // for(let s of subP){
-        //     if(!s.product){
-        //         console.log(s.name)
-        //     } else {
-        //         if(s.product.mainCat === 'coffee'){
-        //             s.price = s.price + 1
-        //             console.log(s.product.name, ' ',  s.name, '---', s.price)
-        //             await s.save()
-        //         }
-        //     }
-        // }
+        for(let s of subP){
+            if(!s.product){
+                console.log(s.name)
+            } else {
+                if(!s.product.category){
+                    console.log(s.product.name)
+                } else {
+                    if(s.product.category.name === 'SOFT DRINKS'){
+                        s.price = s.price + 1
+                        console.log(s.product.name, ' ',  s.name, '---', s.price)
+                        await s.save()
+                    }
+                }
+            }
+        }
 
         for(let p of products){
             if(!p.category){
                 console.log(p.name)
+            } else {
+                if(p.category.name === 'FRESH JUICE' || p.category.name === 'BEER' || p.category.name === 'SOFT DRINKS' || p.category.name === 'APERITIVO MOMENTS'){
+                    p.price = p.price + 1
+                    console.log(p.name, '---', p.price)
+                    await p.save()
+                }
             }
-            // if(p.category.name === 'COCKTAILS' || p.mainCat === 'coffee'){
-                // p.price = p.price + 1
-                // console.log(p.name, '---', p.price)
-                // await p.save()
-            // }
         }
         
         console.log('Numar de produse', products.length)
