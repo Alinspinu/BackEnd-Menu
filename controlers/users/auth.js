@@ -426,7 +426,6 @@ module.exports.login = async (req, res, next) => {
 
 };
 
-module.
 
 
 function addUserData (user, token) {
