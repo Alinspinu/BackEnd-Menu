@@ -368,7 +368,7 @@ module.exports.registerEmployee = async (req, res, next) => {
 
 module.exports.login = async (req, res, next) => {
     const { email, password, url, adminEmail, loc} = req.body;
-    
+
         const query = {email: email}
         if(loc != null){
             query.locatie = loc
@@ -416,7 +416,9 @@ module.exports.login = async (req, res, next) => {
              };
          }
          
-
+         if(!users.length){
+            return res.status(401).json({ message: 'Invalid email or password' });
+         }
     } catch(err){
         console.log(err)
         res.status(500).json({message: err.message})
