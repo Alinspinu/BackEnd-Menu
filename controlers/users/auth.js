@@ -368,9 +368,14 @@ module.exports.registerEmployee = async (req, res, next) => {
 
 module.exports.login = async (req, res, next) => {
     const { email, password, url, adminEmail, loc} = req.body;
+    
+        const query = {email: email}
+        if(loc != null){
+            query.locatie = loc
+        }
 
     try{
-               const user = await User.findOne({ email: email, locatie: loc})
+               const users = await User.find(query)
                             .select([
                                 '-employee.cnp',
                                 '-employee.ciSerial',
@@ -380,29 +385,37 @@ module.exports.login = async (req, res, next) => {
                             .populate({
                                     path: 'locatie'
                             })
-    if (!user || !comparePasswords(password, user.password)) {
-        return res.status(401).json({ message: 'Invalid email or password' });
-    };
-    if (user.status === 'inactive') {
-        return  sendVerificationEmail(user).then(response => {
-            const userData = {
-                name: user.name,
-                email: user.email,
-                id: user.id,
-                locatie: user.locatie._id
-            };
-            if (response.message === 'Email sent') {
-                res.status(200).json({ message: response.message, user: userData })
-            } else {
-                res.status(256).json({ message: response.message, user: userData })
-            };
-        });
-    } else if (user.status === "active") {
-        let expireDate = user.admin === 1 ? '7d' : '1d'
-        const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn:  expireDate});
-        const sendData = addUserData(user, token)
-        res.status(200).json(sendData);
-    };
+         if(users.length > 1){
+            const locs = users.map(u =>{ return {name: u.locatie.name, id: u.locatie._id}})
+            return res.status(200).josn({message: 'Acest email este folosit în mai multe locații! Alege la ce locație vrei să te conectezi!', locs: locs, multiple: true})
+         } 
+         if(users.length === 1){
+            const user = users[0]
+             if (!user || !comparePasswords(password, user.password)) {
+                 return res.status(401).json({ message: 'Invalid email or password' });
+             };
+             if (user.status === 'inactive') {
+                 return  sendVerificationEmail(user).then(response => {
+                     const userData = {
+                         name: user.name,
+                         email: user.email,
+                         id: user.id,
+                         locatie: user.locatie._id
+                     };
+                     if (response.message === 'Email sent') {
+                         res.status(200).json({ message: response.message, user: userData })
+                     } else {
+                         res.status(256).json({ message: response.message, user: userData })
+                     };
+                 });
+             } else if (user.status === "active") {
+                 let expireDate = user.admin === 1 ? '7d' : '1d'
+                 const token = jwt.sign({ userId: user._id }, process.env.AUTH_SECRET, { expiresIn:  expireDate});
+                 const sendData = addUserData(user, token)
+                 res.status(200).json(sendData);
+             };
+         }
+         
 
     } catch(err){
         console.log(err)
@@ -410,6 +423,8 @@ module.exports.login = async (req, res, next) => {
     }
 
 };
+
+module.
 
 
 function addUserData (user, token) {
