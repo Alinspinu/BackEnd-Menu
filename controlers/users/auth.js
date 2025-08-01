@@ -368,7 +368,6 @@ module.exports.registerEmployee = async (req, res, next) => {
 
 module.exports.login = async (req, res, next) => {
     const { email, password, url, adminEmail, loc} = req.body;
-        console.log(loc)
         const query = {email: email}
         if(loc != null){
             query.locatie = loc
@@ -386,14 +385,12 @@ module.exports.login = async (req, res, next) => {
                                     path: 'locatie'
                             })
 
-            console.log(users)
          if(users.length > 1){
             const locs = users.map(u =>{ return {name: u.locatie.name, id: u.locatie._id}})
             return res.status(200).json({message: 'Acest email este folosit în mai multe locații! Alege la ce locație vrei să te conectezi!', locs: locs, multiple: true})
          } 
          if(users.length === 1){
             const user = users[0]
-            console.log(user)
              if (!user || !comparePasswords(password, user.password)) {
                  return res.status(401).json({ message: 'Invalid email or password' });
              };

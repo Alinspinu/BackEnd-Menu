@@ -28,7 +28,7 @@ module.exports.transactionCreated = async (req, res) => {
             transactionType: transactionType || 'error',
             date: date || new Date(),
             description: webHookData.EventData.Description || 'error',
-            amount: Math.abs(webHookData.EventData.amount),
+            amount: Math.abs(webHookData.EventData.Amount),
             iban: iban || 'error',
             vivaAccountId: vivaAccountId || 'error',
             transactionId: webHookData.EventData.WalletTransactionId || 'error',
