@@ -145,15 +145,17 @@ const qs = require('qs')
 
 app.get('/anaf-callback', async (req, res) => {
     const { code, error } = req.query;
-  
-    if (!code) {
-      return res.status(400).send('Missing code in query.');
-    }
 
     if(!error) {
         const redirectUrl = `http://localhost:8100/config/efactura?error=${error}`
         res.redirect(redirectUrl)
     }
+
+    if (!code) {
+      return res.status(400).send('Missing code in query.');
+    }
+
+
   
     try {
       const auth = Buffer.from(`${process.env.ANAF_CLIENT_ID}:${process.env.ANAF_CLIENT_SECRET}`).toString('base64');
