@@ -141,6 +141,8 @@ const AnafToken = require('./models/utils/anaf-token.js')
 const redirectUri = 'https://flowmanager.ro/anaf-callback'
 const axios = require('axios')
 const qs = require('qs')
+
+
 app.get('/anaf-callback', async (req, res) => {
     const { code, state } = req.query;
     console.log(code)
@@ -165,8 +167,9 @@ app.get('/anaf-callback', async (req, res) => {
           },
         }
       );
-      console.log('Access Token:', response.data.access_token);
-      console.log('Refresh Token:', response.data.refresh_token);
+      console.log(response)
+    //   console.log('Access Token:', response.data.access_token);
+    //   console.log('Refresh Token:', response.data.refresh_token);
 
       if(response.data.access_token && response.data.refresh_token){
           const token = new AnafToken({token: response.data.access_token, refresh: response.data.refresh_token})
