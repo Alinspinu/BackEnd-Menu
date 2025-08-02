@@ -5,12 +5,12 @@ const {parseXml, parseInvoiceData, parseHeaderFromXml} = require('./parseXml')
 const mode = 'test'
 // const mode = 'prod'
 
-  async function downloadZipFile(id) {
+  async function downloadZipFile(id, token) {
     try {
       const response = await axios.get(`${process.env.ANAF_DOWNLOAD_BASE_URL}?id=${id}`, {
         responseType: 'arraybuffer',
         headers: {
-          'Authorization': `Bearer ${process.env.TOKEN_ANAF}`, 
+          'Authorization': `Bearer ${token}`, 
           'Accept': 'application/zip',
         },
       });
@@ -36,12 +36,12 @@ const mode = 'test'
   }
 
 
-  async function downloadZipFileCheck(id) {
+  async function downloadZipFileCheck(id, token) {
     try {
       const response = await axios.get(`https://api.anaf.ro/${mode}/FCTEL/rest/descarcare?id=${id}`, {
         responseType: 'arraybuffer',
         headers: {
-          'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
+          'Authorization': `Bearer ${token}`,
           'Accept': 'application/zip',
         },
       });

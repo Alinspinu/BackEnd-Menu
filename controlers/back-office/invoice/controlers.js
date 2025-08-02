@@ -49,13 +49,15 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
   const {id} = req.body
   try{
     const invoice = await Invoice.findById(id)
+    const locatie = await Locatie.findById(invoice.locatie).populate({path: 'anafToken', select: 'token'})
+    const token = locatie.anafToken.token
+    if(!token){
+      return res.status(404).json({message: 'Missing token'})
+    }
     const xml = invoice.invoice ? buildEFacturaHeaderXML(invoice) : buildEFacturaHeaderXML(invoice, invoice.issueDate)
     // console.log(xml)
-    let vatNumber = invoice.supplier.vatNumber;
-    if (vatNumber.startsWith('RO')) {
-      vatNumber = vatNumber.slice(2);
-    }
-    const response = await uploadInvoice(xml, vatNumber)
+    let vatNumber = invoice.supplier.vatNumber.replace(/\D/g, '');
+    const response = await uploadInvoice(xml, vatNumber, token)
     console.log(response)
     invoice.eFacturaId = response.eFacturaId
     invoice.eFacturaError = response.eFacturaError
@@ -73,6 +75,11 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
   const {id, noteDate} = req.body
   try{
     let invoice = await Invoice.findById(id).lean();
+    const locatie = await Locatie.findById(invoice.locatie).populate({path: 'anafToken', select: 'token'})
+    const token = locatie.anafToken.token
+    if(!token){
+      return res.status(404).json({message: 'Missing token'})
+    }
     const {
       _id, __v, eFacturaId, eFacturaStatus, eFacturaError, ...invoiceData
     } = invoice;
@@ -80,13 +87,8 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     const inv = await chageValues(invoiceData)
     const xml = buildEFacturaHeaderXML(inv, noteDate)
     // console.log(xml);
-    let vatNumber = invoiceData.supplier.vatNumber;
-    if (vatNumber.startsWith('RO')) {
-      vatNumber = vatNumber.slice(2);
-    }
-
-    const response = await uploadInvoice(xml, vatNumber);
-    
+    let vatNumber = invoiceData.supplier.vatNumber.replace(/\D/g, '');
+    const response = await uploadInvoice(xml, vatNumber, token);
     inv.issueDate = noteDate;
     inv.eFacturaId = response.eFacturaId;
     inv.eFacturaStatus = response.eFacturaStatus;
@@ -156,7 +158,12 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
   try{
     const invoice = await Invoice.findById(id)
     if(invoice && invoice.eFacturaId){
-      const response = await checkInvoiceStatus(invoice.eFacturaId)
+      const locatie = await Locatie.findById(invoice.locatie).populate({path: 'anafToken', select: 'token'})
+      const token = locatie.anafToken.token
+      if(!token){
+        return res.status(404).json({message: 'Missing token'})
+      }
+      const response = await checkInvoiceStatus(invoice.eFacturaId, token)
       invoice.eFacturaId = response.eFacturaId
       invoice.eFacturaError = response.eFacturaError
       invoice.eFacturaStatus = response.eFacturaStatus
@@ -175,9 +182,13 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
 module.exports.handleUplodErros = async (req, res) => {
   const {id, invoiceId} = req.query 
   try{
-    const error = await downloadZipFileCheck(id)
-
     const invoice = await Invoice.findById(invoiceId)
+    const locatie = await Locatie.findById(invoice.locatie).populate({path: 'anafToken', select: 'token'})
+    const token = locatie.anafToken.token
+    if(!token){
+      return res.status(404).json({message: 'Missing token'})
+    }
+    const error = await downloadZipFileCheck(id, token)
     invoice.eFacturaError = error.errors
     const updatedInvoice = await invoice.save()
     
@@ -190,18 +201,28 @@ module.exports.handleUplodErros = async (req, res) => {
 
 
 module.exports.getMessages = async (req, res) => {
-    const {days, cif, filter = 'P'} = req.query
-    const config = {
-        headers: {
-          'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
-          'Content-Type': 'application/json', 
-        }
-      }
+    const {days, filter = 'P', loc} = req.query
 
     try{
-    const response = await axios.get(`${process.env.ANAF_DAYS_BASE_API_URL}?zile=${days}&cif=${cif}&filtru=${filter}`, config)
-    if(response){
-        res.status(200).json(response.data)
+    const locatie = await Locatie.findById(loc).populate({path: 'anfToken', select: 'token'})
+    if(locatie){
+      if(locatie.anafToken && locatie.anafToken.token){
+        const cif = locatie.vatNumber.replace(/\D/g, '')
+        const config = {
+            headers: {
+              'Authorization': `Bearer ${locatie.anafToken.token}`,
+              'Content-Type': 'application/json',  
+            }
+          }
+        const response = await axios.get(`${process.env.ANAF_DAYS_BASE_API_URL}?zile=${days}&cif=${cif}&filtru=${filter}`, config)
+        if(response){
+            res.status(200).json(response.data)
+        }
+      } else {
+        res.status(401).json({message: 'Missing token'})
+      }
+    } else {
+      res.status(401).json({message: 'Mising locatie'})
     }
     }catch(error){
         console.log(error)
@@ -210,36 +231,47 @@ module.exports.getMessages = async (req, res) => {
 }
 
 module.exports.getMessagesByDate = async (req, res) => {
-  const {startDate, endDate, cif, filter = 'P'} = req.body
-  let page = 1
-  const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=${page}&filtru${filter}`
-  const config = {
-    headers: {
-      'Authorization': `Bearer ${process.env.TOKEN_ANAF}`,
-      'Content-Type': 'application/json',
-    }
-  }
+  const {startDate, endDate, filter = 'P', loc} = req.body
   try{
-  const response = await axios.get(apiUrl1, config)
-  if(response){
-      const allPages = response.data.numar_total_pagini
-      console.log(allPages)
-      let messages = response.data.mesaje
-      if(allPages === page){
-        res.status(200).json(response.data)
-      }
-      if(allPages > page){
-        const diference = allPages - page
-        for(let i=1; i <= diference; i++){
-            page = i+1
-            console.log('page', page)
-            const resp = await axios.get(apiUrl1, config)
-            messages = [...messages, ...resp.data.mesaje]
+    const locatie = await Locatie.findById(loc).populate({path: 'anfToken', select: 'token'})
+    if(locatie){
+      if(locatie.anafToken && locatie.anafToken.token){
+        const cif = locatie.vatNumber.replace(/\D/g, '')
+        let page = 1
+        const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=${page}&filtru${filter}`
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${locatie.anafToken.token}`,
+            'Content-Type': 'application/json',
+          }
         }
-      response.data.mesaje = messages
-      res.status(200).json(response.data)
+      
+        const response = await axios.get(apiUrl1, config)
+        if(response){
+            const allPages = response.data.numar_total_pagini
+            console.log(allPages)
+            let messages = response.data.mesaje
+            if(allPages === page){
+              res.status(200).json(response.data)
+            }
+            if(allPages > page){
+              const diference = allPages - page
+              for(let i=1; i <= diference; i++){
+                  page = i+1
+                  console.log('page', page)
+                  const resp = await axios.get(apiUrl1, config)
+                  messages = [...messages, ...resp.data.mesaje]
+              }
+            response.data.mesaje = messages
+            res.status(200).json(response.data)
+            }
+        }
+      } else {
+        res.status(401).json({message: 'Missing token'})
       }
-  }
+    }  else {
+      res.status(401).json({message: 'Mising locatie'})
+    }
   }catch(error){
       console.log(error)
       res.status(500).json(error)
@@ -247,9 +279,14 @@ module.exports.getMessagesByDate = async (req, res) => {
 }
 
 module.exports.getInvoice = async (req, res) => {
-    const {id} = req.query;
+    const {id, loc} = req.query;
     try{
-        const invoice = await downloadZipFile(id)
+      const locatie = await Locatie.findById(loc).populate({path: 'anafToken', select: 'token'})
+      const token = locatie.anafToken.token
+      if(!token){
+        return res.status(404).json({message: 'Missing token'})
+      }
+        const invoice = await downloadZipFile(id, token)
         res.status(200).json(invoice)
     } catch(err) {
         console.log(err)
@@ -260,14 +297,14 @@ module.exports.getInvoice = async (req, res) => {
 
 
   module.exports.checkInvoceStatus = async (req, res) => {
-    const {ids, upload} = req.body;
+    const {ids, upload, loc} = req.body;
     try{
       if(upload){
-        const bills = await Invoice.find({eFacturaId:{$in: ids}})
+        const bills = await Invoice.find({eFacturaId:{$in: ids}, locatie: loc})
         const billsIds = bills.map(b => b.eFacturaId)
         res.status(200).json(billsIds)
       } else {
-        const nirs = await Nir.find({eFacturaId:{$in: ids}})
+        const nirs = await Nir.find({eFacturaId:{$in: ids}, locatie: loc})
         const nirsIds = nirs.map(n => n.eFacturaId)
         res.status(200).json(nirsIds)
       }
@@ -278,35 +315,6 @@ module.exports.getInvoice = async (req, res) => {
 
   }
 
-
-
-
-// async function transformXmlToPdf(xml, res) {
-//   const standard = 'FACT1'; 
-//   const novld = 'DA'; 
-//   const url = `https://api.anaf.ro/prod/FCTEL/rest/transformare/${standard}/${novld}`;
-//   try {
-//     const response = await axios.post(url, xml, {
-//       headers: {
-//         'Content-Type': 'text/plain',
-//         'Authorization': `Bearer ${process.env.TOKEN_ANAF}` 
-//       },
-//       responseType: 'arraybuffer' 
-//     });
-
-//     res.set({
-//       'Content-Type': 'application/pdf',
-//       'Content-Disposition': 'inline; filename=invoice.pdf',
-//       'Content-Length': response.data.length
-//     });
-
-//     res.send(response.data); // send PDF to browser
-//     console.log('✅ PDF sent to frontend.');
-//   } catch (error) {
-//     console.error('❌ Error transforming XML to PDF:', error.response?.data || error.message);
-//     res.status(500).send('Error generating PDF');
-//   }
-// }
 
 
 

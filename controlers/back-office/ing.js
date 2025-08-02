@@ -14,14 +14,12 @@ const salePoint = require('../../models/utils/sale-point')
 
 module.exports.saveIng = async(req, res, next) => {
     const {ing} = req.body;
-    const {loc} = req.body;
     const checkIng = await Ingredient.findOne({name: ing.name, gestiune: ing.gestiune, locatie: loc})
     if(checkIng){
       return res.status(226).json({message: "Ingredientul deja exista în baza de date!"})
     } else {
       delete ing._id
       const newIng = new Ingredient(ing)
-      newIng.locatie = loc
       const savedIng =  await newIng.save()
       const dbIng = await Ingredient.findById(savedIng._id)
             .select([ '-unloadLog', '-uploadLog'])

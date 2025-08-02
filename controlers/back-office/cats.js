@@ -53,12 +53,10 @@ module.exports.searchCats = async (req, res, next) => {
 
 
 module.exports.addCat = async (req, res, next) => {
-    const {loc} = req.query 
     const {category} = req.body
 
     try {
         const cat = new Cat(category)
-        cat.locatie = loc
         await cat.save()
         const catToSend = await Cat.findById(cat._id)
         res.status(200).json({ message: `Category ${cat.name} was created!`, cat: catToSend })

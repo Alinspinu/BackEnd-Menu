@@ -6,8 +6,8 @@ const mode = 'test'
 // const mode = 'prod'
 
 
-async function uploadInvoice(xml, cif, cn = false) {
-    const token = process.env.TOKEN_ANAF;
+async function uploadInvoice(xml, cif, cn = false, token) {
+    // const token = process.env.TOKEN_ANAF;
     const standard = cn ? 'CN' : 'UBL';
     const baseUrl = `https://api.anaf.ro/${mode}/FCTEL/rest/upload`;
     const url = `${baseUrl}?standard=${standard}&cif=${cif}`;
@@ -27,7 +27,7 @@ async function uploadInvoice(xml, cif, cn = false) {
       const error = header.Errors?.$?.errorMessage;
   
       if (indexIncarcare) {
-        return checkInvoiceStatus(indexIncarcare, token, true)
+        return checkInvoiceStatus(indexIncarcare, true, token)
       }
       if (error) {
         return {
@@ -44,8 +44,8 @@ async function uploadInvoice(xml, cif, cn = false) {
   }
 
 
-  async function checkInvoiceStatus(indexIncarcare, upload = false) {
-    const token = process.env.TOKEN_ANAF;
+  async function checkInvoiceStatus(indexIncarcare, upload = false, token) {
+    // const token = process.env.TOKEN_ANAF;
     const veryfyBaseUrl = `https://api.anaf.ro/${mode}/FCTEL/rest/stareMesaj`;
     const verifyUrl = `${veryfyBaseUrl}?id_incarcare=${indexIncarcare}`;
     try{
