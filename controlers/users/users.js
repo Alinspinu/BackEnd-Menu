@@ -231,6 +231,9 @@ module.exports.getRefreshTokenValability = async (req, res) => {
         if(!loc){
          return res.status(404).json({message: 'Lipsa locatie'})
         }
+        if(!loc.anafToken){
+            return res.status(200).json({message: 'no_token'})
+        }
         const vDays = getJwtValidityInDays(loc.anafToken.token);
         res.status(200).json({time: vDays})
     } catch(error) {
@@ -277,9 +280,7 @@ module.exports.refreshToken = async (req, res) => {
 }
 
 function getJwtValidityInDays(token) {
-    console.log(token)
     const decoded = jwt.decode(token); 
-    console.log(decoded)
     if (!decoded || !decoded.iat || !decoded.exp) {
       throw new Error('Invalid or incomplete token');
     }
