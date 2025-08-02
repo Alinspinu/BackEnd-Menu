@@ -4,6 +4,7 @@ const QRCode = require('qrcode');
 const SalePoint = require('../../models/utils/sale-point')
 const AnafToken = require('../../models/utils/anaf-token')
 const PrintServer = require('../../models/utils/print-server')
+const jwt = require('jsonwebtoken');
 
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
@@ -213,12 +214,8 @@ module.exports.addAnafToken = async (req, res) => {
        if(!locatie){
         return res.status(404).json({message: 'Lipsa locatie'})
        }
-       const decoded = decodeJwt(token.refresh);
-       const issuedAt = decoded.iat; 
-       const expiresAt = decoded.exp; 
-       const validitySeconds = expiresAt - issuedAt;
-       const validityDays = Math.floor(validitySeconds / (60 * 60 * 24));
-       res.status(200).json({message: 'saved', time: validityDays})
+       const vDays = getJwtValidityInDays(token.refresh);
+       res.status(200).json({message: 'saved', time: vDays})
     } catch (error) {
         console.log(error)
         res.status(500).json(error)
@@ -232,23 +229,24 @@ module.exports.getRefreshTokenValability = async (req, res) => {
         if(!loc){
          return res.status(404).json({message: 'Lipsa locatie'})
         }
-        const decoded = decodeJwt(loc.anafToken.refresh);
-        const issuedAt = decoded.iat; 
-        const expiresAt = decoded.exp; 
-        const validitySeconds = expiresAt - issuedAt;
-        const validityDays = Math.floor(validitySeconds / (60 * 60 * 24));
-        res.status(200).json({time: validityDays})
+        const vDays = getJwtValidityInDays(loc.anafToken.refresh);
+        res.status(200).json({time: vDays})
     } catch(error) {
         console.log(error)
         res.status(500).json(error)
     }
 }
 
-function decodeJwt(token){
-    const payload = token.split('.')[1];
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-    const json = Buffer.from(base64, 'base64').toString('utf8');
-    return JSON.parse(json);
+function getJwtValidityInDays(token) {
+    const decoded = jwt.decode(token); 
+  
+    if (!decoded || !decoded.iat || !decoded.exp) {
+      throw new Error('Invalid or incomplete token');
+    }
+  
+    const seconds = decoded.exp - decoded.iat;
+    const days = Math.floor(seconds / (60 * 60 * 24));
+    return days;
   }
 
 module.exports.editLocatieData = async (req, res) => {
