@@ -144,11 +144,15 @@ const qs = require('qs')
 
 
 app.get('/anaf-callback', async (req, res) => {
-    const { code, state } = req.query;
-    console.log(code)
+    const { code, error } = req.query;
   
     if (!code) {
       return res.status(400).send('Missing code in query.');
+    }
+
+    if(!error) {
+        const redirectUrl = `http://localhost:8100/config/efactura?error=${error}`
+        res.redirect(redirectUrl)
     }
   
     try {
@@ -168,14 +172,9 @@ app.get('/anaf-callback', async (req, res) => {
           },
         }
       );
-      console.log(response.data)
-    //   console.log('Access Token:', response.data.access_token);
-    //   console.log('Refresh Token:', response.data.refresh_token);
-
       if(response.data.access_token && response.data.refresh_token){
           const token = new AnafToken({token: response.data.access_token, refresh: response.data.refresh_token})
           const savedToken = await token.save()
-          console.log(savedToken)
           res.send(`Intodu acest cod ** ${savedToken._id} ** in casuta "COD ANAF" si salveaza datele`)
       } else {
         res.status(200).json( {message: 'Something went wrong!!' });
