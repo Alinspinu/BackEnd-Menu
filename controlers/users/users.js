@@ -5,6 +5,7 @@ const SalePoint = require('../../models/utils/sale-point')
 const AnafToken = require('../../models/utils/anaf-token')
 const PrintServer = require('../../models/utils/print-server')
 const jwt = require('jsonwebtoken');
+const qs = require('qs');
 
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
@@ -229,9 +230,45 @@ module.exports.getRefreshTokenValability = async (req, res) => {
         if(!loc){
          return res.status(404).json({message: 'Lipsa locatie'})
         }
-        // console.log(loc.anafToken.refresh)
         const vDays = getJwtValidityInDays(loc.anafToken.token);
         res.status(200).json({time: vDays})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.refreshToken = async (req, res) => {
+    const {id} = req.body
+    try{
+        const loc = await Locatie.findById(id).populate({path: 'anafToken', select: 'refresh'})
+        if(!loc){
+            return res.status(404).json({message: 'Lipsa locatie'})
+        }
+        const url = 'https://logincert.anaf.ro/anaf-oauth2/v1/token'      
+        const auth = Buffer.from(`${process.env.ANAF_CLIENT_ID}:${process.env.ANAF_CLIENT_SECRET}`).toString('base64');
+        const data = qs.stringify({
+            grant_type: 'refresh_token',
+            refresh_token: loc.anafToken.refresh,
+          });
+          const response = await axios.post(
+            url,
+            data,
+            {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Basic ${auth}`,
+              },
+            }
+          );
+
+          if(response.data.access_token && response.data.refresh_token) {
+              const token = await AnafToken.findByIdAndUpdate(loc.anafToken._id, {token: response.data.access_token, refresh: response.data.refresh_token}, {new: true})
+              console.log(token)
+              res.status(200).json({time: getJwtValidityInDays(token.token)})
+          } else {
+            res.status(500).json({message: 'Something went wromng at the token refresh'})
+          }
     } catch(error) {
         console.log(error)
         res.status(500).json(error)

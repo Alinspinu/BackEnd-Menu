@@ -37,6 +37,8 @@ router.route('/locatie')
     .post(users.addAnafToken)
     .get(users.getRefreshTokenValability)
 
+router.route('/refresh').post(users.refreshToken)
+
 router.route('/get-cash').get(users.sendUserCashback)
 
 router.route('/work-log')
