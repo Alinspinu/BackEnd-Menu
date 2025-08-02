@@ -86,19 +86,15 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
 
     const inv = await chageValues(invoiceData)
     const xml = buildEFacturaHeaderXML(inv, noteDate)
-    // console.log(xml);
     let vatNumber = invoiceData.supplier.vatNumber.replace(/\D/g, '');
     const response = await uploadInvoice(xml, vatNumber, token);
     inv.issueDate = noteDate;
     inv.eFacturaId = response.eFacturaId;
     inv.eFacturaStatus = response.eFacturaStatus;
     inv.eFacturaError = response.eFacturaError;
-
     const newInvoice = new Invoice(inv);
     const savedInvoice = await newInvoice.save();
-
     res.status(200).json({message: 'Factura de retur a fost încarcată cu success!', invoice: savedInvoice})
-
   } catch(error){
     console.log(error)
     res.status(500).json(error)
@@ -204,7 +200,7 @@ module.exports.getMessages = async (req, res) => {
     const {days, filter = 'P', loc} = req.query
 
     try{
-    const locatie = await Locatie.findById(loc).populate({path: 'anfToken', select: 'token'})
+    const locatie = await Locatie.findById(loc).populate({path: 'anafToken', select: 'token'})
     if(locatie){
       if(locatie.anafToken && locatie.anafToken.token){
         const cif = locatie.vatNumber.replace(/\D/g, '')
@@ -233,7 +229,7 @@ module.exports.getMessages = async (req, res) => {
 module.exports.getMessagesByDate = async (req, res) => {
   const {startDate, endDate, filter = 'P', loc} = req.body
   try{
-    const locatie = await Locatie.findById(loc).populate({path: 'anfToken', select: 'token'})
+    const locatie = await Locatie.findById(loc).populate({path: 'anafToken', select: 'token'})
     if(locatie){
       if(locatie.anafToken && locatie.anafToken.token){
         const cif = locatie.vatNumber.replace(/\D/g, '')
