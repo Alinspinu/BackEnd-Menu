@@ -239,6 +239,7 @@ module.exports.getRefreshTokenValability = async (req, res) => {
 }
 
 function getJwtValidityInDays(token) {
+    console.log(token)
     const decoded = jwt.decode(token); 
     console.log(decoded)
     if (!decoded || !decoded.iat || !decoded.exp) {
