@@ -6,6 +6,7 @@ const AnafToken = require('../../models/utils/anaf-token')
 const PrintServer = require('../../models/utils/print-server')
 const jwt = require('jsonwebtoken');
 const qs = require('qs');
+const axios = require('axios')
 
 
 const { sendCompleteRegistrationEmail } = require('../../utils/mail')
