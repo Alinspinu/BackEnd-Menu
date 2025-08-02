@@ -146,7 +146,7 @@ const qs = require('qs')
 app.get('/anaf-callback', async (req, res) => {
     const { code, error } = req.query;
 
-    if(!error) {
+    if(error) {
         const redirectUrl = `http://localhost:8100/config/efactura?error=${error}`
         return res.redirect(redirectUrl)
     }
