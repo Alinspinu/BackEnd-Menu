@@ -203,6 +203,7 @@ module.exports.getMessages = async (req, res) => {
     const locatie = await Locatie.findById(loc).populate({path: 'anafToken', select: 'token'})
     if(locatie){
       if(locatie.anafToken && locatie.anafToken.token){
+        console.log(locatie.anafToken.token)
         const cif = locatie.vatNumber.replace(/\D/g, '')
         const config = {
             headers: {
