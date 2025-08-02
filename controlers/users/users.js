@@ -225,12 +225,12 @@ module.exports.addAnafToken = async (req, res) => {
 module.exports.getRefreshTokenValability = async (req, res) => {
     const {id} = req.query
     try{
-        const loc = await Locatie.findById(id).populate({path: 'anafToken', select: 'refresh'})
+        const loc = await Locatie.findById(id).populate({path: 'anafToken', select: 'token'})
         if(!loc){
          return res.status(404).json({message: 'Lipsa locatie'})
         }
         // console.log(loc.anafToken.refresh)
-        const vDays = getJwtValidityInDays(loc.anafToken.refresh);
+        const vDays = getJwtValidityInDays(loc.anafToken.token);
         res.status(200).json({time: vDays})
     } catch(error) {
         console.log(error)
