@@ -246,8 +246,9 @@ module.exports.getRefreshTokenValability = async (req, res) => {
 
 function decodeJwt(token){
     const payload = token.split('.')[1];
-    const decoded = atob(payload);
-    return JSON.parse(decoded);
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const json = Buffer.from(base64, 'base64').toString('utf8');
+    return JSON.parse(json);
   }
 
 module.exports.editLocatieData = async (req, res) => {
