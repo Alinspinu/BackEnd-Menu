@@ -168,7 +168,7 @@ app.get('/anaf-callback', async (req, res) => {
           },
         }
       );
-      console.log(response)
+      console.log(response.data)
     //   console.log('Access Token:', response.data.access_token);
     //   console.log('Refresh Token:', response.data.refresh_token);
 
