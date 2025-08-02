@@ -216,10 +216,10 @@ module.exports.getMessages = async (req, res) => {
             res.status(200).json(response.data)
         }
       } else {
-        res.status(401).json({message: 'Missing token'})
+        res.status(404).json({message: 'Missing token'})
       }
     } else {
-      res.status(401).json({message: 'Mising locatie'})
+      res.status(404).json({message: 'Mising locatie'})
     }
     }catch(error){
         console.log(error)
@@ -264,10 +264,10 @@ module.exports.getMessagesByDate = async (req, res) => {
             }
         }
       } else {
-        res.status(401).json({message: 'Missing token'})
+        res.status(404).json({message: 'Missing token'})
       }
     }  else {
-      res.status(401).json({message: 'Mising locatie'})
+      res.status(404).json({message: 'Mising locatie'})
     }
   }catch(error){
       console.log(error)
