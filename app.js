@@ -159,6 +159,7 @@ app.get('/anaf-callback', async (req, res) => {
           grant_type: 'authorization_code',
           code,
           redirect_uri: redirectUri,
+          token_content_type: 'jwt'
         }),
         {
           headers: {
