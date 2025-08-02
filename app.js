@@ -145,17 +145,11 @@ const qs = require('qs')
 
 app.get('/anaf-callback', async (req, res) => {
     const { code, error } = req.query;
-
+    const baseRedirectUrl = 'http://localhost:8100/config/efactura'
     if(error) {
-        const redirectUrl = `http://localhost:8100/config/efactura?error=${error}`
+        const redirectUrl = `${baseRedirectUrl}?error=${error}`
         return res.redirect(redirectUrl)
     }
-
-    if (!code) {
-      return res.status(400).send('Missing code in query.');
-    }
-
-
   
     try {
       const auth = Buffer.from(`${process.env.ANAF_CLIENT_ID}:${process.env.ANAF_CLIENT_SECRET}`).toString('base64');
@@ -177,7 +171,8 @@ app.get('/anaf-callback', async (req, res) => {
       if(response.data.access_token && response.data.refresh_token){
           const token = new AnafToken({token: response.data.access_token, refresh: response.data.refresh_token})
           const savedToken = await token.save()
-          res.send(`Intodu acest cod ** ${savedToken._id} ** in casuta "COD ANAF" si salveaza datele`)
+          const redirectUrl = `${baseRedirectUrl}?connected=${encodeURIComponent(savedToken._id)}`
+          res.redirect(redirectUrl)
       } else {
         res.status(200).json( {message: 'Something went wrong!!' });
       }

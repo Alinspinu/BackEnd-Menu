@@ -2,7 +2,7 @@ const User = require('../../models/users/user')
 const Locatie = require('../../models/office/locatie')
 const QRCode = require('qrcode');
 const SalePoint = require('../../models/utils/sale-point')
-
+const AnafToken = require('../../models/utils/anaf-token')
 const PrintServer = require('../../models/utils/print-server')
 
 
@@ -201,6 +201,54 @@ module.exports.sendLocatie = async (req, res, next) => {
     }
 }
 
+module.exports.addAnafToken = async (req, res) => {
+    const {loc, id} = req.body
+    try{
+       const token = await AnafToken.findById(id)
+       if(!token){
+        return res.status(404).json({message: 'Lipsa token'})
+       }
+
+       const locatie =  await Locatie.findByIdAndUpdate(loc, {anafToken: id}, {new: true})
+       if(!locatie){
+        return res.status(404).json({message: 'Lipsa locatie'})
+       }
+       const decoded = decodeJwt(token.refresh);
+       const issuedAt = decoded.iat; 
+       const expiresAt = decoded.exp; 
+       const validitySeconds = expiresAt - issuedAt;
+       const validityDays = Math.floor(validitySeconds / (60 * 60 * 24));
+       res.status(200).json({message: 'saved', time: validityDays})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.getRefreshTokenValability = async (req, res) => {
+    const {id} = req.query
+    try{
+        const loc = await Locatie.findById(id).populate({path: 'anafToken', select: 'refresh'})
+        if(!loc){
+         return res.status(404).json({message: 'Lipsa locatie'})
+        }
+        const decoded = decodeJwt(loc.anafToken.refresh);
+        const issuedAt = decoded.iat; 
+        const expiresAt = decoded.exp; 
+        const validitySeconds = expiresAt - issuedAt;
+        const validityDays = Math.floor(validitySeconds / (60 * 60 * 24));
+        res.status(200).json({time: validityDays})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+function decodeJwt(token){
+    const payload = token.split('.')[1];
+    const decoded = atob(payload);
+    return JSON.parse(decoded);
+  }
 
 module.exports.editLocatieData = async (req, res) => {
     const {loc} = req.body

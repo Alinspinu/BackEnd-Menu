@@ -31,7 +31,11 @@ router.route('/loc')
     .put(users.editLocatie)
     .post(users.updateVivaData)
 
-router.route('/locatie').put(users.editLocatieData)
+
+router.route('/locatie')
+    .put(users.editLocatieData)
+    .post(users.addAnafToken)
+    .get(users.getRefreshTokenValability)
 
 router.route('/get-cash').get(users.sendUserCashback)
 
