@@ -229,6 +229,7 @@ module.exports.getRefreshTokenValability = async (req, res) => {
         if(!loc){
          return res.status(404).json({message: 'Lipsa locatie'})
         }
+        console.log(loc.anafToken.refresh)
         const vDays = getJwtValidityInDays(loc.anafToken.refresh);
         res.status(200).json({time: vDays})
     } catch(error) {
