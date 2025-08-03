@@ -20,7 +20,7 @@ const mode = 'test'
 
         const maybeJson = JSON.parse(asText);
         if (maybeJson.eroare) {
-          throw new Error('Server error: ' + maybeJson.eroare);
+          return {error: maybeJson.eroare };
         }
 
       const zip = new AdmZip(response.data);
@@ -39,7 +39,7 @@ const mode = 'test'
           }
           }
       }
-        return invoice;
+        return {invoice: invoice};
     } catch (error) {
       console.error('Error downloading or processing the ZIP file:', error);
     }

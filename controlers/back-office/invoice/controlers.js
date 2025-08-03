@@ -281,11 +281,16 @@ module.exports.getInvoice = async (req, res) => {
       if(!token){
         return res.status(404).json({message: 'Missing token'})
       }
-        const invoice = await downloadZipFile(id, token)
-        if (!invoice) {
-          // return res.status(500).json({ message: 'Failed to download invoice' });
+        const data = await downloadZipFile(id, token)
+        if (data.error) {
+          return res.status(500).json({ message: data.error });
+        } 
+        if(data.invoice){
+          res.status(200).json(data.invoice)
         }
-        res.status(200).json(invoice)
+        if(!data){
+          return res.status(500).json({ message: 'Documentul nu a putut fi descarcat' });
+        }
     } catch(err) {
         console.log(err)
         res.status(500).json(err)
