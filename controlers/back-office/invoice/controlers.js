@@ -282,10 +282,13 @@ module.exports.getInvoice = async (req, res) => {
         return res.status(404).json({message: 'Missing token'})
       }
         const invoice = await downloadZipFile(id, token)
+        if (!invoice) {
+          // return res.status(500).json({ message: 'Failed to download invoice' });
+        }
         res.status(200).json(invoice)
     } catch(err) {
         console.log(err)
-        res.status(500).josn(err)
+        res.status(500).json(err)
     }
 }
 
