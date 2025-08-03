@@ -16,15 +16,13 @@ const mode = 'test'
       });
       const asText = response.data.toString('utf-8');
 
-      // Is it a JSON error?
-      try {
+
+
         const maybeJson = JSON.parse(asText);
         if (maybeJson.eroare) {
           throw new Error('Server error: ' + maybeJson.eroare);
         }
-      } catch (e) {
-        // Not JSON → continue to ZIP
-      }
+
       const zip = new AdmZip(response.data);
 
       const zipEntries = zip.getEntries(); 
