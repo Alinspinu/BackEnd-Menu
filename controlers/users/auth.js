@@ -1,9 +1,12 @@
 
 const jwt = require('jsonwebtoken');
+const axios = require('axios')
+const qs = require('qs')
 const User = require('../../models/users/user');
 const Locatie = require('../../models/office/locatie')
 const SalePoint = require('../../models/utils/sale-point')
-const axios = require('axios')
+const AnafToken = require('../../models/utils/anaf-token.js')
+const redirectUri = 'https://flowmanager.ro/anaf-callback'
 
 
 const { comparePasswords, hashPassword, round, generateSoketId } = require('../../utils/functions')
@@ -616,6 +619,47 @@ module.exports.sendLogs =  async  (req, res) => {
         console.log(error)
         res.status(500).json(error)
     }
+}
+
+
+module.exports.handleAnafTokens = async (req, res) => {
+        const { code, error } = req.query;
+        const baseRedirectUrl = 'http://front.flowmanager.ro/config/efactura'
+        if(error) {
+            const redirectUrl = `${baseRedirectUrl}?error=${error}`
+            return res.redirect(redirectUrl)
+        }
+      
+        try {
+          const auth = Buffer.from(`${process.env.ANAF_CLIENT_ID}:${process.env.ANAF_CLIENT_SECRET}`).toString('base64');
+      
+          const response = await axios.post(process.env.ANAF_TOKEN_URL,
+            qs.stringify({
+              grant_type: 'authorization_code',
+              code,
+              redirect_uri: redirectUri,
+              token_content_type: 'jwt'
+            }),
+            {
+              headers: {
+                'Authorization': `Basic ${auth}`,
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+            }
+          );
+          if(response.data.access_token && response.data.refresh_token){
+              const token = new AnafToken({token: response.data.access_token, refresh: response.data.refresh_token})
+              const savedToken = await token.save()
+              const redirectUrl = `${baseRedirectUrl}?connected=${encodeURIComponent(savedToken._id)}`
+              res.redirect(redirectUrl)
+          } else {
+            res.status(200).json( {message: 'Something went wrong!!' });
+          }
+    
+        } catch (error) {
+          console.error('Token request error:', error.response?.data || error.message);
+          res.status(500).send('Token exchange failed.');
+        }
 }
 
 
