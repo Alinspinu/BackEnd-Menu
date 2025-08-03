@@ -14,7 +14,8 @@ const mode = 'test'
           'Accept': 'application/zip',
         },
       });
-      const zip = new AdmZip(response.data);
+      console.log(response.data)
+      // const zip = new AdmZip(response.data);
       const zipEntries = zip.getEntries(); 
       let invoice;
       for (const entry of zipEntries) {
