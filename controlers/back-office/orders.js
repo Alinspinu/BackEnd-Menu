@@ -249,7 +249,7 @@ module.exports.getOrderByUser = async (req, res, nex) => {
 module.exports.getAllOrders = async (req, res, next) => {
         const {loc, point} = req.query;
     try{
-        const date = new Date()
+        const date = new Date('2025-08-3')
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} , salePoint: point})
