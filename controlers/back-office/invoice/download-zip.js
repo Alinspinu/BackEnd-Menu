@@ -17,11 +17,12 @@ const mode = 'test'
       const asText = response.data.toString('utf-8');
 
 
-
-        const maybeJson = JSON.parse(asText);
-        if (maybeJson.eroare) {
-          return {error: maybeJson.eroare };
-        }
+        try{
+          const maybeJson = JSON.parse(asText);
+          if (maybeJson.eroare) {
+            return {error: maybeJson.eroare };
+          }
+        } catch(e){}
 
       const zip = new AdmZip(response.data);
 
