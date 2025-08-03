@@ -198,7 +198,7 @@ module.exports.handleUplodErros = async (req, res) => {
 
 module.exports.getMessages = async (req, res) => {
     const {days, filter = 'P', loc} = req.query
-
+    console.log('flitru****', filter)
     try{
     const locatie = await Locatie.findById(loc).populate({path: 'anafToken', select: 'token'})
     if(locatie){
