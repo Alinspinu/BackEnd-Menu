@@ -285,10 +285,7 @@ function getJwtValidityInDays(token) {
       throw new Error('Invalid or incomplete token');
     }
   
-    const seconds = decoded.exp - new Date().getTime();
-    console.log('exp seconds', decoded.exp)
-    console.log('iat seconds', decoded.iat)
-    console.log('seconds now', new Date().getTime())
+    const seconds = decoded.exp - Math.floor(Date.now() / 1000);
     const days = Math.floor(seconds / (60 * 60 * 24));
     return days;
   }
