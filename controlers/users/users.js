@@ -286,6 +286,7 @@ function getJwtValidityInDays(token) {
     }
   
     const seconds = decoded.exp - new Date().getTime();
+    console.log('seconds ', seconds)
     const days = Math.floor(seconds / (60 * 60 * 24));
     return days;
   }
