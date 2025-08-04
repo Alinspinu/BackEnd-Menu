@@ -500,7 +500,13 @@ module.exports.getOrderDone = async (req, res, next) => {
 module.exports.endPending = async (req, res, next) => {
     try{
         const {id, section} = req.body;
+        if(!id){
+            return res.status(404).json({message: 'No id was found'})
+        }
         const order = await Order.findById(id)
+        if(!order){
+            return res.status(404).json({message: 'No order was found'})
+        }
         for(let m of order.monitors){
             if(m.section.toString() === section){
                 m.pending = false
@@ -516,13 +522,20 @@ module.exports.endPending = async (req, res, next) => {
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder})
     } catch(err){
         console.log(err.message)
+        res.status(500).json(err)
     }
 }
 
 module.exports.liftStatusDone = async (req, res, next) => {
     try{
         const {id, section} = req.query;
+        if(!id){
+            return res.status(404).json({message: 'No id was found'})
+        }
         const order = await Order.findById(id)
+        if(!order){
+            return res.status(404).json({message: 'No order was found'})
+        }
         for(let m of order.monitors){
             if(m.section.toString() === section){
                 m.lifted = true 
@@ -533,6 +546,7 @@ module.exports.liftStatusDone = async (req, res, next) => {
         res.status(200).json({message: 'Comanda a fost marcată ca și ridicată!', order: newOrder})
     } catch(err){
         console.log(err.message)
+        res.status(500).json(err)
     }
 }
 
@@ -540,7 +554,14 @@ module.exports.liftStatusDone = async (req, res, next) => {
 module.exports.prepStatusDone = async (req, res, next) => {
     try{
         const {id, section} = req.body;
+        if(!id){
+            return res.status(404).json({message: 'No id was found'})
+        }
         const order = await Order.findById(id)
+        if(!order){
+            return res.status(404).json({message: 'No order was found'})
+        }
+        
         for(let m of order.monitors){
             if(m.section.toString() === section){
                 m.prep = false
@@ -552,6 +573,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
         res.status(200).json({message: 'Comanda a fost marcată ca și terminată!', order: newOrder})
     } catch(err){
         console.log(err.message)
+        res.status(500).json(err)
     }
 }
 
