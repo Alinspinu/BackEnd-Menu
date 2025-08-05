@@ -15,7 +15,7 @@ const ComparedInventary = require('../../models/office/comp-inv')
 
 module.exports.saveIng = async(req, res, next) => {
     const {ing} = req.body;
-    const checkIng = await Ingredient.findOne({name: ing.name, gestiune: ing.gestiune, locatie: loc})
+    const checkIng = await Ingredient.findOne({name: ing.name, gestiune: ing.gestiune, locatie: ing.locatie})
     if(checkIng){
       return res.status(226).json({message: "Ingredientul deja exista în baza de date!"})
     } else {
