@@ -264,8 +264,8 @@ module.exports.compareScriptic = async (req, res, next) => {
     const startTime = new Date(start).setUTCHours(0,0,0,0)
     const endTime = new Date(end).setUTCHours(0,0,0,0)
     const eTime = new Date(end).setUTCHours(23,0,0,0)
-    const firstInventary = await Inventary.findOne({date: startTime, locatie: loc, salePoint: point})
-    const lastInventary = await Inventary.findOne({date: endTime, locatie: loc, salePoint: point})
+    const firstInventary = await Inventary.findOne({date: startTime, locatie: loc, salePoint: point}).populate({path: 'ingredients.ing', select: 'price'})
+    const lastInventary = await Inventary.findOne({date: endTime, locatie: loc, salePoint: point}).populate({path: 'ingredients.ing', select: 'price'})
 
     const compInv = ComparedInventary.findOne({firstInv: firstInventary._id, secondInv: lastInventary._id, locatie: loc, salePoint: point})
 
@@ -279,7 +279,7 @@ module.exports.compareScriptic = async (req, res, next) => {
           .populate({path: 'billProduct.toppings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
 
     const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: eTime}, salePoint: point})
-                              .populate({path: 'ings.ing', select: 'name um ings productIngredient', populate: {path: 'ings.ing', select: 'name um' }})
+                              .populate({path: 'ings.ing', select: 'name um ings productIngredient price', populate: {path: 'ings.ing', select: 'name um price' }})
     const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}, salePoint: point}).populate([
       {
         path: 'products.ings.ing', 
@@ -467,6 +467,7 @@ module.exports.compareScriptic = async (req, res, next) => {
           saleUnload: 0,
           gestiune: ing.gestiune,
           depVal: 0,
+          price: ing.ing.price,
           dep: ing.dep,
           upload: {
             value: 0,
@@ -492,6 +493,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         saleUnload: 0,
         gestiune: ing.gestiune,
         depVal: 0,
+        price: ing.ing.price,
         dep: ing.dep,
         upload: {
           value: 0,
@@ -521,6 +523,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         saleUnload: 0,
         gestiune: ing.gestiune,
         depVal: ing.qty,
+        price: ing.ing.price,
         dep: ing.dep,
         upload: {
           value: 0,
@@ -545,6 +548,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         saleUnload: ing.qty,
         gestiune: ing.gestiune,
         depVal: 0,
+        price: ing.ing.price,
         dep: ing.dep,
         upload: {
           value: 0,
@@ -583,6 +587,7 @@ module.exports.compareScriptic = async (req, res, next) => {
     }
     const newCompare = new ComparedInventary(compareInv)
     const savedCompare = await newCompare.save()
+    console.log(savedCompare)
     res.status(200).json(savedCompare)
   } catch(err){
     console.log(err)
