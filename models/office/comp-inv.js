@@ -11,13 +11,20 @@ const compInvSchema = new Schema({
             first: Number,
             second: Number,
             scripticUnload: String,
-            depVal: String,
+            saleUnload: Number,
+            gestiune: String,
+            depVal: Number,
             dep: String,
             price: Number,
-            depVal: Number,
             upload: {
                 value: 0,
-                entries: []
+                entries: [
+                    {
+                        date: String,
+                        qty: Number,
+                        operation: {name: String, details: String}
+                    }
+                ]
             }
         }
 
