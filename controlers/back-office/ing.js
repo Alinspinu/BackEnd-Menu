@@ -6,6 +6,7 @@ const DelProd = require('../../models/office/product/deletetProduct')
 const ImpSheet = require('../../models/office/imp-sheet')
 const CigarsInv = require('../../models/cigars-inv')
 const salePoint = require('../../models/utils/sale-point')
+const ComparedInventary = require('../../models/office/comp-inv')
 
 
 
@@ -263,12 +264,20 @@ module.exports.compareScriptic = async (req, res, next) => {
     const startTime = new Date(start).setUTCHours(0,0,0,0)
     const endTime = new Date(end).setUTCHours(0,0,0,0)
     const eTime = new Date(end).setUTCHours(23,0,0,0)
+    const firstInventary = await Inventary.findOne({date: startTime, locatie: loc, salePoint: point})
+    const lastInventary = await Inventary.findOne({date: endTime, locatie: loc, salePoint: point})
+
+    const compInv = ComparedInventary.findOne({firstInv: firstInventary._id, secondInv: lastInventary._id, locatie: loc, salePoint: point})
+
+    if(compInv){
+      return res.status(200).json(compInv)
+    }
+
     const ings = await Ingredient.find({locatie: loc,  productIngredient: false, salePoint: point}).select('name uploadLog um')
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep', salePoint: point})
           .populate({path: 'billProduct.ings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
           .populate({path: 'billProduct.toppings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
-    const firstInventary = await Inventary.findOne({date: startTime, locatie: loc, salePoint: point})
-    const lastInventary = await Inventary.findOne({date: endTime, locatie: loc, salePoint: point})
+
     const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: eTime}, salePoint: point})
                               .populate({path: 'ings.ing', select: 'name um ings productIngredient', populate: {path: 'ings.ing', select: 'name um' }})
     const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}, salePoint: point}).populate([
@@ -566,10 +575,15 @@ module.exports.compareScriptic = async (req, res, next) => {
     const compareInv = {
       dateFirst: start,
       dateSecond: end,
-      ingredients: ingredients
+      ingredients: ingredients,
+      firstInv: firstInventary._id,
+      secondInv: lastInventary._id,
+      locatie: loc,
+      salePoint: point
     }
-   
-    res.status(200).json({compareInv})
+    const newCompare = new ComparedInventary(compareInv)
+    const savedCompare = await newCompare.save()
+    res.status(200).json(savedCompare)
   } catch(err){
     console.log(err)
     res.status(500).json(err)
