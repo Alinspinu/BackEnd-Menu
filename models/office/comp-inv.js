@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 
 const compInvSchema = new Schema({
-    date: Date,
+    dateFirst: Date,
+    dateSecond: Date,
     ingredients: [
         {
             name: String,
