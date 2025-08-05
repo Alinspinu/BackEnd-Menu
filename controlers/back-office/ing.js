@@ -545,7 +545,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         first: 0,
         second: 0,
         scripticUnload: 0,
-        saleUnload: ing.qty,
+        saleUnload: ing.qty | 0,
         gestiune: ing.gestiune,
         depVal: 0,
         price: ing.ing.price,
