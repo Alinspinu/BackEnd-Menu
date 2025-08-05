@@ -569,10 +569,10 @@ module.exports.printCompareInv = async (req, res) => {
     const sortedIngs = inventary.ingredients.sort((a, b) => a.name.localeCompare(b.name))
     let filtredIngs = sortedIngs
 
-    if(gest){
+    if(gest.length){
       filtredIngs = filtredIngs.filter(i => i.gestiune === gest)
     }
-    if(dep) {
+    if(dep.length) {
       filtredIngs = filtredIngs.filter(i => i.dep === dep)
     }
  
