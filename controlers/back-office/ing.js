@@ -15,21 +15,29 @@ const ComparedInventary = require('../../models/office/comp-inv')
 
 module.exports.saveIng = async(req, res, next) => {
     const {ing} = req.body;
-    const checkIng = await Ingredient.findOne({name: ing.name, gestiune: ing.gestiune, locatie: ing.locatie})
-    if(checkIng){
-      return res.status(226).json({message: "Ingredientul deja exista în baza de date!"})
-    } else {
-      delete ing._id
-      const newIng = new Ingredient(ing)
-      const savedIng =  await newIng.save()
-      const dbIng = await Ingredient.findById(savedIng._id)
-            .select([ '-unloadLog', '-uploadLog'])
-            .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
-            .populate({path: 'salePoint', select: 'name'})
-            .populate({path: 'gest', select: 'name'})
-            .populate({path: 'dept', select: 'name'})
-      return res.status(200).json({message: `Ingredientul ${newIng.name} a fost salvat cu succes!`, ing: dbIng})
+    try{
+
+      const checkIng = await Ingredient.findOne({name: ing.name, gestiune: ing.gestiune, locatie: ing.locatie})
+      if(checkIng){
+        return res.status(226).json({message: "Ingredientul deja exista în baza de date!"})
+      } else {
+        delete ing._id
+        const newIng = new Ingredient(ing)
+        const savedIng =  await newIng.save()
+        const dbIng = await Ingredient.findById(savedIng._id)
+              .select([ '-unloadLog', '-uploadLog'])
+              .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
+              .populate({path: 'salePoint', select: 'name'})
+              .populate({path: 'gest', select: 'name'})
+              .populate({path: 'dept', select: 'name'})
+        return res.status(200).json({message: `Ingredientul ${newIng.name} a fost salvat cu succes!`, ing: dbIng})
+      }
+
+    } catch(err) {
+      console.log(err)
+      res.status(500).json(err)
     }
+
   }
 
 
