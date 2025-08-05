@@ -602,10 +602,6 @@ module.exports.printCompareInv = async (req, res) => {
       if(!ing.ing) {
         console.log(ing)
       } else {
-        // const faptic = round(el.faptic * el.ing.price)
-        // const scriptic = round(el.scriptic * el.ing.price)
-        // scripticValue += scriptic
-        // fapticValue += faptic
         worksheet.addRow(
           [
             `${i+1}`,
@@ -690,14 +686,12 @@ module.exports.printCompareInv = async (req, res) => {
     worksheet.mergeCells(`A1:L1`)
   
 
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
-    workbook.xlsx.write(res)
-    .then(() => {
-      res.end();
-    })
-    .catch((error) => {
-      console.error('Error writing Excel file:', error);
+    workbook.xlsx.writeBuffer().then(buffer => {
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename="example.xlsx"');
+      res.send(buffer);
+    }).catch(err => {
+      console.error('Error writing Excel file:', err);
       res.status(500).send('Internal Server Error');
     });
 
