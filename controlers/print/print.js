@@ -552,7 +552,7 @@ cell.alignment = {horizontal: 'center'}
 
 
 module.exports.printCompareInv = async (req, res) => {
-  const {id} = req.query
+  const {id, dep, gest} = req.query
   try{
     const inventary = await ComparedInventary.findById(id).populate({path: 'locatie', select: 'bussinessName'})
 
@@ -567,7 +567,15 @@ module.exports.printCompareInv = async (req, res) => {
     const workbook = new exceljs.Workbook();
     const worksheet = workbook.addWorksheet(`Inventar comparat ${firstDate} - ${secondDate}`);
     const sortedIngs = inventary.ingredients.sort((a, b) => a.name.localeCompare(b.name))
-  
+    let filtredIngs = sortedIngs
+
+    if(gest){
+      filtredIngs = filtredIngs.filter(i => i.gestiune === gest)
+    }
+    if(dep) {
+      filtredIngs = filtredIngs.filter(i => i.dep === dep)
+    }
+ 
   
     const docTitle =  [
       `Inventar comparat ${firstDate} - ${secondDate}`,
@@ -598,7 +606,7 @@ module.exports.printCompareInv = async (req, res) => {
     ]
     worksheet.addRow(docTitle)
     worksheet.addRow(header)
-    sortedIngs.forEach((ing, i) => {
+    filtredIngs.forEach((ing, i) => {
       worksheet.addRow(
         [
           `${i+1}`,
