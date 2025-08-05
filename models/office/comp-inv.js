@@ -17,7 +17,7 @@ const compInvSchema = new Schema({
             dep: String,
             price: Number,
             upload: {
-                value: 0,
+                value: Number,
                 entries: [
                     {
                         date: String,
