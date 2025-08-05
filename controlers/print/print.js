@@ -586,7 +586,6 @@ module.exports.printCompareInv = async (req, res) => {
       'Nr',
       `Denumire Ingredient`,
       'UM',
-      'Pret cu TVA (um)',
       `Inventar ${firstDate}`,
       'Intrari',
       `Inventar ${secondDate}`,
@@ -594,6 +593,7 @@ module.exports.printCompareInv = async (req, res) => {
       `Vanzari`, 
       `Deprecieri`, 
       `Diferenta (um)`, 
+      'Pret cu TVA (lei / um)',
       `Diferenta (lei)`, 
     ]
     worksheet.addRow(docTitle)
@@ -604,7 +604,6 @@ module.exports.printCompareInv = async (req, res) => {
           `${i+1}`,
           `${ing.name}`,
           `${ing.um}`,
-          `${ing.price}`,
           `${round(ing.first)}`,
           `${round(ing.upload.value)}`,
           `${round(ing.second)}`,
@@ -612,6 +611,7 @@ module.exports.printCompareInv = async (req, res) => {
           `${round(ing.saleUnload)}`,
           `${round(ing.depVal)}`,
           `${round(ing.saleUnload + ing.depVal - (ing.first+ing.upload.value - ing.second))}`,
+          `${ing.price}`,
           `${round((ing.saleUnload + ing.depVal - (ing.first+ing.upload.value - ing.second)) * ing.price)}`,
         ]
         )
@@ -646,7 +646,15 @@ module.exports.printCompareInv = async (req, res) => {
       cell.alignment = { vertical: "middle", horizontal: 'center'}
     })
     worksheet.getColumn(10).eachCell((cell) => {
-      cell.alignment = { vertical: "middle", horizontal: 'right'}
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+  
+    worksheet.getColumn(11).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+  
+    worksheet.getColumn(12).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
     })
   
   worksheet.getRow(1).eachCell((cell)=>{
@@ -671,13 +679,13 @@ module.exports.printCompareInv = async (req, res) => {
     worksheet.getColumn(2).width = 25; 
     worksheet.getColumn(3).width = 10; 
     worksheet.getColumn(4).width = 20; 
-    worksheet.getColumn(5).width = 20; 
-    worksheet.getColumn(6).width = 13; 
-    worksheet.getColumn(7).width = 20; 
+    worksheet.getColumn(5).width = 13; 
+    worksheet.getColumn(6).width = 20; 
+    worksheet.getColumn(7).width = 13; 
     worksheet.getColumn(8).width = 13; 
     worksheet.getColumn(9).width = 15; 
     worksheet.getColumn(10).width = 15; 
-    worksheet.getColumn(11).width = 15; 
+    worksheet.getColumn(11).width = 18; 
     worksheet.getColumn(12).width = 15; 
     worksheet.mergeCells(`A1:L1`)
   
