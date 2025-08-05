@@ -9,6 +9,7 @@ const Invoice = require('../../models/office/invoice')
 const User = require('../../models/users/user')
 const Inventary = require('../../models/office/inventary')
 const Product = require('../../models/office/product/product')
+const ComparedInventary = require('../../models/office/comp-inv')
 const PDFDocument = require("pdfkit");
 const { getProducts } = require('../back-office/product');
 const { saveProductIngredient } = require('../nutrition');
@@ -546,6 +547,164 @@ cell.alignment = {horizontal: 'center'}
     console.error('Error writing Excel file:', error);
     res.status(500).send('Internal Server Error');
   });
+}
+
+
+
+module.exports.printCompareInv = async (req, res) => {
+  const {id} = req.query
+  try{
+    const inventary = await ComparedInventary.findById(id).populate({path: 'locatie', select: 'bussinessName'})
+
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+    const firstDate = inventary.dateFirst
+      .toLocaleDateString("en-GB", options)
+      .replace(/\//g, "-");
+    const secondDate = inventary.dateSecond
+      .toLocaleDateString("en-GB", options)
+      .replace(/\//g, "-");
+  
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet(`Inventar comparat ${firstDate} - ${secondDate} ${inventary.locatie.bussinessName}`);
+    const sortedIngs = inventary.ingredients.sort((a, b) => a.name.localeCompare(b.name))
+  
+  
+    const docTitle =  [
+      `Inventar comparat ${firstDate} - ${secondDate} ${inventary.locatie.bussinessName}`,
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+       '']
+    const header = [
+      'Nr',
+      `Denumire Ingredient`,
+      'UM',
+      'Pret cu TVA (um)'
+      `Inventar ${firstDate}`,
+      'Intrari',
+      `Inventar ${secondDate}`,
+      'Scriptic',
+      `Vanzari`, 
+      `Deprecieri`, 
+      `Diferenta (um)`, 
+      `Diferenta (lei)`, 
+    ]
+    worksheet.addRow(docTitle)
+    worksheet.addRow(header)
+    sortedIngs.forEach((ing, i) => {
+      if(!ing.ing) {
+        console.log(ing)
+      } else {
+        // const faptic = round(el.faptic * el.ing.price)
+        // const scriptic = round(el.scriptic * el.ing.price)
+        // scripticValue += scriptic
+        // fapticValue += faptic
+        worksheet.addRow(
+          [
+            `${i+1}`,
+            `${ing.name}`,
+            `${ing.um}`,
+            `${ing.price}`,
+            `${round(ing.first)}`,
+            `${round(ing.upload.value)}`,
+            `${round(ing.second)}`,
+            `${round(ing.first+ing.upload.value - ing.second)}`,
+            `${round(ing.saleUnload)}`,
+            `${round(ing.depVal)}`,
+            `${round(ing.saleUnload + ing.depVal - (ing.first+ing.upload.value - ing.second))}`,
+            `${round((ing.saleUnload + ing.depVal - (ing.first+ing.upload.value - ing.second)) * ing.price)}`,
+          ]
+          )
+      }
+    })
+
+    worksheet.getColumn(1).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+    worksheet.getColumn(2).eachCell((cell)=> {
+      cell.alignment = { vertical: "right", horizontal: 'left'}
+    })
+  
+    worksheet.getColumn(3).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+    worksheet.getColumn(4).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+    worksheet.getColumn(5).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+    worksheet.getColumn(6).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+    worksheet.getColumn(7).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+    worksheet.getColumn(8).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+    worksheet.getColumn(9).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'center'}
+    })
+    worksheet.getColumn(10).eachCell((cell) => {
+      cell.alignment = { vertical: "middle", horizontal: 'right'}
+    })
+  
+  worksheet.getRow(1).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 14
+    }
+    cell.alignment = {horizontal: 'center'}
+  })
+  
+  
+  worksheet.getRow(2).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+    cell.alignment = {horizontal: 'center'}
+  })
+  
+  
+    worksheet.getColumn(1).width = 5;
+    worksheet.getColumn(2).width = 25; 
+    worksheet.getColumn(3).width = 10; 
+    worksheet.getColumn(4).width = 11; 
+    worksheet.getColumn(5).width = 11; 
+    worksheet.getColumn(6).width = 13; 
+    worksheet.getColumn(7).width = 13; 
+    worksheet.getColumn(8).width = 13; 
+    worksheet.getColumn(9).width = 15; 
+    worksheet.getColumn(10).width = 15; 
+    worksheet.getColumn(11).width = 15; 
+    worksheet.getColumn(12).width = 15; 
+    worksheet.mergeCells(`A1:L1`)
+  
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+    workbook.xlsx.write(res)
+    .then(() => {
+      res.end();
+    })
+    .catch((error) => {
+      console.error('Error writing Excel file:', error);
+      res.status(500).send('Internal Server Error');
+    });
+
+  } catch(error){
+    console.log(error)
+    res.status(200).json(error)
+  }
 }
 
 
