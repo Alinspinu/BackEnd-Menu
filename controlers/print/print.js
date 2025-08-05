@@ -599,26 +599,22 @@ module.exports.printCompareInv = async (req, res) => {
     worksheet.addRow(docTitle)
     worksheet.addRow(header)
     sortedIngs.forEach((ing, i) => {
-      if(!ing.ing) {
-        console.log(ing)
-      } else {
-        worksheet.addRow(
-          [
-            `${i+1}`,
-            `${ing.name}`,
-            `${ing.um}`,
-            `${ing.price}`,
-            `${round(ing.first)}`,
-            `${round(ing.upload.value)}`,
-            `${round(ing.second)}`,
-            `${round(ing.first+ing.upload.value - ing.second)}`,
-            `${round(ing.saleUnload)}`,
-            `${round(ing.depVal)}`,
-            `${round(ing.saleUnload + ing.depVal - (ing.first+ing.upload.value - ing.second))}`,
-            `${round((ing.saleUnload + ing.depVal - (ing.first+ing.upload.value - ing.second)) * ing.price)}`,
-          ]
-          )
-      }
+      worksheet.addRow(
+        [
+          `${i+1}`,
+          `${ing.name}`,
+          `${ing.um}`,
+          `${ing.price}`,
+          `${round(ing.first)}`,
+          `${round(ing.upload.value)}`,
+          `${round(ing.second)}`,
+          `${round(ing.first+ing.upload.value - ing.second)}`,
+          `${round(ing.saleUnload)}`,
+          `${round(ing.depVal)}`,
+          `${round(ing.saleUnload + ing.depVal - (ing.first+ing.upload.value - ing.second))}`,
+          `${round((ing.saleUnload + ing.depVal - (ing.first+ing.upload.value - ing.second)) * ing.price)}`,
+        ]
+        )
     })
 
     worksheet.getColumn(1).eachCell((cell) => {
@@ -674,10 +670,10 @@ module.exports.printCompareInv = async (req, res) => {
     worksheet.getColumn(1).width = 5;
     worksheet.getColumn(2).width = 25; 
     worksheet.getColumn(3).width = 10; 
-    worksheet.getColumn(4).width = 11; 
-    worksheet.getColumn(5).width = 11; 
+    worksheet.getColumn(4).width = 20; 
+    worksheet.getColumn(5).width = 20; 
     worksheet.getColumn(6).width = 13; 
-    worksheet.getColumn(7).width = 13; 
+    worksheet.getColumn(7).width = 20; 
     worksheet.getColumn(8).width = 13; 
     worksheet.getColumn(9).width = 15; 
     worksheet.getColumn(10).width = 15; 
