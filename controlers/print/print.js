@@ -565,12 +565,12 @@ module.exports.printCompareInv = async (req, res) => {
       .replace(/\//g, "-");
   
     const workbook = new exceljs.Workbook();
-    const worksheet = workbook.addWorksheet(`Inventar comparat ${firstDate} - ${secondDate} ${inventary.locatie.bussinessName}`);
+    const worksheet = workbook.addWorksheet(`Inventar comparat ${firstDate} - ${secondDate}`);
     const sortedIngs = inventary.ingredients.sort((a, b) => a.name.localeCompare(b.name))
   
   
     const docTitle =  [
-      `Inventar comparat ${firstDate} - ${secondDate} ${inventary.locatie.bussinessName}`,
+      `Inventar comparat ${firstDate} - ${secondDate}`,
        '',
        '',
        '',
