@@ -357,6 +357,7 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     const delProd = new DelProd(newProduct)
     delProd.employee.name = product.employee.fullName
     const savedProd = await delProd.save()
+    console.log(savedProd)
     socket.emit('delProduct', JSON.stringify(savedProd))
     res.status(200).json({message: 'The product was registred as deleted!'})
 }
