@@ -55,10 +55,10 @@ module.exports.getSurvey = async (req, res) => {
 
 module.exports.getReports = async(req, res, next) => {
     try{
-        const {startDate, endDate, loc} = req.query
+        const {startDate, endDate, loc, point} = req.query
         const start = new Date(startDate).setUTCHours(0,0,0,0)
         const end = new Date(endDate).setUTCHours(0,0,0,0)
-        const reports = await Report.find({period: {$exists: false}, day: {$gte: start, $lte: end}, locatie: loc}).sort({day: 1})
+        const reports = await Report.find({period: {$exists: false}, day: {$gte: start, $lte: end}, locatie: loc, salePoint: point}).sort({day: 1})
         const report = await createReport(reports)
         res.status(200).json(report)
     } catch(err) {
@@ -95,9 +95,9 @@ module.exports.getLastReport = async (req, res) => {
 
 module.exports.getReportsDates = async (req, res) => {
     try{
-        const {loc} = req.query
-        const firstRep = await Report.find({locatie: loc}).sort({day: 1}).limit(1)
-        const lastRep = await Report.find({locatie: loc}).sort({day: -1}).limit(1)
+        const {loc, point} = req.query
+        const firstRep = await Report.find({locatie: loc, salePoint: point}).sort({day: 1}).limit(1)
+        const lastRep = await Report.find({locatie: loc, salePoint: point}).sort({day: -1}).limit(1)
         const firstRepDate = firstRep[0].day
         const lastReportDate = lastRep[0].day
         res.status(200).json({start: firstRepDate, end: lastReportDate})
@@ -110,8 +110,8 @@ module.exports.getReportsDates = async (req, res) => {
 
 module.exports.getAllReports = async(req, res, next) => {
     try{
-        const {loc} = req.query
-        const reports = await Report.find({locatie: loc}).sort({day: -1}).limit(5)
+        const {loc, point} = req.query
+        const reports = await Report.find({locatie: loc, salePoint: point}).sort({day: -1}).limit(5)
         res.status(200).json(reports)
     } catch(err) {
         console.log(err)
@@ -139,10 +139,10 @@ module.exports.deleteReport = async(req, res, next) => {
 
 module.exports.deleteReports = async(req, res) => {
     try{
-        const {loc, start, end} = req.query;
+        const {loc, start, end, point} = req.query;
         const startDate = new Date(start).getTime()
         const endDate = new Date(end).getTime()
-        Report.deleteMany({locatie: loc, day: {$gte: startDate, $lte: endDate}})
+        Report.deleteMany({locatie: loc, salePoint: point, day: {$gte: startDate, $lte: endDate}})
             .then(result => {
                 console.log(result)
                 res.status(200).json({message: `${result.deletedCount} Rapoarte au fost sterse!`})
