@@ -32,6 +32,7 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({locatie: loc, updatedAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
+        console.log(delProds)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
