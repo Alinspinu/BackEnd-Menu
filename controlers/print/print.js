@@ -586,7 +586,7 @@ module.exports.printCompareInv = async (req, res) => {
       'Nr',
       `Denumire Ingredient`,
       'UM',
-      'Pret cu TVA (um)'
+      'Pret cu TVA (um)',
       `Inventar ${firstDate}`,
       'Intrari',
       `Inventar ${secondDate}`,
