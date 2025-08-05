@@ -98,12 +98,14 @@ module.exports.getReportsDates = async (req, res) => {
         const {loc, point} = req.query
         const firstRep = await Report.find({locatie: loc, salePoint: point}).sort({day: 1}).limit(1)
         const lastRep = await Report.find({locatie: loc, salePoint: point}).sort({day: -1}).limit(1)
-        if(!firstRep){
+        if(firstRep.length){
+            console.log(firstRep)
+            const firstRepDate = firstRep[0].day
+            const lastReportDate = lastRep[0].day
+            res.status(200).json({start: firstRepDate, end: lastReportDate})
+        } else {
             return res.status(404).json({message: 'NU exista rapoarte salvate!'})
         }
-        const firstRepDate = firstRep[0].day
-        const lastReportDate = lastRep[0].day
-        res.status(200).json({start: firstRepDate, end: lastReportDate})
     } catch(err){
         console.log(err)
         res.status(500).json(err)
