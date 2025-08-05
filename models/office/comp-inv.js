@@ -6,19 +6,30 @@ const compInvSchema = new Schema({
     date: Date,
     ingredients: [
         {
-            ing: {
-                type: Schema.Types.ObjectId,
-                ref: 'IngredientInv'
-            },
             name: String,
-            faptic: Number,
-            scriptic: Number,
-            gestiune: String,
-            dep: String,
             um: String,
+            first: Number,
+            second: Number,
+            scripticUnload: String,
+            depVal: String,
+            dep: String,
+            price: Number,
+            depVal: Number,
+            upload: {
+                value: 0,
+                entries: []
+            }
         }
+
     ],
-    updated: Boolean,
+    firstInv: {
+        type: Schema.Types.ObjectId,
+        ref: 'Inventary'
+    },
+    secondInv: {
+        type: Schema.Types.ObjectId,
+        ref: 'Inventary'
+    },
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
