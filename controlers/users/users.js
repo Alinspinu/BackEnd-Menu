@@ -342,7 +342,7 @@ module.exports.deletePaymentEntry = async (req, res) => {
 
 module.exports.newCustomer = async (req, res, next) => {
   try{
-      const {name, email, tel, cardIndex, loc, discount} = req.body;
+      const {name, email, tel, cardIndex, loc, discount, client} = req.body;
       const check = await User.findOne({ email: email, locatie: loc }).select('name telephone email cashBack discount');
       if (check && (cardIndex === 0 || cardIndex === '0')) {
         return res.status(256).json({ message: 'Acest email există deja în baza de date!', customer: check });
@@ -356,11 +356,14 @@ module.exports.newCustomer = async (req, res, next) => {
               telephone: tel,
               locatie: loc,
               cardIndex:  cardIndex,
+              client: client,
               discount: discount ? discount : {general: 10}
           });
           const savedUser = await user.save();
           const customer = await User.findById(savedUser._id).select('name telephone email cashBack discount');
-          await sendCompleteRegistrationEmail(customer, 'https://true-meniu.web.app/', 'True Fine Coffee');
+          if(!client){
+              await sendCompleteRegistrationEmail(customer, 'https://true-meniu.web.app/', 'True Fine Coffee');
+          }
           res.status(200).json({message: 'All good', customer});
       }
   }catch(err){
