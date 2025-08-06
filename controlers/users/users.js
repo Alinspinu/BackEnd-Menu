@@ -20,6 +20,7 @@ module.exports.sendUsers = async (req, res, next) => {
         const {loc} = req.query
         let filterTo = {}
         filterTo.locatie = loc
+        console.log(filterTo)
         const user = await User.find(filterTo).select('-password');
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
         res.status(200).json(sortedUsers);
@@ -31,16 +32,6 @@ module.exports.sendUsers = async (req, res, next) => {
 
 module.exports.detectPaymentError = async (req, res, next) => {
     const users = await User.find({ 'employee.fullName': {$exists: true}}).select('employee')
-
-    // for(let user of users){
-    //     for(let pay of user.employee.payments){
-    //         if(!pay.workMonth){
-    //             pay.workMonth = 5
-    //         }
-    //     }
-    //     await user.save()
-    // }
-
     users.forEach(user => {
         user.employee.payments.forEach(pay => {
             if(!pay.workMonth){
