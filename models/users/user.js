@@ -68,6 +68,8 @@ const UserTrueSchema = new Schema({
             }
         ]
     },
+    client: Boolean,
+    
     employee: {
         startDate: Date,
         endDate: Date,
