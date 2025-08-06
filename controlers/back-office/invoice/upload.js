@@ -23,6 +23,7 @@ async function uploadInvoice(xml, cif, cn = false, token) {
       });
   
       const header = await parseHeaderFromXml(response.data);
+      console.log('upload heder', header)
       const indexIncarcare = header.$.index_incarcare;
       const error = header.Errors?.$?.errorMessage;
   
