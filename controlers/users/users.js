@@ -28,7 +28,7 @@ module.exports.sendUsers = async (req, res, next) => {
                 u.client = true
             }
 
-            console.log(`${u.client ? 'Client ' : 'Angajat ' + u.name}`)
+            console.log(`${u.client ? 'Client ' + u.name : 'Angajat ' + u.name}`)
             await u.save()
         }   
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
