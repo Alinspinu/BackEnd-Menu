@@ -60,7 +60,7 @@ async function uploadInvoice(xml, cif, cn = false, token) {
         maxBodyLength: Infinity
       });
       const head = await parseHeaderFromXml(resp.data);
-      console.log(head)
+      console.log('check-heade', head)
       const eFacturaStatus = head.$.stare;
       const downloadId = head.$.id_descarcare
       let status = eFacturaStatus
