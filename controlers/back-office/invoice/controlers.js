@@ -159,7 +159,7 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
       if(!token){
         return res.status(404).json({message: 'Missing token'})
       }
-      const response = await checkInvoiceStatus(invoice.eFacturaId, token)
+      const response = await checkInvoiceStatus(invoice.eFacturaId,false, token)
       invoice.eFacturaId = response.eFacturaId
       invoice.eFacturaError = response.eFacturaError
       invoice.eFacturaStatus = response.eFacturaStatus
