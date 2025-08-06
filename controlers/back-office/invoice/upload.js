@@ -59,6 +59,7 @@ async function uploadInvoice(xml, cif, cn = false, token) {
         maxBodyLength: Infinity
       });
       const head = await parseHeaderFromXml(resp.data);
+      console.log(head)
       const eFacturaStatus = head.$.stare;
       const downloadId = head.$.id_descarcare
       let status = eFacturaStatus
@@ -71,7 +72,7 @@ async function uploadInvoice(xml, cif, cn = false, token) {
           message: upload ? `Documentul a fost încărcat cu success, STATUS: ${status.toUpperCase()}!` : `Documentul a fost verificat, STATUS: ${status}!`
         }
     } catch(error) {
-      console.error('Error uploading:', err?.response?.data || err.message);
+      console.error('Error uploading:', error?.response?.data || error.message);
       throw error
     }
   }
