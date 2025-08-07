@@ -178,14 +178,14 @@ module.exports.getShedules = async (req, res, next) => {
             .sort({_id: -1})
             .limit(3)
             .populate({path: 'days.users.employee', select: 'employee.fullName'})
-            .populate({path: 'days.users.employeePosition'})
+            .populate({path: 'days.users.workPeriod.employeePosition'})
             const shedule = getNowShedule(shedules)
             res.status(200).json(shedule)
         }
         if(shedule === 'all'){
             const shedules = await Shedule.find({locatie: loc, salePoint: point})
                   .populate({path: 'days.users.employee', select: 'employee.fullName'})
-                  .populate({path: 'days.users.employeePosition'})
+                  .populate({path: 'days.users.workPeriod.employeePosition'})
             res.status(200).json(shedules)
         }
     } catch(err){
