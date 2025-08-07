@@ -24,6 +24,9 @@ module.exports.sendUsers = async (req, res, next) => {
             if(!u.client){
                 console.log(u.employee.position)
             }
+            if(u.email === 'alin@flowmanager.ro'){
+                console.log(u.employee)
+            }
         }
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
         res.status(200).json(sortedUsers);
