@@ -20,6 +20,11 @@ module.exports.sendUsers = async (req, res, next) => {
         let filterTo = {}
         filterTo.locatie = loc
         const user = await User.find(filterTo).select('-password');
+        for(let u of user){
+            if(!u.client){
+                console.log(u.employee.position)
+            }
+        }
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
         res.status(200).json(sortedUsers);
       } catch(error) {
