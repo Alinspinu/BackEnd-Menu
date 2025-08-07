@@ -289,28 +289,19 @@ module.exports.registerIn = async (req, res) => {
                 const hashedPassword = hashPassword(password);
                 const user = await User.findById(userId).populate({path: 'locatie'})
                 user.password = hashedPassword;
-                user.telephone = telephone;
+                user.telephone = telephone || user.telephone;
                 user.status = 'active',
                 user.employee.fullName = name,
-                user.employee.cnp = cnp
-                user.employee.ciSerial = ciSerial;
-                user.employee.ciNumber = ciNumber;
-                user.employee.releaseId = releaseId;
-                user.employee.releaseDate = releaseDate;
-                user.employee.address = address;
-                if(req.file) {
-                    const { path, filename } = req.file;
-                    const img = {
-                        name: 'ID',
-                        filename: filename,
-                        url: path
-                    }
-                    user.employee.docs = [img]
-                }
+                user.employee.cnp = cnp || 0
+                user.employee.ciSerial = ciSerial || '';
+                user.employee.ciNumber = ciNumber || 0;
+                user.employee.releaseId = releaseId || '';
+                user.employee.releaseDate = releaseDate || new Date();
+                user.employee.address = address || '';
                 await user.save()
-                const data = {name: user.name, action: 's-a inregistrat'}
-                const gmail = {app: user.locatie.gmail.app, email: user.locatie.gmail.email} 
-                await sendInfoAdminEmail(data, adminEmail ,gmail)
+                // const data = {name: user.name, action: 's-a inregistrat'}
+                // const gmail = {app: user.locatie.gmail.app, email: user.locatie.gmail.email} 
+                // await sendInfoAdminEmail(data, adminEmail ,gmail)
                 res.status(200).json({ message: "Datele au fost actualizate.", user: user});
             } else {
                 return res.status(401).json({ message: "Passwords don't match!" });
