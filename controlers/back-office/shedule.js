@@ -154,28 +154,7 @@ module.exports.getPontaj = async (req, res, next) => {
             res.status(200).json(pontaj)
         }
         if(pont === 'all'){
-            const ponts = await Pontaj.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employee', select: 'fullName'})
-            for(let sh of ponts){
-              for(let d of sh.days){
-                for(let u of d.users){
-                  const name = u.position
-                  const ep = await EmployeePosition.findOne({name: name})
-                  if(ep){
-                    u.employeePosition = ep._id
-                    if(u.employee) {
-                      console.log(u.employee.employee.fullName + ' updated  ' +  u.employeePosition)
-                    } else {
-                      console.log(u)
-                    }
-                  } else {
-                    console.log('pozitia nu a fost gasita dupa nume ' + name)
-                  }
-                }
-              }
-             const ssh =   await sh.save()
-             console.log('PRNTAJUL A FOST MOFICAT ' + ssh.period + '*************************************************************')
-            }
-            console.log(ponts)
+            const ponts = await Pontaj.find({locatie: loc, salePoint: point})
             res.status(200).json(ponts)
         }
         if(month){
