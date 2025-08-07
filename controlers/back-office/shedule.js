@@ -190,7 +190,7 @@ module.exports.getShedules = async (req, res, next) => {
                   const ep = await EmployeePosition.findOne({name: name})
                   if(ep){
                     u.workPeriod.employeePosition = ep._id
-                    console.log(u.employee.fullName + ' updated  ' +  u.workPeriod.employeePosition)
+                    console.log(u.employee.employee.fullName + ' updated  ' +  u.workPeriod.employeePosition)
                   } else {
                     console.log('pozitia nu a fost gasita dupa nume ' + name)
                   }
