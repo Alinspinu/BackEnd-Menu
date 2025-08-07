@@ -86,7 +86,7 @@ module.exports.updateProducts = async (req, res) => {
 
  module.exports.getProducts = async (req, res, next) => {
     try{
-      const {loc, point} = req.body
+      const {loc, point, mode = false} = req.body
       const products = await Product.find({locatie: loc, salePoint: point}).populate([
         {path: 'category', select: 'name'}, 
         {
@@ -116,12 +116,87 @@ module.exports.updateProducts = async (req, res) => {
                 }
         },
     ])
+     console.log('mode', mode)
+      if(mode) await modifySandwich(products)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
       console.log(error);
       res.status(500).json({message: error})
     }
+  }
+
+
+ async function modifySandwich(products) {
+    for( let p of products){
+        if(p.category.name === 'SCHIACCIATA'){
+            const fullSize = makeSubProduct(p, true)
+            const halfsize = makeSubProduct(p, false)
+            const fSub = new SubProduct(fullSize)
+            const hSub = new SubProduct(halfsize)
+            const f = await fSub.save()
+            const h = await hSub.save()
+            p.subProducts.push(f._id)
+            p.subProducts.push(h._id)
+            const ps = await p.save()
+            console.log('product ' + ps.name + 'subs ', ps.subProducts.length)
+        }
+    }
+  }
+
+ function makeSubProduct(p, size){
+    const sub = {
+        name: size ? 'Full size' : 'Half size',
+        price: size ? p.price : round(p.price/2),
+        quantity: size ? p.quantity : p.quantity / 2,
+        qty: size ? p.qty : convertToValueOverTwo(p.qty),
+        recipe: p.recipe,
+        description: p.description,
+        locatie: p.locatie,
+        order: size ? 1 : 2,
+        available: true,
+        tva: p.tva,
+        printOut: false,
+        saleLog: [],
+        ings: size ? p.ings ? p.ings.map(i => {return {qty: i.qty / 2, ing: i.ing }}),
+        product: p._id,
+        salePoint: p.salePoint,
+        allergens: p.allergens,
+        additives: p.additives,
+        nutrition: size ? p.nutrition :  splitNutritionValuesInHalf(p.nutrition),
+    }
+    return sub
+ }
+
+ function splitNutritionValuesInHalf(nutrition) {
+    const result = {};
+  
+    for (const key in nutrition) {
+      const value = nutrition[key];
+  
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        result[key] = splitNutritionValuesInHalf(value);  // Recursively process nested objects
+      } else if (typeof value === 'number') {
+        result[key] = value / 2;
+      } else {
+        result[key] = value;  // Preserve non-number values
+      }
+    }
+  
+    return result;
+  }
+
+ function convertToValueOverTwo(input) {
+    const match = input.match(/(\d+)\s*([a-zA-Z]+)/);
+  
+    if (!match) {
+      throw new Error('Invalid format. Expected format like "200g" or "200 g".');
+    }
+  
+    const value = match[1];
+    const unit = match[2];
+  
+    return `${value/2}  ${unit}`;
   }
 
   module.exports.getProduct = async (req, res, next) => {
