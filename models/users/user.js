@@ -69,7 +69,7 @@ const UserTrueSchema = new Schema({
         ]
     },
     client: Boolean,
-    
+
     employee: {
         startDate: Date,
         endDate: Date,
@@ -105,6 +105,10 @@ const UserTrueSchema = new Schema({
         },
         position: {
             type: String, 
+        },
+        employeePosition: {
+            type: Schema.Types.ObjectId,
+            ref: 'EmployeePosition'
         },
         access: {
             type: Number,
@@ -163,10 +167,12 @@ const UserTrueSchema = new Schema({
                 }
             }
         ],
-        salePoint: {
-            type: Schema.Types.ObjectId,
-            ref: 'SalePoint'
-          }
+        salePoint: [
+             {
+                type: Schema.Types.ObjectId,
+                ref: 'SalePoint'
+              }
+        ]
     },
     status: {
         type: String,

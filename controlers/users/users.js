@@ -13,7 +13,6 @@ const { sendEmployeeEmail } = require('../../utils/mail')
 
 const {hashPassword, encryptData} = require('../../utils/functions')
 
-// const loc = '655e2e7c5a3d53943c6b7c53'
 
 module.exports.sendUsers = async (req, res, next) => {
     try{

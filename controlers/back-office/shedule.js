@@ -5,6 +5,7 @@ const User = require('../../models/users/user')
 const mongoose = require('mongoose');
 const {getNowShedule} = require('../../utils/functions');
 const salePoint = require('../../models/utils/sale-point');
+const EmployeePosition = require('../../models/users/position')
 
 
 
@@ -282,5 +283,51 @@ module.exports.deletePontaj = async (req, res, next) => {
         console.log(err)
         res.status(500).json({message: err.message})
     }
+}
+
+
+module.exports.addPosition = async(req, res) => {
+  const {name, loc, colorLight = '', colorNight = ''} = req.body
+  try{
+    const p = new EmployeePosition({name: name, locatie: loc, colorLight: colorLight, colorNight: colorNight})
+    const sp = await p.save()
+    res.status(200).json({message: `Functia ${sp.name} a fost salvată cu success!`, position: sp})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+module.exports.getPositions = async(req, res) => {
+  const {loc} = req.query
+  try{
+    const p = await EmployeePosition.find({locatie: loc})
+    res,status(200).json(p)
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+module.exports.editPosition = async(req, res) => {
+  const {position} = req.body
+  try{
+    const np = await EmployeePosition.findByIdAndUpdate(position._id, position, {new: true})
+    res.status(200).json({message: `Funcția ${position.name} a fost modificată cu success!`, position: np})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+module.exports.deletePosition = async(req, res) => {
+  const {id} = req.query
+  try{
+    await EmployeePosition.findByIdAndDelete(id)
+    res.status(200).json({message: 'Funcția a fost șteasă cu success!'})
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
 }
 

@@ -15,6 +15,12 @@ router.route('/pontaj')
     .delete(sheduleRoutes.deletePontaj)
 
 
+router.route('/position')
+    .get(sheduleRoutes.getPositions)
+    .post(sheduleRoutes.addPosition)
+    .put(sheduleRoutes.editPosition)
+    .delete(sheduleRoutes.deletePosition)
+
 
 
 module.exports = router
