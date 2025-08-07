@@ -117,7 +117,7 @@ module.exports.updateProducts = async (req, res) => {
         },
     ])
      console.log('mode', mode)
-    //   if(mode) await modifySandwich(products)
+      if(mode) await modifySandwich(products)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -158,8 +158,8 @@ module.exports.updateProducts = async (req, res) => {
         tva: p.tva,
         printOut: false,
         saleLog: [],
-        // ings: size ? p.ings ? p.ings.map(i => {return {qty: i.qty / 2, ing: i.ing }})
-        // product: p._id,
+        ings: size ? p.ings : p.ings.map(i => {return {qty: i.qty / 2, ing: i.ing }}),
+        product: p._id,
         salePoint: p.salePoint,
         allergens: p.allergens,
         additives: p.additives,
