@@ -150,11 +150,12 @@ module.exports.getPontaj = async (req, res, next) => {
             const pontajs = await Pontaj.find({locatie: loc, salePoint: point})
                 .sort({_id: -1})
                 .limit(3)
+                .populate({path: 'days.users.employeePosition'})
             const pontaj = getNowShedule(pontajs)    
             res.status(200).json(pontaj)
         }
         if(pont === 'all'){
-            const ponts = await Pontaj.find({locatie: loc, salePoint: point})
+            const ponts = await Pontaj.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employeePosition'})
             res.status(200).json(ponts)
         }
         if(month){
@@ -177,11 +178,14 @@ module.exports.getShedules = async (req, res, next) => {
             .sort({_id: -1})
             .limit(3)
             .populate({path: 'days.users.employee', select: 'employee.fullName'})
+            .populate({path: 'days.users.employeePosition'})
             const shedule = getNowShedule(shedules)
             res.status(200).json(shedule)
         }
         if(shedule === 'all'){
-            const shedules = await Shedule.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employee', select: 'employee.fullName'})
+            const shedules = await Shedule.find({locatie: loc, salePoint: point})
+                  .populate({path: 'days.users.employee', select: 'employee.fullName'})
+                  .populate({path: 'days.users.employeePosition'})
             res.status(200).json(shedules)
         }
     } catch(err){
