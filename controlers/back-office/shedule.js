@@ -178,7 +178,7 @@ module.exports.getShedules = async (req, res, next) => {
             .sort({_id: -1})
             .limit(3)
             .populate({path: 'days.users.employee', select: 'employee.fullName'})
-            .populate({path: 'days.users.workPeriod.employeePosition'})
+            // .populate({path: 'days.users.workPeriod.employeePosition'})
             const shedule = getNowShedule(shedules)
             res.status(200).json(shedule)
         }
