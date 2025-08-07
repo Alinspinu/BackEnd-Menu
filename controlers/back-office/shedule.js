@@ -154,7 +154,27 @@ module.exports.getPontaj = async (req, res, next) => {
             res.status(200).json(pontaj)
         }
         if(pont === 'all'){
-            const ponts = await Pontaj.find({locatie: loc, salePoint: point})
+            const ponts = await Pontaj.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employee', select: 'fullName'})
+            for(let sh of ponts){
+              for(let d of sh.days){
+                for(let u of d.users){
+                  const name = u.position
+                  const ep = await EmployeePosition.findOne({name: name})
+                  if(ep){
+                    u.employeePosition = ep._id
+                    if(u.employee) {
+                      console.log(u.employee.employee.fullName + ' updated  ' +  u.employeePosition)
+                    } else {
+                      console.log(u)
+                    }
+                  } else {
+                    console.log('pozitia nu a fost gasita dupa nume ' + name)
+                  }
+                }
+              }
+             const ssh =   await sh.save()
+             console.log('PRNTAJUL A FOST MOFICAT ' + ssh.period + '*************************************************************')
+            }
             console.log(ponts)
             res.status(200).json(ponts)
         }
@@ -183,29 +203,6 @@ module.exports.getShedules = async (req, res, next) => {
         }
         if(shedule === 'all'){
             const shedules = await Shedule.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employee', select: 'employee.fullName'})
-            for(let sh of shedules){
-              for(let d of sh.days){
-                for(let u of d.users){
-                  const name = u.workPeriod.position
-                  const ep = await EmployeePosition.findOne({name: name})
-                  if(ep){
-                    u.workPeriod.employeePosition = ep._id
-                    if(u.employee) {
-                      console.log(u.employee.employee.fullName + ' updated  ' +  u.workPeriod.employeePosition)
-                    } else {
-                      console.log(u)
-                    }
-                  } else {
-                    console.log('pozitia nu a fost gasita dupa nume ' + name)
-                  }
-                }
-              }
-             const ssh =   await sh.save()
-             console.log('PROGRAMUL A FOST MOFICAT ' + ssh.period)
-            }
-
-
-
             res.status(200).json(shedules)
         }
     } catch(err){
