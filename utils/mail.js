@@ -120,8 +120,8 @@ async function sendVerificationEmail(newUser) {
 
 async function sendEmployeeEmail(newUser, baseUrlRedirect, message = 'Continuă înregistrarea') {
     const token = jwt.sign({ userId: newUser._id, name: newUser.name, telephone: newUser.telephone, email: newUser.email, locatie: newUser.locatie}, process.env.AUTH_SECRET, { expiresIn: '24h' });
-    
-    const templateSource = fs.readFileSync('views/layouts/employee.ejs', 'utf-8');
+    console.log(newUser.locatie)
+    const templateSource = fs.readFileSync( 'views/layouts/employee.ejs', 'utf-8');
     const templateData = {
         link: `${baseUrlRedirect}register?token=${token}`,
         name: newUser.name,
