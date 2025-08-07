@@ -21,25 +21,11 @@ module.exports.sendUsers = async (req, res, next) => {
         let filterTo = {}
         filterTo.locatie = loc
         const user = await User.find(filterTo).select('-password');
-        const u = user.find(u => !u.client && u.employee.employeePosition === "68949d43d6e118646a4b6ba5")
-        console.log(u.name)
-        // for(let u of user){
-        //     if(!u.client){
-        //         if(!u.employee.employeePosition){
-        //             const name = u.employee.position
-        //             const check = await EmployeePosition.findOne({name: name, locatie: loc})
-        //             if(check) {
-        //                 u.employee.employeePosition = check._id
-        //             } else {
-        //                 const np = new EmployeePosition({name: name, locatie: loc})
-        //                 const sp = await np.save()
-        //                 u.employee.employeePosition = sp._id
-        //             }
-        //          const su = await u.save()
-        //          console.log('User ' + su.name + ' ' + su.employee.employeePosition)
-        //         }
-        //     }
-        // }
+        for(let u of user){
+            if(!u.client){
+                if(u.employee.employeePosition === "68949d43d6e118646a4b6ba5") console.log(u.name)
+            }
+        }
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
         res.status(200).json(sortedUsers);
       } catch(error) {
