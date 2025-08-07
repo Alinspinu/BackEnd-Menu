@@ -364,7 +364,7 @@ module.exports.newCustomer = async (req, res, next) => {
           if(!client){
               await sendEmployeeEmail(customer, 'https://front.flowmanager.ro/');
           }
-          res.status(200).json({message: 'All good', customer});
+          res.status(200).json({message: `Utilizatorul a fost salvat!A fost trimis un e-mail de confirmare la ${email}!`, customer});
       }
   }catch(err){
       console.log(err);
