@@ -194,7 +194,7 @@ module.exports.updateProducts = async (req, res) => {
     const match = input.match(/(\d+)\s*([a-zA-Z]+)/);
   
     if (!match) {
-      return `${match[1]/2}`
+      return input
       throw new Error('Invalid format. Expected format like "200g" or "200 g".');
     }
   
