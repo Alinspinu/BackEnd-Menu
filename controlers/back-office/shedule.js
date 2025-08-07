@@ -190,7 +190,11 @@ module.exports.getShedules = async (req, res, next) => {
                   const ep = await EmployeePosition.findOne({name: name})
                   if(ep){
                     u.workPeriod.employeePosition = ep._id
-                    console.log(u.employee.employee.fullName + ' updated  ' +  u.workPeriod.employeePosition)
+                    if(u.employee) {
+                      console.log(u.employee.employee.fullName + ' updated  ' +  u.workPeriod.employeePosition)
+                    } else {
+                      console.log(u)
+                    }
                   } else {
                     console.log('pozitia nu a fost gasita dupa nume ' + name)
                   }
@@ -206,7 +210,7 @@ module.exports.getShedules = async (req, res, next) => {
         }
     } catch(err){
         console.log(err)
-        res.status(500).json({message: err.error.message})
+        res.status(500).json({message: err})
     }
 }
 
