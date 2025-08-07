@@ -360,7 +360,7 @@ module.exports.newCustomer = async (req, res, next) => {
               discount: discount ? discount : {general: 10}
           });
           const savedUser = await user.save();
-          const customer = await User.findById(savedUser._id).select('name telephone email cashBack discount');
+          const customer = await User.findById(savedUser._id).select('name telephone email cashBack discount locatie').populate({path: 'locatie', select: 'name'});
           if(!client){
               await sendEmployeeEmail(customer, 'https://front.flowmanager.ro/');
           }
