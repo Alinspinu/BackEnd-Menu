@@ -287,9 +287,9 @@ module.exports.deletePontaj = async (req, res, next) => {
 
 
 module.exports.addPosition = async(req, res) => {
-  const {name, loc, colorLight = '', colorNight = ''} = req.body
+  const {position} = req.body
   try{
-    const p = new EmployeePosition({name: name, locatie: loc, colorLight: colorLight, colorNight: colorNight})
+    const p = new EmployeePosition(position)
     const sp = await p.save()
     res.status(200).json({message: `Functia ${sp.name} a fost salvată cu success!`, position: sp})
   } catch(error){
@@ -302,7 +302,7 @@ module.exports.getPositions = async(req, res) => {
   const {loc} = req.query
   try{
     const p = await EmployeePosition.find({locatie: loc})
-    res,status(200).json(p)
+    res.status(200).json(p)
   } catch(error){
     console.log(error)
     res.status(500).json(error)
