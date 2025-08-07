@@ -13,6 +13,9 @@ const employeePositionSchema = new Schema({
     },
     colorLight: String,
     colorNight: String,
+    order: Number,
+    shedule: Boolean,
+    pontaj: Boolean,
 
 })
 
