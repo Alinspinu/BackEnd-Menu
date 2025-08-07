@@ -129,17 +129,21 @@ module.exports.updateProducts = async (req, res) => {
 
  async function modifySandwich(products) {
     for( let p of products){
-        if(p.category.name === 'SCHIACCIATA'){
-            const fullSize = makeSubProduct(p, true)
-            const halfsize = makeSubProduct(p, false)
-            const fSub = new SubProduct(fullSize)
-            const hSub = new SubProduct(halfsize)
-            const f = await fSub.save()
-            const h = await hSub.save()
-            p.subProducts.push(f._id)
-            p.subProducts.push(h._id)
-            const ps = await p.save()
-            console.log('product ' + ps.name + 'subs ', ps.subProducts.length)
+        if(p.category){
+            if(p.category.name === 'SCHIACCIATA'){
+                if(!p.subProducts.length) {
+                    const fullSize = makeSubProduct(p, true)
+                    const halfsize = makeSubProduct(p, false)
+                    const fSub = new SubProduct(fullSize)
+                    const hSub = new SubProduct(halfsize)
+                    const f = await fSub.save()
+                    const h = await hSub.save()
+                    p.subProducts.push(f._id)
+                    p.subProducts.push(h._id)
+                    const ps = await p.save()
+                    console.log('product ' + ps.name + 'subs ', ps.subProducts.length)
+                }
+            }
         }
     }
   }
