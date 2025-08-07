@@ -23,7 +23,7 @@ module.exports.sendUsers = async (req, res, next) => {
         const user = await User.find(filterTo).select('-password');
         for(let u of user){
             if(!u.client){
-                if(u.employee.employeePosition === "68949d43d6e118646a4b6ba5") console.log(u.name)
+                if(u.employee.employeePosition.toString() === "68949d43d6e118646a4b6ba5") console.log(u.name)
             }
         }
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
