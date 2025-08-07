@@ -7,6 +7,7 @@ const PrintServer = require('../../models/utils/print-server')
 const jwt = require('jsonwebtoken');
 const qs = require('qs');
 const axios = require('axios')
+const EmployeePosition = require('../../models/users/position')
 
 
 const { sendEmployeeEmail } = require('../../utils/mail')
@@ -22,10 +23,19 @@ module.exports.sendUsers = async (req, res, next) => {
         const user = await User.find(filterTo).select('-password');
         for(let u of user){
             if(!u.client){
-                console.log(u.employee.position)
-            }
-            if(u.email === 'alin@flowmanager.ro'){
-                console.log(u.employee)
+                if(!u.employee.employeePosition){
+                    const name = u.employee.position
+                    const check = await EmployeePosition.findOne({name: name, locatie: loc})
+                    if(check) {
+                        u.employee.employeePosition = check._id
+                    } else {
+                        const np = new EmployeePosition({name: name, locatie: loc})
+                        const sp = await np.save()
+                        u.employee.employeePosition = sp._id
+                    }
+                 const su = await u.save()
+                 console.log('User ' + su.name + ' ' + su.employee.employeePosition)
+                }
             }
         }
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
