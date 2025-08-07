@@ -116,8 +116,8 @@ module.exports.updateProducts = async (req, res) => {
                 }
         },
     ])
-     console.log('mode', mode)
-    //   if(mode) await modifySandwich(products)
+    //  console.log('mode', mode)
+      if(mode) await modifySandwich(products)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -142,6 +142,10 @@ module.exports.updateProducts = async (req, res) => {
                     p.subProducts.push(h._id)
                     const ps = await p.save()
                     console.log('product ' + ps.name + 'subs ', ps.subProducts.length)
+                } else {
+                    p.ings  = []
+                    const ps = await p.save()
+                    console.log('product ' + ps.name + 'ings ', ps.ings.length)
                 }
             }
         }
