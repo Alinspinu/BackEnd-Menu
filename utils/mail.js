@@ -118,14 +118,14 @@ async function sendVerificationEmail(newUser) {
 };
 
 
-async function sendEmployeeEmail(newUser, baseUrlRedirect) {
+async function sendEmployeeEmail(newUser, baseUrlRedirect, message = 'Continuă înregistrarea') {
     const token = jwt.sign({ userId: newUser._id}, process.env.AUTH_SECRET, { expiresIn: '24h' });
     
     const templateSource = fs.readFileSync('views/layouts/employee.ejs', 'utf-8');
     const templateData = {
         link: `${baseUrlRedirect}register?token=${token}`,
         name: newUser.name,
-        message: 'Continuă procesul de înreistrare.',
+        message: message,
         locatie: newUser.locatie.name
     };
     const renderedTemplate = ejs.render(templateSource, templateData);
@@ -138,13 +138,11 @@ async function sendEmployeeEmail(newUser, baseUrlRedirect) {
               service: 'Gmail',
               auth: {
                   user: newUser.locatie.gmail.email,
-                //  user: 'truefinecoffee@gmail.com',
                   pass: appKey
               }
           });
           const mailOptions = {
               from: newUser.locatie.gmail.email,
-            //   from: 'truefinecoffee@gmail.com',
               to: newUser.email, // Assuming the email is present in the newUser object
               subject: 'Bine ai venit',
               html: renderedTemplate

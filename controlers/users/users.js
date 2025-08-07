@@ -9,7 +9,7 @@ const qs = require('qs');
 const axios = require('axios')
 
 
-const { sendCompleteRegistrationEmail } = require('../../utils/mail')
+const { sendEmployeeEmail } = require('../../utils/mail')
 
 const {hashPassword, encryptData} = require('../../utils/functions')
 
@@ -355,14 +355,14 @@ module.exports.newCustomer = async (req, res, next) => {
               email: email,
               telephone: tel,
               locatie: loc,
-              cardIndex:  cardIndex,
+              cardIndex:  cardIndex || null,
               client: client,
               discount: discount ? discount : {general: 10}
           });
           const savedUser = await user.save();
           const customer = await User.findById(savedUser._id).select('name telephone email cashBack discount');
           if(!client){
-              await sendCompleteRegistrationEmail(customer, 'https://true-meniu.web.app/', 'True Fine Coffee');
+              await sendEmployeeEmail(customer, 'https://front.flowmanager.ro/');
           }
           res.status(200).json({message: 'All good', customer});
       }

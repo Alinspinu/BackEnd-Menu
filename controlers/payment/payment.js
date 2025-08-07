@@ -189,7 +189,7 @@ module.exports.useVoucher = async (req, res, next) => {
 module.exports.reports = async (req, res, next) => {
     try{
         const {value, serverId} = req.query;
-    const server = await PrintServer.findById(serverId)
+        const server = await PrintServer.findById(serverId)
         socket.emit('reports', JSON.stringify({value: value, serverKey: server.key, address: server.fiscalPrinter.driverAddress}))
         res.status(200).json({message: 'Operatie efectuată cu success!'})
     } catch(err) {
