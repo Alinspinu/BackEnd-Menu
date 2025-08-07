@@ -21,6 +21,8 @@ module.exports.sendUsers = async (req, res, next) => {
         let filterTo = {}
         filterTo.locatie = loc
         const user = await User.find(filterTo).select('-password');
+        const u = user.find(u => !u.client && u.employee.employeePosition === "68949d43d6e118646a4b6ba5")
+        console.log(u.name)
         // for(let u of user){
         //     if(!u.client){
         //         if(!u.employee.employeePosition){
