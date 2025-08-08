@@ -156,7 +156,7 @@ module.exports.getPontaj = async (req, res, next) => {
         }
         if(pont === 'all'){
             const ponts = await Pontaj.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employeePosition'})
-            updateShedules(ponts)
+            // updateShedules(ponts)
             res.status(200).json(ponts)
         }
         if(month){
