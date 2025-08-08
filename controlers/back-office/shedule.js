@@ -223,7 +223,7 @@ module.exports.updateShedule = async (req, res, next) => {
                 hours: user.workPeriod.hours,
                 value: dayValue,
                 employee: user.employee,
-                position: user.wotkPeriod.position,
+                position: user.workPeriod.position,
                 employeePosition: user.workPeriod.employeePosition,
                 concediu: user.workPeriod.concediu,
                 medical: user.workPeriod.medical,
