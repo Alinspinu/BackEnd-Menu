@@ -199,7 +199,7 @@ module.exports.updateShedule = async (req, res, next) => {
     try{
         const pontaj = await Pontaj.findOne({month: month, locatie: loc, salePoint: point})
         const shedule = await Shedule.findById(sheduleId).populate({path: 'days.users.employee', select: 'employee.fullName'})
-        const us = await User.findById(user.employee).select('employee').populate({path: 'employee',select: 'position' })
+        const us = await User.findById(user.employee).select('employee').populate({path: 'employee',select: 'position employeePosition' })
         const dayIndex = shedule.days.findIndex(obj => obj.day === day.day)
         const pontDayIndex = pontaj.days.findIndex(obj => {
             const objDay = new Date(obj.date);
@@ -214,6 +214,7 @@ module.exports.updateShedule = async (req, res, next) => {
             pontaj.days[pontDayIndex].users[dayPontUserIndex].hours = user.workPeriod.hours
             pontaj.days[pontDayIndex].users[dayPontUserIndex].value = dayValue
             pontaj.days[pontDayIndex].users[dayPontUserIndex].position = us.employee.position
+            pontaj.days[pontDayIndex].users[dayPontUserIndex].employeePosition = us.employee.employeePosition
             pontaj.days[pontDayIndex].users[dayPontUserIndex].concediu = user.workPeriod.concediu
             pontaj.days[pontDayIndex].users[dayPontUserIndex].medical = user.workPeriod.medical
             await pontaj.save()
@@ -223,6 +224,7 @@ module.exports.updateShedule = async (req, res, next) => {
                 value: dayValue,
                 employee: user.employee,
                 position: us.employee.position,
+                employeePosition: us.employee.employeePosition,
                 concediu: user.concediu,
                 medical: user.medical,
             }
