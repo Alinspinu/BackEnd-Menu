@@ -249,9 +249,7 @@ module.exports.updateShedule = async (req, res, next) => {
     const {sheduleId, day, user, month, dayValue, loc, point} = req.body
     try{
         const pontaj = await Pontaj.findOne({month: month, locatie: loc, salePoint: point})
-        const shedule = await Shedule.findById(sheduleId)
-                          .populate({path: 'days.users.employee', select: 'employee.fullName'})
-                          .populate({path: 'days.users.workPeriod.employeePosition'})
+        const shedule = await Shedule.findById(sheduleId).populate({path: 'days.users.employee', select: 'employee.fullName'})
         const dayIndex = shedule.days.findIndex(obj => obj.day === day.day)
         const pontDayIndex = pontaj.days.findIndex(obj => {
             const objDay = new Date(obj.date);
@@ -327,7 +325,9 @@ module.exports.deletEntry = async (req, res, next) => {
         const newShedule = await Shedule.findOneAndUpdate(
             {_id: sheduleId}, 
             {$pull: {[`days.${dayIndex}.users`]: {employee: userId}}}, 
-            {new: true}).populate({path: 'days.users.employee', select: 'employee.fullName'})
+            {new: true})
+            .populate({path: 'days.users.employee', select: 'employee.fullName'})
+            .populate({path: 'days.users.workPeriod.employeePosition'})
          
         res.status(200).json(newShedule)
     } catch(err){
