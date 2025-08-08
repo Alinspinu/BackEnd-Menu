@@ -389,3 +389,36 @@ module.exports.deletePosition = async(req, res) => {
   }
 }
 
+module.exports.updatePartialShedule = async (req, res) => {
+  const {shedule} = req.body
+  try{
+    const newShedule = await Shedule.findByIdAndUpdate(shedule._id, shedule, {new: true})
+          .populate({path: 'days.users.employee', select: 'employee.fullName'})
+          .populate({path: 'days.users.workPeriod.employeePosition'})
+    res.status(200).json(newShedule)
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
+module.exports.updateAllPositions = async (req, res) => {
+  const {positions} = req.body
+  try{
+    const po = JSON.parse(positions);
+    const promises = po.map(async (p) => {
+      const doc = await EmployeePosition.findById(p._id); 
+      if (doc) {
+        Object.assign(doc, p); 
+        return doc.save();
+      }
+    });
+
+    await Promise.all(promises);
+    res.status(200).json({ message: 'All positions updated' });
+  }catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}

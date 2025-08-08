@@ -21,6 +21,10 @@ router.route('/position')
     .put(sheduleRoutes.editPosition)
     .delete(sheduleRoutes.deletePosition)
 
+router.route('/position-all').post(sheduleRoutes.updateAllPositions)
+router.route('/partial').post(sheduleRoutes.updatePartialShedule)
+
+
 
 
 module.exports = router
