@@ -185,7 +185,7 @@ module.exports.getShedules = async (req, res, next) => {
         if(shedule === 'all'){
             const shedules = await Shedule.find({locatie: loc, salePoint: point})
                   .populate({path: 'days.users.employee', select: 'name employee.fullName'})
-           updateShedules(shedules, loc)
+          //  updateShedules(shedules, loc)
             res.status(200).json(shedules)
         }
     } catch(err){
