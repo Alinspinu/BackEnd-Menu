@@ -421,7 +421,7 @@ module.exports.updateAllPositions = async (req, res) => {
     });
 
     await Promise.all(promises);
-    res.status(200).json({ message: 'All positions updated' });
+    res.status(200).json({ message: 'Modificările au fost efectuate cu success!' });
   }catch(error){
     console.log(error)
     res.status(500).json(error)
