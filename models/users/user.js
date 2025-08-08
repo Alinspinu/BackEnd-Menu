@@ -158,6 +158,10 @@ const UserTrueSchema = new Schema({
                 hours: Number,
                 earnd: Number,
                 position: String,
+                employeePosition: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'EmployeePosition'
+                },
                 concediu: Boolean,
                 medical: Boolean,
                 freePayd: Boolean,

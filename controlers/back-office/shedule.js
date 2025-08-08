@@ -223,8 +223,8 @@ module.exports.updateShedule = async (req, res, next) => {
                 hours: user.workPeriod.hours,
                 value: dayValue,
                 employee: user.employee,
-                position: us.employee.position,
-                employeePosition: us.employee.employeePosition,
+                position: user.position,
+                employeePosition: user.employeePosition,
                 concediu: user.concediu,
                 medical: user.medical,
             }
@@ -236,10 +236,11 @@ module.exports.updateShedule = async (req, res, next) => {
            shedule.days[dayIndex].users[dayUserIndex].workPeriod = user.workPeriod
            shedule.days[dayIndex].users[dayUserIndex].checkIn = user.checkIn
             const savedShedule =  await shedule.save() 
-             const newShedule = await Shedule.findById(savedShedule._id).populate({path: 'days.users.employee', select: 'employee.fullName'})
+            const newShedule = await Shedule.findById(savedShedule._id).populate({path: 'days.users.employee', select: 'employee.fullName'})
            res.status(200).json(newShedule)
         } else {
           const newShedule = await Shedule.findOneAndUpdate({_id: sheduleId}, {$push: {[`days.${dayIndex}.users`]: user}}, {new: true}).populate({path: 'days.users.employee', select: 'employee.fullName'})
+          console.log(newShedule)
           res.status(200).json(newShedule)
         }  
     } catch(err){
