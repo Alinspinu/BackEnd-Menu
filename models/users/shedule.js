@@ -38,6 +38,50 @@ const SheduleSchema = new Schema({
             workValue: Number,
         }
     ],
+    colors: {
+        concediu: {
+            day: {
+                type: String,
+                defalut: 'rgb(19, 82, 116)'
+            },
+            night:  {
+                type: String,
+                defalut: 'rgb(10, 41, 58)'
+            }
+        },
+        liber:{
+            day: {
+                type: String,
+                defalut: 'rgb(71, 71, 71)'
+            },
+            night:  {
+                type: String,
+                defalut: 'rgb(78, 78, 78)'
+            }
+        },
+        medical: {
+            day: {
+                type: String,
+                defalut: 'rgb(232, 41, 41)'
+            },
+            night:  {
+                type: String,
+                defalut: 'rgb(67, 15, 15)'
+            }
+        }
+    },
+    periods: [
+        {
+            label: String,
+            hourStart: Number,
+            hourEnd: Number,
+            period: Number,
+            pm: {
+                type: Boolean,
+                default: false
+            }
+        }
+    ],
     period: String,
     locatie: {
         type: Schema.Types.ObjectId,

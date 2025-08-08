@@ -186,7 +186,7 @@ module.exports.getShedules = async (req, res, next) => {
             const shedules = await Shedule.find({locatie: loc, salePoint: point})
                   .populate({path: 'days.users.employee', select: 'name employee.fullName'})
                   .populate({path: 'days.users.workPeriod.employeePosition'})
-          //  updateShedules(shedules, loc)
+           updateShedules(shedules)
             res.status(200).json(shedules)
         }
     } catch(err){
@@ -195,33 +195,21 @@ module.exports.getShedules = async (req, res, next) => {
     }
 }
 
-async function updateShedules(shedules, loc) {
+async function updateShedules(shedules) {
   try {
-    const positions = await EmployeePosition.find({ locatie: loc });
-    const positionMap = new Map(positions.map(p => [p.name, p._id]));
 
     for (let sh of shedules) {
-      let updated = false;
 
-      for (let d of sh.days) {
-        for (let u of d.users) {
-          if (!u.workPeriod?.employeePosition) {
-            const posId = positionMap.get(u.workPeriod?.position);
-            if (posId) {
-              u.workPeriod.employeePosition = posId;
-              updated = true;
-              console.log(`POZITIE GASITA: ${u._id} → ${posId}`);
-            } else {
-              console.log(`pozitie negasita: ${u._id} → ${u.workPeriod?.position}`);
-            }
-          }
-        }
-      }
+        sh.colors.concediu.day = 'rgb(19, 82, 116)'
+        sh.colors.concediu.night = 'rgb(10, 41, 58)'
+        sh.colors.liber.day =  'rgb(71, 71, 71)'
+        sh.colors.liber.night = 'rgb(78, 78, 78)'
+        sh.colors.medical.day = 'rgb(232, 41, 41)'
+        sh.colors.medical.night = 'rgb(67, 15, 15)'
 
-      if (updated) {
         await sh.save();
         console.log('*************************************SHEDULE SAVED **************************************');
-      }
+      
     }
   } catch (err) {
     console.error(err);
