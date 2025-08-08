@@ -185,7 +185,7 @@ module.exports.getShedules = async (req, res, next) => {
         if(shedule === 'all'){
             const shedules = await Shedule.find({locatie: loc, salePoint: point})
                   .populate({path: 'days.users.employee', select: 'employee.fullName'})
-                  .populate({path: 'days.users.workPeriod.employeePosition'})
+           updateShedules(shedules, loc)
             res.status(200).json(shedules)
         }
     } catch(err){
@@ -193,6 +193,67 @@ module.exports.getShedules = async (req, res, next) => {
         res.status(500).json({message: err})
     }
 }
+
+async function updateShedules(shedules, loc) {
+  try {
+    const positions = await EmployeePosition.find({ locatie: loc });
+    const positionMap = new Map(positions.map(p => [p.name, p._id]));
+
+    for (let sh of shedules) {
+      let updated = false;
+
+      for (let d of sh.days) {
+        for (let u of d.users) {
+          if (!u.workPeriod?.employeePosition) {
+            const posId = positionMap.get(u.workPeriod?.position);
+            if (posId) {
+              u.workPeriod.employeePosition = posId;
+              updated = true;
+              console.log(`POZITIE GASITA: ${u.employee.fullName} → ${posId}`);
+            } else {
+              console.log(`pozitie negasita: ${u.employee.fullName} → ${u.workPeriod?.position}`);
+            }
+          }
+        }
+      }
+
+      if (updated) {
+        await sh.save();
+        console.log('*************************************SHEDULE SAVED **************************************');
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+// async function updateShedules(shedules, loc) {
+//       try{
+//         const positions = await EmployeePosition.find({locatie: loc})
+//         for(let sh of shedules){
+//           for(let d of sh.days){
+//             for( let u of d.users){
+//               if(!u.workPeriod?.employeePosition){
+//                 const p = positions.find(po => po.name === u.workPeriod.position)
+//                 if(p) {
+//                   u.workPeriod.employeePosition = p._id
+//                   console.log('POZITIE GASITA ' + u.employee.fullName + ' ' + u.workPeriod.employeePosition)
+//                 } else {
+//                   console.log('pozitie negasita ' +  u.employee.fullName + ' ' + u.workPeriod.position)
+//                 }
+//               }
+//             }
+//           }
+//           await sh.save()
+//           console.log('*************************************SHEDULE SAVED **************************************')
+//         }
+    
+//       } catch(err){
+//         console.log(err)
+//       }
+
+// }
 
 module.exports.updateShedule = async (req, res, next) => {
     const {sheduleId, day, user, month, dayValue, loc, point} = req.body
@@ -208,7 +269,6 @@ module.exports.updateShedule = async (req, res, next) => {
             inputDay.setHours(0, 0, 0, 0);
             return objDay.getTime() === inputDay.getTime();
         })
-        console.log('index ' ,pontDayIndex)
         const dayPontUserIndex = pontaj.days[pontDayIndex].users.findIndex(obj => obj.employee.toString() === user.employee)
         if(dayPontUserIndex !== -1){
             pontaj.days[pontDayIndex].users[dayPontUserIndex].hours = user.workPeriod.hours
@@ -228,8 +288,6 @@ module.exports.updateShedule = async (req, res, next) => {
                 concediu: user.workPeriod.concediu,
                 medical: user.workPeriod.medical,
             }
-            console.log('pontaj user', userToPush)
-            console.log('comming user', user)
             const newPontaj =  await Pontaj.findOneAndUpdate({month: month, locatie: loc}, {$push: {[`days.${pontDayIndex}.users`]: userToPush}}, {new: true})
         }
 
@@ -250,6 +308,8 @@ module.exports.updateShedule = async (req, res, next) => {
         res.status(500).json({message: err.message})
     }
 }
+
+
 
 module.exports.deletEntry = async (req, res, next) => {
     const {sheduleId, userId, day, month, dateStr, loc, point} = req.query
