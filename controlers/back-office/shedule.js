@@ -156,6 +156,7 @@ module.exports.getPontaj = async (req, res, next) => {
         }
         if(pont === 'all'){
             const ponts = await Pontaj.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employeePosition'})
+            updateShedules(ponts)
             res.status(200).json(ponts)
         }
         if(month){
@@ -186,7 +187,7 @@ module.exports.getShedules = async (req, res, next) => {
             const shedules = await Shedule.find({locatie: loc, salePoint: point})
                   .populate({path: 'days.users.employee', select: 'name employee.fullName'})
                   .populate({path: 'days.users.workPeriod.employeePosition'})
-           updateShedules(shedules)
+         
             res.status(200).json(shedules)
         }
     } catch(err){
