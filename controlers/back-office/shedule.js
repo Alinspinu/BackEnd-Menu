@@ -209,9 +209,9 @@ async function updateShedules(shedules, loc) {
             if (posId) {
               u.workPeriod.employeePosition = posId;
               updated = true;
-              console.log(`POZITIE GASITA: ${u.employee.fullName} → ${posId}`);
+              console.log(`POZITIE GASITA: ${u.employee.employee.fullName} → ${posId}`);
             } else {
-              console.log(`pozitie negasita: ${u.employee.fullName} → ${u.workPeriod?.position}`);
+              console.log(`pozitie negasita: ${u.employee.employee.fullName} → ${u.workPeriod?.position}`);
             }
           }
         }
