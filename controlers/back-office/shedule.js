@@ -228,6 +228,7 @@ module.exports.updateShedule = async (req, res, next) => {
                 concediu: user.concediu,
                 medical: user.medical,
             }
+            console.log('pontaj user', userToPush)
             const newPontaj =  await Pontaj.findOneAndUpdate({month: month, locatie: loc}, {$push: {[`days.${pontDayIndex}.users`]: userToPush}}, {new: true})
         }
 
@@ -242,7 +243,8 @@ module.exports.updateShedule = async (req, res, next) => {
           const newShedule = await Shedule.findOneAndUpdate({_id: sheduleId}, {$push: {[`days.${dayIndex}.users`]: user}}, {new: true}).populate({path: 'days.users.employee', select: 'employee.fullName'})
           res.status(200).json(newShedule)
         }  
-        console.log(user)
+        console.log('comming user', user)
+   
     } catch(err){
         console.log(err)
         res.status(500).json({message: err.message})
