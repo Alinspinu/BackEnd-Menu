@@ -240,9 +240,9 @@ module.exports.updateShedule = async (req, res, next) => {
            res.status(200).json(newShedule)
         } else {
           const newShedule = await Shedule.findOneAndUpdate({_id: sheduleId}, {$push: {[`days.${dayIndex}.users`]: user}}, {new: true}).populate({path: 'days.users.employee', select: 'employee.fullName'})
-          console.log(newShedule)
           res.status(200).json(newShedule)
         }  
+        console.log(user)
     } catch(err){
         console.log(err)
         res.status(500).json({message: err.message})
