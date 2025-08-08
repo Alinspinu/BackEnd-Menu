@@ -184,7 +184,7 @@ module.exports.getShedules = async (req, res, next) => {
         }
         if(shedule === 'all'){
             const shedules = await Shedule.find({locatie: loc, salePoint: point})
-                  .populate({path: 'days.users.employee', select: 'employee.fullName'})
+                  .populate({path: 'days.users.employee', select: 'name employee.fullName'})
            updateShedules(shedules, loc)
             res.status(200).json(shedules)
         }
@@ -209,9 +209,9 @@ async function updateShedules(shedules, loc) {
             if (posId) {
               u.workPeriod.employeePosition = posId;
               updated = true;
-              console.log(`POZITIE GASITA: ${u.employee.employee.fullName} → ${posId}`);
+              console.log(`POZITIE GASITA: ${u._id} → ${posId}`);
             } else {
-              console.log(`pozitie negasita: ${u.employee.employee.fullName} → ${u.workPeriod?.position}`);
+              console.log(`pozitie negasita: ${u._id} → ${u.workPeriod?.position}`);
             }
           }
         }
