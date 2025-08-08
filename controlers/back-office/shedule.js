@@ -223,10 +223,10 @@ module.exports.updateShedule = async (req, res, next) => {
                 hours: user.workPeriod.hours,
                 value: dayValue,
                 employee: user.employee,
-                position: user.position,
-                employeePosition: user.employeePosition,
-                concediu: user.concediu,
-                medical: user.medical,
+                position: user.wotkPeriod.position,
+                employeePosition: user.workPeriod.employeePosition,
+                concediu: user.workPeriod.concediu,
+                medical: user.workPeriod.medical,
             }
             console.log('pontaj user', userToPush)
             console.log('comming user', user)
