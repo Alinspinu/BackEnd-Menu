@@ -178,7 +178,7 @@ module.exports.getPontaj = async (req, res, next) => {
                 .sort({_id: -1})
                 .limit(3)
                 .populate({path: 'days.users.employeePosition'})
-            const pontaj = getNowShedule(pontajs)    
+            // const pontaj = getNowShedule(pontajs)    
              updateShedules(pontaj, loc)
             res.status(200).json(pontaj)
         }
