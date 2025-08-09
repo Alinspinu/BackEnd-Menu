@@ -265,7 +265,7 @@ module.exports.printBill = async (req, res, next) => {
 
         const billId = new mongoose.Types.ObjectId(bill._id);
         await Table.findOneAndUpdate({bills: billId, locatie: bill.locatie, salePoint: bill.salePoint}, {$pull: {bills: billId}}) 
-        socket.emit('billl', JSON.stringify(savedBill))
+        socket.emit('billl', JSON.stringify({bill: savedBill}))
         if(savedBill){
         res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
         } else {
