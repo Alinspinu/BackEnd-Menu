@@ -5,6 +5,9 @@ const fs = require('fs');
 const axios = require('axios')
 
 function comparePasswords(password, hashedPassword) {
+  if(!hashedPassword){
+    return false
+  }
     const [salt, originalHash] = hashedPassword.split("$");
     const hash = crypto
         .pbkdf2Sync(password, salt, 1000, 64, "sha512")
