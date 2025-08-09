@@ -76,6 +76,7 @@ const SheduleSchema = new Schema({
             hourStart: String,
             hourEnd: String,
             period: Number,
+            order: Number,
         }
     ],
     period: String,

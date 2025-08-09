@@ -25,23 +25,18 @@ module.exports.addShedule = async (req, res, next) => {
       let baseDate;
   
       if (lastShedule) {
-        // Continue from the last schedule
         baseDate = new Date(lastShedule.days[6].date);
         baseDate.setDate(baseDate.getDate() + 1);
         baseDate.setUTCHours(0, 0, 0, 0);
       } else {
-        // First schedule → start from current Monday
         const today = new Date();
         today.setUTCHours(0, 0, 0, 0);
-  
-        const dayOfWeek = today.getUTCDay(); // 0 (Sun) - 6 (Sat)
+        const dayOfWeek = today.getUTCDay(); 
         const daysSinceMonday = (dayOfWeek + 6) % 7;
-  
         baseDate = new Date(today);
-        baseDate.setDate(today.getDate() - daysSinceMonday); // go back to this week's Monday
+        baseDate.setDate(today.getDate() - daysSinceMonday); 
       }
   
-      // Generate 7 days starting from baseDate
       let days = [];
   
       for (let i = 0; i < 7; i++) {
@@ -74,18 +69,21 @@ module.exports.addShedule = async (req, res, next) => {
           hourStart: '',
           hourEnd: '',
           period: 0,
+          order: 1
         },
         {
           label: 'Concediu',
           hourStart: '8:00',
           hourEnd: '16:00',
           period: 8,
+          order: 2
         },
         {
           label: 'Medical',
           hourStart: '8:00',
           hourEnd: '16:00',
           period: 8,
+          order: 3
         }
       ]
   
