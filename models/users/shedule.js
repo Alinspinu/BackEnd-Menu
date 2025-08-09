@@ -73,13 +73,9 @@ const SheduleSchema = new Schema({
     periods: [
         {
             label: String,
-            hourStart: Number,
-            hourEnd: Number,
+            hourStart: String,
+            hourEnd: String,
             period: Number,
-            pm: {
-                type: Boolean,
-                default: false
-            }
         }
     ],
     period: String,
