@@ -314,6 +314,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             const savedBill = await newBill.save();
             table.bills.push(savedBill);
             await table.save();
+            console.log('order out ', savedBill.out)
             socket.emit('billl', JSON.stringify({bill: savedBill, secondaryServer: secondaryServer}))
             res.status(200).json({bill: savedBill})
 
