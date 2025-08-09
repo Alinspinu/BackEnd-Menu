@@ -234,13 +234,13 @@ async function updateShedules(sh, loc) {
           for(let d of sh.days){
             for( let u of d.users){
               if(u){
-                if(!u.workPeriod?.employeePosition){
-                  const p = positions.find(po => po.name === u.workPeriod.position)
+                if(!u.employeePosition){
+                  const p = positions.find(po => po.name === u.position)
                   if(p) {
                     u.workPeriod.employeePosition = p._id
-                    console.log('POZITIE GASITA ' + u.employee.fullName + ' ' + u.workPeriod.employeePosition)
+                    console.log('POZITIE GASITA ' + u.employee.fullName + ' ' + u.employeePosition)
                   } else {
-                    console.log('pozitie negasita ' +  u.employee.fullName + ' ' + u.workPeriod.position)
+                    console.log('pozitie negasita ' +  u.employee.fullName + ' ' + u.position)
                   }
                 }
               }
