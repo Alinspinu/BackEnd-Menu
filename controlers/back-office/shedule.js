@@ -67,14 +67,35 @@ module.exports.addShedule = async (req, res, next) => {
       };
   
       const period = `${startDate.toLocaleString('ro-RO', options)} - ${endDate.toLocaleString('ro-RO', options)}`;
+
+      const basicPeriods = [
+        {
+          label: 'LiBER',
+          hourStart: '',
+          hourEnd: '',
+          period: 0,
+        },
+        {
+          label: 'Concediu',
+          hourStart: '8:00',
+          hourEnd: '16:00',
+          period: 8,
+        },
+        {
+          label: 'Medical',
+          hourStart: '8:00',
+          hourEnd: '16:00',
+          period: 8,
+        }
+      ]
   
       const shedule = new Shedule({
         days,
         period,
         locatie: loc,
         salePoint,
-        periods: lastShedule ? lastShedule.periods : [],
-        colors: lastShedule ? lastShedule.colors : undefined
+        periods: lastShedule && lastShedule.periods.length ? lastShedule.periods : basicPeriods,
+        colors: lastShedule && lastShedule.colors ? lastShedule.colors : undefined
       });
   
       const savedShedule = await shedule.save();
@@ -204,26 +225,6 @@ module.exports.getShedules = async (req, res, next) => {
     }
 }
 
-async function updateShedules(shedules) {
-  try {
-
-    for (let sh of shedules) {
-
-        sh.colors.concediu.day = 'rgb(19, 82, 116)'
-        sh.colors.concediu.night = 'rgb(10, 41, 58)'
-        sh.colors.liber.day =  'rgb(71, 71, 71)'
-        sh.colors.liber.night = 'rgb(78, 78, 78)'
-        sh.colors.medical.day = 'rgb(232, 41, 41)'
-        sh.colors.medical.night = 'rgb(67, 15, 15)'
-
-        await sh.save();
-        console.log('*************************************SHEDULE SAVED **************************************');
-      
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
 
 
 // async function updateShedules(shedules, loc) {
