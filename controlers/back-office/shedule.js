@@ -237,7 +237,7 @@ async function updateShedules(sh, loc) {
                 if(!u.employeePosition){
                   const p = positions.find(po => po.name === u.position)
                   if(p) {
-                    u.workPeriod.employeePosition = p._id
+                    u.employeePosition = p._id
                     console.log('POZITIE GASITA ' + u.employee.fullName + ' ' + u.employeePosition)
                   } else {
                     console.log('pozitie negasita ' +  u.employee.fullName + ' ' + u.position)
