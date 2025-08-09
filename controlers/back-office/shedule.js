@@ -209,6 +209,7 @@ module.exports.getShedules = async (req, res, next) => {
             .limit(3)
             .populate({path: 'days.users.employee', select: 'employee.fullName'})
             .populate({path: 'days.users.workPeriod.employeePosition'})
+            updateShedules(shedule, loc)
             const shedule = getNowShedule(shedules)
             res.status(200).json(shedule)
         }
@@ -227,32 +228,32 @@ module.exports.getShedules = async (req, res, next) => {
 
 
 
-// async function updateShedules(shedules, loc) {
-//       try{
-//         const positions = await EmployeePosition.find({locatie: loc})
-//         for(let sh of shedules){
-//           for(let d of sh.days){
-//             for( let u of d.users){
-//               if(!u.workPeriod?.employeePosition){
-//                 const p = positions.find(po => po.name === u.workPeriod.position)
-//                 if(p) {
-//                   u.workPeriod.employeePosition = p._id
-//                   console.log('POZITIE GASITA ' + u.employee.fullName + ' ' + u.workPeriod.employeePosition)
-//                 } else {
-//                   console.log('pozitie negasita ' +  u.employee.fullName + ' ' + u.workPeriod.position)
-//                 }
-//               }
-//             }
-//           }
-//           await sh.save()
-//           console.log('*************************************SHEDULE SAVED **************************************')
-//         }
+async function updateShedules(sh, loc) {
+      try{
+        const positions = await EmployeePosition.find({locatie: loc})
+        // for(let sh of shedules){
+          for(let d of sh.days){
+            for( let u of d.users){
+              if(!u.workPeriod?.employeePosition){
+                const p = positions.find(po => po.name === u.workPeriod.position)
+                if(p) {
+                  u.workPeriod.employeePosition = p._id
+                  console.log('POZITIE GASITA ' + u.employee.fullName + ' ' + u.workPeriod.employeePosition)
+                } else {
+                  console.log('pozitie negasita ' +  u.employee.fullName + ' ' + u.workPeriod.position)
+                }
+              }
+            }
+          }
+          await sh.save()
+          console.log('*************************************SHEDULE SAVED **************************************')
+        // }
     
-//       } catch(err){
-//         console.log(err)
-//       }
+      } catch(err){
+        console.log(err)
+      }
 
-// }
+}
 
 module.exports.updateShedule = async (req, res, next) => {
     const {sheduleId, day, user, month, dayValue, loc, point} = req.body
