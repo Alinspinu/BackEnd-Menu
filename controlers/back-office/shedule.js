@@ -400,7 +400,7 @@ module.exports.updatePartialShedule = async (req, res) => {
     const newShedule = await Shedule.findByIdAndUpdate(shedule._id, shedule, {new: true})
           .populate({path: 'days.users.employee', select: 'employee.fullName'})
           .populate({path: 'days.users.workPeriod.employeePosition'})
-    res.status(200).json(newShedule)
+    res.status(200).json({sh: newShedule, message: 'Modificările au fost efectuate cu success!'})
   } catch(error){
     console.log(error)
     res.status(500).json(error)
