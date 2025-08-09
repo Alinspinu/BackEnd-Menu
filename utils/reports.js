@@ -219,7 +219,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'})
     const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee')
     const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
-    const dbUsers = await User.find({locatie: loc, 'employee.salePoint': point, 'employee.fullName': {$exists: true}, 'employee.salary.inHeand': {$gte: 0} }).select('employee')
+    const dbUsers = await User.find({locatie: loc, client: false, 'employee.salePoint': point, 'employee.salary.inHeand': {$gte: 0} }).select('employee').populate({path: 'employee.employeePosition'})
     const allIngs = await Ingredient.find({locatie: loc, productIngredient: false, salePoint: point})
                     .select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune', 'dept', 'gest'])
                     .populate({path: 'gest', select: 'name'})
@@ -627,7 +627,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             const dbEmpl = {
                 name: dbEmployee.fullName,
                 hours: 0,
-                position: dbEmployee.position,
+                position: dbEmployee.employeePosition.name,
                 monthHours: dbEmployee.salary.norm,
                 baseIncome: dbEmployee.salary.inHeand,
                 hourIncome: round(dbEmployee.salary.inHeand / dbEmployee.salary.norm),
