@@ -29,6 +29,18 @@ module.exports.sendUsers = async (req, res, next) => {
       }
 }
 
+module.exports.sendEmployees = async (req, res) => {
+    const {loc} = req.query
+    try{
+        const user = await User.find({locatie: loc, client: false}).select('-password').populate({path: 'employee.employeePosition'});
+        const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
+        res.status(200).json(sortedUsers)
+    } catch(err) {
+        console.log(err)
+        res.status(200).josn(err)
+    }
+}
+
 module.exports.detectPaymentError = async (req, res, next) => {
     const users = await User.find({ 'employee.fullName': {$exists: true}}).select('employee')
     users.forEach(user => {
