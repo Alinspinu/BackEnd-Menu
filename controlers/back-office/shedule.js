@@ -72,7 +72,9 @@ module.exports.addShedule = async (req, res, next) => {
         days,
         period,
         locatie: loc,
-        salePoint
+        salePoint,
+        periods: lastShedule ? lastShedule.periods : [],
+        colors: lastShedule ? lastShedule.colors : undefined
       });
   
       const savedShedule = await shedule.save();
@@ -124,15 +126,21 @@ module.exports.addPontaj = async (req, res, next) => {
           workValue: 0
         });
       }
+
+      const lastPontaj = await Pontaj.findOne(
+        { locatie: loc, salePoint: salePoint },
+        {},
+        { sort: { _id: -1 } }
+      );
   
       const pontaj = new Pontaj({
         days,
         month: `${months[month]} - ${year}`,
         workValue: 0,
         locatie: loc,
-        salePoint: salePoint
+        salePoint: salePoint,
+        colors: lastPontaj ? lastPontaj.colors : undefined
       });
-  
       const newPontaj = await pontaj.save();
       res.status(200).json(newPontaj);
   

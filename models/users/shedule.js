@@ -42,31 +42,31 @@ const SheduleSchema = new Schema({
         concediu: {
             day: {
                 type: String,
-                defalut: 'rgb(19, 82, 116)'
+                default: '#135274' 
             },
-            night:  {
+            night: {
                 type: String,
-                defalut: 'rgb(10, 41, 58)'
+                default: '#0A293A' 
             }
         },
-        liber:{
+        liber: {
             day: {
                 type: String,
-                defalut: 'rgb(71, 71, 71)'
+                default: '#474747'
             },
-            night:  {
+            night: {
                 type: String,
-                defalut: 'rgb(78, 78, 78)'
+                default: '#4E4E4E' 
             }
         },
         medical: {
             day: {
                 type: String,
-                defalut: 'rgb(232, 41, 41)'
+                default: '#E82929' 
             },
-            night:  {
+            night: {
                 type: String,
-                defalut: 'rgb(67, 15, 15)'
+                default: '#430F0F' 
             }
         }
     },
