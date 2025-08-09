@@ -209,7 +209,7 @@ module.exports.getShedules = async (req, res, next) => {
             .limit(3)
             .populate({path: 'days.users.employee', select: 'employee.fullName'})
             .populate({path: 'days.users.workPeriod.employeePosition'})
-            const shedule = getNowShedule(shedules)
+            // const shedule = getNowShedule(shedules)
             updateShedules(shedule, loc)
             res.status(200).json(shedule)
         }
