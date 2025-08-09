@@ -314,7 +314,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             const savedBill = await newBill.save();
             table.bills.push(savedBill);
             await table.save();
-            socket.emit('billl', JSON.stringify(savedBill))
+            socket.emit('billl', JSON.stringify({bill: parsedBill, secondaryServer: secondaryServer}))
             res.status(200).json({bill: savedBill})
 
         } else {
@@ -328,7 +328,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 }
             })
             if(productsToPrint){
-                socket.emit('billl', JSON.stringify(parsedBill))
+                socket.emit('billl', JSON.stringify({bill: parsedBill, secondaryServer: secondaryServer}))
             }
             delete parsedBill._id
             if(parsedBill.clientInfo._id && parsedBill.clientInfo._id.length){
@@ -499,6 +499,10 @@ module.exports.getOrderDone = async (req, res, next) => {
 }
 
 
+const server = {
+    key: "6fe642"
+}
+
 module.exports.endPending = async (req, res, next) => {
     try{
         const {id, section} = req.body;
@@ -520,7 +524,7 @@ module.exports.endPending = async (req, res, next) => {
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
-        socket.emit('billl', JSON.stringify(newOrder))
+        socket.emit('billl', JSON.stringify({bill: order, secondaryServer: server}))
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder})
     } catch(err){
         console.log(err.message)
@@ -544,7 +548,7 @@ module.exports.liftStatusDone = async (req, res, next) => {
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
-        socket.emit('billl', JSON.stringify(newOrder))
+        socket.emit('billl', JSON.stringify({bill: order, secondaryServer: server}))
         res.status(200).json({message: 'Comanda a fost marcată ca și ridicată!', order: newOrder})
     } catch(err){
         console.log(err.message)
@@ -571,7 +575,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
-        socket.emit('billl', JSON.stringify(newOrder))
+        socket.emit('billl', JSON.stringify({bill: order, secondaryServer: server}))
         res.status(200).json({message: 'Comanda a fost marcată ca și terminată!', order: newOrder})
     } catch(err){
         console.log(err.message)
