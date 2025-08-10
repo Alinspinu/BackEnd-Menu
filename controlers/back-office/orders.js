@@ -523,7 +523,7 @@ module.exports.endPending = async (req, res, next) => {
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
-        // socket.emit('billl', JSON.stringify({bill: newOrder, secondaryServer: server}))
+        socket.emit('billl', JSON.stringify({bill: newOrder, dontParse: true}))
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder, server: server})
     } catch(err){
         console.log(err.message)
