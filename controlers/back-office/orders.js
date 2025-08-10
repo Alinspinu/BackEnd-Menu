@@ -314,7 +314,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             const savedBill = await newBill.save();
             table.bills.push(savedBill);
             await table.save();
-            console.log('order out ', savedBill.out)
             socket.emit('billl', JSON.stringify({bill: savedBill, secondaryServer: secondaryServer}))
             res.status(200).json({bill: savedBill})
 
@@ -358,7 +357,6 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
     const delProd = new DelProd(newProduct)
     delProd.employee.name = product.employee.fullName
     const savedProd = await delProd.save()
-    console.log(savedProd)
     socket.emit('delProduct', JSON.stringify(savedProd))
     res.status(200).json({message: 'The product was registred as deleted!'})
 }
@@ -525,7 +523,7 @@ module.exports.endPending = async (req, res, next) => {
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
-        socket.emit('billl', JSON.stringify({bill: newOrder, secondaryServer: server}))
+        // socket.emit('billl', JSON.stringify({bill: newOrder, secondaryServer: server}))
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder, server: server})
     } catch(err){
         console.log(err.message)
