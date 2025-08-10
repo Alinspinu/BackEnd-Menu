@@ -110,6 +110,8 @@ const orderTrueSchema = new Schema({
         type: Boolean,
         default: false
     },
+    mainPrintServerKey: String,
+    secondPrintServerKey: String,
     dont: Boolean,
     paymentMethod: String,
     payment: {
@@ -226,10 +228,6 @@ const orderTrueSchema = new Schema({
                 imgPath: String,
                 payToGo: Boolean,
                 dep: String,
-                // dep: {
-                //     type: Schema.Types.ObjectId,
-                //     ref: 'Dep'
-                // },
                 printSection: {
                     type: Schema.Types.ObjectId,
                     ref: 'Section'
