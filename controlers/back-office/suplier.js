@@ -14,13 +14,13 @@ module.exports.addSuplier = async (req, res, next) => {
             return res.status(401).json({message: "Codul fiscal este deja inregistrat in baza de date contactati echipa de suport alin@flowmanager.ro"})
         } else {
             const newLocation = new Locatie(suplier) 
-             const loc = await newLocation.save()
+             const savedLocatie = await newLocation.save()
              const table = new Table({
                 index: 1,
-                locatie: loc._id
+                locatie: savedLocatie._id
              })
             await table.save()
-            res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`, id: loc._id})
+            res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`, suplier: savedLocatie})
         }
        } else {
         const check = await Suplier.findOne({vatNumber: suplier.vatNumber, locatie: loc})
