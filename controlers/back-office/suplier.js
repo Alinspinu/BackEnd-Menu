@@ -1,6 +1,7 @@
 const Suplier = require('../../models/office/suplier')
 const Locatie = require('../../models/office/locatie')
 const Table = require('../../models/utils/table')
+const SalePoint = require('../../models/utils/sale-point')
 
 
 module.exports.addSuplier = async (req, res, next) => {
@@ -20,6 +21,8 @@ module.exports.addSuplier = async (req, res, next) => {
                 locatie: savedLocatie._id
              })
             await table.save()
+            const salePoint = new SalePoint({name: savedLocatie.name, address: savedLocatie.address, locatie: savedLocatie._id})
+            await salePoint.save()
             res.status(200).json({message: `Locatia ${newLocation.name} a fost salvată cu success!`, suplier: savedLocatie})
         }
        } else {
