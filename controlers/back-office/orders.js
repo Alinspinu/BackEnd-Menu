@@ -512,6 +512,7 @@ module.exports.endPending = async (req, res, next) => {
         if(!order){
             return res.status(404).json({message: 'No order was found'})
         }
+        console.log(order)
         for(let m of order.monitors){
             if(m.section.toString() === section){
                 m.pending = false
