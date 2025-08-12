@@ -5,6 +5,11 @@ const Product = require('../models/office/product/product')
 const SubProduct = require('../models/office/product/sub-product')
 
 
+const norm = s => s?.trim().toLowerCase()
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+const veggie = ['lapte vegetal', 'lapte mazare', 'lapte ovaz' ]
+
 async function unloadIngs (ings, qtyProdus) {
   try{
     for (const ing of ings) {
@@ -22,7 +27,7 @@ async function unloadIngs (ings, qtyProdus) {
             await ingredientInv.save();
             console.log(`Success!! unload-ingredient: Nume - ${ingredientInv.name} - ${cantFinal} / stoc: ${ingredientInv.qty}`)
           }
-            if(ingredientInv.name === "Lapte Vegetal"){
+            if(veggie.includes(norm(ingredientInv.name))){
               const lapte = await IngInv.findOne({name: "Lapte"})
               const ingTo = {
                 qty: ing.qty,
@@ -56,7 +61,8 @@ async function uploadIngs (ings, qtyProdus) {
               await ingredientInv.save();
               console.log(`Success!! upload-ingredient: Nume - ${ingredientInv.name} + ${cantFinal} / stoc: ${ingredientInv.qty}`)
             }
-            if(ingredientInv.name === "Lapte Vegetal"){
+          
+            if(veggie.includes(norm(ingredientInv.name))){
               const lapte = await IngInv.findOne({name: "Lapte"})
               const ingTo = {
                 qty: ing.qty,
