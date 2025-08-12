@@ -28,7 +28,7 @@ async function unloadIngs (ings, qtyProdus) {
             console.log(`Success!! unload-ingredient: Nume - ${ingredientInv.name} - ${cantFinal} / stoc: ${ingredientInv.qty}`)
           }
             if(veggie.includes(norm(ingredientInv.name))){
-              const lapte = await IngInv.findOne({name: "Lapte"})
+              const lapte = await IngInv.findOne({name: "Lapte", locatie: ingredientInv.locatie, salePoint: ingredientInv.salePoint})
               const ingTo = {
                 qty: ing.qty,
                 ing: lapte._id
@@ -63,7 +63,7 @@ async function uploadIngs (ings, qtyProdus) {
             }
           
             if(veggie.includes(norm(ingredientInv.name))){
-              const lapte = await IngInv.findOne({name: "Lapte"})
+              const lapte = await IngInv.findOne({name: "Lapte", locatie: ingredientInv.locatie, salePoint: ingredientInv.salePoint})
               const ingTo = {
                 qty: ing.qty,
                 ing: lapte._id
