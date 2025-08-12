@@ -514,7 +514,7 @@ module.exports.endPending = async (req, res, next) => {
         }
         console.log(order)
         for(let m of order.monitors){
-            if(m.section.toString() === section){
+            if(m.section && m.section.toString() === section){
                 m.pending = false
                 m.products.forEach(p => {
                     if(p.prep === 'pending'){
