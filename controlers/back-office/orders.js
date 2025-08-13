@@ -513,7 +513,6 @@ module.exports.endPending = async (req, res, next) => {
         if(!order){
             return res.status(404).json({message: 'No order was found'})
         }
-        console.log(order)
         for(let m of order.monitors){
             if(m.section && m.section.toString() === section){
                 m.pending = false
@@ -524,7 +523,7 @@ module.exports.endPending = async (req, res, next) => {
                 }) 
             }
         }
-        const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
+        const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true}).populate({path: 'masaRest', select: 'index name'})
         socket.emit('billl', JSON.stringify({bill: newOrder, dontParse: true}))
         res.status(200).json({message: 'Comanda a fost acceptată!', order: newOrder, server: server})
     } catch(err){
@@ -548,7 +547,7 @@ module.exports.liftStatusDone = async (req, res, next) => {
                 m.lifted = true 
             }
         }
-        const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
+        const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true}).populate({path: 'masaRest', select: 'index name'})
         socket.emit('billl', JSON.stringify({bill: newOrder, secondaryServer: server}))
         res.status(200).json({message: 'Comanda a fost marcată ca și ridicată!', order: newOrder, server: server})
     } catch(err){
@@ -575,7 +574,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
                 m.products.forEach(p => p.prep = 'done')
             }
         }
-        const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
+        const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true}).populate({path: 'masaRest', select: 'index name'})
         socket.emit('billl', JSON.stringify({bill: newOrder, secondaryServer: server}))
         res.status(200).json({message: 'Comanda a fost marcată ca și terminată!', order: newOrder, server: server})
     } catch(err){
