@@ -314,6 +314,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             const savedBill = await newBill.save();
             table.bills.push(savedBill);
             await table.save();
+            savedBill.masaRest = table
             socket.emit('billl', JSON.stringify({bill: savedBill, secondaryServer: secondaryServer}))
             res.status(200).json({bill: savedBill})
 
@@ -335,7 +336,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 parsedBill.user = parsedBill.clientInfo._id
                 parsedBill.clientInfo.userId = parsedBill.user
             }
-            const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId}, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index'});
+            const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId}, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index name'});
             if(bill){
                 res.status(200).json({bill: bill})
             } else {
