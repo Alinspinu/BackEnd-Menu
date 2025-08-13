@@ -5,7 +5,7 @@ const Client = require('../../models/office/client')
 module.exports.addClient = async (req, res) => {
     const {client} = req.body
     try{
-
+        console.log(client)
         const newClient = new Client(client)
         const savedClient = await newClient.save()
         console.log(savedClient)
