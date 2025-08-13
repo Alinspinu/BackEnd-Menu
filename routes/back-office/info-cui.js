@@ -8,4 +8,4 @@ router.route('/')
     .post(infoCont.getClientAddress)
 
 
-module.exports = routerp
+module.exports = router
