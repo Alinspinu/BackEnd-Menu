@@ -96,6 +96,7 @@ module.exports.sendUser = async (req, res, next) => {
                     'products.toppings.price'
                 ]
             })
+            .populate({path: 'employee.employeePosition'})
         res.status(200).json(user)
     } catch(err){
         console.log(err)
