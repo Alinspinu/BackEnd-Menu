@@ -81,6 +81,7 @@ module.exports.saveNir = async( req, res, next) => {
     nir.documentDate = new Date(Date.now())
    }
    try{
+      console.log(nir.nirInvoice)
       const newNir = new Nir(nir)
       newNir.suplier = nir.suplier._id
       const savedNir = await newNir.save()
