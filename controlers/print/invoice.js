@@ -270,7 +270,7 @@ invoice.products.forEach((el, i) => {
     doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
     doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
     doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
-    doc.text(`${round(el.total - el.totalNoVat)}`, 523, newValue, { width: 30, align: "right" })
+    doc.text(`${round(el.total - el.totalNoVat)}`, 523, newValue, { width: 60, align: "right" })
     heghtValue += rowHeigth
 })
 
@@ -293,8 +293,8 @@ doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 365, 678, { width: 90, alig
 doc.text(`${round(invoice.vatAmount)} Lei`, 480, 678, { width: 75, align: 'center' })
 
 doc.fontSize(16)
-doc.text('TOTAL', 365, 745, { width: 90, align: 'center' })
-doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 464, 745, { width: 90, align: 'center' })
+doc.text('TOTAL', 382, 745)
+doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 445, 745,{ width: 150, align: 'left' })
 
 return doc
 
