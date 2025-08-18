@@ -70,7 +70,7 @@ async function unloadIngs (ings, qtyProdus) {
                     }  else {console.log('Nu au fost gasita a doua Intrare 2222')}
                     } else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 111111')}
                   } else {
-                    const eIndex =  gest.entries.findIndex(g => g._id === oldestEntry._id)
+                    const eIndex =  gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
                     if(eIndex !== -1){
                       gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - cantFinal)
                       console.log('Gestiune gasita stoc modificat ',  gest.entries[eIndex].qty,  gest.entries[eIndex].date)
