@@ -18,11 +18,67 @@ async function unloadIngs (ings, qtyProdus) {
             console.log(`Eorare! Ingredientul nu a fost găsit în baza de date. la descarcare de stoc`);
         } else {
           if(ingredientInv.ings.length){
-            ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
+            ingredientInv.ings.forEach(obj => {
+              obj.qty = round(obj.qty * ing.qty)
+            })
             await unloadIngs(ingredientInv.ings, qtyProdus)
           } else {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
             ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
+
+            if(ingredientInv.invGestiune){
+              const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune === ingredientInv.gest)
+              if(gestIndex !== -1){
+                let gest = ingredientInv.invGestiune[gestIndex]
+                gest.qty = round(gest.qty - cantFinal)
+
+                const oldestEntry = gest.entries.reduce((oldest, current) => {
+                  return new Date(current.date) < new Date(oldest.date) ? current : oldest;
+                });
+
+                if(oldestEntry){
+                  if(oldestEntry.qty < cantFinal && gest.entries.length > 1){
+                    const diference = cantFinal - oldestEntry.qty
+                    const entryToRemoveIndex = gest.entries.findIndex(g => new Date(q.date) === new Date(oldestEntry.date))
+                    if(entryToRemoveIndex !== -1){
+                      gest.entries.splice(entryToRemoveIndex, 1)
+                      const secondEntry = gest.entries.reduce((oldest, current) => {
+                        return new Date(current.date) < new Date(oldest.date) ? current : oldest;
+                      });
+
+                      if(secondEntry){
+                        if(secondEntry.qty < diference && gest.entries.length > 1){
+                          const secondDif = diference - secondEntry.qty
+                          const secondEntryToRemoveIndex = gest.entries.findIndex(g => new Date(q.date) === new Date(secondEntry.date))
+                          if(secondEntryToRemoveIndex !== -1){
+                            gest.entries.splice(secondEntryToRemoveIndex, 1)
+                            const thirddEntry = gest.entries.reduce((oldest, current) => {
+                              return new Date(current.date) < new Date(oldest.date) ? current : oldest;
+                            });
+
+                            const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(thirddEntry.date))
+                            if(eIndex !== -1){
+                              gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - secondDif)
+                            }
+                        }  else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 2222')}
+                      } else {
+                        const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(secondEntry.date))
+                        if(eIndex !== -1){
+                          gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - diference)
+                        }
+                      }
+                    }  else {console.log('Nu au fost gasita a doua Intrare 2222')}
+                    } else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 111111')}
+                  } else {
+                    const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(oldestEntry.date))
+                    if(eIndex !== -1){
+                      gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - cantFinal)
+                    }
+                  }
+                }  else {console.log('Nu au fost gasita cea mai veche gestiune')}
+                ingredientInv.invGestiune[gestIndex] = gest
+              }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ingredientInv.gest)}
+            } else {console.log('Nu au fost gasite gestiuni de inventar')}
 
             await ingredientInv.save();
             console.log(`Success!! unload-ingredient: Nume - ${ingredientInv.name} - ${cantFinal} / stoc: ${ingredientInv.qty}`)
@@ -57,6 +113,27 @@ async function uploadIngs (ings, qtyProdus) {
             }else {
               let cantFinal = parseFloat(ing.qty * qtyProdus);
               ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
+
+              if(ingredientInv.invGestiune){
+                const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune === ingredientInv.gest)
+                if(gestIndex !== -1){
+                  let gest = ingredientInv.invGestiune[gestIndex]
+                  gest.qty = round(gest.qty + cantFinal)
+  
+                  const oldestEntry = gest.entries.reduce((oldest, current) => {
+                    return new Date(current.date) < new Date(oldest.date) ? current : oldest;
+                  });
+  
+                  if(oldestEntry){
+                      const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(oldestEntry.date))
+                      if(eIndex !== -1){
+                        gest.entries[eIndex].qty = round(gest.entries[eIndex].qty + cantFinal)
+                      }
+                  }  else {console.log('Nu au fost gasita cea mai veche gestiune')}
+                  ingredientInv.invGestiune[gestIndex] = gest
+                }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ingredientInv.gest)}
+              } else {console.log('Nu au fost gasite gestiuni de inventar')}
+
 
               await ingredientInv.save();
               console.log(`Success!! upload-ingredient: Nume - ${ingredientInv.name} + ${cantFinal} / stoc: ${ingredientInv.qty}`)

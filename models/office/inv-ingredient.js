@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Product = require('../office/product/product')
-const SubProduct = require('../office/product/sub-product')
+const SubProduct = require('../office/product/sub-product');
+
 
 const invIngSchema = new Schema({
   name: {
@@ -99,6 +100,34 @@ const invIngSchema = new Schema({
     default: 0
   },
   gestiune: String,
+  invGestiune: [
+    {
+      qty: Number,
+      entries: [
+        {
+          qty: Number,
+          date: {
+            type: Date,
+            index: true
+          },
+          price: {
+            type: Number,
+            required: true
+          },
+          suplierName: String,
+          nir: {
+            type: Schema.Types.ObjectId,
+            ref: 'Nir'
+          }
+        }
+      ], 
+      gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+      }
+    }
+
+  ],
   gest: {
     type: Schema.Types.ObjectId,
     ref: 'Gestiune'
