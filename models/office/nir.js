@@ -64,6 +64,10 @@ const nirSchema = new Schema({
       procent: Number,
     }
   ],
+  nirInvoice: {
+    type: Schema.Types.ObjectId,
+    ref: 'NirInvoice'
+  },
   eFacturaId: String,
   ingredients: [
     {

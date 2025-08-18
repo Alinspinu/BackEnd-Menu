@@ -246,8 +246,8 @@ module.exports.paySuplierBill = async (req, res, next) => {
 
 module.exports.addEFacturaID = async (req, res, next) => {
   try{
-    const {nirId, id} = req.body
-    const nir = await Nir.findByIdAndUpdate(nirId, {eFacturaId: id}, {new: true})
+    const {nirId, id, nirInvoice} = req.body
+    const nir = await Nir.findByIdAndUpdate(nirId, {eFacturaId: id, nirInvoice: nirInvoice}, {new: true})
     res.status(200).json(nir)
   } catch(error){
     console.log(error)
