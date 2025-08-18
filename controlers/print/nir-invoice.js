@@ -34,7 +34,7 @@ doc.text(`Cont`, 25 + 10, 74, { width: 50, align: "left" })
 doc.fontSize(10);
 // doc.font('Courier')
 doc.text(`${invoice.supplier.vatNumber}`, 130 + 10, 50);
-doc.text(`200 lei`, 130 + 10, 74);
+
 
 doc.text(`${invoice.supplier.bank}`, 60 + 10, 62)
 doc.text(`${invoice.supplier.iban}`, 55 + 10, 74)
@@ -229,6 +229,8 @@ if(productsCount > 50){
   doc.fontSize(5)
   rowHeigth = 7
 }
+
+console.log(invoice.products)
 
 invoice.products.forEach((el, i) => {
   if(el.name.length > 30){
