@@ -218,10 +218,9 @@ nirSchema.pre('save', async function (next){
         suplierNmae: sup.name,
         nir: doc._id
       }
-      console.log('before modifications', ingredient.gestiune[index])
-      if(ingredient.gestiune[index].qty < 0 ) {
+      if(ingredient.invGestiune[index].qty < 0 ) {
         console.log('hit - 0')
-        ent.qty = roundd(ingredient.gestiune[index].qty + ent.qty)
+        ent.qty = roundd(ingredient.invGestiune[index].qty + ent.qty)
         ingredient.invGestiune[index].entries = []
         console.log('entry quantity ', ent.qty)
         console.log('gest entries ', ingredient.invGestiune[index].entries )
