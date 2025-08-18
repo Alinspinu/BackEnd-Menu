@@ -204,7 +204,7 @@ function subtractFromEntries(entries, cantFinal) {
       } else {
         console.log('Este ultima intrare, am pus cantitate negativa', entry.qty, ' ramas ', remaining)
         // last entry → allow negative
-        entry.qty -= remaining;
+        entry.qty -= (remaining + entry.qty);
         remaining = 0;
       }
     }
