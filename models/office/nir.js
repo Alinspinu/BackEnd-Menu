@@ -212,7 +212,7 @@ nirSchema.pre('save', async function (next){
       let ent = {
         qty: el.qty,
         inQty: el.qty,
-        date: new Date(),
+        date: doc.receptionDate || new Date(),
         priceNoVat: el.price,
         priceWithVat: roundd(el.price * (1 + el.tva / 100)),
         suplierNmae: sup.name,
@@ -222,8 +222,26 @@ nirSchema.pre('save', async function (next){
         ent.qty = roundd(ingredient.gestiune[index].qty + ent.qty)
         ingredient.invGestiune[index].entries = []
       }
-      ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty + ent.qty)
+
+     
       ingredient.invGestiune[index].entries.push(ent)
+
+      let total = 0
+
+      for (let i = 0; i < ingredient.invGestiune[index].entries.length; i++) {
+        const entry = ingredient.invGestiune[index].entries[i];
+        if(entry.qty < 0){
+          ingredient.invGestiune[index].entries.splice(i, 1);
+          i--;  
+        } else {
+          total += entry.qty
+        }
+      }
+
+      ingredient.invGestiune[index].qty = roundd(total)
+
+
+
       console.log('all good in the good ', ingredient.invGestiune[index])
     } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
   } else {console.log('ingredientul nu are gestiuni de inventar')}
