@@ -264,8 +264,8 @@ doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 365, 678, { width: 90, alig
 doc.text(`${round(invoice.vatAmount)} Lei`, 480, 678, { width: 75, align: 'center' })
 
 doc.fontSize(16)
-doc.text('TOTAL', 325, 745, { width: 90, align: 'center' })
-doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 415, 745, { width: 90, align: 'center' })
+doc.text('TOTAL', 345, 745, { width: 90, align: 'center' })
+doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 425, 745, { width: 90, align: 'center' })
 
 return doc
 
