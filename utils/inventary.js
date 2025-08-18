@@ -26,7 +26,7 @@ async function unloadIngs (ings, qtyProdus) {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
             ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
 
-            if(ingredientInv.invGestiune){
+            if(ingredientInv.invGestiune.length){
               const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune === ingredientInv.gest)
               if(gestIndex !== -1){
                 let gest = ingredientInv.invGestiune[gestIndex]
@@ -114,7 +114,7 @@ async function uploadIngs (ings, qtyProdus) {
               let cantFinal = parseFloat(ing.qty * qtyProdus);
               ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
 
-              if(ingredientInv.invGestiune){
+              if(ingredientInv.invGestiune.length){
                 const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune === ingredientInv.gest)
                 if(gestIndex !== -1){
                   let gest = ingredientInv.invGestiune[gestIndex]
