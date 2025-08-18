@@ -110,7 +110,11 @@ const invIngSchema = new Schema({
             type: Date,
             index: true
           },
-          price: {
+          priceNoVat: {
+            type: Number,
+            required: true
+          },
+          priceWithVat: {
             type: Number,
             required: true
           },

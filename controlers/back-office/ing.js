@@ -57,6 +57,9 @@ module.exports.saveIng = async(req, res, next) => {
         const totalItems = 1500
         const ing = items.find(i => i._id === "683763760c7221a32654b6a8")
         const totalPages = Math.ceil(totalItems / limit);
+
+        await updateItems(items)
+
         res.status(200).json({
           items,
           totalPages,
@@ -67,6 +70,43 @@ module.exports.saveIng = async(req, res, next) => {
         res.status(500).json({message: err})
       }
     };
+
+
+
+    async function updateItems(items) {
+      const promises = [];
+    
+      for (const ing of items) {
+        if (!ing.invGestiune.length) {
+          const gest = {
+            gestiune: ing.gest._id,
+            qty: ing.qty,
+            entries: [
+              {
+                qty: ing.qty,
+                date: new Date(),
+                priceWithVat: ing.tvaPrice,
+                priceNoVat: ing.price,
+                suplierNane: 'First Entry'
+              }
+            ]
+          };
+    
+          ing.invGestiune = [gest];
+    
+          // push the promise to an array instead of awaiting here
+          promises.push(
+            ing.save().then((editedIng) => {
+              console.log('Ingredient editat cu success!', editedIng.name);
+            })
+          );
+        }
+      }
+    
+      // wait for all promises to complete
+      await Promise.all(promises);
+    }
+    
 
 
     module.exports.getIngUploadLog = async (req, res) => {

@@ -73,6 +73,7 @@ async function unloadIngs (ings, qtyProdus) {
                     const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(oldestEntry.date))
                     if(eIndex !== -1){
                       gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - cantFinal)
+                      console.log('Gestiune gasita stoc modificat ',  gest.entries[eIndex].qty,  gest.entries[eIndex].date)
                     }
                   }
                 }  else {console.log('Nu au fost gasita cea mai veche gestiune')}
