@@ -33,13 +33,13 @@ async function unloadIngs (ings, qtyProdus) {
                 gest.qty = round(gest.qty - cantFinal)
 
                 const oldestEntry = gest.entries.reduce((oldest, current) => {
-                  return new Date(current.date) < new Date(oldest.date) ? current : oldest;
+                  return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
                 });
 
                 if(oldestEntry){
                   if(oldestEntry.qty < cantFinal && gest.entries.length > 1){
                     const diference = cantFinal - oldestEntry.qty
-                    const entryToRemoveIndex = gest.entries.findIndex(g => new Date(q.date) === new Date(oldestEntry.date))
+                    const entryToRemoveIndex = gest.entries.findIndex(g => new Date(g.date).getTime() === new Date(oldestEntry.date).getTime())
                     if(entryToRemoveIndex !== -1){
                       gest.entries.splice(entryToRemoveIndex, 1)
                       const secondEntry = gest.entries.reduce((oldest, current) => {
@@ -49,20 +49,20 @@ async function unloadIngs (ings, qtyProdus) {
                       if(secondEntry){
                         if(secondEntry.qty < diference && gest.entries.length > 1){
                           const secondDif = diference - secondEntry.qty
-                          const secondEntryToRemoveIndex = gest.entries.findIndex(g => new Date(q.date) === new Date(secondEntry.date))
+                          const secondEntryToRemoveIndex = gest.entries.findIndex(g => new Date(g.date).getTime() === new Date(secondEntry.date).getTime())
                           if(secondEntryToRemoveIndex !== -1){
                             gest.entries.splice(secondEntryToRemoveIndex, 1)
                             const thirddEntry = gest.entries.reduce((oldest, current) => {
                               return new Date(current.date) < new Date(oldest.date) ? current : oldest;
                             });
 
-                            const eIndex =  gest.entries.findIndex(g => new Date(g.date) === new Date(thirddEntry.date))
+                            const eIndex =  gest.entries.findIndex(g => new Date(g.date).getTime() === new Date(thirddEntry.date).getTime())
                             if(eIndex !== -1){
                               gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - secondDif)
                             }
                         }  else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 2222')}
                       } else {
-                        const eIndex =  gest.entries.findIndex(g => new Date(g.date) === new Date(secondEntry.date))
+                        const eIndex =  gest.entries.findIndex(g => new Date(g.date).getTime() === new Date(secondEntry.date).getTime())
                         if(eIndex !== -1){
                           gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - diference)
                         }
@@ -70,7 +70,7 @@ async function unloadIngs (ings, qtyProdus) {
                     }  else {console.log('Nu au fost gasita a doua Intrare 2222')}
                     } else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 111111')}
                   } else {
-                    const eIndex =  gest.entries.findIndex(g => new Date(g.date) === new Date(oldestEntry.date))
+                    const eIndex =  gest.entries.findIndex(g => new Date(g.date.getTime()) === new Date(oldestEntry.date).getTime())
                     if(eIndex !== -1){
                       gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - cantFinal)
                       console.log('Gestiune gasita stoc modificat ',  gest.entries[eIndex].qty,  gest.entries[eIndex].date)
