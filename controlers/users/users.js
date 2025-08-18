@@ -419,7 +419,7 @@ module.exports.deleteWorkEntry = async (req, res, next) => {
     try{
         const {userId, day} = req.body
         const date = new Date(day)
-        console.log(date)
+        console.log(day)
         const newUser = await User.findOneAndUpdate(
             {_id: userId}, 
             {$pull: {'employee.workLog': {day: date}}}, 
