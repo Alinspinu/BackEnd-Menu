@@ -211,7 +211,7 @@ nirSchema.pre('save', async function (next){
     if(index !== -1){
       let ent = {
         qty: el.qty,
-        inQty: e.qty,
+        inQty: el.qty,
         date: new Date(),
         priceNoVat: el.price,
         priceWithVat: roundd(el.price * (1 + el.tva / 100)),
