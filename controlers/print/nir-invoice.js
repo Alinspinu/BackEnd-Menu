@@ -230,6 +230,7 @@ if(productsCount > 50){
   doc.fontSize(5)
   rowHeigth = 7
 }
+console.log(invoice)
 
 invoice.products.forEach((el, i) => {
   if(el.name.length > 30){
