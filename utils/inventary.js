@@ -202,7 +202,7 @@ function subtractFromEntries(entries, cantFinal) {
         i--;        // fix index
         console.log('Am sters intrarea')
       } else {
-        console.log('Este ultima intrare, am pus cantitate negativa')
+        console.log('Este ultima intrare, am pus cantitate negativa', entry.qty, ' ramas ', remaining)
         // last entry → allow negative
         entry.qty -= remaining;
         remaining = 0;
