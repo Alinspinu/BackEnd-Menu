@@ -265,7 +265,7 @@ doc.text(`${round(invoice.vatAmount)} Lei`, 480, 678, { width: 75, align: 'cente
 
 doc.fontSize(16)
 doc.text('TOTAL', 382, 745)
-doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 445, 745,)
+doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 445, 745,{ width: 150, align: 'left' })
 
 return doc
 
