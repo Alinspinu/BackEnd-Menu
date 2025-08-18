@@ -122,11 +122,11 @@ async function uploadIngs (ings, qtyProdus) {
                   gest.qty = round(gest.qty + cantFinal)
   
                   const oldestEntry = gest.entries.reduce((oldest, current) => {
-                    return new Date(current.date) < new Date(oldest.date) ? current : oldest;
+                    return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
                   });
   
                   if(oldestEntry){
-                      const eIndex =  gest.entries.findIndex(g => new Date(g.date) === new Date(oldestEntry.date))
+                      const eIndex =  gest.entries.findIndex(g => new Date(g.date).getTime() === new Date(oldestEntry.date).getTime())
                       if(eIndex !== -1){
                         gest.entries[eIndex].qty = round(gest.entries[eIndex].qty + cantFinal)
                       }
