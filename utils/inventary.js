@@ -56,13 +56,13 @@ async function unloadIngs (ings, qtyProdus) {
                               return new Date(current.date) < new Date(oldest.date) ? current : oldest;
                             });
 
-                            const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(thirddEntry.date))
+                            const eIndex =  gest.entries.findIndex(g => new Date(g.date) === new Date(thirddEntry.date))
                             if(eIndex !== -1){
                               gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - secondDif)
                             }
                         }  else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 2222')}
                       } else {
-                        const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(secondEntry.date))
+                        const eIndex =  gest.entries.findIndex(g => new Date(g.date) === new Date(secondEntry.date))
                         if(eIndex !== -1){
                           gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - diference)
                         }
@@ -70,7 +70,7 @@ async function unloadIngs (ings, qtyProdus) {
                     }  else {console.log('Nu au fost gasita a doua Intrare 2222')}
                     } else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 111111')}
                   } else {
-                    const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(oldestEntry.date))
+                    const eIndex =  gest.entries.findIndex(g => new Date(g.date) === new Date(oldestEntry.date))
                     if(eIndex !== -1){
                       gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - cantFinal)
                       console.log('Gestiune gasita stoc modificat ',  gest.entries[eIndex].qty,  gest.entries[eIndex].date)
@@ -126,7 +126,7 @@ async function uploadIngs (ings, qtyProdus) {
                   });
   
                   if(oldestEntry){
-                      const eIndex =  gest.entries.findIndex(g => new Date(q.date) === new Date(oldestEntry.date))
+                      const eIndex =  gest.entries.findIndex(g => new Date(g.date) === new Date(oldestEntry.date))
                       if(eIndex !== -1){
                         gest.entries[eIndex].qty = round(gest.entries[eIndex].qty + cantFinal)
                       }
