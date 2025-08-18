@@ -95,6 +95,10 @@ const nirSchema = new Schema({
         type: Number,
         default: 0
       },
+      invGestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+      },
       gestiune: {
         type: String,
         default: "magazie",
@@ -180,44 +184,55 @@ nirSchema.pre('save', async function (next){
       details: sup.name +  " Nr  Doc - " + doc.nrDoc
     };
 
-    const promises = doc.ingredients.map((el) => {
-      return Ingredient.findByIdAndUpdate(
-        el.ing,
-        {
-          $setOnInsert: {
-            um: el.um,
-            locatie: doc.locatie,
-          },
-          $set: {
-            price: el.price,
-            tva: el.tva,
-            tvaPrice: roundd(el.price * (1 + el.tva / 100)),
-            sellPrice: el.sellPrice
-          },
-          $inc: {qty: el.qty},
-          $push: {
-            uploadLog: {
-              date: doc.documentDate,
-              qty: el.qty,
-              operation: operation,
-              uploadPrice: roundd(el.price * (1 + el.tva / 100)),
-              logId: el.logId
-            }
-          }
-        },
-        { upsert: true, new: true }
-      ).exec();
+    const promises = doc.ingredients.map(async (el) => {
+
+    let ingredient = await Ingredient.findById(el.ing);
+    if(!ingredient) {
+      console.log('Ingredient nu a fost gasit pentru id:', el.ing);
+      return null; 
+    }
+    ingredient.price = el.price;
+    ingredient.tva = el.tva;
+    ingredient.tvaPrice = roundd(el.price * (1 + el.tva / 100));
+    ingredient.sellPrice = el.sellPrice;
+    ingredient.qty = (ingredient.qty || 0) + el.qty;
+  
+    ingredient.uploadLog.push({
+      date: doc.documentDate,
+      qty: el.qty,
+      operation: operation,
+      uploadPrice: roundd(el.price * (1 + el.tva / 100)),
+      logId: el.logId
     });
 
-    const results = await Promise.all(promises)
+    if(ingredient.invGestiune.length){
+    let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
+    const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
+    if(index !== -1){
+      const ent = {
+        qty: el.qty,
+        date: new Date(),
+        priceNoVat: el.price,
+        priceWithVat: roundd(el.price * (1 + el.tva / 100)),
+        suplierNmae: sup.name,
+        nir: doc._id
+      }
+      ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty + el.qty)
+      ingredient.invGestiune[index].entries.push(ent)
+      console.log('all good in the good ', ingredient.invGestiune[index])
+    } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
+  } else {console.log('ingredientul nu are gestiuni de inventar')}
 
+    return ingredient.save();
+  });
+    
+  const results = await Promise.all(promises);
+    
     next()
   } catch(error){
     next(error)
   }
 })
-
-
 
 
 
