@@ -4,6 +4,7 @@ const { parseStringPromise } = require('xml2js');
 
 
   function parseInvoiceData (invoiceData, id) {
+    console.log(invoiceData)
    const invoiceNumber = Array.isArray(invoiceData.Invoice["cbc:ID"]) 
     ? (invoiceData.Invoice["cbc:ID"][0]["_"] || invoiceData.Invoice["cbc:ID"][0]) 
     : invoiceData.Invoice["cbc:ID"] || 'Unknown';
