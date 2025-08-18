@@ -30,6 +30,10 @@ router.route('/sheet')
     .post(nirRoutes.addImpSheet)
     .delete(nirRoutes.deleteSheet)
 
+router.route('/nir-invoice')
+    .get(nirRoutes.printNirInvoice)
+    .post(nirRoutes.seaveNirInvoice)
+
 // router.route('/fix').get(nirRoutes.fixBuleala)
     
 
