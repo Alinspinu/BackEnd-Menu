@@ -103,6 +103,14 @@ const invIngSchema = new Schema({
   invGestiune: [
     {
       qty: Number,
+      inventary:[
+        {
+          date: Date,
+          faptic: Number,
+          scriptic: Number,
+          diference: Number
+        }
+      ],
       entries: [
         {
           qty: Number,

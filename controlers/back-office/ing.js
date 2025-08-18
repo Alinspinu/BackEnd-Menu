@@ -58,7 +58,7 @@ module.exports.saveIng = async(req, res, next) => {
         const ing = items.find(i => i._id === "683763760c7221a32654b6a8")
         const totalPages = Math.ceil(totalItems / limit);
 
-        // await updateItems(items)
+        await updateItems(items)
 
         res.status(200).json({
           items,
@@ -81,9 +81,11 @@ module.exports.saveIng = async(req, res, next) => {
           const gest = {
             gestiune: ing.gest._id,
             qty: ing.qty,
+            inventary: [],
             entries: [
               {
                 qty: ing.qty,
+                inQty: ing.qty,
                 date: new Date(),
                 priceWithVat: ing.tvaPrice,
                 priceNoVat: ing.price,
