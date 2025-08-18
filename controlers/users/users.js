@@ -424,7 +424,7 @@ module.exports.deleteWorkEntry = async (req, res, next) => {
             {_id: userId}, 
             {$pull: {'employee.workLog': {day: date}}}, 
             {new: true})
-            const log = newUser.employee.workLog.find(l => new Date(l.day).getTime() === date.getTime())
+            const log = newUser.employee.workLog.filter(l => new Date(l.day).getMonth() === 7)
             console.log(log)
         res.status(200).json(newUser)
     }catch(err){
