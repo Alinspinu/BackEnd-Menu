@@ -4,6 +4,13 @@ const { parseStringPromise } = require('xml2js');
 
 
   function parseInvoiceData (invoiceData, id) {
+
+    const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
+
+    const iban = suplierIban?.['cbc:ID'][0]
+    const bank = suplierIban?.['cbc:Name'][0]
+
+
    const invoiceNumber = Array.isArray(invoiceData.Invoice["cbc:ID"]) 
     ? (invoiceData.Invoice["cbc:ID"][0]["_"] || invoiceData.Invoice["cbc:ID"][0]) 
     : invoiceData.Invoice["cbc:ID"] || 'Unknown';
@@ -30,20 +37,18 @@ const { parseStringPromise } = require('xml2js');
                 Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"]) 
         ? (invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]["_"] || 
         invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]) 
-        : 'Unknown VAT Number'
+        : 'Unknown VAT Number',
+      iban: iban,
+      bank: bank
     };
 
     const customerParty = invoiceData.Invoice["cac:AccountingCustomerParty"]?.[0]?.["cac:Party"]?.[0];
 
-    const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
-
-    const iban = suplierIban?.['cbc:ID']
-    const bank = suplierIban?.['cbc:Name']
 
     console.log(suplierIban)
     console.log(iban)
     console.log(bank)
-
+    console.log(supplier)
     const customer = {
       name: customerParty?.["cac:PartyLegalEntity"]?.[0]?.["cbc:RegistrationName"]?.[0]
         ? getText(customerParty["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0])
