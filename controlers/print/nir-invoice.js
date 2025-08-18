@@ -46,24 +46,24 @@ doc.fontSize(10)
 doc.fontSize(12);
 doc.font('public/font/Montserrat-Bold.ttf')
 
-let rh = 2
-if(invoice.client.name.split('').length > 22) rh = 12
-if(invoice.client.name.split('').length > 44) rh = 24
-// header date client
-doc.fontSize(10);
-// doc.font('Courier-Bold')
-doc.text('Client', 395 - 40, 50, { width: 35, align: "left" })
-doc.text(`C.I.F.`, 395 - 40, 62 +rh, { width: 30, align: "left" });
+// let rh = 2
+// if(invoice.client.name.split('').length > 22) rh = 12
+// if(invoice.client.name.split('').length > 44) rh = 24
+// // header date client
+// doc.fontSize(10);
+// // doc.font('Courier-Bold')
+// doc.text('Client', 395 - 40, 50, { width: 35, align: "left" })
+// doc.text(`C.I.F.`, 395 - 40, 62 +rh, { width: 30, align: "left" });
 
 
 
 
-//date client
-doc.fontSize(10);
-// doc.font('public/font/Montserrat-Bold.ttf')
-doc.text(`${invoice.client.name}`, 485 - 60, 50, { width: 150, align: "left" });
-doc.font("public/font/Montserrat-Regular.ttf");
-doc.text(`${invoice.client.vatNumber}`, 485  - 40, 62+rh , { width: 145, align: "left" });
+// //date client
+// doc.fontSize(10);
+// // doc.font('public/font/Montserrat-Bold.ttf')
+// doc.text(`${invoice.client.name}`, 485 - 60, 50, { width: 150, align: "left" });
+// doc.font("public/font/Montserrat-Regular.ttf");
+// doc.text(`${invoice.client.vatNumber}`, 485  - 40, 62+rh , { width: 145, align: "left" });
 
 
 //Titlu factura
