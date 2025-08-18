@@ -35,54 +35,6 @@ async function unloadIngs (ings, qtyProdus) {
                 gest.entries = subtractFromEntries(gest.entries, cantFinal);
 
 
-                // const oldestEntry = gest.entries.reduce((oldest, current) => {
-                //   return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
-                // });
-
-                // if(oldestEntry){
-                //   if(oldestEntry.qty < cantFinal && gest.entries.length > 1){
-                //     console.log('Cantitatea de produs este prea mică in această intrare, trec la urmatoarea ',oldestEntry.qty, ' an nevoie de ', cantFinal )
-                //     const diference = cantFinal - oldestEntry.qty
-                //     const entryToRemoveIndex = gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
-                //     if(entryToRemoveIndex !== -1){
-                //       gest.entries.splice(entryToRemoveIndex, 1)
-                //       const secondEntry = gest.entries.reduce((oldest, current) => {
-                //         return new Date(current.date) < new Date(oldest.date) ? current : oldest;
-                //       });
-
-                //       if(secondEntry){
-                //         if(secondEntry.qty < diference && gest.entries.length > 1){
-                //           console.log('Cantitatea de produs este prea mică in această intrare, trec la urmatoarea ',secondEntry.qty, ' an nevoie de ', diference )
-                //           const secondDif = diference - secondEntry.qty
-                //           const secondEntryToRemoveIndex = gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
-                //           if(secondEntryToRemoveIndex !== -1){
-                //             gest.entries.splice(secondEntryToRemoveIndex, 1)
-                //             const thirddEntry = gest.entries.reduce((oldest, current) => {
-                //               return new Date(current.date) < new Date(oldest.date) ? current : oldest;
-                //             });
-
-                //             const eIndex =  gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
-                //             if(eIndex !== -1){
-                //               gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - secondDif)
-                //             }
-                //         }  else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 2222')}
-                //       } else {
-                //         const eIndex =  gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
-                //         if(eIndex !== -1){
-                //           gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - diference)
-                //         }
-                //       }
-                //     }  else {console.log('Nu au fost gasita a doua Intrare 2222')}
-                //     } else {console.log('Nu au fost gasita intrarea ce trebuie stearsa in intrari 111111')}
-                //   } else {
-                //     const eIndex =  gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
-                //     if(eIndex !== -1){
-                //       gest.entries[eIndex].qty = round(gest.entries[eIndex].qty - cantFinal)
-                //       console.log('Gestiune gasita stoc modificat ',  gest.entries[eIndex].qty,  gest.entries[eIndex].date)
-                //     }  else {console.log('Nu au fost gasita intrarea ce trebuie modificata ', gest.entries, oldestEntry)}
-                //   }
-                // }  else {console.log('Nu au fost gasita cea mai veche gestiune')}
-
                 ingredientInv.invGestiune[gestIndex] = gest
               }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ingredientInv.gest)}
             } else {console.log('Nu au fost gasite gestiuni de inventar')}
@@ -193,16 +145,16 @@ function subtractFromEntries(entries, cantFinal) {
       remaining = 0;
     } else {
       // not enough in this entry — consume it completely
-      console.log('Nu am gasit destula cantitate ', entry.qty, remaining)
+      console.log('Nu am gasit destula cantitate - ', entry.qty, ' Cantitate vanduta  -  ',  remaining)
       remaining -= entry.qty;
 
       if (!isLast) {
         // delete the spent entry
         entries.splice(i, 1);
         i--;        // fix index
-        console.log('Am sters intrarea')
+        console.log('Am sters intrarea cu cantitate insuficienta ', entry.qty, 'cantitate ramasa pentru urmatoarea intrare', remaining )
       } else {
-        console.log('Este ultima intrare, am pus cantitate negativa', entry.qty, ' ramas ', remaining)
+        console.log('Este ultima intrare, am pus cantitate negativa.  Cantitate intrare -', entry.qty, ' Cantitate vanduta  - ', remaining + entry.aqty)
         // last entry → allow negative
         entry.qty -= (remaining + entry.qty);
         remaining = 0;

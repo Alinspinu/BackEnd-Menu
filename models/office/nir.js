@@ -222,8 +222,6 @@ nirSchema.pre('save', async function (next){
         console.log('hit - 0')
         ent.qty = roundd(ingredient.invGestiune[index].qty + ent.qty)
         ingredient.invGestiune[index].entries = []
-        console.log('entry quantity ', ent.qty)
-        console.log('gest entries ', ingredient.invGestiune[index].entries )
       }
 
      
@@ -245,7 +243,7 @@ nirSchema.pre('save', async function (next){
 
 
 
-      console.log('all good in the good ', ingredient.invGestiune[index])
+      console.log('all good in the good  cantitate gestiune', ingredient.invGestiune[index].qty)
     } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
   } else {console.log('ingredientul nu are gestiuni de inventar')}
 
