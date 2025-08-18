@@ -34,6 +34,10 @@ const nirInvoiceSchema = new Schema({
     taxExclusiveAmount: Number,
     taxInclusiveAmount: Number,
     vatAmount: Number,
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    }
 })
 
 

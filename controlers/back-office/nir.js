@@ -258,9 +258,10 @@ module.exports.addEFacturaID = async (req, res, next) => {
 
 module.exports.seaveNirInvoice = async (req, res) => {
   try{
-    const {nirInvoice} = req.body
+    const {nirInvoice, loc} = req.body
 
     const inv = new NirInvoice(nirInvoice)
+    inv.locatie = loc
     const savedInv = await inv.save()
     res.status(200).json(savedInv)
   } catch(error){
@@ -275,8 +276,7 @@ module.exports.printNirInvoice = async (req, res) => {
 
     const {id} = req.query
 
-    const nirInvoice = await NirInvoice.findById(id)
-    console.log(nirInvoice)
+    const nirInvoice = await NirInvoice.findById(id).populate({path: 'locatie'})
     const doc = createNirInvoice(nirInvoice)
 
     doc.end();
