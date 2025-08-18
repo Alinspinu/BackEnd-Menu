@@ -231,11 +231,8 @@ if(productsCount > 50){
 }
 
 console.log(invoice.products)
-
+doc.fontSize(8)
 invoice.products.forEach((el, i) => {
-  if(el.name.length > 30){
-    el.name = el.name.slice(0, 40)
-  }
     let newValue = y + heghtValue
     doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
     doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
