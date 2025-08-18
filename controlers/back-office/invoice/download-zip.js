@@ -32,7 +32,6 @@ const mode = 'prod'
           if (!entry.entryName.includes('semnatura')) {
           const xmlData = entry.getData().toString('utf8'); 
           try {
-            console.log(xmlData)
               const result = await parseXml(xmlData); 
               invoice = parseInvoiceData(result, id);
               break; 

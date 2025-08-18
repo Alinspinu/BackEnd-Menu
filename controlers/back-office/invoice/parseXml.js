@@ -10,7 +10,6 @@ const { parseStringPromise } = require('xml2js');
     const iban = suplierIban?.['cbc:ID'][0]
     const bank = suplierIban?.['cbc:Name'][0]
 
-
    const invoiceNumber = Array.isArray(invoiceData.Invoice["cbc:ID"]) 
     ? (invoiceData.Invoice["cbc:ID"][0]["_"] || invoiceData.Invoice["cbc:ID"][0]) 
     : invoiceData.Invoice["cbc:ID"] || 'Unknown';
@@ -44,11 +43,6 @@ const { parseStringPromise } = require('xml2js');
 
     const customerParty = invoiceData.Invoice["cac:AccountingCustomerParty"]?.[0]?.["cac:Party"]?.[0];
 
-
-    console.log(suplierIban)
-    console.log(iban)
-    console.log(bank)
-    console.log(supplier)
     const customer = {
       name: customerParty?.["cac:PartyLegalEntity"]?.[0]?.["cbc:RegistrationName"]?.[0]
         ? getText(customerParty["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0])
