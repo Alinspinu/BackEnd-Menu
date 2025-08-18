@@ -35,9 +35,14 @@ const { parseStringPromise } = require('xml2js');
 
     const customerParty = invoiceData.Invoice["cac:AccountingCustomerParty"]?.[0]?.["cac:Party"]?.[0];
 
-    const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]
+    const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
+
+    const iban = suplierIban?.['cbc:ID']
+    const bank = suplierIban?.['cbc:Name']
 
     console.log(suplierIban)
+    console.log(iban)
+    console.log(bank)
 
     const customer = {
       name: customerParty?.["cac:PartyLegalEntity"]?.[0]?.["cbc:RegistrationName"]?.[0]
