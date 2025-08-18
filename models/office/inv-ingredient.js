@@ -118,6 +118,7 @@ const invIngSchema = new Schema({
             type: Number,
             required: true
           },
+          inQty: Number,
           suplierName: String,
           nir: {
             type: Schema.Types.ObjectId,

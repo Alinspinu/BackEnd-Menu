@@ -209,15 +209,20 @@ nirSchema.pre('save', async function (next){
     let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
     const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
     if(index !== -1){
-      const ent = {
+      let ent = {
         qty: el.qty,
+        inQty: e.qty,
         date: new Date(),
         priceNoVat: el.price,
         priceWithVat: roundd(el.price * (1 + el.tva / 100)),
         suplierNmae: sup.name,
         nir: doc._id
       }
-      ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty + el.qty)
+      if(ingredient.gestiune[index].qty <=0 ) {
+        ent.qty = roundd(ingredient.gestiune[index].qty + ent.qty)
+        ingredient.invGestiune[index].entries = []
+      }
+      ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty + ent.qty)
       ingredient.invGestiune[index].entries.push(ent)
       console.log('all good in the good ', ingredient.invGestiune[index])
     } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
@@ -239,23 +244,42 @@ nirSchema.pre('save', async function (next){
 nirSchema.pre('deleteOne', { document: true, query: false }, async function(next){
   try{
     const doc = this
-    const promises = doc.ingredients.map(el => {
-      return Ingredient.findByIdAndUpdate(
-        el.ing,
-        {
-          $inc: {qty: -el.qty},
-          $pull: {
-            uploadLog: {
-              logId: el.logId,
-            }
-          }
-        },
-        {new: true}
-      ).exec()
-    })
 
-    const results = await Promise.all(promises)
+    const promises = doc.ingredients.map(async el => {
+      const ingredient = await Ingredient.findById(el.ing);
+      if (!ingredient) {
+        console.log('Ingredient not found:', el.ing);
+        return null;
+      }
+    
+      // decrement qty
+      ingredient.qty = (ingredient.qty || 0) - el.qty;
+    
+      // remove from uploadLog by logId
+      ingredient.uploadLog = ingredient.uploadLog.filter(log => {
+        return log.logId.toString() !== el.logId.toString();
+      });
 
+
+      if(ingredient.invGestiune.length){
+        let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
+        const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
+        if(index !== -1){
+          ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty - el.qty)
+          ingredient.invGestiune[index].entries = ingredient.invGestiune[index].entries.filter(log => {
+            return log.nir.toString() !== doc._id.toString();
+          });
+    
+          console.log('all good in the good ', ingredient.invGestiune[index])
+        } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
+      } else {console.log('ingredientul nu are gestiuni de inventar')}
+
+    
+      return ingredient.save();
+    });
+    
+    const results = await Promise.all(promises);
+    
     const suplier = await Suplier.findById(doc.suplier);
 
       if (suplier) {
