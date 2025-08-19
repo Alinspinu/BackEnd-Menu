@@ -242,14 +242,36 @@ module.exports.getNirs = async(req, res, next) => {
   try{
     const nirs = await Nir.find({locatie: loc, salePoint: point})
           .sort({ createdAt: -1 })
-          .limit(100)
           .populate({path: 'suplier'})
-          
-    res.status(200).json(nirs)
+          .populate({path: 'ingredients.ing', select: 'gest'})
+
+          await modifyProducts(nirs)
+          console.log('Au fost actualizate ', nirs.length, ' de NIR-URI ')
+    res.status(200).json(nirs[0])
   } catch(err) {
     console.log(err)
     res.status(500).json({messahe: err.message})
   }
+}
+
+
+function modifyProducts(products) {
+  const productPromises = products.map(p => {
+
+    p.ingredients.forEach(i => {
+      i.invGestiune = i.ing.gest
+      console.log('Gestiune modificata pe ingredient din nir', i.name);
+    });
+
+
+
+
+      return p.save().then(savedP => {
+        console.log(savedP.index, 'a fost modificat cu success!');
+      });
+    });
+
+  return Promise.all(productPromises);
 }
 
 
