@@ -32,8 +32,11 @@ async function unloadIngs (ings, qtyProdus) {
                 const gest = ingredientInv.invGestiune[gestIndex];
                 console.log('Procesare.... ', ingredientInv.name)
                 gest.qty = round(gest.qty - cantFinal);
-                console.log(gest)
-                gest.entries = subtractFromEntries(gest.entries, cantFinal);
+                if(gest.entries.length){
+                  gest.entries = subtractFromEntries(gest.entries, cantFinal);
+                } else {
+                  console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost scazuta din gestiune!, stoc final ', gest.qty)
+                }
 
 
                 ingredientInv.invGestiune[gestIndex] = gest
@@ -91,7 +94,7 @@ async function uploadIngs (ings, qtyProdus) {
 
                         console.log(ingredientInv.name, 'a fost încarcat cu +',  cantFinal, ' / stoc final ', gest.entries[eIndex].qty )
                       }
-                  }  else {console.log('Nu au fost gasita cea mai veche gestiune')}
+                  }  else { console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost incarcata doar in principal!, stoc final ', gest.qty)}
                   ingredientInv.invGestiune[gestIndex] = gest
                 }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
               } else {console.log('Nu au fost gasite gestiuni de inventar')}
