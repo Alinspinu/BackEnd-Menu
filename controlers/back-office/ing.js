@@ -54,6 +54,7 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'salePoint', select: 'name'})
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
+          .populate({path: 'eFactura.gestiune', select: 'name'})
         const totalItems = 1500
         const ing = items.find(i => i._id === "683763760c7221a32654b6a8")
         const totalPages = Math.ceil(totalItems / limit);
@@ -225,6 +226,7 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'salePoint', select: 'name'})
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
+          .populate({path: 'eFactura.gestiune', select: 'name'})
         res.status(200).json({message: `Ingredientul ${ing.name} a fost actualizat cu succes!`, ing: ing})
       } catch(err){
         console.log(err)
@@ -285,6 +287,7 @@ module.exports.saveManualInventary = async (req, res, next) => {
         .populate({path: 'salePoint', select: 'name'})
         .populate({path: 'gest', select: 'name'})
         .populate({path: 'dept', select: 'name'})
+        .populate({path: 'eFactura.gestiune', select: 'name'})
     res.status(200).json({message: 'Inventarul a fost actualizat', ing: dbIng})
   } catch(err){
     console.log(err)
