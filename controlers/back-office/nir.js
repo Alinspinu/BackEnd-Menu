@@ -8,6 +8,8 @@ const Ingredient = require('../../models/office/inv-ingredient')
 
 const {createNirInvoice} = require('../print/nir-invoice')
 
+const {unloadIngs, uploadIngs} = require('../../utils/inventary')
+
 
 
 
@@ -22,6 +24,7 @@ module.exports.addImpSheet = async (req, res) => {
             .populate({path: 'ings.gestiune', select: 'name'})
             .populate({path: 'user', select: 'employee.fullName'})
       if(dbSheet){
+        await unloadIngs(dbSheet.ings, 1)
         res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: dbSheet})
       } else{
         res.status(200).json({message: 'Fișa nu a fost găsită în baza de date dupa salvare!'})
@@ -35,7 +38,11 @@ module.exports.addImpSheet = async (req, res) => {
 module.exports.deleteSheet = async (req, res) => {
   try{
     const {id} = req.query;
-     await ImpSheet.deleteOne({_id: id}) 
+    const dbSheet = await ImpSheet.findById(id)
+    if(dbSheet){
+      await uploadIngs(dbSheet.ings, 1)
+      await ImpSheet.deleteOne({_id: id}) 
+    }
     res.status(200).json({message: 'Fișa a fost ștearsă cu success!'})
   } catch(error) {
     console.log(error)
@@ -52,13 +59,6 @@ module.exports.getSheets = async (req, res) => {
         .populate({path: 'ings.gestiune', select: 'name'})
         .populate({path: 'user', select: 'employee.fullName'})
 
-        // modifyProducts(sheets)
-
-        // for(let s of sheets){
-        //   await fixBuleala(s)
-        //   console.log('Buleala fixed !!! maybe :)))')
-        // }
-
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
           const bDate = new Date(b.date).getTime()
@@ -70,23 +70,6 @@ module.exports.getSheets = async (req, res) => {
     }
 }
 
-
-async function fixBuleala(sheet) {
-      const ingsPromises = sheet.ings.flatMap(ing => {
-              if(ing.ing.productIngredient){
-              return ing.ing.ings.map(ingg =>
-                  Ingredient.findByIdAndUpdate(
-                  ingg.ing,
-                  { $inc: { qty: ingg.qty ? ingg.qty : 0 } },
-                  { new: true }
-                  ).exec()
-              );
-              } else {
-              return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: ing.qty ? ing.qty : 0}}, {new: true }).exec()
-              }
-          })
-            await Promise.all(ingsPromises)
-}
 
 function modifyProducts(products) {
   const productPromises = products.map(p => {
