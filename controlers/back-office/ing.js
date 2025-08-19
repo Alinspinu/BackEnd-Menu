@@ -60,7 +60,10 @@ module.exports.saveIng = async(req, res, next) => {
 
         // await updateItems(items)
         // await updateGesName(items)
+        const pIng = items.filter(i => i.productIngredient)
 
+        modifyProducts(pIng)
+        
         res.status(200).json({
           items,
           totalPages,
@@ -71,6 +74,25 @@ module.exports.saveIng = async(req, res, next) => {
         res.status(500).json({message: err})
       }
     };
+
+
+
+      function modifyProducts(products) {
+
+        const productPromises = products.map(p => {
+      
+          // Then work on main product ingredients & toppings
+          p.ings.forEach(i => {
+            i.gestiune = i.ing.invGestiune[0].gestiune;
+            console.log('Gestiune modificata pe ingredientele de la Ingredientul comus', i.ing.invGestiune[0].name);
+          });
+            return p.save().then(savedP => {
+              console.log(savedP.name, 'a fost modificat cu success!');
+            });
+          });
+      
+        return Promise.all(productPromises);
+      }
 
 
 
