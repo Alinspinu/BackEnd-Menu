@@ -221,9 +221,10 @@ module.exports.getNirs = async(req, res, next) => {
   try{
     const nirs = await Nir.find({locatie: loc, salePoint: point})
           .sort({ createdAt: -1 })
+          .limit(500)
           .populate({path: 'suplier'})
           .populate({path: 'ingredients.ing', select: 'gest'})
-          // await modifyProducts(nirs)
+          await modifyProducts(nirs)
           console.log('Au fost actualizate ', nirs.length, ' de NIR-URI ')
     res.status(200).json(nirs)
   } catch(err) {
@@ -244,16 +245,80 @@ function modifyProducts(products) {
         }
       }
     });
-
-
-
-
       return p.save().then(savedP => {
         console.log(savedP.index, 'a fost modificat cu success!');
       });
     });
 
   return Promise.all(productPromises);
+}
+
+
+
+
+async function fixBuleala(nirs) {
+  for(let doc of nirs){
+
+  
+  const promises = doc.ingredients.map(async el => {
+    const ingredient = await Ingredient.findById(el.ing);
+    if (!ingredient) {
+      console.log('Ingredient not found:', el.ing);
+      return null;
+    }
+  
+    // decrement qty
+    ingredient.qty = (ingredient.qty || 0) - el.qty;
+  
+    // remove from uploadLog by logId
+    ingredient.uploadLog = ingredient.uploadLog.filter(log => {
+      return log.logId.toString() !== el.logId.toString();
+    });
+
+
+    if(ingredient.invGestiune.length){
+      let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
+      const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
+      if(index !== -1){
+        ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty - el.qty)
+        ingredient.invGestiune[index].entries = ingredient.invGestiune[index].entries.filter(log => {
+          return log.nir.toString() !== doc._id.toString();
+        });
+  
+        console.log('all good in the good ', ingredient.invGestiune[index])
+      } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
+    } else {console.log('ingredientul nu are gestiuni de inventar')}
+
+  
+    return ingredient.save();
+  });
+  
+  const results = await Promise.all(promises);
+  
+  const suplier = await Suplier.findById(doc.suplier);
+
+    if (suplier) {
+      const sortedRecords = suplier.records.sort((a, b) => {
+        const aDate = new Date(a.date).getTime() 
+        const bDate = new Date(b.date).getTime()
+        return aDate - bDate
+    })
+        const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
+        if (recordIndex !== -1) {
+            sortedRecords.splice(recordIndex, 1);
+            for (let i = recordIndex; i < sortedRecords.length; i++) {
+                sortedRecords[i].sold -= doc.totalDoc;
+            }
+            suplier.sold = suplier.sold - doc.totalDoc
+            suplier.records = sortedRecords
+            await suplier.save();
+            console.log('furnizorul a fos actualizat', suplier.name)
+        } else {
+          console.error('ERROR! Record not found! Suplier unchanged!')
+        }
+    }
+
+  }
 }
 
 
