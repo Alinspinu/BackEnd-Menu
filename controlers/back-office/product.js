@@ -85,32 +85,46 @@ module.exports.updateProducts = async (req, res) => {
       const products = await Product.find({locatie: loc, salePoint: point}).populate([
         {path: 'category', select: 'name'}, 
         {
-            path: 'subProducts', populate: {
-                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty invGestiune', 
-                    populate: {
-                        path: 'ings.ing', select: 'name tvaPrice qty um' 
-                    }
-            }
+            path: 'subProducts', 
+            populate: [
+                {
+                    path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
+                        populate: {
+                            path: 'ings.ing', select: 'name tvaPrice qty um' 
+                        }
+                },
+                {
+                     path: 'ings.gestiune', select: 'name'
+                }
+            ]
         },
         {
-            path: 'toppings', select: 'qty name ing price um', 
-            populate: {
-                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty invGestiune', 
+            path: 'toppings', select: 'qty name ing price um gestiune', 
+            populate: [
+                {
+                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
                 populate: {
                     path: 'ings', select: 'qty ing', 
                     populate: {
                         path: 'ing', select: 'name tvaPrice qty um'
                     }
                 }
-            }
+                },
+                {
+                    path: 'gestiune', select: 'name'
+                }
+        ]
         },
         {
-            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty invGestiune', 
+            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
                 populate: {
                     path: 'ings.ing', select: 'name tvaPrice qty um'
                 }
         },
-    ])
+        {
+            path: 'ings.gestiune', select: 'name'
+        }
+    ]).lean()
 
     //    modifyProducts(products)
 
@@ -124,9 +138,7 @@ module.exports.updateProducts = async (req, res) => {
 
   function modifyProducts(products) {
     const productPromises = products.map(p => {
-      // Work on subProducts first
-  
-      // Then work on main product ingredients & toppings
+ 
       p.ings.forEach(i => {
         i.gestiune = i.ing.invGestiune[0].gestiune;
         console.log('Gestiune modificata pe ingredientele de la PRODUS', i.ing.invGestiune[0].name);
