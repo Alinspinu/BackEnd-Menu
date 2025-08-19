@@ -60,10 +60,10 @@ module.exports.saveIng = async(req, res, next) => {
 
         // await updateItems(items)
         // await updateGesName(items)
-        const pIng = items.filter(i => i.productIngredient)
+        // const pIng = items.filter(i => i.productIngredient)
 
-        modifyProducts(pIng)
-        
+        // modifyProducts(pIng)
+
         res.status(200).json({
           items,
           totalPages,
