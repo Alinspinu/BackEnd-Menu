@@ -145,18 +145,20 @@ module.exports.saveIng = async(req, res, next) => {
       const promises = [];
     
       for (const ing of items) {
-            for(let en of ing.eFactura){
-              en.gestiune = ing.gest
-              console.log('Intrare modificata cu success!! ', en.gestiune )
-            }
-          
-    
-          // push the promise to an array instead of awaiting here
-          promises.push(
-            ing.save().then((editedIng) => {
-              console.log('Ingredient editat cu success!', editedIng.name);
-            })
-          );
+        if(ing.eFactura.length){
+          for(let en of ing.eFactura){
+            en.gestiune = ing.gest
+            console.log('Intrare modificata cu success!! ', en.gestiune )
+          }
+        
+  
+        // push the promise to an array instead of awaiting here
+        promises.push(
+          ing.save().then((editedIng) => {
+            console.log('Ingredient editat cu success!', editedIng.name);
+          })
+        );
+        }
         
       }
     
