@@ -35,7 +35,7 @@ async function unloadIngs (ings, qtyProdus) {
                 if(gest.entries.length){
                   gest.entries = subtractFromEntries(gest.entries, cantFinal);
                 } else {
-                  console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost scazuta din gestiune!, stoc final ', gest.qty)
+                  console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost scazuta din principal!, stoc final ', gest.qty)
                 }
 
 
