@@ -119,8 +119,17 @@ module.exports.updateProducts = async (req, res) => {
             select: 'name tvaPrice um ings productIngredient gestiune qty',
             populate: {
                 path: 'ings',
-                select: 'qty ing',
-                populate: innerIngPopulate
+                select: 'qty ing gestiune',
+                populate: [
+                    {
+                        path: 'ing',
+                        select: 'name tvaPrice qty um'
+                    },
+                    {
+                        path: 'gestiune',
+                        select: 'name'
+                    }
+                ]
             }
             },
             { path: 'gestiune', select: 'name' }
