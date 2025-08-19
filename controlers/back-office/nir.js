@@ -259,7 +259,7 @@ function modifyProducts(products) {
 
     p.ingredients.forEach(i => {
       if(!i.invGestiune){
-        if(i.ing.gest){
+        if(i.ing && i.ing.gest){
           i.invGestiune = i.ing.gest
           console.log('Gestiune modificata pe ingredient din nir', i.name);
         }
