@@ -111,8 +111,8 @@ module.exports.updateProducts = async (req, res) => {
                 }
         },
     ])
-    
-       modifyProducts(products)
+
+    //    modifyProducts(products)
 
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
