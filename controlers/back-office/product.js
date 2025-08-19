@@ -86,7 +86,7 @@ module.exports.updateProducts = async (req, res) => {
         {path: 'category', select: 'name'}, 
         {
             path: 'subProducts', populate: {
-                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
+                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty invGestiune', 
                     populate: {
                         path: 'ings.ing', select: 'name tvaPrice qty um' 
                     }
@@ -95,7 +95,7 @@ module.exports.updateProducts = async (req, res) => {
         {
             path: 'toppings', select: 'qty name ing price um', 
             populate: {
-                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
+                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty invGestiune', 
                 populate: {
                     path: 'ings', select: 'qty ing', 
                     populate: {
@@ -105,12 +105,14 @@ module.exports.updateProducts = async (req, res) => {
             }
         },
         {
-            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
+            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty invGestiune', 
                 populate: {
                     path: 'ings.ing', select: 'name tvaPrice qty um'
                 }
         },
     ])
+      await modifyProducts(products)
+      
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -118,6 +120,74 @@ module.exports.updateProducts = async (req, res) => {
       res.status(500).json({message: error})
     }
   }
+
+  function modifyProducts(products) {
+    const productPromises = products.map(p => {
+      // Work on subProducts first
+      const subProductPromises = (p.subProducts || []).map(s => {
+        // Modify ingredients on subproduct
+        s.ings.forEach(i => {
+          i.gestiune = i.ing.invGestiune[0].gestiune;
+          console.log('Gestiune modificata pe ingredientele de la sub produs', i.ing.invGestiune[0].name);
+        });
+  
+        // return the promise for s.save()
+        return s.save().then(savedS => {
+          console.log(savedS.name, 'a fost modificat cu success!');
+        });
+      });
+  
+      // Then work on main product ingredients & toppings
+      p.ings.forEach(i => {
+        i.gestiune = i.ing.invGestiune[0].gestiune;
+        console.log('Gestiune modificata pe ingredientele de la PRODUS', i.ing.invGestiune[0].name);
+      });
+  
+      p.toppings.forEach(t => {
+        t.gestiune = t.ing.invGestiune[0].gestiune;
+        console.log('Gestiune modificata pe Toppingurile de la PRODUS', t.ing.invGestiune[0].name);
+      });
+  
+      // Return a promise that waits for all sub-products to be saved THEN p.save()
+      return Promise.all(subProductPromises).then(() => {
+        return p.save().then(savedP => {
+          console.log(savedP.name, 'a fost modificat cu success!');
+        });
+      });
+    });
+  
+    return Promise.all(productPromises);
+  }
+  
+
+
+//   async function modifyProducts(products){
+
+//         for(let p of products){
+//             if(p.subProducts.length){
+//                 for(let s of p.subProducts){
+//                     for(let i of s.ings){
+//                         i.gestiune = i.ing.invGestiune[0].gestiune
+//                         console.log('Gestiune modificata pe ingredientele de la sub produs ', i.ing.invGestiune[0].name)
+//                     }
+//                     const savedS = await s.save()
+//                     console.log(savedS.name, 'a fost modificat cu success!')
+//                 }
+//             } 
+//             for(let i of p.ings){
+//                 i.gestiune = i.ing.invGestiune[0].gestiune
+//                 console.log('Gestiune modificata pe ingredientele de la PRODUS ', i.ing.invGestiune[0].name)
+//             }
+//             for(let t of p.toppings){
+//                 t.gestiune = t.ing.invGestiune[0].gestiune
+//                 console.log('Gestiune modificata pe Toppingurile de la PRODUS ', i.ing.invGestiune[0].name)
+//             }
+
+//             const savedP = await p.save()
+//             console.log(savedP.name, 'a fost modificat cu success!')
+//         }
+
+//   }
 
 
   module.exports.getProduct = async (req, res, next) => {

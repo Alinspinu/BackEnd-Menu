@@ -64,6 +64,10 @@ const subProductSchema = new Schema({
           qty: {
             type: Number,
           },
+          gestiune: {
+            type: Schema.Types.ObjectId,
+            ref: 'Gestiune'
+          },
           ing: {
             type: Schema.Types.ObjectId,
             ref: "IngredientInv"
