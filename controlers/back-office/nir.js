@@ -221,10 +221,10 @@ module.exports.getNirs = async(req, res, next) => {
   try{
     const nirs = await Nir.find({locatie: loc, salePoint: point})
           .sort({ createdAt: -1 })
-          .limit(500)
+          .limit(100)
           .populate({path: 'suplier'})
-          .populate({path: 'ingredients.ing', select: 'gest'})
-          await modifyProducts(nirs)
+
+          .populate({path: 'ingredients.invGestiune', select: 'name'})
           console.log('Au fost actualizate ', nirs.length, ' de NIR-URI ')
     res.status(200).json(nirs)
   } catch(err) {
@@ -234,92 +234,92 @@ module.exports.getNirs = async(req, res, next) => {
 }
 
 
-function modifyProducts(products) {
-  const productPromises = products.map(p => {
+// function modifyProducts(products) {
+//   const productPromises = products.map(p => {
 
-    p.ingredients.forEach(i => {
-      if(!i.invGestiune){
-        if(i.ing && i.ing.gest){
-          i.invGestiune = i.ing.gest
-          console.log('Gestiune modificata pe ingredient din nir', i.name);
-        }
-      }
-    });
-      return p.save().then(savedP => {
-        console.log(savedP.index, 'a fost modificat cu success!');
-      });
-    });
+//     p.ingredients.forEach(i => {
+//       if(!i.invGestiune){
+//         if(i.ing && i.ing.gest){
+//           i.invGestiune = i.ing.gest
+//           console.log('Gestiune modificata pe ingredient din nir', i.name);
+//         }
+//       }
+//     });
+//       return p.save().then(savedP => {
+//         console.log(savedP.index, 'a fost modificat cu success!');
+//       });
+//     });
 
-  return Promise.all(productPromises);
-}
-
-
+//   return Promise.all(productPromises);
+// }
 
 
-async function fixBuleala(nirs) {
-  for(let doc of nirs){
-
-  
-  const promises = doc.ingredients.map(async el => {
-    const ingredient = await Ingredient.findById(el.ing);
-    if (!ingredient) {
-      console.log('Ingredient not found:', el.ing);
-      return null;
-    }
-  
-    // decrement qty
-    ingredient.qty = (ingredient.qty || 0) - el.qty;
-  
-    // remove from uploadLog by logId
-    ingredient.uploadLog = ingredient.uploadLog.filter(log => {
-      return log.logId.toString() !== el.logId.toString();
-    });
 
 
-    if(ingredient.invGestiune.length){
-      let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
-      const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
-      if(index !== -1){
-        ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty - el.qty)
-        ingredient.invGestiune[index].entries = ingredient.invGestiune[index].entries.filter(log => {
-          return log.nir.toString() !== doc._id.toString();
-        });
-  
-        console.log('all good in the good ', ingredient.invGestiune[index])
-      } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
-    } else {console.log('ingredientul nu are gestiuni de inventar')}
+// async function fixBuleala(nirs) {
+//   for(let doc of nirs){
 
   
-    return ingredient.save();
-  });
+//   const promises = doc.ingredients.map(async el => {
+//     const ingredient = await Ingredient.findById(el.ing);
+//     if (!ingredient) {
+//       console.log('Ingredient not found:', el.ing);
+//       return null;
+//     }
   
-  const results = await Promise.all(promises);
+//     // decrement qty
+//     ingredient.qty = (ingredient.qty || 0) - el.qty;
   
-  const suplier = await Suplier.findById(doc.suplier);
+//     // remove from uploadLog by logId
+//     ingredient.uploadLog = ingredient.uploadLog.filter(log => {
+//       return log.logId.toString() !== el.logId.toString();
+//     });
 
-    if (suplier) {
-      const sortedRecords = suplier.records.sort((a, b) => {
-        const aDate = new Date(a.date).getTime() 
-        const bDate = new Date(b.date).getTime()
-        return aDate - bDate
-    })
-        const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
-        if (recordIndex !== -1) {
-            sortedRecords.splice(recordIndex, 1);
-            for (let i = recordIndex; i < sortedRecords.length; i++) {
-                sortedRecords[i].sold -= doc.totalDoc;
-            }
-            suplier.sold = suplier.sold - doc.totalDoc
-            suplier.records = sortedRecords
-            await suplier.save();
-            console.log('furnizorul a fos actualizat', suplier.name)
-        } else {
-          console.error('ERROR! Record not found! Suplier unchanged!')
-        }
-    }
 
-  }
-}
+//     if(ingredient.invGestiune.length){
+//       let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
+//       const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
+//       if(index !== -1){
+//         ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty - el.qty)
+//         ingredient.invGestiune[index].entries = ingredient.invGestiune[index].entries.filter(log => {
+//           return log.nir.toString() !== doc._id.toString();
+//         });
+  
+//         console.log('all good in the good ', ingredient.invGestiune[index])
+//       } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
+//     } else {console.log('ingredientul nu are gestiuni de inventar')}
+
+  
+//     return ingredient.save();
+//   });
+  
+//   const results = await Promise.all(promises);
+  
+//   const suplier = await Suplier.findById(doc.suplier);
+
+//     if (suplier) {
+//       const sortedRecords = suplier.records.sort((a, b) => {
+//         const aDate = new Date(a.date).getTime() 
+//         const bDate = new Date(b.date).getTime()
+//         return aDate - bDate
+//     })
+//         const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
+//         if (recordIndex !== -1) {
+//             sortedRecords.splice(recordIndex, 1);
+//             for (let i = recordIndex; i < sortedRecords.length; i++) {
+//                 sortedRecords[i].sold -= doc.totalDoc;
+//             }
+//             suplier.sold = suplier.sold - doc.totalDoc
+//             suplier.records = sortedRecords
+//             await suplier.save();
+//             console.log('furnizorul a fos actualizat', suplier.name)
+//         } else {
+//           console.error('ERROR! Record not found! Suplier unchanged!')
+//         }
+//     }
+
+//   }
+// }
 
 
 
