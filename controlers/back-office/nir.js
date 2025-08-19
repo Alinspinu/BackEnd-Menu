@@ -223,9 +223,7 @@ module.exports.getNirs = async(req, res, next) => {
           .sort({ createdAt: -1 })
           .limit(100)
           .populate({path: 'suplier'})
-
           .populate({path: 'ingredients.invGestiune', select: 'name'})
-          console.log('Au fost actualizate ', nirs.length, ' de NIR-URI ')
     res.status(200).json(nirs)
   } catch(err) {
     console.log(err)
