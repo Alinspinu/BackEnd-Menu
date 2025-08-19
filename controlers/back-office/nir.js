@@ -4,6 +4,8 @@ const ImpSheet = require('../../models/office/imp-sheet')
 const Report = require('../../models/office/report');
 const NirInvoice = require('../../models/office/nir-invoice')
 
+const Ingredient = require('../../models/office/inv-ingredient')
+
 const {createNirInvoice} = require('../print/nir-invoice')
 
 
@@ -52,6 +54,11 @@ module.exports.getSheets = async (req, res) => {
 
         // modifyProducts(sheets)
 
+        for(let s of sheets){
+          await fixBuleala(s)
+          console.log('Buleala fixed !!! maybe :)))')
+        }
+
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
           const bDate = new Date(b.date).getTime()
@@ -63,6 +70,23 @@ module.exports.getSheets = async (req, res) => {
     }
 }
 
+
+async function fixBuleala(sheet) {
+      const ingsPromises = sheet.ings.flatMap(ing => {
+              if(ing.ing.productIngredient){
+              return ing.ing.ings.map(ingg =>
+                  Ingredient.findByIdAndUpdate(
+                  ingg.ing,
+                  { $inc: { qty: ingg.qty ? ingg.qty : 0 } },
+                  { new: true }
+                  ).exec()
+              );
+              } else {
+              return Ingredient.findByIdAndUpdate(ing.ing._id, {$inc: {qty: ing.qty ? ing.qty : 0}}, {new: true }).exec()
+              }
+          })
+            await Promise.all(ingsPromises)
+}
 
 function modifyProducts(products) {
   const productPromises = products.map(p => {
