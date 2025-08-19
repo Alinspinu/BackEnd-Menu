@@ -16,15 +16,23 @@ const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 module.exports.addImpSheet = async (req, res) => {
     try{
       const {sheet} = req.body
-      if(sheet._id) await ImpSheet.deleteOne({_id: sheet._id})
+      if(sheet._id) {
+        await ImpSheet.deleteOne({_id: sheet._id})
+        let tempSheet = sheet
+        tempSheet.ings = tempSheet.ings.map(i =>{ return {qty: i.qty, ing: i.ing, gestiune: i.gestiune._id}})
+        console.log(tempSheet)
+        await uploadIngs(tempSheet.ings, 1)
+      }
+
       const newSheet = new ImpSheet(sheet)
       const savedSheet = await newSheet.save()
+      await unloadIngs(savedSheet.ings, 1)
+
       const dbSheet = await ImpSheet.findById(savedSheet._id)
             .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice'})
             .populate({path: 'ings.gestiune', select: 'name'})
             .populate({path: 'user', select: 'employee.fullName'})
       if(dbSheet){
-        await unloadIngs(dbSheet.ings, 1)
         res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: dbSheet})
       } else{
         res.status(200).json({message: 'Fișa nu a fost găsită în baza de date dupa salvare!'})
