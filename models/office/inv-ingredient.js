@@ -103,6 +103,11 @@ const invIngSchema = new Schema({
   invGestiune: [
     {
       qty: Number,
+      gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+      },
+      name: String,
       inventary:[
         {
           date: Date,
@@ -134,10 +139,6 @@ const invIngSchema = new Schema({
           }
         }
       ], 
-      gestiune: {
-        type: Schema.Types.ObjectId,
-        ref: 'Gestiune'
-      }
     }
 
   ],

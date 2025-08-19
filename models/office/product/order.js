@@ -259,6 +259,10 @@ const orderTrueSchema = new Schema({
                         qty: Number,
                         um: String,
                         ingPrice: Number,
+                        gestiune: {
+                            type: Schema.Types.ObjectId,
+                            ref: 'Gestiune'
+                        },
                         ing: {
                             type: Schema.Types.ObjectId,
                             ref: 'IngredientInv'
@@ -269,6 +273,10 @@ const orderTrueSchema = new Schema({
                     {
                         qty: {
                           type: Number,
+                        },
+                        gestiune: {
+                               type: Schema.Types.ObjectId,
+                               ref: 'Gestiune'
                         },
                         ing: {
                             type: Schema.Types.ObjectId,

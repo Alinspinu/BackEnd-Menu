@@ -59,6 +59,7 @@ module.exports.saveIng = async(req, res, next) => {
         const totalPages = Math.ceil(totalItems / limit);
 
         // await updateItems(items)
+        await updateGesName(items)
 
         res.status(200).json({
           items,
@@ -73,6 +74,51 @@ module.exports.saveIng = async(req, res, next) => {
 
 
 
+    async function updateGesName(items) {
+      const promises = [];
+    
+      for (const ing of items) {
+        if (!ing.invGestiune.length) {
+          console.log('***********Am gasit un ingredient fara gestiune, i-am pus o gestiunea ', ing.name)
+          const gest = {
+            gestiune: ing.gest._id,
+            qty: ing.qty,
+            inventary: [],
+            name: ing.gest.name,
+            entries: [
+              {
+                qty: ing.qty,
+                inQty: ing.qty,
+                date: new Date(),
+                priceWithVat: ing.tvaPrice,
+                priceNoVat: ing.price,
+                suplierNane: 'First Entry'
+              }
+            ]
+          };
+    
+          ing.invGestiune = [gest];
+    
+          // push the promise to an array instead of awaiting here
+          promises.push(
+            ing.save().then((editedIng) => {
+              console.log('Ingredient editat cu success!', editedIng.name);
+            })
+          );
+        } else {
+          ing.invGestiune[0].name = ing.gest.name
+          promises.push(
+            ing.save().then((editedIng) => {
+              console.log('Ingredient editat cu success cu numele la gestiune - ', editedIng.invGestiune[0].name);
+            })
+          );
+        }
+      }
+    
+      // wait for all promises to complete
+      await Promise.all(promises);
+    }
+    
     async function updateItems(items) {
       const promises = [];
     
@@ -82,6 +128,7 @@ module.exports.saveIng = async(req, res, next) => {
             gestiune: ing.gest._id,
             qty: ing.qty,
             inventary: [],
+            name: ing.gest.name,
             entries: [
               {
                 qty: ing.qty,
