@@ -80,27 +80,6 @@ module.exports.getSheets = async (req, res) => {
 }
 
 
-function modifyProducts(products) {
-  const productPromises = products.map(p => {
-
-    p.ings.forEach(i => {
-      i.gestiune = i.ing.invGestiune[0].gestiune;
-      console.log('Gestiune modificata pe fisa de deprecieri', i.ing.invGestiune[0].name);
-    });
-
-    // p.toppings.forEach(t => {
-    //   t.gestiune = t.ing.invGestiune[0].gestiune;
-    //   console.log('Gestiune modificata pe Toppingurile de la PRODUS', t.ing.invGestiune[0].name);
-    // });
-
-
-      return p.save().then(savedP => {
-        console.log(savedP.date, 'a fost modificat cu success!');
-      });
-    });
-
-  return Promise.all(productPromises);
-}
 
 
 module.exports.getSheetsByPeriod = async (req, res) => {
