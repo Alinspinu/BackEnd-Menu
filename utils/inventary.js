@@ -88,7 +88,7 @@ async function uploadIngs (ings, qtyProdus) {
                       if(eIndex !== -1){
                         gest.entries[eIndex].qty = round(gest.entries[eIndex].qty + cantFinal)
 
-                        console.log(ingredientInv.name, 'a fost încarcat cu ', cantFinal, 'stoc final ', gest.entries[eIndex].qty + cantFinal)
+                        console.log(ingredientInv.name, 'a fost încarcat cu +',  cantFinal, ' / stoc final ', gest.entries[eIndex].qty )
                       }
                   }  else {console.log('Nu au fost gasita cea mai veche gestiune')}
                   ingredientInv.invGestiune[gestIndex] = gest
@@ -135,7 +135,7 @@ function subtractFromEntries(entries, cantFinal) {
     if (entry.qty >= remaining) {
       // enough to cover remaining
       entry.qty -= remaining;
-      console.log('Am gasit destula cantitate in intrare ', entry.qty,  ' cantitate scazuta ', remaining,  ' stoc ramas ',  entry.qty - remaining)
+      console.log('Am gasit destula cantitate in intrare / ', entry.qty,  ' / cantitate scazuta -', remaining,  '/ stoc ramas ',  entry.qty - remaining)
 
       if (entry.qty === 0 && !isLast) {
         console.log('Dar am consumato pe toata si am sterso')
@@ -147,10 +147,10 @@ function subtractFromEntries(entries, cantFinal) {
       remaining = 0;
     } else {
       // not enough in this entry — consume it completely
-      console.log('Nu am gasit destula cantitate - ', entry.qty, ' Cantitate vanduta  -  ',  remaining)
+      console.log('Nu am gasit destula cantitate / ', entry.qty, ' Cantitate ce trebuie scazuta  ',  remaining)
       remaining -= entry.qty;
 
-      if (!isLast) {
+    if (!isLast) {
         // delete the spent entry
         entries.splice(i, 1);
         i--;        // fix index
