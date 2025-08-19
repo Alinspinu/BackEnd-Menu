@@ -59,7 +59,7 @@ module.exports.saveIng = async(req, res, next) => {
         const totalPages = Math.ceil(totalItems / limit);
 
         // await updateItems(items)
-        await updateGesName(items)
+        // await updateGesName(items)
 
         res.status(200).json({
           items,
