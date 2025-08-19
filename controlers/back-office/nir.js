@@ -20,7 +20,6 @@ module.exports.addImpSheet = async (req, res) => {
         await ImpSheet.deleteOne({_id: sheet._id})
         let tempSheet = sheet
         tempSheet.ings = tempSheet.ings.map(i =>{ return {qty: i.qty, ing: i.ing, gestiune: i.gestiune._id}})
-        console.log(tempSheet)
         await uploadIngs(tempSheet.ings, 1)
       }
 

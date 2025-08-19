@@ -2,7 +2,8 @@ const IngInv = require('../models/office/inv-ingredient')
 const {round} = require('./functions')
 
 const Product = require('../models/office/product/product')
-const SubProduct = require('../models/office/product/sub-product')
+const SubProduct = require('../models/office/product/sub-product');
+const ingredient = require('../models/nutrition/ingredient');
 
 
 const norm = s => s?.trim().toLowerCase()
@@ -34,6 +35,14 @@ async function unloadIngs (ings, qtyProdus) {
                 gest.qty = round(gest.qty - cantFinal);
                 if(gest.entries.length){
                   gest.entries = subtractFromEntries(gest.entries, cantFinal);
+                  const oldestEntry = gest.entries.reduce((oldest, current) => {
+                    return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
+                  });
+                  if(oldestEntry){
+                    ingredientInv.price = oldestEntry.priceNoVat
+                    ingredientInv.tvaPrice = oldestEntry.priceWithVat
+                    console.log('Am am acualizat pretul ingredientului dupa ultima intrare ', ingredientInv.tvaPrice)
+                  } else {console.log('!!!!!Atentie nu am gasit ultima intrare pretul ingredientului a ramas acelasi!')}
                 } else {
                   console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost scazuta din principal!, stoc final ', gest.qty)
                 }
