@@ -58,7 +58,7 @@ module.exports.saveIng = async(req, res, next) => {
         const ing = items.find(i => i._id === "683763760c7221a32654b6a8")
         const totalPages = Math.ceil(totalItems / limit);
 
-        // await updateItems(items)
+        await updateItems(items)
         // await updateGesName(items)
         // const pIng = items.filter(i => i.productIngredient)
 
@@ -145,25 +145,11 @@ module.exports.saveIng = async(req, res, next) => {
       const promises = [];
     
       for (const ing of items) {
-        if (!ing.invGestiune.length) {
-          const gest = {
-            gestiune: ing.gest._id,
-            qty: ing.qty,
-            inventary: [],
-            name: ing.gest.name,
-            entries: [
-              {
-                qty: ing.qty,
-                inQty: ing.qty,
-                date: new Date(),
-                priceWithVat: ing.tvaPrice,
-                priceNoVat: ing.price,
-                suplierNane: 'First Entry'
-              }
-            ]
-          };
-    
-          ing.invGestiune = [gest];
+            for(let en of ing.eFactura){
+              en.gestiune = ing.gest
+              console.log('Intrare modificata cu success!! ', en.gestiune )
+            }
+          
     
           // push the promise to an array instead of awaiting here
           promises.push(
@@ -171,7 +157,7 @@ module.exports.saveIng = async(req, res, next) => {
               console.log('Ingredient editat cu success!', editedIng.name);
             })
           );
-        }
+        
       }
     
       // wait for all promises to complete

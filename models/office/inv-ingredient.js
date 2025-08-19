@@ -80,7 +80,11 @@ const invIngSchema = new Schema({
     {
       suplier: String,
       name: String,
-      qtyCorector: Number
+      qtyCorector: Number,
+      gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+      }
     }
   ],
   price: {
