@@ -17,6 +17,7 @@ module.exports.addImpSheet = async (req, res) => {
       const savedSheet = await newSheet.save()
       const dbSheet = await ImpSheet.findById(savedSheet._id)
             .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice'})
+            .populate({path: 'ings.gestiune', select: 'name'})
             .populate({path: 'user', select: 'employee.fullName'})
       if(dbSheet){
         res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: dbSheet})
@@ -45,9 +46,11 @@ module.exports.getSheets = async (req, res) => {
         const {loc, point} = req.query
         const sheets = await ImpSheet.find({locatie: loc, salePoint: point})
         .sort({date: -1})
-        .limit(30)
-        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
+        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice invGestiune'})
         .populate({path: 'user', select: 'employee.fullName'})
+
+        modifyProducts(sheets)
+
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
           const bDate = new Date(b.date).getTime()
@@ -60,12 +63,38 @@ module.exports.getSheets = async (req, res) => {
 }
 
 
+function modifyProducts(products) {
+  const productPromises = products.map(p => {
+
+    p.ings.forEach(i => {
+      i.gestiune = i.ing.invGestiune[0].gestiune;
+      console.log('Gestiune modificata pe fisa de deprecieri', i.ing.invGestiune[0].name);
+    });
+
+    // p.toppings.forEach(t => {
+    //   t.gestiune = t.ing.invGestiune[0].gestiune;
+    //   console.log('Gestiune modificata pe Toppingurile de la PRODUS', t.ing.invGestiune[0].name);
+    // });
+
+
+      return p.save().then(savedP => {
+        console.log(savedP.date, 'a fost modificat cu success!');
+      });
+    });
+
+  return Promise.all(productPromises);
+}
+
+
 module.exports.getSheetsByPeriod = async (req, res) => {
   try{
     const {startDate, endDate, loc, point} = req.query
     const startTime = new Date(startDate).getTime()
     const endTime = new Date(endDate).getTime()
-    const sheets = ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}, salePoint: point}) 
+    const sheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}, salePoint: point}) 
+        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
+        .populate({path: 'ings.gestiune', select: 'name'})
+        .populate({path: 'user', select: 'employee.fullName'})
     res.status(200).json(sheets)
   } catch(error){
     console.log(error)
