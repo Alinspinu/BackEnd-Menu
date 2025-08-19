@@ -12,6 +12,17 @@ const cloudinary = require('cloudinary').v2;
 const {checkTopping, round} = require('../../utils/functions')
 
 
+const innerIngPopulate = [
+    {
+        path: 'ings.ing',
+        select: 'name tvaPrice qty um'
+    },
+    {
+        path: 'ings.gestiune',
+        select: 'name'
+    }
+]
+
 
 module.exports.changeVat = async (req, res) => {
     try{
@@ -82,19 +93,7 @@ module.exports.updateProducts = async (req, res) => {
  module.exports.getProducts = async (req, res, next) => {
     try{
       const {loc, point} = req.body
-
-    const innerIngPopulate = [
-        {
-            path: 'ings.ing',
-            select: 'name tvaPrice qty um'
-        },
-        {
-            path: 'ings.gestiune',
-            select: 'name'
-        }
-    ]
   
-  // MAIN QUERY
     const products = await Product.find(
         { locatie: loc, salePoint: point }
     )
@@ -225,35 +224,51 @@ module.exports.updateProducts = async (req, res) => {
 
   module.exports.getProduct = async (req, res, next) => {
     try{
-      const product = await Product.findById(req.query.id).populate([
-        {
-            path: 'subProducts', populate: {
-                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
-                    populate: {
-                        path: 'ings.ing', select: 'name tvaPrice qty um'
-                    }
-            }
-        },
-        {path: "category", select: 'name'},
-        {
-            path: 'toppings', select: 'qty name ing price um', 
-            populate: {
-                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
+      const product = await Product.findById(req.query.id)
+            .populate({ path: 'category', select: 'name' })
+            .populate({
+            path: 'subProducts',
+            populate: [
+                {
+                path: 'ings.ing',
+                select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                populate: innerIngPopulate
+                },
+                { path: 'ings.gestiune', select: 'name' }
+            ]
+            })
+            .populate({
+            path: 'toppings',
+            select: 'qty name ing price um gestiune',
+            populate: [
+                {
+                path: 'ing',
+                select: 'name tvaPrice um ings productIngredient gestiune qty',
                 populate: {
-                    path: 'ings', select: 'qty ing', 
-                    populate: {path: 'ing', select: 'name tvaPrice qty um'
-
-                    }
+                    path: 'ings',
+                    select: 'qty ing gestiune',
+                    populate: [
+                        {
+                            path: 'ing',
+                            select: 'name tvaPrice qty um'
+                        },
+                        {
+                            path: 'gestiune',
+                            select: 'name'
+                        }
+                    ]
                 }
-            }
-        },
-        {
-            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
-                populate: {
-                    path: 'ings.ing', select: 'name tvaPrice qty um'
-                }
-        },
-    ])
+                },
+                { path: 'gestiune', select: 'name' }
+            ]
+            })
+            .populate({
+            path: 'ings.ing',
+            select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty',
+            populate: innerIngPopulate
+            })
+            .populate({ path: 'ings.gestiune', select: 'name' })
+            .lean();    
       res.status(200).json(product)
     }catch(error) {
       console.log(error)
@@ -307,36 +322,51 @@ module.exports.addProd = async (req, res, next) => {
             }
         }
   
-        const productToSend = await Product.findById(savedProduct._id).populate([
-            {
-                path: 'subProducts', populate: {
-                    path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
-                        populate: {
-                            path: 'ings.ing', select: 'name tvaPrice qty'
-                        }
-                }
-            },
-            {path: "category", select: 'name'},
-            {
-                path: 'toppings', select: 'qty name ing price um', 
+        const productToSend = await Product.findById(savedProduct._id)
+            .populate({ path: 'category', select: 'name' })
+            .populate({
+            path: 'subProducts',
+            populate: [
+                {
+                path: 'ings.ing',
+                select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                populate: innerIngPopulate
+                },
+                { path: 'ings.gestiune', select: 'name' }
+            ]
+            })
+            .populate({
+            path: 'toppings',
+            select: 'qty name ing price um gestiune',
+            populate: [
+                {
+                path: 'ing',
+                select: 'name tvaPrice um ings productIngredient gestiune qty',
                 populate: {
-                    path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
-                    populate: {
-                        path: 'ings', select: 'qty ing', 
-                        populate: {
-                            path: 'ing', select: 'name tvaPrice qty um'
-    
+                    path: 'ings',
+                    select: 'qty ing gestiune',
+                    populate: [
+                        {
+                            path: 'ing',
+                            select: 'name tvaPrice qty um'
+                        },
+                        {
+                            path: 'gestiune',
+                            select: 'name'
                         }
-                    }
+                    ]
                 }
-            },
-            {
-                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
-                    populate: {
-                        path: 'ings.ing', select: 'name tvaPrice qty um'
-                    }
-            },
-        ]);
+                },
+                { path: 'gestiune', select: 'name' }
+            ]
+            })
+            .populate({
+            path: 'ings.ing',
+            select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty',
+            populate: innerIngPopulate
+            })
+            .populate({ path: 'ings.gestiune', select: 'name' })
+            .lean();   
         res.status(200).json({ message: `Product ${product.name} was created!`, product: productToSend });
     } catch (err) {
         console.log(err);
@@ -375,35 +405,51 @@ module.exports.editProduct = async (req, res, next) => {
                   }
                 }
               }
-              const newProduct = await Product.findByIdAndUpdate(parsedProduct._id, parsedProduct, {new: true}).populate([
-                {
-                    path: 'subProducts', populate: {
-                        path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
-                            populate: {
-                                path: 'ings.ing', select: 'name tvaPrice qty um' 
-                            }
-                    }
-                },
-                {path: "category", select: 'name'},
-                {
-                    path: 'toppings', select: 'qty name ing um', 
-                    populate: {
-                        path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
+              const newProduct = await Product.findByIdAndUpdate(parsedProduct._id, parsedProduct, {new: true})
+                    .populate({ path: 'category', select: 'name' })
+                    .populate({
+                    path: 'subProducts',
+                    populate: [
+                        {
+                        path: 'ings.ing',
+                        select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                        populate: innerIngPopulate
+                        },
+                        { path: 'ings.gestiune', select: 'name' }
+                    ]
+                    })
+                    .populate({
+                    path: 'toppings',
+                    select: 'qty name ing price um gestiune',
+                    populate: [
+                        {
+                        path: 'ing',
+                        select: 'name tvaPrice um ings productIngredient gestiune qty',
                         populate: {
-                            path: 'ings', select: 'qty ing', 
-                            populate: {path: 'ing', select: 'name tvaPrice qty um'
-        
-                            }
+                            path: 'ings',
+                            select: 'qty ing gestiune',
+                            populate: [
+                                {
+                                    path: 'ing',
+                                    select: 'name tvaPrice qty um'
+                                },
+                                {
+                                    path: 'gestiune',
+                                    select: 'name'
+                                }
+                            ]
                         }
-                    }
-                },
-                {
-                    path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
-                        populate: {
-                            path: 'ings.ing', select: 'name tvaPrice qty um'
-                        }
-                },
-            ])
+                        },
+                        { path: 'gestiune', select: 'name' }
+                    ]
+                    })
+                    .populate({
+                    path: 'ings.ing',
+                    select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty',
+                    populate: innerIngPopulate
+                    })
+                    .populate({ path: 'ings.gestiune', select: 'name' })
+                    .lean();   
             res.status(200).json({ message: `Produst ${oldProduct.name} a fost modificat cu success!`, product: newProduct })
           
     } catch( error){
