@@ -46,10 +46,11 @@ module.exports.getSheets = async (req, res) => {
         const {loc, point} = req.query
         const sheets = await ImpSheet.find({locatie: loc, salePoint: point})
         .sort({date: -1})
-        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice invGestiune'})
+        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
+        .populate({path: 'ings.gestiune', select: 'name'})
         .populate({path: 'user', select: 'employee.fullName'})
 
-        modifyProducts(sheets)
+        // modifyProducts(sheets)
 
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
