@@ -54,10 +54,10 @@ module.exports.getSheets = async (req, res) => {
 
         // modifyProducts(sheets)
 
-        for(let s of sheets){
-          await fixBuleala(s)
-          console.log('Buleala fixed !!! maybe :)))')
-        }
+        // for(let s of sheets){
+        //   await fixBuleala(s)
+        //   console.log('Buleala fixed !!! maybe :)))')
+        // }
 
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
