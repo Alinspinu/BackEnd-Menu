@@ -134,126 +134,126 @@ const nirSchema = new Schema({
 
 
 
-// nirSchema.pre('save', async function (next){
-//   try{
-//     const doc = this
-//     const sup = await Suplier.findById(doc.suplier)
+nirSchema.pre('save', async function (next){
+  try{
+    const doc = this
+    const sup = await Suplier.findById(doc.suplier)
 
-//     const record = {
-//       typeOf: 'intrare',
-//       document: {
-//         typeOf: doc.document,
-//         docId: doc.nrDoc,
-//         amount: doc.totalDoc,
-//       },
-//       sold: sup.sold,
-//       date: doc.documentDate,
-//       nir: doc._id 
-//     }
-//       if (sup) {
-//         sup.records.push(record)
-//         const sortedRecords = sup.records.sort((a, b) => {
-//           const aDate = new Date(a.date).getTime() 
-//           const bDate = new Date(b.date).getTime()
-//           return aDate - bDate
-//       })
-//           const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
-//           if (recordIndex !== -1) {
-//               for (let i = recordIndex; i < sortedRecords.length; i++) {
-//                   sortedRecords[i].sold += doc.totalDoc;
-//               }
-//               sup.sold = sup.sold + doc.totalDoc
-//               sup.records = sortedRecords
-//               await sup.save();
-//               console.log("Supplier update:", sup.name);
-//           } else {
-//             console.error('ERROR record not found, Sulier unchanged!')
-//           }
-//       }
+    const record = {
+      typeOf: 'intrare',
+      document: {
+        typeOf: doc.document,
+        docId: doc.nrDoc,
+        amount: doc.totalDoc,
+      },
+      sold: sup.sold,
+      date: doc.documentDate,
+      nir: doc._id 
+    }
+      if (sup) {
+        sup.records.push(record)
+        const sortedRecords = sup.records.sort((a, b) => {
+          const aDate = new Date(a.date).getTime() 
+          const bDate = new Date(b.date).getTime()
+          return aDate - bDate
+      })
+          const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
+          if (recordIndex !== -1) {
+              for (let i = recordIndex; i < sortedRecords.length; i++) {
+                  sortedRecords[i].sold += doc.totalDoc;
+              }
+              sup.sold = sup.sold + doc.totalDoc
+              sup.records = sortedRecords
+              await sup.save();
+              console.log("Supplier update:", sup.name);
+          } else {
+            console.error('ERROR record not found, Sulier unchanged!')
+          }
+      }
 
-//     const counter = await Counter.findOneAndUpdate(
-//       { locatie: doc.locatie, model: "Nir", salePoint: doc.salePoint },
-//       { $inc: { value: 1 } },
-//       { upsert: true, new: true }
-//     );
-//     doc.index = counter.value;
+    const counter = await Counter.findOneAndUpdate(
+      { locatie: doc.locatie, model: "Nir", salePoint: doc.salePoint },
+      { $inc: { value: 1 } },
+      { upsert: true, new: true }
+    );
+    doc.index = counter.value;
 
 
-//     const operation = {
-//       name: 'intrare', 
-//       details: sup.name +  " Nr  Doc - " + doc.nrDoc
-//     };
+    const operation = {
+      name: 'intrare', 
+      details: sup.name +  " Nr  Doc - " + doc.nrDoc
+    };
 
-//     const promises = doc.ingredients.map(async (el) => {
+    const promises = doc.ingredients.map(async (el) => {
 
-//     let ingredient = await Ingredient.findById(el.ing);
-//     if(!ingredient) {
-//       console.log('Ingredient nu a fost gasit pentru id:', el.ing);
-//       return null; 
-//     }
-//     ingredient.price = el.price;
-//     ingredient.tva = el.tva;
-//     ingredient.tvaPrice = roundd(el.price * (1 + el.tva / 100));
-//     ingredient.sellPrice = el.sellPrice;
-//     ingredient.qty = (ingredient.qty || 0) + el.qty;
+    let ingredient = await Ingredient.findById(el.ing);
+    if(!ingredient) {
+      console.log('Ingredient nu a fost gasit pentru id:', el.ing);
+      return null; 
+    }
+    ingredient.price = el.price;
+    ingredient.tva = el.tva;
+    ingredient.tvaPrice = roundd(el.price * (1 + el.tva / 100));
+    ingredient.sellPrice = el.sellPrice;
+    ingredient.qty = (ingredient.qty || 0) + el.qty;
   
-//     ingredient.uploadLog.push({
-//       date: doc.documentDate,
-//       qty: el.qty,
-//       operation: operation,
-//       uploadPrice: roundd(el.price * (1 + el.tva / 100)),
-//       logId: el.logId
-//     });
+    ingredient.uploadLog.push({
+      date: doc.documentDate,
+      qty: el.qty,
+      operation: operation,
+      uploadPrice: roundd(el.price * (1 + el.tva / 100)),
+      logId: el.logId
+    });
 
-//     if(ingredient.invGestiune.length){
-//     let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
-//     const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
-//     if(index !== -1){
-//       let ent = {
-//         qty: el.qty,
-//         inQty: el.qty,
-//         date: doc.receptionDate || new Date(),
-//         priceNoVat: el.price,
-//         priceWithVat: roundd(el.price * (1 + el.tva / 100)),
-//         suplierNmae: sup.name,
-//         nir: doc._id
-//       }
-//       if(ingredient.invGestiune[index].qty < 0 ) {
-//         console.log('hit - 0')
-//         ent.qty = roundd(ingredient.invGestiune[index].qty + ent.qty)
-//         ingredient.invGestiune[index].entries = []
-//       }
+    if(ingredient.invGestiune.length){
+    let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
+    const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
+    if(index !== -1){
+      let ent = {
+        qty: el.qty,
+        inQty: el.qty,
+        date: doc.receptionDate || new Date(),
+        priceNoVat: el.price,
+        priceWithVat: roundd(el.price * (1 + el.tva / 100)),
+        suplierNmae: sup.name,
+        nir: doc._id
+      }
+      if(ingredient.invGestiune[index].qty < 0 ) {
+        console.log('hit - 0')
+        ent.qty = roundd(ingredient.invGestiune[index].qty + ent.qty)
+        ingredient.invGestiune[index].entries = []
+      }
 
      
-//       ingredient.invGestiune[index].entries.push(ent)
+      ingredient.invGestiune[index].entries.push(ent)
 
-//       let total = 0
+      let total = 0
 
-//       for (let i = 0; i < ingredient.invGestiune[index].entries.length; i++) {
-//         const entry = ingredient.invGestiune[index].entries[i];
-//         if(entry.qty < 0){
-//           ingredient.invGestiune[index].entries.splice(i, 1);
-//           i--;  
-//         } else {
-//           total += entry.qty
-//         }
-//       }
+      for (let i = 0; i < ingredient.invGestiune[index].entries.length; i++) {
+        const entry = ingredient.invGestiune[index].entries[i];
+        if(entry.qty < 0){
+          ingredient.invGestiune[index].entries.splice(i, 1);
+          i--;  
+        } else {
+          total += entry.qty
+        }
+      }
 
-//       ingredient.invGestiune[index].qty = roundd(total)
-//       console.log('all good in the good  cantitate gestiune', ingredient.invGestiune[index].qty)
-//     } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
-//   } else {console.log('ingredientul nu are gestiuni de inventar')}
+      ingredient.invGestiune[index].qty = roundd(total)
+      console.log('all good in the good  cantitate gestiune', ingredient.invGestiune[index].qty)
+    } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
+  } else {console.log('ingredientul nu are gestiuni de inventar')}
 
-//     return ingredient.save();
-//   });
+    return ingredient.save();
+  });
     
-//   const results = await Promise.all(promises);
+  const results = await Promise.all(promises);
     
-//     next()
-//   } catch(error){
-//     next(error)
-//   }
-// })
+    next()
+  } catch(error){
+    next(error)
+  }
+})
 
 
 
