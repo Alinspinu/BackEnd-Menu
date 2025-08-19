@@ -39,6 +39,10 @@ const productTrueSchema = new Schema({
                 um: String,
                 ingPrice: Number,
                 qty: Number,
+                gestiune: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                },
                 ing: {
                     type: Schema.Types.ObjectId,
                     ref: "IngredientInv"
@@ -66,6 +70,10 @@ const productTrueSchema = new Schema({
           qty: {
             type: Number,
           },
+          gestiune: {
+            type: Schema.Types.ObjectId,
+            ref: 'Gestiune'
+         },
           ing: {
             type: Schema.Types.ObjectId,
             ref: "IngredientInv"

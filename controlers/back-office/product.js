@@ -86,16 +86,16 @@ module.exports.updateProducts = async (req, res) => {
         {path: 'category', select: 'name'}, 
         {
             path: 'subProducts', populate: {
-                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
+                path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty invGestiune', 
                     populate: {
                         path: 'ings.ing', select: 'name tvaPrice qty um' 
                     }
             }
         },
         {
-            path: 'toppings', select: 'qty name ing price um gestiune', 
+            path: 'toppings', select: 'qty name ing price um', 
             populate: {
-                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
+                path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty invGestiune', 
                 populate: {
                     path: 'ings', select: 'qty ing', 
                     populate: {
@@ -105,13 +105,14 @@ module.exports.updateProducts = async (req, res) => {
             }
         },
         {
-            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
+            path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty invGestiune', 
                 populate: {
                     path: 'ings.ing', select: 'name tvaPrice qty um'
                 }
         },
     ])
-    //   await modifyProducts(products)
+    
+       modifyProducts(products)
 
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
@@ -121,8 +122,31 @@ module.exports.updateProducts = async (req, res) => {
     }
   }
 
-
+  function modifyProducts(products) {
+    const productPromises = products.map(p => {
+      // Work on subProducts first
   
+      // Then work on main product ingredients & toppings
+      p.ings.forEach(i => {
+        i.gestiune = i.ing.invGestiune[0].gestiune;
+        console.log('Gestiune modificata pe ingredientele de la PRODUS', i.ing.invGestiune[0].name);
+      });
+  
+      p.toppings.forEach(t => {
+        t.gestiune = t.ing.invGestiune[0].gestiune;
+        console.log('Gestiune modificata pe Toppingurile de la PRODUS', t.ing.invGestiune[0].name);
+      });
+  
+
+        return p.save().then(savedP => {
+          console.log(savedP.name, 'a fost modificat cu success!');
+        });
+      });
+  
+    return Promise.all(productPromises);
+  }
+  
+
 
 
   module.exports.getProduct = async (req, res, next) => {
