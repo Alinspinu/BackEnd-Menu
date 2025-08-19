@@ -27,16 +27,16 @@ async function unloadIngs (ings, qtyProdus) {
             ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
 
             if(ingredientInv.invGestiune.length){
-              const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune.toString() === ingredientInv.gest.toString())
+              const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune.toString() === ing.gestiune.toString())
               if(gestIndex !== -1){
-  
                 const gest = ingredientInv.invGestiune[gestIndex];
+                console.log('Procesare.... ', ingredientInv.name)
                 gest.qty = round(gest.qty - cantFinal);
                 gest.entries = subtractFromEntries(gest.entries, cantFinal);
 
 
                 ingredientInv.invGestiune[gestIndex] = gest
-              }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ingredientInv.gest)}
+              }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
             } else {console.log('Nu au fost gasite gestiuni de inventar')}
 
             await ingredientInv.save();
@@ -74,7 +74,7 @@ async function uploadIngs (ings, qtyProdus) {
               ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
 
               if(ingredientInv.invGestiune.length){
-                const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune.toString() === ingredientInv.gest.toString())
+                const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune.toString() === ing.gestiune.toString())
                 if(gestIndex !== -1){
                   let gest = ingredientInv.invGestiune[gestIndex]
                   gest.qty = round(gest.qty + cantFinal)
@@ -87,10 +87,12 @@ async function uploadIngs (ings, qtyProdus) {
                       const eIndex =  gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
                       if(eIndex !== -1){
                         gest.entries[eIndex].qty = round(gest.entries[eIndex].qty + cantFinal)
+
+                        console.log(ingredientInv.name, 'a fost încarcat cu ', cantFinal, 'stoc final ', gest.entries[eIndex].qty + cantFinal)
                       }
                   }  else {console.log('Nu au fost gasita cea mai veche gestiune')}
                   ingredientInv.invGestiune[gestIndex] = gest
-                }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ingredientInv.gest)}
+                }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
               } else {console.log('Nu au fost gasite gestiuni de inventar')}
 
 
@@ -133,7 +135,7 @@ function subtractFromEntries(entries, cantFinal) {
     if (entry.qty >= remaining) {
       // enough to cover remaining
       entry.qty -= remaining;
-      console.log('Am gasit destula cantitate in intrare')
+      console.log('Am gasit destula cantitate in intrare ', entry.qty,  ' cantitate scazuta ', remaining,  ' stoc ramas ',  entry.qty - remaining)
 
       if (entry.qty === 0 && !isLast) {
         console.log('Dar am consumato pe toata si am sterso')
