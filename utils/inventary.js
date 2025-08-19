@@ -32,6 +32,7 @@ async function unloadIngs (ings, qtyProdus) {
                 const gest = ingredientInv.invGestiune[gestIndex];
                 console.log('Procesare.... ', ingredientInv.name)
                 gest.qty = round(gest.qty - cantFinal);
+                console.log(gest.entries)
                 gest.entries = subtractFromEntries(gest.entries, cantFinal);
 
 
