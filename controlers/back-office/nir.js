@@ -225,7 +225,7 @@ module.exports.getNirs = async(req, res, next) => {
           .populate({path: 'ingredients.ing', select: 'gest'})
           // await modifyProducts(nirs)
           console.log('Au fost actualizate ', nirs.length, ' de NIR-URI ')
-    res.status(200).json(nirs[0])
+    res.status(200).json(nirs)
   } catch(err) {
     console.log(err)
     res.status(500).json({messahe: err.message})
