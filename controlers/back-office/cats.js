@@ -12,18 +12,26 @@ module.exports.sendCats = async (req, res, next) => {
                 { path: 'category' },
                 {
                     path: 'subProducts', select: '-saleLog',
-                    populate: {
-                        path: 'ings.ing', select: 'name um ings productIngredient qty', 
-                            populate: {
-                                path: 'ings.ing', select: 'name um qty' 
+                    populate: [
+                            {
+                            path: 'ings.ing', select: 'name um ings productIngredient qty', 
+                                populate: {
+                                    path: 'ings.ing', select: 'name um qty' 
+                                }
+                            },
+                            {
+                                path: 'ings.gestiune', select: 'name'
                             }
-                        }
+                    ]
                 },
                 { 
                     path: 'ings.ing', select: 'name qty um productIngredient ings',
                         populate: {
                             path: 'ings.ing', select: 'name um qty'
                         } 
+                },
+                {
+                    path: 'ings.gestiune', select: 'name'
                 }
             ]
         })
