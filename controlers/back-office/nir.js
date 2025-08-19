@@ -339,7 +339,9 @@ module.exports.getNir = async (req, res, next) => {
   
   try{
     const {id} = req.query
-    const nir = await Nir.findById(id).populate({path: 'suplier'})
+    const nir = await Nir.findById(id)
+      .populate({path: 'suplier'})
+      .populate({path: 'ingredients.invGestiune', select: 'name'})
     res.status(200).json({nir: nir})
   } catch (err) {
     console.log(err)
