@@ -244,7 +244,6 @@ module.exports.getNirs = async(req, res, next) => {
           .sort({ createdAt: -1 })
           .populate({path: 'suplier'})
           .populate({path: 'ingredients.ing', select: 'gest'})
-
           await modifyProducts(nirs)
           console.log('Au fost actualizate ', nirs.length, ' de NIR-URI ')
     res.status(200).json(nirs[0])
@@ -259,8 +258,12 @@ function modifyProducts(products) {
   const productPromises = products.map(p => {
 
     p.ingredients.forEach(i => {
-      i.invGestiune = i.ing.gest
-      console.log('Gestiune modificata pe ingredient din nir', i.name);
+      if(!i.invGestiune){
+        if(i.ing.gest){
+          i.invGestiune = i.ing.gest
+          console.log('Gestiune modificata pe ingredient din nir', i.name);
+        }
+      }
     });
 
 
