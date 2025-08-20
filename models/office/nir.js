@@ -464,11 +464,12 @@ nirSchema.pre(
           const gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString();
           const index = invGestiune.findIndex((g) => g.gestiune.toString() === gestiuneMatch);
           if (index !== -1) {
+            console.log('Cantitate gestiune (la iesire) inainte de modificari ', invGestiune[index].qty)
             invGestiune[index].qty = roundd(invGestiune[index].qty - el.qty);
             invGestiune[index].entries = invGestiune[index].entries.filter(
               (log) => log?.nir?.toString() !== doc._id.toString()
             );
-            console.log('intrari pre delete hoock', invGestiune[index].entries)
+            console.log('Cantitate gestiune (la iesire) dupa modificari ', invGestiune[index].qty)
           }
         }
 
