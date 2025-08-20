@@ -384,7 +384,7 @@ nirSchema.pre('save', async function (next){
             tvaPrice: ingredient.tvaPrice === 0 ? roundd(el.price * (1 + el.tva / 100)) : ingredient.tvaPrice,
             sellPrice: el.sellPrice,
             invGestiune: invGestiune,
-            inventary: ingredient.invenraty
+            inventary: ingredient.inventary
           },
           $inc: { qty: el.qty },
           $push: { uploadLog: uploadLog[uploadLog.length - 1] }
@@ -532,7 +532,7 @@ nirSchema.pre(
           {
             $inc: { qty: -el.qty },
             $pull: { uploadLog: { logId: el.logId } },
-            $set: { invGestiune: invGestiune }
+            $set: { invGestiune: invGestiune, inventary: ingredient.inventary }
           }
         );
       });
