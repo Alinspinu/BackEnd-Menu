@@ -281,8 +281,8 @@ module.exports.saveIng = async(req, res, next) => {
 
 module.exports.saveManualInventary = async (req, res, next) => {
   try{
-    console.log('hit the function')
     const {data} = req.body
+    console.log(data)
     const ing  = await Ingredient.findById(data.ingId)
     for(let inv of ing.inventary){
       if(inv.index === data.invIndex){
