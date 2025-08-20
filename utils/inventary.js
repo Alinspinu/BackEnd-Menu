@@ -3,7 +3,6 @@ const {round} = require('./functions')
 
 const Product = require('../models/office/product/product')
 const SubProduct = require('../models/office/product/sub-product');
-const ingredient = require('../models/nutrition/ingredient');
 
 
 const norm = s => s?.trim().toLowerCase()

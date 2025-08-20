@@ -91,8 +91,8 @@ const UserTrueSchema = new Schema({
         ciSerial: {
             type: String,
         },
-        ciNumber: {
-            type: Number,
+    ciNumber: {
+        type: Number,
         },
         releaseId:{
             type: String

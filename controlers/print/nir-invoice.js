@@ -231,7 +231,6 @@ if(productsCount > 50){
   rowHeigth = 7
 }
 
-console.log(invoice.products)
 doc.fontSize(8)
 invoice.products.forEach((el, i) => {
     let newValue = y + heghtValue

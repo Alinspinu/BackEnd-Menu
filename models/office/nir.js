@@ -298,7 +298,7 @@ nirSchema.pre('save', async function (next){
     const promises = doc.ingredients.map(async (el) => {
       const ingredient = await Ingredient.findById(el.ing);
       if (!ingredient) {
-        console.log('Ingredient nu a fost gasit pentru id:', el.ing);
+        console.error('Ingredient nu a fost gasit pentru id:', el.ing);
         return null;
       }
       console.log('Procesare..... ', ingredient.name)
@@ -315,6 +315,25 @@ nirSchema.pre('save', async function (next){
           logId: el.logId
         }
       ];
+
+  
+
+      const lastInventary = ingredient.inventary.reduce((oldest, current) => {
+        return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
+      });
+
+      if(lastInventary){
+        const inventaryDate = new Date(lastInventary.day).getTime()
+        const documentDate = new Date(doc.documentDate).getTime() 
+        if(inventaryDate > documentDate){
+          lastInventary.qty = roundd(lastInventary.qty + el.qty)
+          const index = ingredient.inventary.findIndex(i => i.index === lastInventary.index)
+          if(index !== -1) {
+            ingredient.inventary[index] = lastInventary
+            console.log('Am gasit un invenar creat dupa data intrarii si am modificat cu success stocul scriptic!')
+          } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
+        } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii!')}
+      } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
 
       let invGestiune = ingredient.invGestiune;
       if (invGestiune.length) {
@@ -358,7 +377,8 @@ nirSchema.pre('save', async function (next){
             tva: el.tva,
             tvaPrice: ingredient.tvaPrice === 0 ? roundd(el.price * (1 + el.tva / 100)) : ingredient.tvaPrice,
             sellPrice: el.sellPrice,
-            invGestiune: invGestiune
+            invGestiune: invGestiune,
+            inventary: ingredient.invenraty
           },
           $inc: { qty: el.qty },
           $push: { uploadLog: uploadLog[uploadLog.length - 1] }
@@ -460,6 +480,24 @@ nirSchema.pre(
           console.log('Ingredient not found:', el.ing);
           return null;
         }
+
+
+        const lastInventary = ingredient.inventary.reduce((oldest, current) => {
+          return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
+        });
+  
+        if(lastInventary){
+          const inventaryDate = new Date(lastInventary.day).getTime()
+          const documentDate = new Date(doc.documentDate).getTime() 
+          if(inventaryDate > documentDate){
+            lastInventary.qty = roundd(lastInventary.qty - el.qty)
+            const index = ingredient.inventary.findIndex(i => i.index === lastInventary.index)
+            if(index !== -1) {
+              ingredient.inventary[index] = lastInventary
+              console.log('Am gasit un invenar creat dupa data intrarii stornate si am modificat cu success stocul scriptic!')
+            } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
+          } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii stornate!')}
+        } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
 
         // Build updated invGestiune entries in memory
         let invGestiune = ingredient.invGestiune;
