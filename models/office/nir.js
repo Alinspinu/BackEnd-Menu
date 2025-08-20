@@ -301,6 +301,8 @@ nirSchema.pre('save', async function (next){
         console.log('Ingredient nu a fost gasit pentru id:', el.ing);
         return null;
       }
+      console.log('Procesare..... ', ingredient.name)
+      console.log('Cantitate (de intrare) document ', el.qty)
 
       // --- Build new invGestiune & uploadLog values fully in memory:
       let uploadLog = [
@@ -343,7 +345,7 @@ nirSchema.pre('save', async function (next){
           });
 
           invGestiune[index].qty = roundd(total);
-          console.log('Intrare adaugata cu succeess! ', ingredient.name, ' cantitate document ', el.qty, ' cantitate gestiune (la intrare) dupa modificari ', invGestiune[index].qty )
+          console.log('Intrare adaugata cu succeess! Cantitate gestiune (la intrare) dupa modificari ', invGestiune[index].qty )
         }
 
       }
