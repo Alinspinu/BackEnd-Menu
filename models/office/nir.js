@@ -326,11 +326,17 @@ nirSchema.pre('save', async function (next){
         const inventaryDate = new Date(lastInventary.day).getTime()
         const documentDate = new Date(doc.documentDate).getTime() 
         if(inventaryDate > documentDate){
+
+          console.log('AM gasit un inventar inregistrat dupa data documentului')
+          console.log('Modificare stoc scriptic...')
+          console.log('Cantitate scriptica gasita ', lastInventary.qty)
+          console.log('Cantitate de adaugat ', el.qty)
+
           lastInventary.qty = roundd(lastInventary.qty + el.qty)
           const index = ingredient.inventary.findIndex(i => i.index === lastInventary.index)
           if(index !== -1) {
             ingredient.inventary[index] = lastInventary
-            console.log('Am gasit un invenar creat dupa data intrarii si am modificat cu success stocul scriptic!')
+            console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty + el.qty)
           } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
         } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii!')}
       } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
@@ -490,11 +496,17 @@ nirSchema.pre(
           const inventaryDate = new Date(lastInventary.day).getTime()
           const documentDate = new Date(doc.documentDate).getTime() 
           if(inventaryDate > documentDate){
+
+            console.log('AM gasit un inventar inregistrat dupa data documentului')
+            console.log('Modificare stoc scriptic...')
+            console.log('Cantitate scriptica gasita ', lastInventary.qty)
+            console.log('Cantitate de scazut ', el.qty)
+
             lastInventary.qty = roundd(lastInventary.qty - el.qty)
             const index = ingredient.inventary.findIndex(i => i.index === lastInventary.index)
             if(index !== -1) {
               ingredient.inventary[index] = lastInventary
-              console.log('Am gasit un invenar creat dupa data intrarii stornate si am modificat cu success stocul scriptic!')
+              console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty - el.qty)
             } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
           } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii stornate!')}
         } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
