@@ -345,9 +345,8 @@ nirSchema.pre('save', async function (next){
           console.log('Intrare adaugata cu succeess! ', ingredient.name, ' cantitate document ', el.qty, ' cantitate gestiune ', invGestiune[index].qty )
         }
 
-
       }
-
+      console.log(invGestiune)
       // --- perform atomic update on Ingredient
       return Ingredient.updateOne(
         { _id: el.ing },
