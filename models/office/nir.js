@@ -336,7 +336,7 @@ nirSchema.pre('save', async function (next){
           const index = ingredient.inventary.findIndex(i => i.index === lastInventary.index)
           if(index !== -1) {
             ingredient.inventary[index] = lastInventary
-            console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty + el.qty)
+            console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty)
           } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
         } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii!')}
       } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
@@ -506,7 +506,7 @@ nirSchema.pre(
             const index = ingredient.inventary.findIndex(i => i.index === lastInventary.index)
             if(index !== -1) {
               ingredient.inventary[index] = lastInventary
-              console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty - el.qty)
+              console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty)
             } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
           } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii stornate!')}
         } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
