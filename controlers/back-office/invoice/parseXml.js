@@ -90,6 +90,7 @@ const { parseStringPromise } = require('xml2js');
         console.log(invoicedQuantity)
         console.log(invoicedQuantity["_"])
         const quantity = invoicedQuantity ? parseFloat(invoicedQuantity["_"]) : 0;
+        console.log(quantity)
         const unitCode = invoicedQuantity && invoicedQuantity["$"] ? invoicedQuantity["$"].unitCode : 'N/A';
       
         // Extract total amount excluding VAT
