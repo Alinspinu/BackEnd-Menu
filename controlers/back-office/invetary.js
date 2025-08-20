@@ -9,7 +9,7 @@ const ComparedInventary = require('../../models/office/comp-inv');
 module.exports.createInventary = async (req, res, next) => {
   try{
     const {date, loc, point, gestiune} = req.body
-    const invDate = new Date(date).setUTCHours(21,59,59,0)
+    const invDate = new Date(date).setUTCHours(20,59,59,0)
     const ings = await Ingredient.find({locatie: loc, 'invGestiune.gestiune': gestiune, salePoint: point})
                     .select('name  dept um invGestiune')
                     .populate({path: 'dept', select:'name'})
