@@ -165,10 +165,10 @@ function parseCreditNoteData(creditData, id) {
 
     return {
       name,
-      quantity,
+      quantity: - quantity,
       unitCode,
-      price: priceAmount,
-      totalNoVat,
+      price: - priceAmount,
+      totalNoVat: - totalNoVat,
       vatPercent
     };
   }) || [];
@@ -187,11 +187,11 @@ function parseCreditNoteData(creditData, id) {
     supplier,
     customer,
     products,
-    vatAmount,
-    taxExclusiveAmount,
-    taxInclusiveAmount,
-    prepayAmount,
-    payableAmount,
+    vatAmount: -vatAmount,
+    taxExclusiveAmount: -taxExclusiveAmount,
+    taxInclusiveAmount: -taxInclusiveAmount,
+    prepayAmount: -prepayAmount,
+    payableAmount:  -payableAmount,
     currencyId,
     id
   };
