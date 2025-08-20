@@ -73,20 +73,11 @@ const invIngSchema = new Schema({
         type: Number,
         default: 0
       },
-      gestiuni: [
-        {
-          qty: Number,
-          faptic: {
-            type: Number,
-            default: 0
-          },
-          name: String,
-          gestiune: {
-            type: Schema.Types.ObjectId,
-            ref: 'Gestiune'
-          }
-        }
-      ] 
+      gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+      },
+      gName: String,
       
     }
   ],

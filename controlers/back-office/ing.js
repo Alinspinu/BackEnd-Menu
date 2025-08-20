@@ -236,13 +236,18 @@ module.exports.saveIng = async(req, res, next) => {
 
 
 
+
+
     module.exports.saveInventary = async (req, res, next) => {
-      const {loc, point, selectedDate} = req.query
+      const {loc, point, selectedDate, gestiune} = req.query
       try {
         const date = new Date(selectedDate);
-        date.setUTCHours(23, 59, 59, 0);
+        date.setUTCHours(20, 59, 59, 0);
         const formattedDate = date.toISOString();
-        const ings = await Ingredient.find({locatie: loc, productIngredient: false, salePoint: point}).select('inventary name gestiune qty dep um')
+        const ings = await Ingredient.find({locatie: loc, productIngredient: false, salePoint: point})
+                          .select('inventary name gestiune qty dep um gest')
+                          .populate({path: 'gest', select: 'name'})
+
         const updatePromises = ings.map(ing => {
           let index = 1;
           if (ing.inventary && ing.inventary.length) {
@@ -254,7 +259,9 @@ module.exports.saveIng = async(req, res, next) => {
           const entry = {
             index: index,
             day: formattedDate,
-            qty: ing.qty
+            qty: ing.qty,
+            gestiune: ing.gest._id,
+            gName: ing.gest.name
           };
     
           return Ingredient.updateOne(
@@ -278,7 +285,7 @@ module.exports.saveManualInventary = async (req, res, next) => {
     const ing  = await Ingredient.findById(data.ingId)
     ing.inventary.forEach(inv => {
       if(inv.index === data.invIndex){
-        inv.faptic = data.qtyInv
+        inv.faptic = data.qtyInv,
       }
     })
     const newIng = await ing.save()
@@ -298,7 +305,12 @@ module.exports.saveManualInventary = async (req, res, next) => {
 module.exports.getIng = async (req, res) => {
   const {id} = req.query
   try{
-    const ing = await Ingredient.findById(id).populate({path: 'ings.ing', select: 'name um'})
+    const ing = await Ingredient.findById(id)
+        .populate({path: 'ings.ing', select: 'name um'})
+        .populate({path: 'salePoint', select: 'name'})
+        .populate({path: 'gest', select: 'name'})
+        .populate({path: 'dept', select: 'name'})
+        .populate({path: 'eFactura.gestiune', select: 'name'})
     res.status(200).json(ing)
   } catch(error){
     console.log(error)
