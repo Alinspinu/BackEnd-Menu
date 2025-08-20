@@ -4,7 +4,7 @@ const { parseStringPromise } = require('xml2js');
 
 
   function parseInvoiceData (invoiceData, id) {
-
+    console.log(invoiceData)
 
     const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
 
