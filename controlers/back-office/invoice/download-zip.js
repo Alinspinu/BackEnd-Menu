@@ -1,6 +1,6 @@
 const axios = require('axios')
 const AdmZip = require('adm-zip');
-const {parseXml, parseInvoiceData, parseHeaderFromXml} = require('./parseXml')
+const {parseXml, parseInvoiceData, parseHeaderFromXml, parseCreditNoteData} = require('./parseXml')
 
 // const mode = 'test'
 const mode = 'prod'
@@ -34,7 +34,12 @@ const mode = 'prod'
           try {
             console.log(xmlData)
               const result = await parseXml(xmlData); 
-              invoice = parseInvoiceData(result, id);
+              if(result.Invoice){
+                invoice = parseInvoiceData(result, id);
+              } 
+              if(result.CreditNote){
+                invoice = parseCreditNoteData(result, id)
+              }
               break; 
           } catch (err) {
               console.error(`Error parsing XML:`, err);
