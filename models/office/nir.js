@@ -328,6 +328,7 @@ nirSchema.pre('save', async function (next){
             suplierNmae: sup.name,
             nir: doc._id
           };
+          console.log('Cantitate gestiune (la intrare) inainte de modificari ', invGestiune[index].name, ' ',invGestiune[index].qty)
           if(invGestiune[index].qty <= 0){
             ent.qty = roundd(invGestiune[index].qty + ent.qty);
             invGestiune[index].entries = [];
@@ -342,7 +343,7 @@ nirSchema.pre('save', async function (next){
           });
 
           invGestiune[index].qty = roundd(total);
-          console.log('Intrare adaugata cu succeess! ', ingredient.name, ' cantitate document ', el.qty, ' cantitate gestiune ', invGestiune[index].qty )
+          console.log('Intrare adaugata cu succeess! ', ingredient.name, ' cantitate document ', el.qty, ' cantitate gestiune (la intrare) dupa modificari ', invGestiune[index].qty )
         }
 
       }
