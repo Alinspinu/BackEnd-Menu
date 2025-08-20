@@ -86,7 +86,10 @@ const { parseStringPromise } = require('xml2js');
         // // const quantity = parseFloat(iq && typeof iq === 'object' ? iq._.replace(',', '.') : iq) || 0;
 
         const invoicedQuantity = item["cbc:InvoicedQuantity"] && item["cbc:InvoicedQuantity"][0];
-        const quantity = invoicedQuantity ? +invoicedQuantity["_"] : 0;
+
+        console.log(invoicedQuantity)
+        console.log(invoicedQuantity["_"])
+        const quantity = invoicedQuantity ? parseFloat(invoicedQuantity["_"]) : 0;
         const unitCode = invoicedQuantity && invoicedQuantity["$"] ? invoicedQuantity["$"].unitCode : 'N/A';
       
         // Extract total amount excluding VAT
