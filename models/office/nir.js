@@ -338,7 +338,7 @@ nirSchema.pre('save', async function (next){
           invGestiune[index].entries = invGestiune[index].entries.filter(e=> {
             if(e.qty < 0) return false;
             total += e.qty;
-            console.log('Cantitate Intrare gestiune  ', invGestiune[index].name, ' ', el.qty)
+            console.log('Cantitate Intrare gestiune  ', invGestiune[index].name, ' ', e.qty)
             return true;
           });
 
