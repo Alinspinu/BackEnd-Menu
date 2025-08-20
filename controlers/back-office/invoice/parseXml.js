@@ -167,8 +167,8 @@ function parseCreditNoteData(creditData, id) {
       name,
       quantity: - quantity,
       unitCode,
-      price: - priceAmount,
-      totalNoVat: - totalNoVat,
+      price: priceAmount,
+      totalNoVat: totalNoVat,
       vatPercent
     };
   }) || [];
