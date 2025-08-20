@@ -148,7 +148,7 @@ function subtractFromEntries(entries, cantFinal) {
     if (entry.qty >= remaining) {
       // enough to cover remaining
       entry.qty -= remaining;
-      console.log('Am gasit destula cantitate in intrare / ', entry.qty,  ' / cantitate scazuta -', remaining,  '/ stoc ramas ',  entry.qty - remaining)
+      console.log('Am gasit destula cantitate in intrare / ', entry.qty, '/ stoc ramas ',  entry.qty - remaining)
 
       if (entry.qty === 0 && !isLast) {
         console.log('Dar am consumato pe toata si am sterso')
