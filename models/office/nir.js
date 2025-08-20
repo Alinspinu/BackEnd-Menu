@@ -328,6 +328,7 @@ nirSchema.pre('save', async function (next){
             suplierNmae: sup.name,
             nir: doc._id
           };
+          console.log('intrari gestiune inaite de modificari ', invGestiune[index].entries)
           if(invGestiune[index].qty <= 0){
             ent.qty = roundd(invGestiune[index].qty + ent.qty);
             invGestiune[index].entries = [];
