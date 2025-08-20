@@ -282,7 +282,6 @@ module.exports.saveIng = async(req, res, next) => {
 module.exports.saveManualInventary = async (req, res, next) => {
   try{
     const {data} = req.body
-    console.log(data)
     const ing  = await Ingredient.findById(data.ingId)
     for(let inv of ing.inventary){
       if(inv.index === data.entry.index){
@@ -303,13 +302,6 @@ module.exports.saveManualInventary = async (req, res, next) => {
 
       }
     }
-    // ing.inventary.forEach(inv => {
-    //   if(inv.index === data.invIndex){
-    //     inv.faptic = data.faptic
-    //     const inventary = await
-    //   }
-
-    // })
     const newIng = await ing.save()
     const dbIng = await Ingredient.findById(newIng._id)
         .select([ '-unloadLog', '-uploadLog'])
