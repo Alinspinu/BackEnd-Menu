@@ -70,9 +70,12 @@ const { parseStringPromise } = require('xml2js');
           : 0;
       
         // Extract quantity and unit code
-        const invoicedQuantity = item["cbc:InvoicedQuantity"] && item["cbc:InvoicedQuantity"][0];
-        const quantity = invoicedQuantity ? +invoicedQuantity["_"] : 0;
-        const unitCode = invoicedQuantity && invoicedQuantity["$"] ? invoicedQuantity["$"].unitCode : 'N/A';
+        const iq = item["cbc:InvoicedQuantity"]?.[0];
+        const quantity = (typeof iq === 'object') ? +iq['_'] : +iq;
+        const unitCode = (typeof iq === 'object' && iq['$']) ? iq['$'].unitCode : 'N/A';
+        // const invoicedQuantity = item["cbc:InvoicedQuantity"] && item["cbc:InvoicedQuantity"][0];
+        // const quantity = invoicedQuantity ? +invoicedQuantity["_"] : 0;
+        // const unitCode = invoicedQuantity && invoicedQuantity["$"] ? invoicedQuantity["$"].unitCode : 'N/A';
       
         // Extract total amount excluding VAT
         const totalNoVat = item["cbc:LineExtensionAmount"] 
