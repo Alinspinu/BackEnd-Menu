@@ -337,8 +337,10 @@ nirSchema.pre('save', async function (next){
           invGestiune[index].entries = invGestiune[index].entries.filter(e=> {
             if(e.qty < 0) return false;
             total += e.qty;
+            console.log('Cantitate Intrare gestiune  ', invGestiune[index].name, ' ', el.qty)
             return true;
           });
+
           invGestiune[index].qty = roundd(total);
           console.log('Intrare adaugata cu succeess! ', ingredient.name, ' cantitate document ', el.qty, ' cantitate gestiune ', invGestiune[index].qty )
         }
