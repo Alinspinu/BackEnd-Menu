@@ -285,8 +285,8 @@ module.exports.saveManualInventary = async (req, res, next) => {
     console.log(data)
     const ing  = await Ingredient.findById(data.ingId)
     for(let inv of ing.inventary){
-      if(inv.index === data.invIndex){
-        inv.faptic = data.faptic
+      if(inv.index === data.entry.index){
+        inv.faptic = data.entry.faptic
         const inventary = await Inventary.findOne({date: new Date(inv.day), gestiune: inv.gestiune})
         if(inventary){
           console.log('Inventar gasit')
@@ -295,7 +295,7 @@ module.exports.saveManualInventary = async (req, res, next) => {
           if(invIng){
             console.log('Am gasi ingredient in inventar')
             console.log('Modific cantitatea....')
-            invIng.faptic = data.faptic
+            invIng.faptic = data.entry.faptic
             await inventary.save()
             console.log('Success!! CAntitate modificata si inventar editat!')
           } else {console.log('Nu am gasit ingtredient in inventar')}
