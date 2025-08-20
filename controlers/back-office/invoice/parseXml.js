@@ -71,8 +71,8 @@ const { parseStringPromise } = require('xml2js');
       console.log(item)
         // Extract quantity and unit code
         const iq = item["cbc:InvoicedQuantity"]?.[0];
-        const quantity = (typeof iq === 'object') ? +iq['_'] : +iq;
-        const unitCode = (typeof iq === 'object' && iq['$']) ? iq['$'].unitCode : 'N/A';
+        const quantity = parseFloat(iq && typeof iq === 'object' ? iq._.replace(',', '.') : iq) || 0;
+
         // const invoicedQuantity = item["cbc:InvoicedQuantity"] && item["cbc:InvoicedQuantity"][0];
         // const quantity = invoicedQuantity ? +invoicedQuantity["_"] : 0;
         // const unitCode = invoicedQuantity && invoicedQuantity["$"] ? invoicedQuantity["$"].unitCode : 'N/A';
