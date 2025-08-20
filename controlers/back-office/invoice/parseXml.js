@@ -4,8 +4,6 @@ const { parseStringPromise } = require('xml2js');
 
 
   function parseInvoiceData (invoiceData, id) {
-    console.log(invoiceData)
-
     const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
 
     const iban = suplierIban?.['cbc:ID'] ? suplierIban?.['cbc:ID'][0] : 'NO IBAN'
@@ -68,7 +66,6 @@ const { parseStringPromise } = require('xml2js');
         const price = item["cac:Price"] && item["cac:Price"][0]["cbc:PriceAmount"]
           ? +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"] || +item["cac:Price"][0]["cbc:PriceAmount"][0]
           : 0;
-      console.log(item)
         // Extract quantity and unit code
         // const iq = item["cbc:InvoicedQuantity"]?.[0];
 

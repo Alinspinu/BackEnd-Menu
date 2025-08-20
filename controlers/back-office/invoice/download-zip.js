@@ -46,6 +46,7 @@ const mode = 'prod'
           }
           }
       }
+        console.log(invoice)
         return {invoice: invoice};
     } catch (error) {
       console.error('Error downloading or processing the ZIP file:', error);
