@@ -4,6 +4,10 @@ const Schema = mongoose.Schema;
 
 const inventarySchema = new Schema({
     date: Date,
+    gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+    },
     ingredients: [
         {
             ing: {

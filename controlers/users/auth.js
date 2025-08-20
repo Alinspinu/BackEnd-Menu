@@ -604,7 +604,6 @@ module.exports.sendLogs =  async  (req, res) => {
         const response = await axios.post("https://pqz77twxh4.execute-api.us-east-1.amazonaws.com/prod/", {
             message: `---- ${message}`,
         });
-        console.log("Log sent:", response.data);
         res.status(200).json(response.data)
     } catch(error){
         console.log(error)

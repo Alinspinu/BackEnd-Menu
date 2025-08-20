@@ -3,6 +3,7 @@ const {round} = require('./functions')
 
 const Product = require('../models/office/product/product')
 const SubProduct = require('../models/office/product/sub-product');
+const Inventary = require('../models/office/inventary')
 
 
 const norm = s => s?.trim().toLowerCase()
@@ -26,6 +27,27 @@ async function unloadIngs (ings, qtyProdus) {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
             ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
 
+
+            const inventary = await  Inventary
+                                .findOne({date: {$gte: new Date()}, gestiune: ing.gestiune})
+                                .sort({ date: 1 }); 
+              if(inventary){
+                console.log('AM gasit un inventar inregistrat dupa data vanzarii')
+                console.log('Cautare ingredient in inventar...')
+                const ingI = inventary.ingredients.find(i => i.ing.toString() === ing.ing.toString())
+                if(ingI){
+                console.log('Ingredient gasit ', ingI.name)
+                console.log('Cantitate ingredient ', ingI.scriptic, ingI.um)
+                console.log('Cantitate de scazut ', cantFinal, ingI.um)
+                ingI.scriptic = round(ingI.scriptic - cantFinal)
+                console.log('Cantitate modificata ', ingI.scriptic)
+                await inventary.save()
+                console.log('Inventar modificat cu success!!')
+              } else {console.warn('Nu am gasit ingredientul in inventar ',  ing.ing.toString())}
+    
+              } 
+
+
             const lastInventary = ingredientInv.inventary.reduce((oldest, current) => {
               return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
             });
@@ -36,6 +58,8 @@ async function unloadIngs (ings, qtyProdus) {
                 lastInventary.qty = round(lastInventary.qty - cantFinal)
               }
             }
+
+
             if(ingredientInv.invGestiune.length){
               const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune.toString() === ing.gestiune.toString())
               if(gestIndex !== -1){
@@ -92,6 +116,28 @@ async function uploadIngs (ings, qtyProdus) {
             }else {
               let cantFinal = parseFloat(ing.qty * qtyProdus);
               ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
+
+
+            const inventary = await  Inventary
+                                .findOne({date: {$gte: new Date()}, gestiune: ing.gestiune})
+                                .sort({ date: 1 }); 
+                if(inventary){
+                  console.log('AM gasit un inventar inregistrat dupa data incarcarii')
+                  console.log('Cautare ingredient in inventar...')
+                  const ingI = inventary.ingredients.find(i => i.ing.toString() === ing.ing.toString())
+                  if(ingI){
+                  console.log('Ingredient gasit ', ingI.name)
+                  console.log('Cantitate ingredient ', ingI.scriptic, ingI.um)
+                  console.log('Cantitate de adaugat ', cantFinal, ingI.um)
+                  ingI.scriptic = round(ingI.scriptic + cantFinal)
+                  console.log('Cantitate modificata ', ingI.scriptic)
+                  await inventary.save()
+                  console.log('Inventar modificat cu success!!')
+                } else {console.warn('Nu am gasit ingredientul in inventar ',  ing.ing.toString())}
+
+                } 
+
+
 
               const lastInventary = ingredientInv.inventary.reduce((oldest, current) => {
                 return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;

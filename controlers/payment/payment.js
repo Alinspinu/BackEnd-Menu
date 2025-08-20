@@ -224,6 +224,8 @@ module.exports.reprinFiscal = async (req, res, next) => {
 }
 
 
+
+
 module.exports.printBill = async (req, res, next) => {
     try{
         const {bill, mode, mainServer} = req.body
@@ -319,20 +321,20 @@ module.exports.posPaymentCheck = async (req, res, next) => {
 }
 
 module.exports.fixBul = async (req, res, next) => {
-    try{
-        const startD = new Date('2024-01-05')
-        startD.setHours(0,0,0,0)
-        const orders = Order.find({createdAt: {$gte: startD} })
-       const response = await axios.post('https://flowmanager.ro/pay/fix', {orders}, {
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        console.log(response)
-        res.status(200)
-    } catch(err){
-        console.log(err)
-    }
+    // try{
+    //     const startD = new Date('2024-01-05')
+    //     startD.setHours(0,0,0,0)
+    //     const orders = Order.find({createdAt: {$gte: startD} })
+    //    const response = await axios.post('https://flowmanager.ro/pay/fix', {orders}, {
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         }
+    //     })
+    //     console.log(response)
+    //     res.status(200)
+    // } catch(err){
+    //     console.log(err)
+    // }
 
 }
 

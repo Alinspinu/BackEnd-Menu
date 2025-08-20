@@ -72,7 +72,21 @@ const invIngSchema = new Schema({
       faptic: {
         type: Number,
         default: 0
-      }
+      },
+      gestiuni: [
+        {
+          qty: Number,
+          faptic: {
+            type: Number,
+            default: 0
+          },
+          name: String,
+          gestiune: {
+            type: Schema.Types.ObjectId,
+            ref: 'Gestiune'
+          }
+        }
+      ] 
       
     }
   ],
@@ -112,14 +126,6 @@ const invIngSchema = new Schema({
         ref: 'Gestiune'
       },
       name: String,
-      inventary:[
-        {
-          date: Date,
-          faptic: Number,
-          scriptic: Number,
-          diference: Number
-        }
-      ],
       entries: [
         {
           qty: Number,

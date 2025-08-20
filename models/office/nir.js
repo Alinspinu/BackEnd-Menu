@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Counter = require("../utils/counter");
 const Ingredient = require('../office/inv-ingredient')
+const Inventary = require('../office/inventary')
 const Suplier = require('../office/suplier')
 const {roundd } = require('../../utils/functions')
 
@@ -134,127 +135,6 @@ const nirSchema = new Schema({
 
 
 
-// nirSchema.pre('save', async function (next){
-//   try{
-//     const doc = this
-//     const sup = await Suplier.findById(doc.suplier)
-
-//     const record = {
-//       typeOf: 'intrare',
-//       document: {
-//         typeOf: doc.document,
-//         docId: doc.nrDoc,
-//         amount: doc.totalDoc,
-//       },
-//       sold: sup.sold,
-//       date: doc.documentDate,
-//       nir: doc._id 
-//     }
-//       if (sup) {
-//         sup.records.push(record)
-//         const sortedRecords = sup.records.sort((a, b) => {
-//           const aDate = new Date(a.date).getTime() 
-//           const bDate = new Date(b.date).getTime()
-//           return aDate - bDate
-//       })
-//           const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
-//           if (recordIndex !== -1) {
-//               for (let i = recordIndex; i < sortedRecords.length; i++) {
-//                   sortedRecords[i].sold += doc.totalDoc;
-//               }
-//               sup.sold = sup.sold + doc.totalDoc
-//               sup.records = sortedRecords
-//               await sup.save();
-//               console.log("Supplier update:", sup.name);
-//           } else {
-//             console.error('ERROR record not found, Sulier unchanged!')
-//           }
-//       }
-
-//     const counter = await Counter.findOneAndUpdate(
-//       { locatie: doc.locatie, model: "Nir", salePoint: doc.salePoint },
-//       { $inc: { value: 1 } },
-//       { upsert: true, new: true }
-//     );
-//     doc.index = counter.value;
-
-
-//     const operation = {
-//       name: 'intrare', 
-//       details: sup.name +  " Nr  Doc - " + doc.nrDoc
-//     };
-
-//     const promises = doc.ingredients.map(async (el) => {
-
-//     let ingredient = await Ingredient.findById(el.ing);
-//     if(!ingredient) {
-//       console.log('Ingredient nu a fost gasit pentru id:', el.ing);
-//       return null; 
-//     }
-//     ingredient.price = el.price;
-//     ingredient.tva = el.tva;
-//     ingredient.tvaPrice = roundd(el.price * (1 + el.tva / 100));
-//     ingredient.sellPrice = el.sellPrice;
-//     ingredient.qty = (ingredient.qty || 0) + el.qty;
-  
-//     ingredient.uploadLog.push({
-//       date: doc.documentDate,
-//       qty: el.qty,
-//       operation: operation,
-//       uploadPrice: roundd(el.price * (1 + el.tva / 100)),
-//       logId: el.logId
-//     });
-
-//     if(ingredient.invGestiune.length){
-//     let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
-//     const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
-//     if(index !== -1){
-//       let ent = {
-//         qty: el.qty,
-//         inQty: el.qty,
-//         date: doc.receptionDate || new Date(),
-//         priceNoVat: el.price,
-//         priceWithVat: roundd(el.price * (1 + el.tva / 100)),
-//         suplierNmae: sup.name,
-//         nir: doc._id
-//       }
-//       if(ingredient.invGestiune[index].qty < 0 ) {
-//         console.log('hit - 0')
-//         ent.qty = roundd(ingredient.invGestiune[index].qty + ent.qty)
-//         ingredient.invGestiune[index].entries = []
-//       }
-
-     
-//       ingredient.invGestiune[index].entries.push(ent)
-
-//       let total = 0
-
-//       for (let i = 0; i < ingredient.invGestiune[index].entries.length; i++) {
-//         const entry = ingredient.invGestiune[index].entries[i];
-//         if(entry.qty < 0){
-//           ingredient.invGestiune[index].entries.splice(i, 1);
-//           i--;  
-//         } else {
-//           total += entry.qty
-//         }
-//       }
-
-//       ingredient.invGestiune[index].qty = roundd(total)
-//       console.log('all good in the good  cantitate gestiune', ingredient.invGestiune[index].qty)
-//     } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
-//   } else {console.log('ingredientul nu are gestiuni de inventar')}
-
-//     return ingredient.save();
-//   });
-    
-//   const results = await Promise.all(promises);
-    
-//     next()
-//   } catch(error){
-//     next(error)
-//   }
-// })
-
 
 nirSchema.pre('save', async function (next){
   try{
@@ -316,6 +196,26 @@ nirSchema.pre('save', async function (next){
         }
       ];
 
+
+      const inventary = await  Inventary
+                                .findOne({date: {$gte: new Date(doc.documentDate)}, gestiune: el.invGestiune})
+                                .sort({ date: 1 }); 
+
+      if(inventary){
+        console.log('AM gasit un inventar inregistrat dupa data documentului de intrare')
+        console.log('Cautare ingredient in inventar...')
+        const ing = inventary.ingredients.find(i => i.ing.toString() === el.ing.toString())
+        if(ing){
+          console.log('Ingredient gasit ', ing.name)
+          console.log('Cantitate ingredient ', ing.scriptic, ing.um)
+          console.log('Cantitate de adaugat ', el.qty, ing.um)
+          ing.scriptic = roundd(ing.scriptic + e.qty)
+          console.log('Cantitate modificata ', ing.scriptic)
+          await inventary.save()
+          console.log('Inventar modificat cu success!!')
+        } else {console.warn('Nu am gasit ingredientul in inventar ',  el.ing.toString())}
+
+      } 
   
 
       const lastInventary = ingredient.inventary.reduce((oldest, current) => {
@@ -327,19 +227,19 @@ nirSchema.pre('save', async function (next){
         const documentDate = new Date(doc.documentDate).getTime() 
         if(inventaryDate > documentDate){
 
-          console.log('AM gasit un inventar inregistrat dupa data documentului')
+          console.log('AM gasit un inventar inregistrat dupa data documentului de intrare')
           console.log('Modificare stoc scriptic...')
           console.log('Cantitate scriptica gasita ', lastInventary.qty)
           console.log('Cantitate de adaugat ', el.qty)
 
           lastInventary.qty = roundd(lastInventary.qty + el.qty)
-          const index = ingredient.inventary.findIndex(i => i.index === lastInventary.index)
-          if(index !== -1) {
-            ingredient.inventary[index] = lastInventary
-            console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty)
-          } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
+          console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty)
+
         } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii!')}
       } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
+
+
+
 
       let invGestiune = ingredient.invGestiune;
       if (invGestiune.length) {
@@ -403,76 +303,6 @@ nirSchema.pre('save', async function (next){
 
 
 
-// nirSchema.pre('deleteOne', { document: true, query: false }, async function(next){
-//   try{
-//     const doc = this
-
-//     const promises = doc.ingredients.map(async el => {
-//       const ingredient = await Ingredient.findById(el.ing);
-//       if (!ingredient) {
-//         console.log('Ingredient not found:', el.ing);
-//         return null;
-//       }
-    
-//       // decrement qty
-//       ingredient.qty = (ingredient.qty || 0) - el.qty;
-    
-//       // remove from uploadLog by logId
-//       ingredient.uploadLog = ingredient.uploadLog.filter(log => {
-//         return log.logId.toString() !== el.logId.toString();
-//       });
-
-
-//       if(ingredient.invGestiune.length){
-//         let gestiuneMatch = el.invGestiune ? el.invGestiune.toString() : ingredient.gest.toString()
-//         const index = ingredient.invGestiune.findIndex(g => g.gestiune.toString() === gestiuneMatch)
-//         if(index !== -1){
-//           ingredient.invGestiune[index].qty = roundd(ingredient.invGestiune[index].qty - el.qty)
-//           ingredient.invGestiune[index].entries = ingredient.invGestiune[index].entries.filter(log => {
-//             return log.nir.toString() !== doc._id.toString();
-//           });
-    
-//           console.log('all good in the good ', ingredient.invGestiune[index])
-//         } else {console.log('Nu am gasit gestiunea ', gestiuneMatch, ingredient.invGestiune)}
-//       } else {console.log('ingredientul nu are gestiuni de inventar')}
-
-    
-//       return ingredient.save();
-//     });
-    
-//     const results = await Promise.all(promises);
-    
-//     const suplier = await Suplier.findById(doc.suplier);
-
-//       if (suplier) {
-//         const sortedRecords = suplier.records.sort((a, b) => {
-//           const aDate = new Date(a.date).getTime() 
-//           const bDate = new Date(b.date).getTime()
-//           return aDate - bDate
-//       })
-//           const recordIndex = sortedRecords.findIndex(r => r.nir.toString() === doc._id.toString());
-//           if (recordIndex !== -1) {
-//               sortedRecords.splice(recordIndex, 1);
-//               for (let i = recordIndex; i < sortedRecords.length; i++) {
-//                   sortedRecords[i].sold -= doc.totalDoc;
-//               }
-//               suplier.sold = suplier.sold - doc.totalDoc
-//               suplier.records = sortedRecords
-//               await suplier.save();
-//               console.log('furnizorul a fos actualizat', suplier.name)
-//           } else {
-//             console.error('ERROR! Record not found! Suplier unchanged!')
-//           }
-//       }
-
-
-//     next()
-//   } catch(error){
-//     next(error)
-//   }
-// })
-
-
 nirSchema.pre(
   'deleteOne',
   { document: true, query: false },
@@ -486,6 +316,27 @@ nirSchema.pre(
           console.log('Ingredient not found:', el.ing);
           return null;
         }
+
+
+
+        const inventary = await  Inventary
+                            .findOne({date: {$gte: new Date(doc.documentDate)}, gestiune: el.invGestiune})
+                            .sort({ date: 1 }); 
+          if(inventary){
+            console.log('AM gasit un inventar inregistrat dupa data documentului de iesire')
+            console.log('Cautare ingredient in inventar...')
+            const ing = inventary.ingredients.find(i => i.ing.toString() === el.ing.toString())
+            if(ing){
+            console.log('Ingredient gasit ', ing.name)
+            console.log('Cantitate ingredient ', ing.scriptic, ing.um)
+            console.log('Cantitate de scazut ', el.qty, ing.um)
+            ing.scriptic = roundd(ing.scriptic - e.qty)
+            console.log('Cantitate modificata ', ing.scriptic)
+            await inventary.save()
+            console.log('Inventar modificat cu success!!')
+          } else {console.warn('Nu am gasit ingredientul in inventar ',  el.ing.toString())}
+
+          } 
 
 
         const lastInventary = ingredient.inventary.reduce((oldest, current) => {
