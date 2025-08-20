@@ -465,6 +465,7 @@ nirSchema.pre(
           const index = invGestiune.findIndex((g) => g.gestiune.toString() === gestiuneMatch);
           if (index !== -1) {
             invGestiune[index].qty = roundd(invGestiune[index].qty - el.qty);
+            console.log('intrari pre delete hoock', invGestiune[index].entries)
             invGestiune[index].entries = invGestiune[index].entries.filter(
               (log) => log.nir.toString() !== doc._id.toString()
             );
