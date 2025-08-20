@@ -25,7 +25,7 @@ async function unloadIngs (ings, qtyProdus) {
           } else {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
             ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
-            
+
             const lastInventary = ingredientInv.inventary.reduce((oldest, current) => {
               return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
             });
@@ -36,8 +36,6 @@ async function unloadIngs (ings, qtyProdus) {
                 lastInventary.qty = round(lastInventary.qty - cantFinal)
               }
             }
-
-
             if(ingredientInv.invGestiune.length){
               const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune.toString() === ing.gestiune.toString())
               if(gestIndex !== -1){
@@ -57,8 +55,6 @@ async function unloadIngs (ings, qtyProdus) {
                 } else {
                   console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost scazuta din principal!, stoc final ', gest.qty)
                 }
-
-
                 ingredientInv.invGestiune[gestIndex] = gest
               }  else {console.warn('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
             } else {console.warn('Nu au fost gasite gestiuni de inventar')}
@@ -96,7 +92,6 @@ async function uploadIngs (ings, qtyProdus) {
             }else {
               let cantFinal = parseFloat(ing.qty * qtyProdus);
               ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
-
 
               const lastInventary = ingredientInv.inventary.reduce((oldest, current) => {
                 return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
@@ -155,7 +150,6 @@ async function uploadIngs (ings, qtyProdus) {
 
 
 function subtractFromEntries(entries, cantFinal) {
-  // sort by date ASC (oldest first)
   entries.sort((a, b) => new Date(a.date) - new Date(b.date));
   console.log('Cantitate ce trebuie scazuta din document', cantFinal)
   let remaining = cantFinal;
@@ -163,37 +157,32 @@ function subtractFromEntries(entries, cantFinal) {
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
 
-    // on the last entry we allow negative stock
     const isLast = i === entries.length - 1;
 
     if (remaining <= 0) break;
 
     if (entry.qty >= remaining) {
-      // enough to cover remaining
+
       entry.qty -= remaining;
       console.log('Am gasit destula cantitate in intrare / ', entry.qty, '/ stoc ramas ',  entry.qty - remaining)
 
       if (entry.qty === 0 && !isLast) {
         console.log('Dar am consumato pe toata si am sterso')
-        // delete if 0 and not the last
         entries.splice(i, 1);
-        i--;        // fix index because we removed current element
+        i--;    
       }
 
       remaining = 0;
     } else {
-      // not enough in this entry — consume it completely
       console.warn('Nu am gasit destula cantitate / ', entry.qty, ' Cantitate ce trebuie scazuta  ',  remaining)
       remaining -= entry.qty;
 
     if (!isLast) {
-        // delete the spent entry
         entries.splice(i, 1);
-        i--;        // fix index
+        i--;     
         console.log('Am sters intrarea cu cantitate insuficienta ', entry.qty, 'cantitate ramasa pentru urmatoarea intrare', remaining )
       } else {
         console.log('Este ultima intrare, am pus cantitate negativa.  Cantitate intrare -', entry.qty, ' Cantitate vanduta  - ', remaining + entry.qty)
-        // last entry → allow negative
         entry.qty -= (remaining + entry.qty);
         remaining = 0;
       }
