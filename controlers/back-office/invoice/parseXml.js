@@ -66,22 +66,7 @@ const { parseStringPromise } = require('xml2js');
         const price = item["cac:Price"] && item["cac:Price"][0]["cbc:PriceAmount"]
           ? +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"] || +item["cac:Price"][0]["cbc:PriceAmount"][0]
           : 0;
-        // Extract quantity and unit code
-        // const iq = item["cbc:InvoicedQuantity"]?.[0];
-
-        // let quantity = 0;
-        // let unitCode = 'N/A';
-
-        // if (iq) {
-        //   if (typeof iq === 'object') {
-        //     // handle both "1.000" and "1,000" and also negative values
-        //     const raw = iq._.replace(',', '.');
-        //     quantity = parseFloat(raw);
-        //     unitCode = iq.$?.unitCode || unitCode;
-        //   }
-        // }
-        // // const quantity = parseFloat(iq && typeof iq === 'object' ? iq._.replace(',', '.') : iq) || 0;
-
+       
         const invoicedQuantity = item["cbc:InvoicedQuantity"] && item["cbc:InvoicedQuantity"][0];
 
         console.log(invoicedQuantity)
