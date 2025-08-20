@@ -346,7 +346,10 @@ nirSchema.pre('save', async function (next){
         }
 
       }
-      console.log(invGestiune)
+      console.log('Cantitate festiune final ', invGestiune.qty)
+      for(let g of invGestiune){
+        console.log(g.entries)
+      }
       // --- perform atomic update on Ingredient
       return Ingredient.updateOne(
         { _id: el.ing },
