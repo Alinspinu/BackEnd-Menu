@@ -5,7 +5,7 @@ const { parseStringPromise } = require('xml2js');
 
   function parseInvoiceData (invoiceData, id) {
 
-    const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
+    const suplierIban = invoiceData?.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
 
     const iban = suplierIban?.['cbc:ID'] ? suplierIban?.['cbc:ID'][0] : 'NO IBAN'
     const bank = suplierIban?.['cbc:Name'] ? suplierIban?.['cbc:Name'][0] : 'NO NAME'
