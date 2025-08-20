@@ -9,7 +9,7 @@ router.route('/')
 
 router.route('/update')
     .post(invCont.updateInventary)
-    .pue(invCont.updateGestiune)
+    .put(invCont.updateGestiune)
 
 
 module.exports = router
