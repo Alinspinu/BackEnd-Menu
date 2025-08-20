@@ -169,7 +169,7 @@ function subtractFromEntries(entries, cantFinal) {
         i--;        // fix index
         console.log('Am sters intrarea cu cantitate insuficienta ', entry.qty, 'cantitate ramasa pentru urmatoarea intrare', remaining )
       } else {
-        console.log('Este ultima intrare, am pus cantitate negativa.  Cantitate intrare -', entry.qty, ' Cantitate vanduta  - ', remaining + entry.aqty)
+        console.log('Este ultima intrare, am pus cantitate negativa.  Cantitate intrare -', entry.qty, ' Cantitate vanduta  - ', remaining + entry.qty)
         // last entry → allow negative
         entry.qty -= (remaining + entry.qty);
         remaining = 0;
