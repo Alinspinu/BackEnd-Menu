@@ -16,7 +16,7 @@ async function unloadIngs (ings, qtyProdus) {
     for (const ing of ings) {
         const ingredientInv = await IngInv.findById(ing.ing).exec();
         if (!ingredientInv) {
-            console.log(`Eorare! Ingredientul nu a fost găsit în baza de date. la descarcare de stoc`);
+            console.error(`Eorare! Ingredientul nu a fost găsit în baza de date. la descarcare de stoc`);
         } else {
           if(ingredientInv.ings.length){
             ingredientInv.ings.forEach(obj => {
@@ -42,15 +42,15 @@ async function unloadIngs (ings, qtyProdus) {
                     ingredientInv.price = oldestEntry.priceNoVat
                     ingredientInv.tvaPrice = oldestEntry.priceWithVat
                     console.log('Am am acualizat pretul ingredientului dupa ultima intrare ', ingredientInv.tvaPrice)
-                  } else {console.log('!!!!!Atentie nu am gasit ultima intrare pretul ingredientului a ramas acelasi!')}
+                  } else {console.warn('!!!!!Atentie nu am gasit ultima intrare pretul ingredientului a ramas acelasi!')}
                 } else {
                   console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost scazuta din principal!, stoc final ', gest.qty)
                 }
 
 
                 ingredientInv.invGestiune[gestIndex] = gest
-              }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
-            } else {console.log('Nu au fost gasite gestiuni de inventar')}
+              }  else {console.warn('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
+            } else {console.warn('Nu au fost gasite gestiuni de inventar')}
 
             await ingredientInv.save();
             console.log(`Success!! unload-ingredient: Nume - ${ingredientInv.name} - ${cantFinal} / stoc: ${ingredientInv.qty}`)
@@ -77,7 +77,7 @@ async function uploadIngs (ings, qtyProdus) {
     for (const ing of ings) {
         const ingredientInv = await IngInv.findById(ing.ing).exec();
         if (!ingredientInv) {
-            console.log(`Eorare! Ingredientul nu a fost găsit în baza de date. la incarcare de stoc`);
+            console.error(`Eorare! Ingredientul nu a fost găsit în baza de date. la incarcare de stoc`);
           } else {
             if(ingredientInv.ings.length){
               ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
@@ -103,10 +103,10 @@ async function uploadIngs (ings, qtyProdus) {
 
                         console.log(ingredientInv.name, 'a fost încarcat cu +',  cantFinal, ' / stoc final ', gest.entries[eIndex].qty )
                       }
-                  }  else { console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost incarcata doar in principal!, stoc final ', gest.qty)}
+                  }  else { console.warn('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost incarcata doar in principal!, stoc final ', gest.qty)}
                   ingredientInv.invGestiune[gestIndex] = gest
-                }  else {console.log('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
-              } else {console.log('Nu au fost gasite gestiuni de inventar')}
+                }  else {console.warn('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
+              } else {console.warn('Nu au fost gasite gestiuni de inventar')}
 
 
               await ingredientInv.save();
@@ -160,7 +160,7 @@ function subtractFromEntries(entries, cantFinal) {
       remaining = 0;
     } else {
       // not enough in this entry — consume it completely
-      console.log('Nu am gasit destula cantitate / ', entry.qty, ' Cantitate ce trebuie scazuta  ',  remaining)
+      console.warn('Nu am gasit destula cantitate / ', entry.qty, ' Cantitate ce trebuie scazuta  ',  remaining)
       remaining -= entry.qty;
 
     if (!isLast) {
