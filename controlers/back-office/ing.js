@@ -285,7 +285,7 @@ module.exports.saveManualInventary = async (req, res, next) => {
     const ing  = await Ingredient.findById(data.ingId)
     ing.inventary.forEach(inv => {
       if(inv.index === data.invIndex){
-        inv.faptic = data.qtyInv,
+        inv.faptic = data.qtyInv
       }
     })
     const newIng = await ing.save()
