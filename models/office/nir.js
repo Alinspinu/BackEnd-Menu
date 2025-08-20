@@ -328,7 +328,6 @@ nirSchema.pre('save', async function (next){
             suplierNmae: sup.name,
             nir: doc._id
           };
-          console.log('intrari gestiune inaite de modificari ', invGestiune[index].entries)
           if(invGestiune[index].qty <= 0){
             ent.qty = roundd(invGestiune[index].qty + ent.qty);
             invGestiune[index].entries = [];
@@ -338,7 +337,7 @@ nirSchema.pre('save', async function (next){
           invGestiune[index].entries = invGestiune[index].entries.filter(e=> {
             if(e.qty < 0) return false;
             total += e.qty;
-            console.log('Cantitate Intrare gestiune  ', invGestiune[index].name, ' ', e.qty)
+            console.log('Cantitate intrare de gestiune  ', invGestiune[index].name, ' ', e.qty)
             return true;
           });
 
@@ -346,10 +345,6 @@ nirSchema.pre('save', async function (next){
           console.log('Intrare adaugata cu succeess! ', ingredient.name, ' cantitate document ', el.qty, ' cantitate gestiune ', invGestiune[index].qty )
         }
 
-      }
-      console.log('Cantitate festiune final ', invGestiune.qty)
-      for(let g of invGestiune){
-        console.log(g.entries)
       }
       // --- perform atomic update on Ingredient
       return Ingredient.updateOne(
