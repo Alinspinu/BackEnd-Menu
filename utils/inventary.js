@@ -134,7 +134,7 @@ async function uploadIngs (ings, qtyProdus) {
 function subtractFromEntries(entries, cantFinal) {
   // sort by date ASC (oldest first)
   entries.sort((a, b) => new Date(a.date) - new Date(b.date));
-
+  console.log('Cantitate ce trebuie scazuta din document', cantFinal)
   let remaining = cantFinal;
 
   for (let i = 0; i < entries.length; i++) {
