@@ -90,7 +90,7 @@ module.exports.updateInventary = async (req, res) => {
      } else {
        const inventary = await Inventary.findById(inventaryId)
                         .populate([
-                            { path: 'ingredients.ing', select: 'price um' },
+                            { path: 'ingredients.ing', select: 'price um inventary' },
                             { path: 'gestiune', select: 'name' }
                         ]);
        res.status(200).json(inventary)
