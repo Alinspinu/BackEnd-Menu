@@ -696,6 +696,14 @@ module.exports.printCompareInv = async (req, res) => {
     worksheet.getColumn(11).width = 18; 
     worksheet.getColumn(12).width = 15; 
     worksheet.mergeCells(`A1:L1`)
+
+    worksheet.eachRow(row => {
+      row.eachCell(cell => {
+        if (typeof cell.value === 'number') {
+          cell.numFmt = '0.000'; // or "0" if you want no decimals
+        }
+      });
+    });
   
 
     workbook.xlsx.writeBuffer().then(buffer => {
