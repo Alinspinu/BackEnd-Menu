@@ -55,17 +55,27 @@ module.exports.createInventary = async (req, res, next) => {
 
 
 module.exports.updateInventary = async (req, res) => {
-    const {invId, ingId, value} = req.body
+    const {invId, ingId, value, invIndex} = req.body
     try{
 
         const inventary = await Inventary.findById(invId)
         if(inventary.updated){
             return res.status(401).json({ message: 'Inventarul a fost folosit la actualizarea gestiunii, prin urmare nu poate fi modificat!' });
         }
+
+        const dbIng  = await Ingredient.findById(ingId)
+        const ingInv = dbIng.inventary.find(i => i.index === invIndex)
+        if(ingInv) {
+            ingInv.faptic = value
+            await dbIng.save()
+        }   
+        
         const ing = inventary.ingredients.find(i => i.ing.toString() === ingId)
         if(ing){
             ing.faptic = value
         }
+
+
         const savedInv = await inventary.save()
         await savedInv.populate([
             { path: 'ingredients.ing', select: 'price um inventary' },
