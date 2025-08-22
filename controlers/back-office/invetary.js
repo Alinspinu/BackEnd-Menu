@@ -22,7 +22,7 @@ module.exports.createInventary = async (req, res, next) => {
             const gest = i.invGestiune.find(g => g.gestiune._id.toString() === gestiune)
             if(gest){          
                 for(let e of gest.entries){
-                    scripticValue += (e.priceNoVat * e.qty)
+                    scripticValue += (e.priceWithVat * e.qty)
                 }
                 const ing = {
                     ing: i._id,
@@ -77,7 +77,7 @@ module.exports.updateInventary = async (req, res) => {
 
         for(let g of  dbIng.invGestiune){
             if(g.gestiune.toString() === inventary.gestiune.toString()){
-
+                console.log('hitt fiind gesiune')
                 inventary.fapticValue = round(inventary.fapticValue + allocateFromNewest(g.entries, value))
             }
         }
