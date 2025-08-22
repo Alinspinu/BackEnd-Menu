@@ -2,7 +2,8 @@
 const Ingredient = require('../../models/office/inv-ingredient');
 const Inventary = require('../../models/office/inventary');
 const ComparedInventary = require('../../models/office/comp-inv');
-
+const io = require('socket.io-client');
+const socket = io("https://socket.flowmanager.ro")
 
 
 
@@ -81,6 +82,9 @@ module.exports.updateInventary = async (req, res) => {
             { path: 'ingredients.ing', select: 'price um inventary' },
             { path: 'gestiune', select: 'name' }
           ]);
+
+        socket.emit('inventary', JSON.stringify({inv: savedInv}))
+
         res.status(200).json({message: 'Inventarul a fost actualizat cu success! ', inv: savedInv})
     } catch(error){
         console.log(error)
