@@ -340,7 +340,7 @@ nirSchema.pre(
           } 
 
 
-          if(ingredient.inventary.length){}{
+          if(ingredient.inventary.length){}{ 
             const lastInventary = ingredient.inventary.reduce((oldest, current) => {
               return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
             });
@@ -363,7 +363,8 @@ nirSchema.pre(
                 } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
               } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii stornate!')}
             } 
-          } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
+          } 
+        
 
         // Build updated invGestiune entries in memory
         let invGestiune = ingredient.invGestiune;
