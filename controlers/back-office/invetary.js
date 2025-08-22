@@ -115,7 +115,7 @@ module.exports.updateInventary = async (req, res) => {
      const {inventaryId, loc, point} = req.query;
      if(inventaryId === "all"){
        const inventaries = await Inventary.find({locatie: loc, salePoint: point})
-                            .select('gestiune date updated')
+                            .select('-ingredients')
                             .populate({path: 'gestiune', select: 'name'})
        res.status(200).json(inventaries)
      } else {
