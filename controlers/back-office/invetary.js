@@ -77,7 +77,8 @@ module.exports.updateInventary = async (req, res) => {
 
         for(let g of  dbIng.invGestiune){
             if(g.gestiune.toString() === inventary.gestiune.toString()){
-                inventary.fapticValue = round(inventary.fapticValue + allocateFromNewest(inventary.entries, value))
+
+                inventary.fapticValue = round(inventary.fapticValue + allocateFromNewest(g.entries, value))
             }
         }
 
