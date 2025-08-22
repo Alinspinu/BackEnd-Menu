@@ -68,7 +68,7 @@ module.exports.updateInventary = async (req, res) => {
         }
         const savedInv = await inventary.save()
         await savedInv.populate([
-            { path: 'ingredients.ing', select: 'price um' },
+            { path: 'ingredients.ing', select: 'price um inventary' },
             { path: 'gestiune', select: 'name' }
           ]);
         res.status(200).json({message: 'Inventarul a fost actualizat cu success! ', inv: savedInv})
