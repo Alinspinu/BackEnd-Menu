@@ -202,6 +202,7 @@ nirSchema.pre('save', async function (next){
                                 .sort({ date: 1 }); 
 
       if(inventary){
+        inventary.scripticValue = roundd(inventary.scripticValue + el.total)
         console.log('AM gasit un inventar inregistrat dupa data documentului de intrare')
         console.log('Cautare ingredient in inventar...')
         const ing = inventary.ingredients.find(i => i.ing.toString() === el.ing.toString())
@@ -324,6 +325,7 @@ nirSchema.pre(
                             .findOne({date: {$gte: new Date(doc.documentDate)}, gestiune: el.invGestiune})
                             .sort({ date: 1 }); 
           if(inventary){
+            inventary.scripticValue = roundd(inventary.scripticValue - el.total)
             console.log('AM gasit un inventar inregistrat dupa data documentului de iesire')
             console.log('Cautare ingredient in inventar...')
             const ing = inventary.ingredients.find(i => i.ing.toString() === el.ing.toString())

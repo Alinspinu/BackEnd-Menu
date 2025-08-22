@@ -22,6 +22,11 @@ const inventarySchema = new Schema({
             um: String,
         }
     ],
+    fapticValue: {
+        type: Number,
+        default: 0
+    },
+    scripticValue: Number,
     updated: Boolean,
     locatie: {
         type: Schema.Types.ObjectId,

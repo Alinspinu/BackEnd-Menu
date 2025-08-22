@@ -32,6 +32,13 @@ async function unloadIngs (ings, qtyProdus) {
                                 .findOne({date: {$gte: new Date()}, gestiune: ing.gestiune})
                                 .sort({ date: 1 }); 
               if(inventary){
+                const gest = ingredientInv.invGestiune.find(g => g.gestiune._id.toString() === inventary.gestiune.toString())
+                if(gest && gest.entries.length){        
+                  const lastEntry = gest.entries.reduce((oldest, current) => {
+                    return new Date(current.date).getTime() > new Date(oldest.date).getTime() ? current : oldest;
+                  });  
+                  inventary.scripticValue = round(inventary.scripticValue - (lastEntry.priceWithVat * cantFinal))
+                }
                 console.log('AM gasit un inventar inregistrat dupa data vanzarii')
                 console.log('Cautare ingredient in inventar...')
                 const ingI = inventary.ingredients.find(i => i.ing.toString() === ing.ing.toString())
@@ -122,6 +129,13 @@ async function uploadIngs (ings, qtyProdus) {
                                 .findOne({date: {$gte: new Date()}, gestiune: ing.gestiune})
                                 .sort({ date: 1 }); 
                 if(inventary){
+                  const gest = ingredientInv.invGestiune.find(g => g.gestiune._id.toString() === inventary.gestiune.toString())
+                  if(gest && gest.entries.length){        
+                    const lastEntry = gest.entries.reduce((oldest, current) => {
+                      return new Date(current.date).getTime() > new Date(oldest.date).getTime() ? current : oldest;
+                    });  
+                    inventary.scripticValue = round(inventary.scripticValue + (lastEntry.priceWithVat * cantFinal))
+                  }
                   console.log('AM gasit un inventar inregistrat dupa data incarcarii')
                   console.log('Cautare ingredient in inventar...')
                   const ingI = inventary.ingredients.find(i => i.ing.toString() === ing.ing.toString())

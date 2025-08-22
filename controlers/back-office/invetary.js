@@ -4,6 +4,7 @@ const Inventary = require('../../models/office/inventary');
 const ComparedInventary = require('../../models/office/comp-inv');
 const io = require('socket.io-client');
 const socket = io("https://socket.flowmanager.ro")
+const {round} = require('../../utils/functions')
 
 
 
@@ -15,10 +16,14 @@ module.exports.createInventary = async (req, res, next) => {
                     .select('name  dept um invGestiune')
                     .populate({path: 'dept', select:'name'})
                     .populate({path: 'invGestiune.gestiune', select: 'name'})
-
+        
+        let scripticValue = 0
         const mapIngredients =  ings.map(i => {
             const gest = i.invGestiune.find(g => g.gestiune._id.toString() === gestiune)
             if(gest){          
+                for(let e of gest.entries){
+                    scripticValue += (e.priceNoVat * e.qty)
+                }
                 const ing = {
                     ing: i._id,
                     name: i.name,
@@ -33,6 +38,7 @@ module.exports.createInventary = async (req, res, next) => {
                 return undefined
             }
         }).filter(Boolean)
+
         const sortedIngredients = mapIngredients.sort((a,b) => b.name.localeCompare(a.name) )
         const inv = new Inventary({
           locatie: loc,
@@ -40,6 +46,7 @@ module.exports.createInventary = async (req, res, next) => {
           date: invDate,
           gestiune: gestiune,
           ingredients: sortedIngredients,
+          scripticValue: round(scripticValue),
           updated: false
         })
         const savedInv = await inv.save()
@@ -65,6 +72,16 @@ module.exports.updateInventary = async (req, res) => {
         }
 
         const dbIng  = await Ingredient.findById(ingId)
+
+
+
+        for(let g of  dbIng.invGestiune){
+            if(g.gestiune.toString() === inventary.gestiune.toString()){
+                inventary.fapticValue = round(inventary.fapticValue + allocateFromNewest(inventary.entries, value))
+            }
+        }
+
+       
         const ingInv = dbIng.inventary.find(i => i.index === invIndex)
         if(ingInv) {
             ingInv.faptic = value
@@ -146,6 +163,49 @@ module.exports.updateInventary = async (req, res) => {
      res.status(500).json(err)
    }
  }
+
+
+
+function allocateFromNewest(entries, globalQty) {
+    if (!Array.isArray(entries) || globalQty <= 0) {
+      return 0;
+    }
+  
+    // Sort by date: newest first
+    const sorted = [...entries].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  
+    let remaining = globalQty;
+    const allocations = [];
+  
+    for (const e of sorted) {
+      if (remaining <= 0) break;
+      const useQty = Math.min(remaining, Number(e.qty) || 0);
+      if (useQty > 0) {
+        allocations.push({
+          price: Number(e.priceWithVat) || 0,
+          qty: useQty,
+        });
+        remaining -= useQty;
+      }
+    }
+  
+    // If still remaining, price it using the oldest entry's price
+    if (remaining > 0 && sorted.length > 0) {
+      const oldest = sorted[sorted.length - 1];
+      allocations.push({
+        price: Number(oldest.priceWithVat) || 0,
+        qty: remaining,
+      });
+      remaining = 0;
+    }
+  
+    const totalCost = allocations.reduce((sum, a) => sum + a.price * a.qty, 0);  
+    return totalCost;
+  }
+  
+  
 
 
  
