@@ -73,17 +73,13 @@ module.exports.updateInventary = async (req, res) => {
 
         const dbIng  = await Ingredient.findById(ingId)
        
-        // const ingInv = dbIng.inventary.find(i => i.index === invIndex)
-        // if(ingInv) {
-        //     ingInv.faptic = value
-        //     await dbIng.save()
-        // }   
         
         const ing = inventary.ingredients.find(i => i.ing.toString() === ingId)
         if(ing){
             for(let g of  dbIng.invGestiune){
                 if(g.gestiune.toString() === inventary.gestiune.toString()){
                     console.log('hitt fiind gesiune')
+                    console.log(g.entries)
                     inventary.fapticValue = round(inventary.fapticValue - allocateFromNewest(g.entries, ing.faptic))
                     inventary.fapticValue = round(inventary.fapticValue + allocateFromNewest(g.entries, value))
                 }
