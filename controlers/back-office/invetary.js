@@ -236,6 +236,7 @@ function allocateFromNewest(entries, globalQty) {
     }
   
     const totalCost = allocations.reduce((sum, a) => sum + a.price * a.qty, 0);  
+    console.log(totalCost)
     return {totalCost, allocations};
   }
   
