@@ -63,7 +63,7 @@ module.exports.createInventary = async (req, res, next) => {
 
 
 module.exports.updateInventary = async (req, res) => {
-    const {invId, ingId, value, invIndex} = req.body
+    const {invId, ingId, value} = req.body
     try{
 
         const inventary = await Inventary.findById(invId)
@@ -72,17 +72,12 @@ module.exports.updateInventary = async (req, res) => {
         }
 
         const dbIng  = await Ingredient.findById(ingId)
-
-
-
-
-
        
-        const ingInv = dbIng.inventary.find(i => i.index === invIndex)
-        if(ingInv) {
-            ingInv.faptic = value
-            await dbIng.save()
-        }   
+        // const ingInv = dbIng.inventary.find(i => i.index === invIndex)
+        // if(ingInv) {
+        //     ingInv.faptic = value
+        //     await dbIng.save()
+        // }   
         
         const ing = inventary.ingredients.find(i => i.ing.toString() === ingId)
         if(ing){

@@ -55,16 +55,16 @@ async function unloadIngs (ings, qtyProdus) {
               } 
 
 
-            const lastInventary = ingredientInv.inventary.reduce((oldest, current) => {
-              return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
-            });
-            if(lastInventary){       
-              if(new Date(lastInventary.day).getTime() > new Date().getTime()){
-                console.log('Am gasit inventar creat dupa data descarcarii')
-                console.log('Modificare stoc scriptic.... ', lastInventary.qty,  '-', cantFinal, ' = ', lastInventary.qty - cantFinal )
-                lastInventary.qty = round(lastInventary.qty - cantFinal)
-              }
-            }
+            // const lastInventary = ingredientInv.inventary.reduce((oldest, current) => {
+            //   return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
+            // });
+            // if(lastInventary){       
+            //   if(new Date(lastInventary.day).getTime() > new Date().getTime()){
+            //     console.log('Am gasit inventar creat dupa data descarcarii')
+            //     console.log('Modificare stoc scriptic.... ', lastInventary.qty,  '-', cantFinal, ' = ', lastInventary.qty - cantFinal )
+            //     lastInventary.qty = round(lastInventary.qty - cantFinal)
+            //   }
+            // }
 
 
             if(ingredientInv.invGestiune.length){
@@ -153,16 +153,16 @@ async function uploadIngs (ings, qtyProdus) {
 
 
 
-              const lastInventary = ingredientInv.inventary.reduce((oldest, current) => {
-                return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
-              });
-              if(lastInventary){       
-                if(new Date(lastInventary.day).getTime() > new Date().getTime()){
-                  console.log('Am gasit inventar creat dupa data incarcarii')
-                  console.log('Modificare stoc scriptic.... ', lastInventary.qty,  '+', cantFinal, ' = ', lastInventary.qty + cantFinal )
-                  lastInventary.qty = round(lastInventary.qty + cantFinal)
-                }
-              }
+              // const lastInventary = ingredientInv.inventary.reduce((oldest, current) => {
+              //   return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
+              // });
+              // if(lastInventary){       
+              //   if(new Date(lastInventary.day).getTime() > new Date().getTime()){
+              //     console.log('Am gasit inventar creat dupa data incarcarii')
+              //     console.log('Modificare stoc scriptic.... ', lastInventary.qty,  '+', cantFinal, ' = ', lastInventary.qty + cantFinal )
+              //     lastInventary.qty = round(lastInventary.qty + cantFinal)
+              //   }
+              // }
 
               if(ingredientInv.invGestiune.length){
                 const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune.toString() === ing.gestiune.toString())
