@@ -73,22 +73,17 @@ module.exports.updateInventary = async (req, res) => {
 
         const dbIng  = await Ingredient.findById(ingId)
        
-        
         const ing = inventary.ingredients.find(i => i.ing.toString() === ingId)
         if(ing){
             for(let g of  dbIng.invGestiune){
                 if(g.gestiune.toString() === inventary.gestiune.toString()){
-                    console.log('hitt fiind gesiune')
-                    console.log(g.entries)
-                    inventary.fapticValue = round(inventary.fapticValue - allocateFromNewest(g.entries, ing.faptic))
-                    inventary.fapticValue = round(inventary.fapticValue + allocateFromNewest(g.entries, value))
+                    inventary.fapticValue = round(inventary.fapticValue - allocateFromNewest(g.entries, ing.faptic).totalCost)
+                    inventary.fapticValue = round(inventary.fapticValue + allocateFromNewest(g.entries, value).totalCost)
                 }
             }
 
             ing.faptic = value
         }
-
-
         const savedInv = await inventary.save()
         await savedInv.populate([
             { path: 'ingredients.ing', select: 'price um inventary' },
@@ -151,8 +146,53 @@ module.exports.updateInventary = async (req, res) => {
 
  module.exports.updateGestiune = async (req, res) =>{
    try{
+    const {id} = req.body
 
-    res.status(200)
+    const inventary = await Inventary.findById(id)
+
+    const promises = inventary.ingredients.map(async (i) => {
+        const dbIng = await Ingredient.findById(i.ing)
+        if(dbIng){
+            consoel.log(`Am gasit ingredient in baza de date procesare ${dbIng.name}....`)
+            const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
+            if(ingGest){
+                console.log(`Am gasit gestiunea inventarului ${ingGest.name}....`)
+                console.log('Cantitate gesiune ', ingGest.qty)
+                console.log('Cantitate ingredient inventar faptic ', i.faptic)
+                ingGest.qty = i.faptic
+                if(ingGest.entries.length){
+                    console.log(ingGest.entries)
+                    console.log('Am gasit intrari de marfa pe gesiune ', ingGest.entries.length)
+                    console.log('Modific cantitatile....')
+                    const entries = allocateFromNewest(ingGest.entries, i.faptic).allocations
+                    ingGest.entries = entries
+                    console.log(ingGest.entries)
+                } else {
+                    console.log('Nu am gasit intrari pe gestiune...')
+                    console.log('Adaug intrare de inventar cu cantitatea faptica ', i.faptic)
+                    const entry = {
+                        qty: i.faptic,
+                        date: inventary.date,
+                        priceNoVat: dbIng.price,
+                        priceWithVat: round(dbIng.price * (1 + dbIng.tva / 100)),
+                        inQty: i.faptic,
+                        suplierName: 'Intrare din inventar'
+                    }
+                    ingGest.entries.push(entry)
+                    console.log('Intrare adaugata ', ingGest.entries)
+                }
+            }
+            dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
+         return dbIng.save().then(i => {
+            console.log(`Ingredientul ${i.name} a fost actulizat cu succees!`)
+            console.log('Cantitate totala ', i.qty)
+         })
+        }
+    })
+
+    await Promise.all(promises)
+
+    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!'})
    } catch(err){
      console.log(err)
      res.status(500).json(err)
@@ -165,39 +205,37 @@ function allocateFromNewest(entries, globalQty) {
     if (!Array.isArray(entries) || globalQty <= 0) {
       return 0;
     }
-  
     // Sort by date: newest first
     const sorted = [...entries].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-  
+    ); 
     let remaining = globalQty;
     const allocations = [];
-  
     for (const e of sorted) {
       if (remaining <= 0) break;
       const useQty = Math.min(remaining, Number(e.qty) || 0);
       if (useQty > 0) {
         allocations.push({
-          price: Number(e.priceWithVat) || 0,
+          priceWithVat: Number(e.priceWithVat) || 0,
+          priceNoVat: Number(e.priceNovat) || 0,
+          inQty: Number(e.inQty) || 0,
+          suplierName: e.suplierName,
+          nir: e.nir,
           qty: useQty,
+          date: new Date(e.date)
         });
         remaining -= useQty;
       }
     }
-  
     // If still remaining, price it using the oldest entry's price
-    if (remaining > 0 && sorted.length > 0) {
-      const oldest = sorted[sorted.length - 1];
-      allocations.push({
-        price: Number(oldest.priceWithVat) || 0,
-        qty: remaining,
-      });
+    if (remaining > 0 && allocations.length > 0) {
+      const oldest = allocations[allocations.length - 1];
+      oldest.qty = round(oldest.qty + remaining)
       remaining = 0;
     }
   
     const totalCost = allocations.reduce((sum, a) => sum + a.price * a.qty, 0);  
-    return totalCost;
+    return {totalCost, allocations};
   }
   
   

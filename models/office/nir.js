@@ -217,29 +217,6 @@ nirSchema.pre('save', async function (next){
         } else {console.warn('Nu am gasit ingredientul in inventar ',  el.ing.toString())}
 
       } 
-  
-      // if(ingredient.inventary.length){
-      //   const lastInventary = ingredient.inventary.reduce((oldest, current) => {
-      //     return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
-      //   });
-  
-      //   if(lastInventary){
-      //     const inventaryDate = new Date(lastInventary.day).getTime()
-      //     const documentDate = new Date(doc.documentDate).getTime() 
-      //     if(inventaryDate > documentDate){
-  
-      //       console.log('AM gasit un inventar inregistrat dupa data documentului de intrare')
-      //       console.log('Modificare stoc scriptic...')
-      //       console.log('Cantitate scriptica gasita ', lastInventary.qty)
-      //       console.log('Cantitate de adaugat ', el.qty)
-  
-      //       lastInventary.qty = roundd(lastInventary.qty + el.qty)
-      //       console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty)
-  
-      //     } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii!')}
-      //   } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
-      // } else {console.warn('Atentie nu a fost gasit nici un inventar pe ', ingredient.name)}
-
 
 
 
@@ -281,8 +258,8 @@ nirSchema.pre('save', async function (next){
         { _id: el.ing },
         {
           $set: {
-            price: ingredient.price === 0 ? el.price : ingredient.price,
             tva: el.tva,
+            price: ingredient.price === 0 ? el.price : ingredient.price,
             tvaPrice: ingredient.tvaPrice === 0 ? roundd(el.price * (1 + el.tva / 100)) : ingredient.tvaPrice,
             sellPrice: el.sellPrice,
             invGestiune: invGestiune,
@@ -341,31 +318,6 @@ nirSchema.pre(
 
           } 
 
-
-          // if(ingredient.inventary.length){}{ 
-          //   const lastInventary = ingredient.inventary.reduce((oldest, current) => {
-          //     return new Date(current.day).getTime() > new Date(oldest.day).getTime() ? current : oldest;
-          //   });
-      
-          //   if(lastInventary){
-          //     const inventaryDate = new Date(lastInventary.day).getTime()
-          //     const documentDate = new Date(doc.documentDate).getTime() 
-          //     if(inventaryDate > documentDate){
-    
-          //       console.log('AM gasit un inventar inregistrat dupa data documentului')
-          //       console.log('Modificare stoc scriptic...')
-          //       console.log('Cantitate scriptica gasita ', lastInventary.qty)
-          //       console.log('Cantitate de scazut ', el.qty)
-    
-          //       lastInventary.qty = roundd(lastInventary.qty - el.qty)
-          //       const index = ingredient.inventary.findIndex(i => i.index === lastInventary.index)
-          //       if(index !== -1) {
-          //         ingredient.inventary[index] = lastInventary
-          //         console.log('SUCCES! ', ingredient.name, 'cantitate scriptica inventar modificata ', lastInventary.qty)
-          //       } else {console.warn('Am gasit inventar, am modificat cantitatea dar nu am putut actualiza inventarele ', index)}
-          //     } else {console.log('Nu am gasit nici un inventar creat dupa data intrarii stornate!')}
-          //   } 
-          // } 
         
 
         // Build updated invGestiune entries in memory
