@@ -153,7 +153,7 @@ module.exports.updateInventary = async (req, res) => {
     const promises = inventary.ingredients.map(async (i) => {
         const dbIng = await Ingredient.findById(i.ing)
         if(dbIng){
-            consoel.log(`Am gasit ingredient in baza de date procesare ${dbIng.name}....`)
+            console.log(`Am gasit ingredient in baza de date procesare ${dbIng.name}....`)
             const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
             if(ingGest){
                 console.log(`Am gasit gestiunea inventarului ${ingGest.name}....`)
