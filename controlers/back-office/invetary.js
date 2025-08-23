@@ -159,19 +159,20 @@ module.exports.updateInventary = async (req, res) => {
                 console.log(`Am gasit gestiunea inventarului ${ingGest.name}....`)
                 console.log('Cantitate gesiune ', ingGest.qty)
                 console.log('Cantitate ingredient inventar faptic ', i.faptic)
-                ingGest.qty = i.faptic
+                console.log('Diferenta de modificat din inventar ', i.scriptic - i.faptic)
+                ingGest.qty = round(ingGest.qty - (i.scriptic - i.faptic))
                 if(ingGest.entries.length){
                     console.log(ingGest.entries)
                     console.log('Am gasit intrari de marfa pe gesiune ', ingGest.entries.length)
                     console.log('Modific cantitatile....')
-                    const entries = allocateFromNewest(ingGest.entries, i.faptic).allocations
+                    const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
                     ingGest.entries = entries
                     console.log(ingGest.entries)
                 } else {
                     console.log('Nu am gasit intrari pe gestiune...')
-                    console.log('Adaug intrare de inventar cu cantitatea faptica ', i.faptic)
+                    console.log('Adaug intrare de inventar cu cantitatea faptica ', ingGest.qty,)
                     const entry = {
-                        qty: i.faptic,
+                        qty: ingGest.qty,
                         date: inventary.date,
                         priceNoVat: dbIng.price,
                         priceWithVat: round(dbIng.price * (1 + dbIng.tva / 100)),
