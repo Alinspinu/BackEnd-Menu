@@ -37,7 +37,7 @@ async function unloadIngs (ings, qtyProdus) {
                   const lastEntry = gest.entries.reduce((oldest, current) => {
                     return new Date(current.date).getTime() > new Date(oldest.date).getTime() ? current : oldest;
                   });  
-                  inventary.scripticValue = round(inventary.scripticValue - (lastEntry.priceWithVat * cantFinal))
+                  inventary.scripticValue = round(Number(inventary.scripticValue) || 0 - (lastEntry.priceWithVat * cantFinal))
                 }
                 console.log('AM gasit un inventar inregistrat dupa data vanzarii')
                 console.log('Cautare ingredient in inventar...')
@@ -123,7 +123,7 @@ async function uploadIngs (ings, qtyProdus) {
                     const lastEntry = gest.entries.reduce((oldest, current) => {
                       return new Date(current.date).getTime() > new Date(oldest.date).getTime() ? current : oldest;
                     });  
-                    inventary.scripticValue = round(inventary.scripticValue + (lastEntry.priceWithVat * cantFinal))
+                    inventary.scripticValue = round(Number(inventary.scripticValue) || 0 + (lastEntry.priceWithVat * cantFinal))
                   }
                   console.log('AM gasit un inventar inregistrat dupa data incarcarii')
                   console.log('Cautare ingredient in inventar...')
