@@ -2,6 +2,11 @@
 const Ingredient = require('../../models/office/inv-ingredient');
 const Inventary = require('../../models/office/inventary');
 const ComparedInventary = require('../../models/office/comp-inv');
+const DelProd = require('../../models/office/product/deletetProduct')
+const Order = require('../../models/office/product/order')
+const ImpSheet = require('../../models/office/imp-sheet')
+
+
 const io = require('socket.io-client');
 const socket = io("https://socket.flowmanager.ro")
 const {round} = require('../../utils/functions')
@@ -153,24 +158,13 @@ module.exports.updateInventary = async (req, res) => {
     const promises = inventary.ingredients.map(async (i) => {
         const dbIng = await Ingredient.findById(i.ing)
         if(dbIng){
-            console.log(`Am gasit ingredient in baza de date procesare ${dbIng.name}....`)
             const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
             if(ingGest){
-                console.log(`Am gasit gestiunea inventarului ${ingGest.name}....`)
-                console.log('Cantitate gesiune ', ingGest.qty)
-                console.log('Cantitate ingredient inventar faptic ', i.faptic)
-                console.log('Diferenta de modificat din inventar ', i.scriptic - i.faptic)
                 ingGest.qty = round(ingGest.qty - (i.scriptic - i.faptic))
                 if(ingGest.entries.length){
-                    console.log(ingGest.entries)
-                    console.log('Am gasit intrari de marfa pe gesiune ', ingGest.entries.length)
-                    console.log('Modific cantitatile....')
                     const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
                     ingGest.entries = entries
-                    console.log(ingGest.entries)
                 } else {
-                    console.log('Nu am gasit intrari pe gestiune...')
-                    console.log('Adaug intrare de inventar cu cantitatea faptica ', ingGest.qty,)
                     const entry = {
                         qty: ingGest.qty,
                         date: inventary.date,
@@ -180,7 +174,6 @@ module.exports.updateInventary = async (req, res) => {
                         suplierName: 'Intrare din inventar'
                     }
                     ingGest.entries.push(entry)
-                    console.log('Intrare adaugata ', ingGest.entries)
                 }
             }
             dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
@@ -199,6 +192,376 @@ module.exports.updateInventary = async (req, res) => {
      res.status(500).json(err)
    }
  }
+
+
+module.exports.getComaredInv = async (req, res) => {
+
+    try{
+        const {point, loc} = req.query
+
+        const compareInv = await ComparedInventary.find({locatie: loc, point: point})
+
+        res.status(200).json(compareInv)
+    } catch(error){
+        consol.log(error)
+        res.status(500).json('Eroare la descacarea inventar compus', error)
+    }
+}
+
+
+
+module.exports.compareScriptic = async (req, res, next) => {
+  try{
+    let ingredients = []
+    let consIngs = []
+    let delIngs = []
+    const {firstInvId, secondInvId, loc, point} = req.body
+    const firstInventary = await Inventary.findById(firstInvId).populate({path: 'ingredients.ing', select: 'price'})
+    const lastInventary = await Inventary.findById(secondInvId).populate({path: 'ingredients.ing', select: 'price'})
+
+    const startTime = new Date(firstInventary.date)
+    const endTime = new Date(lastInventary.date)
+   
+
+    const compInv = await ComparedInventary.findOne({firstInv: firstInventary._id, secondInv: lastInventary._id, locatie: loc, salePoint: point})
+
+    if(compInv){
+      return res.status(200).json(compInv)
+    }
+
+    const ings = await Ingredient.find({locatie: loc,  productIngredient: false, salePoint: point}).select('name uploadLog um')
+    const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep', salePoint: point})
+          .populate({path: 'billProduct.ings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
+          .populate({path: 'billProduct.toppings.ing', select: 'name ings um', populate: {path: 'ings.ing', select: 'name um'}})
+
+    const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}, salePoint: point})
+                              .populate({path: 'ings.ing', select: 'name um ings productIngredient price', populate: {path: 'ings.ing', select: 'name um price' }})
+    const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}, salePoint: point}).populate([
+      {
+        path: 'products.ings.ing', 
+        populate: {path: 'ings.ing'}
+      },
+      {
+        path: 'products.toppings.ing', 
+        populate: {path: 'ings.ing'}
+      }
+    ])
+
+
+
+    for(const sheet of impSheets){
+      for(let ing of sheet.ings){
+          if(ing.ing.productIngredient){
+              for(let ingg of ing.ing.ings){
+                  const index = delIngs.findIndex(i => i.name === ingg.ing.name)
+                  if(index !== -1){
+                      delIngs[index].qty = round(delIngs[index].qty + ingg.qty)
+                  } else {
+                      delIngs.push(ingg)
+                  }
+              }
+          } else {
+              const index = delIngs.findIndex(i => i.name === ing.ing.name)
+              if(index !== -1){
+                  delIngs[index].qty = round(delIngs[index].qty + ing.qty)
+              } else {
+                  delIngs.push(ing)
+              }
+          }
+      }
+  }
+
+    if(delProds){
+      delProds.forEach(delProduct => {
+        const product = delProduct.billProduct
+        product.ings.forEach(ing => {
+          if(ing.ing.ings && ing.ing.ings.length){
+            ing.ing.ings.forEach(ig => {
+              const existingIng = delIngs.find(i => i.ing.name === ig.ing.name)
+              if(existingIng){
+                const updatedIng = {
+                  qty: existingIng.qty + round(ig.qty * ing.qty),
+                  ing: existingIng.ing
+                }
+                delIngs = delIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+              } else{
+                delIngs.push(ig)
+              }
+            })
+          } else{
+            if(ing && ing.ing){
+              const existingIngredient = delIngs.find(p =>p.ing.name === ing.ing.name);
+              if (existingIngredient) {
+                const updatedIng = {
+                  qty: existingIngredient.qty + ing.qty,
+                  ing: existingIngredient.ing
+                }
+                delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+              } else {
+                delIngs.push(ing);
+              }
+            }
+          }
+        })
+        product.toppings.forEach(ing => {
+          if(ing.ing.ings && ing.ing.ings.length){
+            ing.ing.ings.forEach(ig => {
+              const existingIng = delIngs.find(i => i.ing.name === ig.ing.name)
+              if(existingIng){
+                const updatedIng = {
+                  qty: existingIng.qty + round(ig.qty *ing.qty),
+                  ing: existingIng.ing
+                }
+                delIngs = delIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+              } else{
+                delIngs.push(ig)
+              }
+            })
+          } else{
+            if(ing && ing.ing){
+              const existingIngredient = delIngs.find(p =>p.ing.name === ing.ing.name);
+              if (existingIngredient) {
+                const updatedIng = {
+                  qty: existingIngredient.qty + ing.qty,
+                  ing: existingIngredient.ing
+                }
+                delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+              } else {
+                delIngs.push(ing);
+              }
+            }
+          }
+        })
+      })
+    }
+      if(orders){
+        orders.forEach(order=> {
+          order.products.forEach(product => {
+            product.ings.forEach(ing => {
+              ing.qty = round(ing.qty*product.quantity)
+              if(ing.ing.ings && ing.ing.ings.length){
+                ing.ing.ings.forEach(ig => {
+                  const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
+                  if (existingIngredient) {
+                    const updatedIng = {
+                      qty: existingIngredient.qty + round(ig.qty * ing.qty), 
+                      ing: existingIngredient.ing
+                    }
+                    consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                  } else {
+                    consIngs.push(ig);
+                  }
+                })
+              } else {
+                if(ing && ing.ing){
+                  const existingIngredient = consIngs.find(p =>p.ing.name === ing.ing.name);
+                  if (existingIngredient) {
+                    const updatedIng = {
+                      qty: existingIngredient.qty + ing.qty,
+                      ing: existingIngredient.ing
+                    }
+                    consIngs = consIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                  } else {
+                    consIngs.push(ing);
+                  }
+                }
+                else {
+                  console.log(ing)
+                }
+              }
+            })
+            if(product.toppings.length){
+              product.toppings.forEach(topping=>{
+                topping.qty = round(topping.qty * product.quantity)
+                if(topping.ing.ings.length){
+                  topping.ing.ings.forEach(ig => {
+                    const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
+                    if (existingIngredient) {
+                      const updatedIng = {
+                        qty: existingIngredient.qty + round(ig.qty * topping.qty),
+                        ing: existingIngredient.ing
+                      }
+                        consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                    } else {
+                      consIngs.push(ig);
+                    }
+                  })
+                }
+                else{
+                  const existingIngredient = consIngs.find(p =>p.ing.name === topping.ing.name);
+                  if (existingIngredient) {
+                    existingIngredient.qty = round(existingIngredient.qty + topping.qty)
+                    const updatedIng = {
+                      qty: existingIngredient.qty + topping.qty,
+                      ing: existingIngredient.ing
+                    }
+                    // if(updatedIng.ing.name === "Lapte Vegetal"){
+                    //   console.log(updatedIng.qty)
+                    // }
+                    consIngs = consIngs.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+                  } else {
+                    const ig = {
+                      qty: topping.qty,
+                      ing: topping.ing
+                    }
+                    consIngs.push(ig);
+                  }
+                }
+              })
+            }
+          })
+        })
+      } 
+
+      lastInventary.ingredients.forEach(ing => {
+        const compareIng = {
+          name: ing.name,
+          um: ing.um,
+          first: 0,
+          second: ing.faptic,
+          scripticUnload: 0,
+          saleUnload: 0,
+          depVal: 0,
+          price: ing.ing.price,
+          dep: ing.dep,
+          upload: {
+            value: 0,
+            entries: []
+          },
+        }
+        const existingIng = ingredients.find(ingr => ingr.name === ing.name )
+        if(existingIng){
+          existingIng.second += ing.faptic
+        } else {
+          ingredients.push(compareIng)
+        }
+      })
+
+  
+    firstInventary.ingredients.forEach(ing => {
+      const compareIng = {
+        name: ing.name,
+        um: ing.um,
+        first: ing.faptic,
+        second: 0,
+        scripticUnload: 0,
+        saleUnload: 0,
+        depVal: 0,
+        price: ing.ing.price,
+        dep: ing.dep,
+        upload: {
+          value: 0,
+          entries: []
+        },
+
+      }
+      const existingIng = ingredients.find(ingr => ingr.name === ing.name )
+      if(existingIng){
+        existingIng.first += ing.faptic
+      } else {
+        ingredients.push(compareIng)
+      }
+    })
+
+
+
+
+
+    delIngs.forEach(ing => {
+      const compareIng = {
+        name: ing.ing.name,
+        um: ing.ing.um,
+        first: 0,
+        second: 0,
+        scripticUnload: 0,
+        saleUnload: 0,
+        depVal: ing.qty,
+        price: ing.ing.price,
+        dep: ing.dep,
+        upload: {
+          value: 0,
+          entries: []
+        },
+      }
+      const existingIng = ingredients.find(ingd => ingd.name === compareIng.name)
+      if(existingIng){
+        existingIng.depVal += compareIng.depVal
+      } else {
+        ingredients.push(compareIng)
+      }
+    })
+
+    consIngs.forEach(ing => {
+      const compareIng = {
+        name: ing.ing.name,
+        um: ing.ing.um,
+        first: 0,
+        second: 0,
+        scripticUnload: 0,
+        saleUnload: ing.qty | 0,
+        depVal: 0,
+        price: ing.ing.price,
+        dep: ing.dep,
+        upload: {
+          value: 0,
+          entries: []
+        },
+      }
+      const existingIng = ingredients.find(ingd => ingd.name === compareIng.name)
+      if(existingIng){
+        existingIng.saleUnload += compareIng.saleUnload
+      } else {
+        ingredients.push(compareIng)
+      }
+    })
+
+    ings.forEach(ing => {
+      ing.uploadLog.forEach(log => {
+        const logDate = new Date(log.date).setUTCHours(0,0,0,0)
+        if(logDate >= startTime && logDate <= endTime && log.operation && log.operation.name === 'intrare'){
+            const compareIng = ingredients.find(ingr => ingr.name === ing.name)
+            if(compareIng) {
+              compareIng.upload.value += log.qty
+              compareIng.upload.entries.push(log)
+            }
+        }
+      })
+    })
+   
+    const compareInv = {
+      dateFirst: start,
+      dateSecond: end,
+      ingredients: ingredients,
+      firstInv: firstInventary._id,
+      secondInv: lastInventary._id,
+      locatie: loc,
+      salePoint: point,
+      gestiune: firstInventary.gestiune
+    }
+    const newCompare = new ComparedInventary(compareInv)
+    const savedCompare = await newCompare.save()
+    res.status(200).json(savedCompare)
+  } catch(err){
+    console.log(err)
+    res.status(500).json(err)
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -11,5 +11,9 @@ router.route('/update')
     .post(invCont.updateInventary)
     .put(invCont.updateGestiune)
 
+router.route('/compare')
+    .post(invCont.compareScriptic)
+    .pot(invCont.getComaredInv)
+
 
 module.exports = router
