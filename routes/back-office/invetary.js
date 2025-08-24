@@ -13,7 +13,7 @@ router.route('/update')
 
 router.route('/compare')
     .post(invCont.compareScriptic)
-    .pot(invCont.getComaredInv)
+    .get(invCont.getComaredInv)
 
 
 module.exports = router
