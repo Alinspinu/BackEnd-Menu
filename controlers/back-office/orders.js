@@ -50,11 +50,11 @@ module.exports.getOrder = async (req, res, next) => {
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point})
         const start = new Date('2025-08-01')
-        const or = await Order.find({ locatie: loc , updatedAt: {$gte: start}, status: 'done', salePoint: point, 'products.ings.gestiune': {$exists: false}})
-                                .populate({path: 'products.toppings.ing', select: 'gest'})
-                                .populate({path: 'products.ings.ing', select: 'gest'})
-            console.log('Comenzi', or.length)
-            await updateDelProducts(or)
+        // const or = await Order.find({ locatie: loc , updatedAt: {$gte: start}, status: 'done', salePoint: point, 'products.ings.gestiune': {$exists: false}})
+        //                         .populate({path: 'products.toppings.ing', select: 'gest'})
+        //                         .populate({path: 'products.ings.ing', select: 'gest'})
+        //     console.log('Comenzi', or.length)
+        //     await updateDelProducts(or)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     try{
