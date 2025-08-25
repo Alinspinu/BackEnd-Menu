@@ -57,13 +57,9 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'eFactura.gestiune', select: 'name'})
         const totalItems = 1500
         const totalPages = Math.ceil(totalItems / limit);
-        // const it = await Ingredient.find({locatie: loc, salePoint: point, productIngredient: true})
-        //               .populate({path: 'ings.ing', select: 'gest'})
-        // await updateItems(items)
-        // await updateGesName(items)
-        // const pIng = items.filter(i => i.productIngredient)
 
-        await modifyProducts(items)
+
+        // await modifyProducts(items)
 
 
         res.status(200).json({
