@@ -27,6 +27,7 @@ module.exports.saveIng = async(req, res, next) => {
         const dbIng = await Ingredient.findById(savedIng._id)
               .select([ '-unloadLog', '-uploadLog'])
               .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
+              .populate({path: 'ings.gestiune', select: 'name'})
               .populate({path: 'salePoint', select: 'name'})
               .populate({path: 'gest', select: 'name'})
               .populate({path: 'dept', select: 'name'})
@@ -60,7 +61,7 @@ module.exports.saveIng = async(req, res, next) => {
         const totalPages = Math.ceil(totalItems / limit);
 
 
-        // await modifyProducts(items)
+        await modifyProducts(items)
 
 
         res.status(200).json({
@@ -220,6 +221,7 @@ module.exports.saveIng = async(req, res, next) => {
         const ing = await Ingredient.findById(id)
           .select([ '-unloadLog', '-uploadLog', '-inventary'])
           .populate({path: "ings.ing", select: '-unloadLog -uploadLog -inventary'})
+          .populate({path: 'ings.gestiune', select: 'name'})
           .populate({path: 'salePoint', select: 'name'})
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
@@ -318,6 +320,7 @@ module.exports.getIng = async (req, res) => {
   try{
     const ing = await Ingredient.findById(id)
         .populate({path: 'ings.ing', select: 'name um'})
+        .populate({path: 'ings.gestiune', select: 'name'})
         .populate({path: 'salePoint', select: 'name'})
         .populate({path: 'gest', select: 'name'})
         .populate({path: 'dept', select: 'name'})
