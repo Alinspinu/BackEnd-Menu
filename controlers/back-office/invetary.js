@@ -544,8 +544,8 @@ module.exports.compareScriptic = async (req, res, next) => {
     })
    
     const compareInv = {
-      dateFirst: start,
-      dateSecond: end,
+      dateFirst: firstInventary.date,
+      dateSecond: lastInventary.date,
       ingredients: ingredients,
       firstInv: firstInventary._id,
       secondInv: lastInventary._id,
