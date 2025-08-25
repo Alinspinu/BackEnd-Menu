@@ -65,6 +65,11 @@ module.exports.saveIng = async(req, res, next) => {
         // const pIng = items.filter(i => i.productIngredient)
 
         // await modifyProducts(it)
+        for(let ing of items){
+          if(ing.ings.length && ing.productIngredient === false){
+            console.log(ing)
+          }
+        }
 
         res.status(200).json({
           items,
