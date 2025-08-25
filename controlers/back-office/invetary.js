@@ -271,7 +271,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                   if(index !== -1){
                       delIngs[index].qty = round(delIngs[index].qty + ingg.qty)
                   } else {
-                      delIngs.push(ingg)
+                     if(ingg.gestiune.toString() === firstInventary.gestiune.toString() )  delIngs.push(ingg)
                   }
               }
           } else {
@@ -279,7 +279,7 @@ module.exports.compareScriptic = async (req, res, next) => {
               if(index !== -1){
                   delIngs[index].qty = round(delIngs[index].qty + ing.qty)
               } else {
-                  delIngs.push(ing)
+                if(ing.gestiune.toString() === firstInventary.gestiune.toString())  delIngs.push(ing)
               }
           }
       }
@@ -299,7 +299,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                 }
                 delIngs = delIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
               } else{
-                delIngs.push(ig)
+                if(ig.gestiune.toString() === firstInventary.gestiune.toString() )  delIngs.push(ig)
               }
             })
           } else{
@@ -312,7 +312,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                 }
                 delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
               } else {
-                delIngs.push(ing);
+                if(ing.gestiune.toString() === firstInventary.gestiune.toString()) delIngs.push(ing);
               }
             }
           }
@@ -328,7 +328,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                 }
                 delIngs = delIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
               } else{
-                delIngs.push(ig)
+                if(ig.gestiune.toString() === firstInventary.gestiune.toString() )  delIngs.push(ig)
               }
             })
           } else{
@@ -341,7 +341,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                 }
                 delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
               } else {
-                delIngs.push(ing);
+                if(ing.gestiune.toString() === firstInventary.gestiune.toString() )  delIngs.push(ing);
               }
             }
           }
@@ -363,7 +363,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                     }
                     consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                   } else {
-                    consIngs.push(ig);
+                    if(ig.gestiune.toString() === firstInventary.gestiune.toString() ) consIngs.push(ig);
                   }
                 })
               } else {
@@ -376,7 +376,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                     }
                     consIngs = consIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
                   } else {
-                    consIngs.push(ing);
+                    if(ing.gestiune.toString() === firstInventary.gestiune.toString()) consIngs.push(ing);
                   }
                 }
                 else {
@@ -397,7 +397,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                       }
                         consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                     } else {
-                      consIngs.push(ig);
+                        if(ig.gestiune.toString() === firstInventary.gestiune.toString() ) consIngs.push(ig);
                     }
                   })
                 }
@@ -418,7 +418,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                       qty: topping.qty,
                       ing: topping.ing
                     }
-                    consIngs.push(ig);
+                    if(topping.gestiune.toString() === firstInventary.gestiune.toString())  consIngs.push(ig);
                   }
                 }
               })
