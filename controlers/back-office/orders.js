@@ -50,7 +50,7 @@ module.exports.getOrder = async (req, res, next) => {
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point})
         const dProds = await DelProd.find({locatie: loc, salePoint: point, 'billProduct.ings.ing': {$exists: true}})
-                            .populate({path: 'billProduct.ings.ing', select: 'gest'})
+                            .populate({path: 'billProduct.ings.ing', select: 'gest name'})
                             .populate({path: 'billProduct.toppings.ing', select: 'gest'})
                 console.log(dProds[0])
                 console.log(dProds[1])
@@ -75,7 +75,9 @@ async function updateDelProducts(products){
 
         for(let i of p.billProduct.ings){
             if(!i.gestiune){
-                i.gestiune = i.ing.gest
+                if(i.ing.gest){
+                    i.gestiune = i.ing.gest
+                } else {console.log(i.ing.name)}
             }
         }
         return p.save()
@@ -86,7 +88,7 @@ async function updateDelProducts(products){
         // Log each product’s toppings/ings
         for (const prod of savedProducts) {
             console.log('Product:', prod.billProduct.name);
-            console.log('toppings:', prod.billProduct.toppings);
+            // console.log('toppings:', prod.billProduct.toppings);
             console.log('ings:', prod.billProduct.ings);
         }
 }
