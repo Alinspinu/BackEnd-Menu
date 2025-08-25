@@ -197,9 +197,14 @@ module.exports.updateInventary = async (req, res) => {
 module.exports.getComaredInv = async (req, res) => {
 
     try{
-        const {point, loc} = req.query
-        const compareInv = await ComparedInventary.find({locatie: loc, salePoint: point})
-        res.status(200).json(compareInv)
+        const {point, loc, id} = req.query
+        if(id){
+          const compInv =  await ComparedInventary.findById(id)
+            res.status(200).json(compInv)
+        } else {
+            const compareInv = await ComparedInventary.find({locatie: loc, salePoint: point})
+            res.status(200).json(compareInv)
+        }
     } catch(error){
         consol.log(error)
         res.status(500).json('Eroare la descacarea inventar compus', error)
