@@ -213,6 +213,17 @@ module.exports.getComaredInv = async (req, res) => {
 }
 
 
+module.exports.deleteCompare = async (req, res) => {
+    try{
+        const {id} = req.query
+        await ComparedInventary.findByIdAndDelete(id)
+        res.status(200).json({message: 'Inventarul comparat a fost șters cu sucess!'})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 
 module.exports.compareScriptic = async (req, res, next) => {
   try{

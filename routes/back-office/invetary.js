@@ -14,6 +14,7 @@ router.route('/update')
 router.route('/compare')
     .post(invCont.compareScriptic)
     .get(invCont.getComaredInv)
+    .delete(invCont.deleteCompare)
 
 
 module.exports = router
