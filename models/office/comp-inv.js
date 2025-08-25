@@ -13,7 +13,6 @@ const compInvSchema = new Schema({
             second: Number,
             scripticUnload: String,
             saleUnload: Number,
-            gestiune: String,
             depVal: Number,
             dep: String,
             price: Number,
@@ -30,6 +29,10 @@ const compInvSchema = new Schema({
         }
 
     ],
+    gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+    },
     firstInv: {
         type: Schema.Types.ObjectId,
         ref: 'Inventary'
