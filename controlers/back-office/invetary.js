@@ -314,6 +314,7 @@ module.exports.compareScriptic = async (req, res, next) => {
               } else {
                 if(!ing.gestiune){
                     console.log(ing)
+                    console.log(product)
                 }
                 if(ing.gestiune.toString() === firstInventary.gestiune.toString()) delIngs.push(ing);
               }
