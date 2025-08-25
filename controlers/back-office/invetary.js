@@ -198,7 +198,7 @@ module.exports.getComaredInv = async (req, res) => {
 
     try{
         const {point, loc} = req.query
-
+        console.log(point, loc)
         const compareInv = await ComparedInventary.find({locatie: loc, point: point})
         console.log(compareInv)
         res.status(200).json(compareInv)
