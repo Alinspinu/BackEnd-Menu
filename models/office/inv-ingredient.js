@@ -158,6 +158,16 @@ const invIngSchema = new Schema({
     type: Boolean, 
     default: false,
   },
+  production: {
+    tehnic: {
+      type: Boolean,
+      default: false
+    },
+    qty: {
+      type: Number,
+      default: 0
+    }
+  },
   ings: [
     {
       qty: Number,
