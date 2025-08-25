@@ -64,6 +64,10 @@ const deletetProductSchema = new Schema ({
                     qty: Number,
                     um: String,
                     ingPrice: Number,
+                    gestiune: {
+                        type: Schema.Types.ObjectId,
+                        ref: 'Gestiune'
+                    },
                     ing: {
                         type: Schema.Types.ObjectId,
                         ref: "IngredientInv"
@@ -75,6 +79,10 @@ const deletetProductSchema = new Schema ({
                     ing: {
                         type: Schema.Types.ObjectId,
                         ref: 'IngredientInv'
+                    },
+                    gestiune: {
+                        type: Schema.Types.ObjectId,
+                        ref: 'Gestiune'
                     },
                     qty: {
                       type: Number,
