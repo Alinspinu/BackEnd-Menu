@@ -49,13 +49,13 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point})
-        const dProds = await DelProd.find({locatie: loc, salePoint: point, 'billProduct.ings.ing': {$exists: true}})
-                            .populate({path: 'billProduct.ings.ing', select: 'gest name'})
-                            .populate({path: 'billProduct.toppings.ing', select: 'gest'})
-                console.log(dProds[0])
-                console.log(dProds[1])
-                console.log(dProds[2])
-            await updateDelProducts(dProds)
+        // const dProds = await DelProd.find({locatie: loc, salePoint: point, 'billProduct.ings.ing': {$exists: true}})
+        //                     .populate({path: 'billProduct.ings.ing', select: 'gest name'})
+        //                     .populate({path: 'billProduct.toppings.ing', select: 'gest'})
+        //         console.log(dProds[0])
+        //         console.log(dProds[1])
+        //         console.log(dProds[2])
+        //     await updateDelProducts(dProds)
         console.log(delProds)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
@@ -65,33 +65,33 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
-async function updateDelProducts(products){
-    const promises = products.map(p => {
-        // for(let t of p.billProduct.toppings){
-        //     if(!t.gestiune){
-        //         t.gestiune = t.ing.gest
-        //     }
-        // }
+// async function updateDelProducts(products){
+//     const promises = products.map(p => {
+//         // for(let t of p.billProduct.toppings){
+//         //     if(!t.gestiune){
+//         //         t.gestiune = t.ing.gest
+//         //     }
+//         // }
 
-        for(let i of p.billProduct.ings){
-            if(!i.gestiune){
-                if(i.ing){
-                    i.gestiune = i.ing.gest
-                } else {console.log(i)}
-            }
-        }
-        return p.save()
-    })
+//         for(let i of p.billProduct.ings){
+//             if(!i.gestiune){
+//                 if(i.ing){
+//                     i.gestiune = i.ing.gest
+//                 } else {console.log(i)}
+//             }
+//         }
+//         return p.save()
+//     })
 
-        const savedProducts = await Promise.all(promises);
+//         const savedProducts = await Promise.all(promises);
 
-        // Log each product’s toppings/ings
-        for (const prod of savedProducts) {
-            console.log('Product:', prod.billProduct.name);
-            // console.log('toppings:', prod.billProduct.toppings);
-            console.log('ings:', prod.billProduct.ings);
-        }
-}
+//         // Log each product’s toppings/ings
+//         for (const prod of savedProducts) {
+//             console.log('Product:', prod.billProduct.name);
+//             // console.log('toppings:', prod.billProduct.toppings);
+//             console.log('ings:', prod.billProduct.ings);
+//         }
+// }
 
 
 module.exports.testRaport = async (req, res) => {
