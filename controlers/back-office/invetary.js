@@ -200,7 +200,7 @@ module.exports.getComaredInv = async (req, res) => {
         const {point, loc} = req.query
 
         const compareInv = await ComparedInventary.find({locatie: loc, point: point})
-
+        console.log(compareInv)
         res.status(200).json(compareInv)
     } catch(error){
         consol.log(error)
@@ -540,7 +540,7 @@ module.exports.compareScriptic = async (req, res, next) => {
     }
     const newCompare = new ComparedInventary(compareInv)
     const savedCompare = await newCompare.save()
-    res.status(200).json(savedCompare)
+    res.status(200).json({message: 'Invetaul comparat a fost generat cu success!', inv: savedCompare})
   } catch(err){
     console.log(err)
     res.status(500).json(err)
