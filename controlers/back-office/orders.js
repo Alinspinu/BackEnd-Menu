@@ -16,8 +16,8 @@ const {print} = require('../../utils/print/printOrders')
 const {printBill, posPayment} = require('../../utils/print/printFiscal')
 
 const io = require('socket.io-client');
-const salePoint = require('../../models/utils/sale-point');
 const socket = io("https://socket.flowmanager.ro")
+const salePoint = require('../../models/utils/sale-point');
 // const socket = io("http://localhost:8090")
 
 
@@ -49,6 +49,10 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point})
+        const dProds = await DelProd.find({locatie: loc, salePoint: point})
+                            .populate({path: 'ings.ing', select: 'gest'})
+                            .populate({path: 'toppings.ing', select: 'gest'})
+            await updateDelProducts(dProds)
         console.log(delProds)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
@@ -56,6 +60,32 @@ module.exports.getOrder = async (req, res, next) => {
     } catch (err){
         console.log(err)
     }
+}
+
+async function updateDelProducts(products){
+    const promises = products.map(p => {
+        for(let t of p.toppings){
+            if(!t.gestiune){
+                t.gestiune = t.ing.gest
+            }
+        }
+
+        for(let i of p.ings){
+            if(!i.gestiune){
+                i.gestiune = i.ing.gest
+            }
+        }
+        return p.save()
+    })
+
+        const savedProducts = await Promise.all(promises);
+
+        // Log each product’s toppings/ings
+        for (const prod of savedProducts) {
+            console.log('Product:', prod.name);
+            console.log('toppings:', prod.toppings);
+            console.log('ings:', prod.ings);
+        }
 }
 
 
@@ -601,7 +631,6 @@ module.exports.resetOrderCounter = async (req, res) => {
 module.exports.deleteOrder = async (req, res, next) => {
     try {
         const { data } = req.body;
-        console.log('data', data);
 
         if (data && data.length) {
             const orderIds = data.map(obj => obj.id);
