@@ -555,7 +555,7 @@ module.exports.compareScriptic = async (req, res, next) => {
     console.log('Gest ', firstInventary.gestiune)
     console.log('GESTIUNE ', compareInv.gestiune)
     const newCompare = new ComparedInventary(compareInv)
-    const savedCompare = await newCompare.save()
+    const savedCompare = await newCompare.save().populate({path: 'gestiune', select: 'name'})
     res.status(200).json({message: 'Invetaul comparat a fost generat cu success!', inv: savedCompare})
   } catch(err){
     console.log(err)
