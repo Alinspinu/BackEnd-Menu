@@ -367,7 +367,9 @@ module.exports.compareScriptic = async (req, res, next) => {
                     }
                     consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                   } else {
-                    if(ig.gestiune.toString() === firstInventary.gestiune.toString() ) consIngs.push(ig);
+                    if(ig.gestiune){
+                        if(ig.gestiune.toString() === firstInventary.gestiune.toString() ) consIngs.push(ig);
+                    } else {console.log(ig)}
                   }
                 })
               } else {
