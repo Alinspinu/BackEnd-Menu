@@ -75,9 +75,9 @@ async function updateDelProducts(products){
 
         for(let i of p.billProduct.ings){
             if(!i.gestiune){
-                if(i.ing.gest){
+                if(i.ing){
                     i.gestiune = i.ing.gest
-                } else {console.log(i.ing.name)}
+                } else {console.log(i)}
             }
         }
         return p.save()
