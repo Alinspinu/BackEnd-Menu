@@ -49,7 +49,7 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({ locatie: loc , updatedAt: {$gte: today}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point})
-        const dProds = await DelProd.find({locatie: loc, salePoint: point, 'billProduct.ings.ing': {$exists: true}})
+        const dProds = await DelProd.find({locatie: loc, salePoint: point, 'billProduct.ings.ing': {$exists: true}, 'billProduct.toppings.ing': {$exists: true}})
                             .populate({path: 'billProduct.ings.ing', select: 'gest'})
                             .populate({path: 'billProduct.toppings.ing', select: 'gest'})
                 console.log(dProds[0])
