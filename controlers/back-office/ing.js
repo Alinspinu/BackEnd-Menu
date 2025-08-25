@@ -51,6 +51,7 @@ module.exports.saveIng = async(req, res, next) => {
         const items = await Ingredient.find({locatie: loc, salePoint: point}).skip(skip).limit(limit)
           .select([ '-unloadLog', '-uploadLog'])
           .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
+          .populate({path: 'ings.gestiune', select: 'name'})
           .populate({path: 'salePoint', select: 'name'})
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
@@ -59,7 +60,7 @@ module.exports.saveIng = async(req, res, next) => {
         const totalPages = Math.ceil(totalItems / limit);
 
 
-        await modifyProducts(items)
+        // await modifyProducts(items)
 
 
         res.status(200).json({
