@@ -2,8 +2,8 @@ const Ingredient = require('../../models/office/inv-ingredient')
 const {round, formatedDateToShow} = require('./../../utils/functions')
 const Inventary = require('../../models/office/inventary')
 const Order = require('../../models/office/product/order')
-const DelProd = require('../../models/office/product/deletetProduct')
 const ImpSheet = require('../../models/office/imp-sheet')
+const DelProd = require('../../models/office/product/deletetProduct')
 const CigarsInv = require('../../models/cigars-inv')
 const salePoint = require('../../models/utils/sale-point')
 const ComparedInventary = require('../../models/office/comp-inv')
@@ -58,12 +58,13 @@ module.exports.saveIng = async(req, res, next) => {
         const totalItems = 1500
         const ing = items.find(i => i._id === "683763760c7221a32654b6a8")
         const totalPages = Math.ceil(totalItems / limit);
-
+        const it = await Ingredient.find({locatie: loc, salePoint: point, productIngredient: true})
+                      .populate({path: 'ings.ing', select: 'gest'})
         // await updateItems(items)
         // await updateGesName(items)
         // const pIng = items.filter(i => i.productIngredient)
 
-        // modifyProducts(pIng)
+        await modifyProducts(it)
 
         res.status(200).json({
           items,
@@ -78,21 +79,18 @@ module.exports.saveIng = async(req, res, next) => {
 
 
 
-      function modifyProducts(products) {
+     async function modifyProducts(products) {
 
-        const productPromises = products.map(p => {
+        const productPromises = products.map(i => {
+            for(let ing of i.ings){
+              if(!ing.gestiune){
+                ing.gestiune = ing.ing.gest
+              }
+            }
+            return i.save()
+        })
       
-          // Then work on main product ingredients & toppings
-          p.ings.forEach(i => {
-            i.gestiune = i.ing.invGestiune[0].gestiune;
-            console.log('Gestiune modificata pe ingredientele de la Ingredientul comus', i.ing.invGestiune[0].name);
-          });
-            return p.save().then(savedP => {
-              console.log(savedP.name, 'a fost modificat cu success!');
-            });
-          });
-      
-        return Promise.all(productPromises);
+        await Promise.all(productPromises);
       }
 
 
