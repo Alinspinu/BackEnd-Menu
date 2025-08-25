@@ -198,12 +198,11 @@ module.exports.getComaredInv = async (req, res) => {
 
     try{
         const {point, loc, id} = req.query
-        console.log(id)
         if(id){
           const compInv =  await ComparedInventary.findById(id).populate({path: 'gestiune', select: 'name'})
             res.status(200).json(compInv)
         } else {
-            const compareInv = await ComparedInventary.find({locatie: loc, salePoint: point})
+            const compareInv = await ComparedInventary.find({locatie: loc, salePoint: point}).populate({path: 'gestiune', select: 'name'})
             res.status(200).json(compareInv)
         }
     } catch(error){
