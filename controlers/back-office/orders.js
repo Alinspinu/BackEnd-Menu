@@ -50,8 +50,8 @@ module.exports.getOrder = async (req, res, next) => {
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point})
         const dProds = await DelProd.find({locatie: loc, salePoint: point})
-                            .populate({path: 'ings.ing', select: 'gest'})
-                            .populate({path: 'toppings.ing', select: 'gest'})
+                            .populate({path: 'billProduct.ings.ing', select: 'gest'})
+                            .populate({path: 'billProduct.toppings.ing', select: 'gest'})
             await updateDelProducts(dProds)
         console.log(delProds)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
@@ -64,13 +64,13 @@ module.exports.getOrder = async (req, res, next) => {
 
 async function updateDelProducts(products){
     const promises = products.map(p => {
-        for(let t of p.toppings){
+        for(let t of p.billProduct.toppings){
             if(!t.gestiune){
                 t.gestiune = t.ing.gest
             }
         }
 
-        for(let i of p.ings){
+        for(let i of p.billProduct.ings){
             if(!i.gestiune){
                 i.gestiune = i.ing.gest
             }
@@ -82,9 +82,9 @@ async function updateDelProducts(products){
 
         // Log each product’s toppings/ings
         for (const prod of savedProducts) {
-            console.log('Product:', prod.name);
-            console.log('toppings:', prod.toppings);
-            console.log('ings:', prod.ings);
+            console.log('Product:', prod.billProduct.name);
+            console.log('toppings:', prod.billProduct.toppings);
+            console.log('ings:', prod.billProduct.ings);
         }
 }
 
