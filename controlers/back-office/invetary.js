@@ -312,6 +312,9 @@ module.exports.compareScriptic = async (req, res, next) => {
                 }
                 delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
               } else {
+                if(!ing.gestiune){
+                    console.log(ing)
+                }
                 if(ing.gestiune.toString() === firstInventary.gestiune.toString()) delIngs.push(ing);
               }
             }
