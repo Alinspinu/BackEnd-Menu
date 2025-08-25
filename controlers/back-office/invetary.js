@@ -369,7 +369,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                   } else {
                     if(ig.gestiune){
                         if(ig.gestiune.toString() === firstInventary.gestiune.toString() ) consIngs.push(ig);
-                    } else {console.log(ig)}
+                    } else {console.log(ing.ing)}
                   }
                 })
               } else {
@@ -561,7 +561,8 @@ module.exports.compareScriptic = async (req, res, next) => {
     console.log('Gest ', firstInventary.gestiune)
     console.log('GESTIUNE ', compareInv.gestiune)
     const newCompare = new ComparedInventary(compareInv)
-    const savedCompare = await newCompare.save().populate({path: 'gestiune', select: 'name'})
+    const savedCompare = await newCompare.save()
+    await savedCompare.populate({ path: 'gestiune', select: 'name' });
     res.status(200).json({message: 'Invetaul comparat a fost generat cu success!', inv: savedCompare})
   } catch(err){
     console.log(err)
