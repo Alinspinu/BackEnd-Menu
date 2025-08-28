@@ -70,6 +70,7 @@ async function unloadIngs (ings, qtyProdus) {
                 const gest = ingredientInv.invGestiune[gestIndex];
                 console.log('Procesare.... ', ingredientInv.name)
                 if(ingredientInv.production && !ingredientInv.production.tehnic && ingredientInv.productIngredient){
+                  console.log('Am gasit produs ingredient NO TEHNIC')
                   if(gest.qty <= cantFinal){
                     const diference = cantFinal - gest.qty
                     gest.qty = round(ingredientInv.production.qty - diference)
@@ -92,7 +93,23 @@ async function unloadIngs (ings, qtyProdus) {
                       }
                       gest.entries.push(entry)
                     }
+                  } else {
+                    gest.qty = round(gest.qty - cantFinal);
+                    if(gest.entries.length){
+                      gest.entries = subtractFromEntries(gest.entries, cantFinal);
+                      const oldestEntry = gest.entries.reduce((oldest, current) => {
+                        return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
+                      });
+                      if(oldestEntry){
+                        ingredientInv.price = oldestEntry.priceNoVat
+                        ingredientInv.tvaPrice = oldestEntry.priceWithVat
+                        console.log('Am am acualizat pretul ingredientului dupa ultima intrare ', ingredientInv.tvaPrice)
+                      } else {console.warn('!!!!!Atentie nu am gasit ultima intrare pretul ingredientului a ramas acelasi!')}
+                    } else {
+                      console.log('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost scazuta din principal!, stoc final ', gest.qty)
+                    }
                   }
+
                 } else {
 
                   gest.qty = round(gest.qty - cantFinal);
