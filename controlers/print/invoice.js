@@ -292,7 +292,7 @@ invoice.products.forEach((el, i) => {
     doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
     doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
     doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
-    doc.text(`${round(el.total - el.totalNoVat)}`, 503, newValue, { width: 60, align: "right" })
+    doc.text(`${round(el.total - el.totalNoVat)}`, 483, newValue, { width: 60, align: "right" })
     heghtValue += rowHeigth
 })
 
