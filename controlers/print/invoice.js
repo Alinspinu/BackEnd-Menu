@@ -237,6 +237,25 @@ doc.stroke()
 doc.rect(483, 327, 77, 330)
 doc.lineWidth(0.5);
 doc.stroke()
+
+let products = []
+
+for(let p of invoice.products){
+  const existingProduct = products.find(p => p.name === p.name)
+  if(existingProduct){
+    existingProduct.quantity += p.quantity
+    existingProduct.totalNoVat += p.totalNoVat
+    existingProduct.total += p.total
+  } else {
+    products.push(p)
+  }
+}
+
+invoice.products = products
+
+
+
+
 // radare produse
 y = 317
 let heghtValue = 12
@@ -257,6 +276,9 @@ if(productsCount > 50){
   doc.fontSize(5)
   rowHeigth = 7
 }
+
+
+
 
 invoice.products.forEach((el, i) => {
   if(el.name.length > 30){
