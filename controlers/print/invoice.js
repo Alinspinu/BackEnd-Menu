@@ -241,7 +241,7 @@ doc.stroke()
 let products = []
 
 for(let p of invoice.products){
-  const existingProduct = products.find(p => p.name === p.name)
+  const existingProduct = products.find(pa => pa.name === p.name)
   if(existingProduct){
     existingProduct.quantity += p.quantity
     existingProduct.totalNoVat += p.totalNoVat
