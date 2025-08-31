@@ -361,8 +361,6 @@ module.exports.paySuplierBill = async (req, res, next) => {
 module.exports.addEFacturaID = async (req, res, next) => {
   try{
     const {nirId, id, nirInvoice} = req.body
-    nirInvoice.supplier.bank =  nirInvoice.supplier.bank.toString()
-    nirInvoice.supplier.iban =  nirInvoice.supplier.iban.toString()
     const nir = await Nir.findByIdAndUpdate(nirId, {eFacturaId: id, nirInvoice: nirInvoice}, {new: true})
     res.status(200).json(nir)
   } catch(error){
@@ -374,7 +372,8 @@ module.exports.addEFacturaID = async (req, res, next) => {
 module.exports.seaveNirInvoice = async (req, res) => {
   try{
     const {nirInvoice, loc} = req.body
-
+    nirInvoice.supplier.bank =  nirInvoice.supplier.bank.toString()
+    nirInvoice.supplier.iban =  nirInvoice.supplier.iban.toString()
     const inv = new NirInvoice(nirInvoice)
     inv.locatie = loc
     const savedInv = await inv.save()
