@@ -365,7 +365,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                       qty: existingIngredient.qty + round(ig.qty * ing.qty), 
                       ing: existingIngredient.ing
                     }
-                    consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                    consIngs = consIngs.map(p => (p.ing?.name === ig.ing.name ? updatedIng : p));
                   } else {
                       if(ig.gestiune.toString() === firstInventary.gestiune.toString() ) consIngs.push(ig);
                       
@@ -381,7 +381,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                       qty: existingIngredient.qty + ing.qty,
                       ing: existingIngredient.ing
                     }
-                    consIngs = consIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                    consIngs = consIngs.map(p => (p.ing?.name === ing.ing.name ? updatedIng : p));
                   } else {
                     if(ing.gestiune.toString() === firstInventary.gestiune.toString()) consIngs.push(ing);
                   }
@@ -409,7 +409,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                   })
                 }
                 else{
-                  const existingIngredient = consIngs.find(p =>p.ing.name === topping.ing?.name);
+                  const existingIngredient = consIngs.find(p =>p.ing?.name === topping.ing?.name);
                   if (existingIngredient) {
                     existingIngredient.qty = round(existingIngredient.qty + topping.qty)
                     const updatedIng = {
