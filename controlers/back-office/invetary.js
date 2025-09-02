@@ -443,7 +443,7 @@ module.exports.compareScriptic = async (req, res, next) => {
           scripticUnload: 0,
           saleUnload: 0,
           depVal: 0,
-          price: ing.ing.price,
+          price: ing.ing?.price || 0,
           dep: ing.dep,
           upload: {
             value: 0,
@@ -497,7 +497,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         scripticUnload: 0,
         saleUnload: 0,
         depVal: ing.qty,
-        price: ing.ing.price,
+        price: ing.ing?.price || 0,
         dep: ing.dep,
         upload: {
           value: 0,
@@ -521,7 +521,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         scripticUnload: 0,
         saleUnload: ing.qty | 0,
         depVal: 0,
-        price: ing.ing.price,
+        price: ing.ing?.price || 0,
         dep: ing.dep,
         upload: {
           value: 0,
