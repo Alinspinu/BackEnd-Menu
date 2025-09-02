@@ -359,7 +359,7 @@ module.exports.compareScriptic = async (req, res, next) => {
               ing.qty = round(ing.qty*product.quantity)
               if(ing.ing.ings && ing.ing.ings.length){
                 ing.ing.ings.forEach(ig => {
-                  const existingIngredient = consIngs.find(p =>p.ing.name === ig.ing.name);
+                  const existingIngredient = consIngs.find(p =>p.ing?.name === ig.ing?.name);
                   if (existingIngredient) {
                     const updatedIng = {
                       qty: existingIngredient.qty + round(ig.qty * ing.qty), 
