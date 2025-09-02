@@ -419,7 +419,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                     // if(updatedIng.ing.name === "Lapte Vegetal"){
                     //   console.log(updatedIng.qty)
                     // }
-                    consIngs = consIngs.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+                    consIngs = consIngs.map(p => (p.ing?.name === topping.ing?.name ? updatedIng : p));
                   } else {
                     const ig = {
                       qty: topping.qty,
