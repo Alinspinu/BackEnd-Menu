@@ -409,7 +409,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                   })
                 }
                 else{
-                  const existingIngredient = consIngs.find(p =>p.ing.name === topping.ing.name);
+                  const existingIngredient = consIngs.find(p =>p.ing.name === topping.ing?.name);
                   if (existingIngredient) {
                     existingIngredient.qty = round(existingIngredient.qty + topping.qty)
                     const updatedIng = {
