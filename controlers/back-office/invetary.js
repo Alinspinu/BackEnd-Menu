@@ -402,7 +402,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                         qty: existingIngredient.qty + round(ig.qty * topping.qty),
                         ing: existingIngredient.ing
                       }
-                        consIngs = consIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                        consIngs = consIngs.map(p => (p.ing?.name === ig.ing?.name ? updatedIng : p));
                     } else {
                         if(ig.gestiune.toString() === firstInventary.gestiune.toString() ) consIngs.push(ig);
                     }
