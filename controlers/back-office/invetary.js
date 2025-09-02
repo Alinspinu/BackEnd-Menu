@@ -491,7 +491,7 @@ module.exports.compareScriptic = async (req, res, next) => {
     delIngs.forEach(ing => {
       const compareIng = {
         name: ing.ing?.name,
-        um: ing.ing.um,
+        um: ing.ing?.um,
         first: 0,
         second: 0,
         scripticUnload: 0,
@@ -515,7 +515,7 @@ module.exports.compareScriptic = async (req, res, next) => {
     consIngs.forEach(ing => {
       const compareIng = {
         name: ing.ing?.name,
-        um: ing.ing.um,
+        um: ing.ing?.um,
         first: 0,
         second: 0,
         scripticUnload: 0,
