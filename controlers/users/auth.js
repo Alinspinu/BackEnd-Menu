@@ -285,6 +285,7 @@ module.exports.registerIn = async (req, res) => {
     try{
         const {name, password, confirmPassword, telephone, ciSerial, ciNumber, releaseId, address, releaseDate, userId, cnp, adminEmail} = req.body
         if(userId && userId.length){
+            console.log('hitttttt******** ')
             if (password === confirmPassword) {
                 const hashedPassword = hashPassword(password);
                 const user = await User.findById(userId).populate({path: 'locatie'})
