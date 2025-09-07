@@ -113,6 +113,7 @@ module.exports.editUser = async (req, res, next) => {
     const {id} = req.query;
     try{
         const user = await User.findByIdAndUpdate(id, update, {new: true})
+        console.log(user.employee.employeePosition)
         res.status(200).json({message: 'Utilizatorul a fost actualizat!', user: user})
     } catch (err) {
         console.log(err)
