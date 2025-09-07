@@ -10,6 +10,7 @@ const upload = multer({ storage });
 router.route('/')
     .post(users.sendUsers)
     .get(users.sendEmployees)
+    .put(users.editPosition)
 
 router.route('/user')
     .post(users.sendUser)
