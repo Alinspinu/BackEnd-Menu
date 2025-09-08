@@ -266,7 +266,7 @@ module.exports.compareScriptic = async (req, res, next) => {
       for(let ing of sheet.ings){
           if(ing.ing.productIngredient){
               for(let ingg of ing.ing.ings){
-                  const index = delIngs.findIndex(i => i.name === ingg.ing.name)
+                  const index = delIngs.findIndex(i => i.ing._id.toString() === ingg.ing._id.toString())
                   if(index !== -1){
                       delIngs[index].qty = round(delIngs[index].qty + ingg.qty)
                   } else {
@@ -276,7 +276,7 @@ module.exports.compareScriptic = async (req, res, next) => {
                   }
               }
           } else {
-              const index = delIngs.findIndex(i => i.name === ing.ing.name)
+              const index = delIngs.findIndex(i => i.ing._id.toString() === ing.ing._id.toString())
               if(index !== -1){
                 if(ing.ing.name === 'Oua'){
                   console.log(ing.qty)
@@ -512,7 +512,6 @@ module.exports.compareScriptic = async (req, res, next) => {
       //   console.log(ing)
       // }
       const compareIng = {
-        _id: ing.ing?._id,
         name: ing.ing?.name,
         um: ing.ing?.um,
         first: 0,
@@ -537,7 +536,6 @@ module.exports.compareScriptic = async (req, res, next) => {
 
     consIngs.forEach(ing => {
       const compareIng = {
-        _id: ing.ing?._id,
         name: ing.ing?.name,
         um: ing.ing?.um,
         first: 0,
