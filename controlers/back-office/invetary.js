@@ -654,7 +654,7 @@ module.exports.compareScriptic = async (req, res) => {
     }
 
     function processLeaf(map, w, mult = 1) {
-      if (!w?.ing?._id || !gestMatch(w)) return;
+      if (!w?.ing?._id || !gestMatch(w.ing)) return;
       const qty = r((w.qty || 0) * (mult || 1));
       if (qty) addTo(map, w.ing, qty);
     }
@@ -662,7 +662,7 @@ module.exports.compareScriptic = async (req, res) => {
     function processComposite(map, w, mult = 1) {
       if (!w?.ing?.ings?.length) return;
       for (const sub of w.ing.ings) {
-        if (!sub?.ing?._id || !gestMatch(sub)) continue;
+        if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
         const qty = r((sub.qty || 0) * (w.qty || 0) * (mult || 1));
         if (qty) addTo(map, sub.ing, qty);
       }
