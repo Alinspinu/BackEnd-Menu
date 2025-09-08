@@ -268,15 +268,9 @@ module.exports.compareScriptic = async (req, res, next) => {
               for(let ingg of ing.ing.ings){
                   const index = delIngs.findIndex(i => i.name === ingg.ing.name)
                   if(index !== -1){
-                      if(ingg.ing.name === 'Oua'){
-                        console.log(ingg.qty)
-                      }
                       delIngs[index].qty = round(delIngs[index].qty + ingg.qty)
                   } else {
                      if(ingg.gestiune.toString() === firstInventary.gestiune.toString() ) {
-                      if(ingg.ing.name === 'Oua'){
-                        console.log(ingg.qty)
-                      }
                       delIngs.push(ingg)
                      } 
                   }
@@ -290,9 +284,6 @@ module.exports.compareScriptic = async (req, res, next) => {
                   delIngs[index].qty = round(delIngs[index].qty + ing.qty)
               } else {
                 if(ing.gestiune.toString() === firstInventary.gestiune.toString()) {
-                  if(ing.ing.name === 'Oua'){
-                    console.log(ing.qty)
-                  }
                   delIngs.push(ing)
                 }  
               }
@@ -304,14 +295,8 @@ module.exports.compareScriptic = async (req, res, next) => {
       delProds.forEach(delProduct => {
         const product = delProduct.billProduct
         product.ings.forEach(ing => {
-          if(ing.ing?.name === 'Oua'){
-            console.log('oua produs sters', ing.qty, product.name)
-          }
           if(ing.ing.ings && ing.ing.ings.length){
             ing.ing.ings.forEach(ig => {
-              if(ig.ing?.name === 'Oua'){
-                console.log('oua produs sters', ing.qty, product.name)
-              }
               const existingIng = delIngs.find(i => i.ing._id.toString() === ig.ing._id.toString())
               if(existingIng){
                 const updatedIng = {
@@ -514,6 +499,7 @@ module.exports.compareScriptic = async (req, res, next) => {
         console.log(ing)
       }
       const compareIng = {
+        _id: ing.ing?._id,
         name: ing.ing?.name,
         um: ing.ing?.um,
         first: 0,
@@ -538,6 +524,7 @@ module.exports.compareScriptic = async (req, res, next) => {
 
     consIngs.forEach(ing => {
       const compareIng = {
+        _id: ing.ing?._id,
         name: ing.ing?.name,
         um: ing.ing?.um,
         first: 0,
