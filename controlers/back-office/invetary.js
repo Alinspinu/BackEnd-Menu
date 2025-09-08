@@ -232,7 +232,11 @@ module.exports.compareScriptic = async (req, res, next) => {
     const {firstInvId, secondInvId, loc, point} = req.body
     const firstInventary = await Inventary.findById(firstInvId).populate({path: 'ingredients.ing', select: 'price'})
     const lastInventary = await Inventary.findById(secondInvId).populate({path: 'ingredients.ing', select: 'price'})
-
+    lastInventary.ingredients.forEach(i => {
+      if(i.name === 'Oua'){
+        console.log(i)
+      }
+    })
     const startTime = new Date(firstInventary.date)
     const endTime = new Date(lastInventary.date)
    
