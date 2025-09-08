@@ -617,7 +617,7 @@ module.exports.compareScriptic = async (req, res) => {
 
     // 2) Load the rest in parallel
     const [ings, delProds, impSheets, orders] = await Promise.all([
-      Ingredient.find({ locatie: loc, productIngredient: false, salePoint: point }).select('name uploadLog um'),
+      Ingredient.find({ locatie: loc, productIngredient: false, salePoint: point }).select('name uploadLog um').lean(),
       DelProd.find({
         locatie: loc,
         createdAt: { $gte: startTime, $lt: endTime },
@@ -625,9 +625,9 @@ module.exports.compareScriptic = async (req, res) => {
         salePoint: point,
       })
         .populate({ path: 'billProduct.ings.ing', select: 'name ings um', populate: { path: 'ings.ing', select: 'name um' } })
-        .populate({ path: 'billProduct.toppings.ing', select: 'name ings um', populate: { path: 'ings.ing', select: 'name um' } }),
+        .populate({ path: 'billProduct.toppings.ing', select: 'name ings um', populate: { path: 'ings.ing', select: 'name um' } }).lean(),
       ImpSheet.find({ locatie: loc, date: { $gte: startTime, $lte: endTime }, salePoint: point })
-        .populate({ path: 'ings.ing', select: 'name um ings productIngredient price', populate: { path: 'ings.ing', select: 'name um price' } }),
+        .populate({ path: 'ings.ing', select: 'name um ings productIngredient price', populate: { path: 'ings.ing', select: 'name um price' } }).lean(),
       Order.find({ locatie: loc, createdAt: { $gte: startTime, $lte: endTime }, salePoint: point })
         .populate([
           { path: 'products.ings.ing',     populate: { path: 'ings.ing' } },
@@ -639,10 +639,10 @@ module.exports.compareScriptic = async (req, res) => {
     const r = (n) => round(n); // or roundd
     const idStr = (x) => (x?._id ? x._id.toString() : String(x));
     const sameId = (a, b) => a && b && idStr(a) === idStr(b);
-    // const gestMatch = (wrap) => wrap?.gestiune && sameId(wrap.gestiune, firstInventary.gestiune);
+    const gestMatch = (wrap) => wrap?.gestiune && sameId(wrap.gestiune, firstInventary.gestiune);
 
-    const gestMatch = (w) =>
-      !w?.gestiune || sameId(w.gestiune, firstInventary.gestiune);
+    // const gestMatch = (w) =>
+    //   !w?.gestiune || sameId(w.gestiune, firstInventary.gestiune);
     // fast accumulators by _id
     const depMap  = new Map(); // deletions / sheets → depVal
     const consMap = new Map(); // orders consumption → saleUnload
