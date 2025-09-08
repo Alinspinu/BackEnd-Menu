@@ -237,6 +237,11 @@ module.exports.compareScriptic = async (req, res, next) => {
         console.log(i)
       }
     })
+    firstInventary.ingredients.forEach(i => {
+      if(i.name === 'Oua'){
+        console.log(i)
+      }
+    })
     const startTime = new Date(firstInventary.date)
     const endTime = new Date(lastInventary.date)
    
