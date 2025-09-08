@@ -290,6 +290,12 @@ module.exports.compareScriptic = async (req, res, next) => {
           }
       }
   }
+    
+  delIngs.forEach(i => {
+    if(i.ing.name === 'Oua'){
+      console.log('Ingredinet din fisa', i.qty)
+    }
+  })
 
     if(delProds){
       delProds.forEach(delProduct => {
@@ -358,6 +364,13 @@ module.exports.compareScriptic = async (req, res, next) => {
         })
       })
     }
+
+    delIngs.forEach(i => {
+      if(i.ing.name === 'Oua'){
+        console.log('Ingredinet din fisa si produse sterse', i.qty)
+      }
+    })
+
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
@@ -495,9 +508,9 @@ module.exports.compareScriptic = async (req, res, next) => {
 
 
     delIngs.forEach(ing => {
-      if(ing.ing.name === 'Oua'){
-        console.log(ing)
-      }
+      // if(ing.ing.name === 'Oua'){
+      //   console.log(ing)
+      // }
       const compareIng = {
         _id: ing.ing?._id,
         name: ing.ing?.name,
