@@ -632,7 +632,7 @@ module.exports.compareScriptic = async (req, res) => {
         .populate([
           { path: 'products.ings.ing',     populate: { path: 'ings.ing' } },
           { path: 'products.toppings.ing', populate: { path: 'ings.ing' } },
-        ]),
+        ]).lean(),
     ]);
 
     // === helpers ============================================================
@@ -710,7 +710,6 @@ module.exports.compareScriptic = async (req, res) => {
             console.log('Lipsa ingredient',w)
           }
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
-          console.log(scaled)
           if(scaled.ing?.name === 'Oua'){
             console.log(scaled.gestiune)
           }
