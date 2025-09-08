@@ -232,16 +232,6 @@ module.exports.compareScriptic = async (req, res, next) => {
     const {firstInvId, secondInvId, loc, point} = req.body
     const firstInventary = await Inventary.findById(firstInvId).populate({path: 'ingredients.ing', select: 'price'})
     const lastInventary = await Inventary.findById(secondInvId).populate({path: 'ingredients.ing', select: 'price'})
-    lastInventary.ingredients.forEach(i => {
-      if(i.name === 'Oua'){
-        console.log(i)
-      }
-    })
-    firstInventary.ingredients.forEach(i => {
-      if(i.name === 'Oua'){
-        console.log(i)
-      }
-    })
     const startTime = new Date(firstInventary.date)
     const endTime = new Date(lastInventary.date)
    
@@ -278,17 +268,33 @@ module.exports.compareScriptic = async (req, res, next) => {
               for(let ingg of ing.ing.ings){
                   const index = delIngs.findIndex(i => i.name === ingg.ing.name)
                   if(index !== -1){
+                      if(ingg.name === 'Oua'){
+                        console.log(ingg.qty)
+                      }
                       delIngs[index].qty = round(delIngs[index].qty + ingg.qty)
                   } else {
-                     if(ingg.gestiune.toString() === firstInventary.gestiune.toString() )  delIngs.push(ingg)
+                     if(ingg.gestiune.toString() === firstInventary.gestiune.toString() ) {
+                      if(ingg.name === 'Oua'){
+                        console.log(ingg.qty)
+                      }
+                      delIngs.push(ingg)
+                     } 
                   }
               }
           } else {
               const index = delIngs.findIndex(i => i.name === ing.ing.name)
               if(index !== -1){
+                if(ing.name === 'Oua'){
+                  console.log(ing.qty)
+                }
                   delIngs[index].qty = round(delIngs[index].qty + ing.qty)
               } else {
-                if(ing.gestiune.toString() === firstInventary.gestiune.toString())  delIngs.push(ing)
+                if(ing.gestiune.toString() === firstInventary.gestiune.toString()) {
+                  if(ing.name === 'Oua'){
+                    console.log(ing.qty)
+                  }
+                  delIngs.push(ing)
+                }  
               }
           }
       }
