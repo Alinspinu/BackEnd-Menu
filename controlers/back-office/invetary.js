@@ -700,7 +700,7 @@ module.exports.compareScriptic = async (req, res) => {
         } else processLeaf(depMap, w, 1);
       }
     }
-
+    console.log(orders.length)
     // === 5) orders -> consMap
     for (const order of orders || []) {
       for (const prod of order.products || []) {
