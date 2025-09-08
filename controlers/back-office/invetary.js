@@ -706,8 +706,11 @@ module.exports.compareScriptic = async (req, res) => {
         const mult = r(prod.quantity || 0);
 
         for (const w of prod.ings || []) {
+          if(!w.ing){
+            console.log('Lipsa ingredient',w)
+          }
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
-          if(scaled.ing.name === 'Oua'){
+          if(scaled.ing?.name === 'Oua'){
             console.log(scaled.gestiune)
           }
           // console.log(w)
