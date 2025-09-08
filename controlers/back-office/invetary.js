@@ -304,8 +304,14 @@ module.exports.compareScriptic = async (req, res, next) => {
       delProds.forEach(delProduct => {
         const product = delProduct.billProduct
         product.ings.forEach(ing => {
+          if(ing.ing?.name === 'Oua'){
+            console.log('oua produs sters', ing.qty, product.name)
+          }
           if(ing.ing.ings && ing.ing.ings.length){
             ing.ing.ings.forEach(ig => {
+              if(ig.ing?.name === 'Oua'){
+                console.log('oua produs sters', ing.qty, product.name)
+              }
               const existingIng = delIngs.find(i => i.ing.name === ig.ing.name)
               if(existingIng){
                 const updatedIng = {
@@ -518,9 +524,6 @@ module.exports.compareScriptic = async (req, res, next) => {
           value: 0,
           entries: []
         },
-      }
-      if(ing.ing?.name === 'Oua'){
-        console.log('oua produs sters', ing.qty)
       }
       const existingIng = ingredients.find(ingd => ingd.name === compareIng.name)
       if(existingIng){
