@@ -510,6 +510,9 @@ module.exports.compareScriptic = async (req, res, next) => {
 
 
     delIngs.forEach(ing => {
+      if(ing.ing.name === 'Oua'){
+        console.log(ing)
+      }
       const compareIng = {
         name: ing.ing?.name,
         um: ing.ing?.um,
