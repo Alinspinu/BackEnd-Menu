@@ -700,7 +700,6 @@ module.exports.compareScriptic = async (req, res) => {
         } else processLeaf(depMap, w, 1);
       }
     }
-    console.log(orders.length)
     // === 5) orders -> consMap
     for (const order of orders || []) {
       for (const prod of order.products || []) {
@@ -708,6 +707,7 @@ module.exports.compareScriptic = async (req, res) => {
 
         for (const w of prod.ings || []) {
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
+          console.log(scaled)
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
               if (!sub?.ing?._id || !gestMatch(sub)) continue;
