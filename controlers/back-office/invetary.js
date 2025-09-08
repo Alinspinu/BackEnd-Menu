@@ -707,7 +707,10 @@ module.exports.compareScriptic = async (req, res) => {
 
         for (const w of prod.ings || []) {
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
-          console.log(w)
+          if(scaled.name === 'Oua'){
+            console.log(scaled)
+          }
+          // console.log(w)
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
               if (!sub?.ing?._id || !gestMatch(sub)) continue;
