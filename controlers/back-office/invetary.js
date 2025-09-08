@@ -658,7 +658,7 @@ module.exports.compareScriptic = async (req, res) => {
       const qty = r((w.qty || 0) * (mult || 1));
       if (qty) addTo(map, w.ing, qty);
     }
-    
+
     function processComposite(map, w, mult = 1) {
       if (!w?.ing?.ings?.length) return;
       for (const sub of w.ing.ings) {
@@ -682,7 +682,7 @@ module.exports.compareScriptic = async (req, res) => {
       for (const w of bp.ings || []) {
         if (w?.ing?.ings?.length) {
           for (const sub of w.ing.ings) {
-            if (!sub?.ing?._id || !gestMatch(sub)) continue;
+            if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
             const qty = r((sub.qty || 0) * (w.qty || 0));
             if (qty) addTo(depMap, sub.ing, qty);
           }
@@ -691,7 +691,7 @@ module.exports.compareScriptic = async (req, res) => {
       for (const w of bp.toppings || []) {
         if (w?.ing?.ings?.length) {
           for (const sub of w.ing.ings) {
-            if (!sub?.ing?._id || !gestMatch(sub)) continue;
+            if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
             const qty = r((sub.qty || 0) * (w.qty || 0));
             if (qty) addTo(depMap, sub.ing, qty);
           }
@@ -708,7 +708,7 @@ module.exports.compareScriptic = async (req, res) => {
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
-              if (!sub?.ing?._id || !gestMatch(sub)) continue;
+              if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
               const qty = r((sub.qty || 0) * (scaled.qty || 0));
               if (qty) addTo(consMap, sub.ing, qty);
             }
@@ -719,7 +719,7 @@ module.exports.compareScriptic = async (req, res) => {
           const scaled = { ...t, qty: r((t.qty || 0) * mult) };
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
-              if (!sub?.ing?._id || !gestMatch(sub)) continue;
+              if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
               const qty = r((sub.qty || 0) * (scaled.qty || 0));
               if (qty) addTo(consMap, sub.ing, qty);
             }
