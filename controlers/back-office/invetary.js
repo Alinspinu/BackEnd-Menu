@@ -312,26 +312,26 @@ module.exports.compareScriptic = async (req, res, next) => {
               if(ig.ing?.name === 'Oua'){
                 console.log('oua produs sters', ing.qty, product.name)
               }
-              const existingIng = delIngs.find(i => i.ing.name === ig.ing.name)
+              const existingIng = delIngs.find(i => i.ing._id.toString() === ig.ing._id.toString())
               if(existingIng){
                 const updatedIng = {
-                  qty: existingIng.qty + round(ig.qty * ing.qty),
+                  qty: round(existingIng.qty + (ig.qty * ing.qty)),
                   ing: existingIng.ing
                 }
-                delIngs = delIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                delIngs = delIngs.map(p => (p.ing._id.toString() === ig.ing.toString() ? updatedIng : p));
               } else{
                 if(ig.gestiune.toString() === firstInventary.gestiune.toString() )  delIngs.push(ig)
               }
             })
           } else{
             if(ing && ing.ing){
-              const existingIngredient = delIngs.find(p =>p.ing.name === ing.ing.name);
+              const existingIngredient = delIngs.find(p =>p.ing._id.toString() === ing.ing._id.toString());
               if (existingIngredient) {
                 const updatedIng = {
                   qty: existingIngredient.qty + ing.qty,
                   ing: existingIngredient.ing
                 }
-                delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                delIngs = delIngs.map(p => (p.ing._id.toString() === ing.ing.toString() ? updatedIng : p));
               } else {
                 if(!ing.gestiune){
                     console.log(ing)
@@ -345,26 +345,26 @@ module.exports.compareScriptic = async (req, res, next) => {
         product.toppings.forEach(ing => {
           if(ing.ing.ings && ing.ing.ings.length){
             ing.ing.ings.forEach(ig => {
-              const existingIng = delIngs.find(i => i.ing.name === ig.ing.name)
+              const existingIng = delIngs.find(i => i.ing._id.toString() === ig.ing._id.toString())
               if(existingIng){
                 const updatedIng = {
                   qty: existingIng.qty + round(ig.qty *ing.qty),
                   ing: existingIng.ing
                 }
-                delIngs = delIngs.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                delIngs = delIngs.map(p => (p.ing._id.toString() === ig.ing._id.toString() ? updatedIng : p));
               } else{
                 if(ig.gestiune.toString() === firstInventary.gestiune.toString() )  delIngs.push(ig)
               }
             })
           } else{
             if(ing && ing.ing){
-              const existingIngredient = delIngs.find(p =>p.ing.name === ing.ing.name);
+              const existingIngredient = delIngs.find(p =>p.ing._id.toString() === ing.ing._id.toString());
               if (existingIngredient) {
                 const updatedIng = {
                   qty: existingIngredient.qty + ing.qty,
                   ing: existingIngredient.ing
                 }
-                delIngs = delIngs.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                delIngs = delIngs.map(p => (p.ing._id.toString() === ing.ing._id.toString() ? updatedIng : p));
               } else {
                 if(ing.gestiune.toString() === firstInventary.gestiune.toString() )  delIngs.push(ing);
               }
