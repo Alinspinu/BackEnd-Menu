@@ -707,7 +707,7 @@ module.exports.compareScriptic = async (req, res) => {
 
         for (const w of prod.ings || []) {
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
-          if(scaled.name === 'Oua'){
+          if(scaled.ing.name === 'Oua'){
             console.log(scaled)
           }
           // console.log(w)
