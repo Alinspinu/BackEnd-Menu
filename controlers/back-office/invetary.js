@@ -639,8 +639,10 @@ module.exports.compareScriptic = async (req, res) => {
     const r = (n) => round(n); // or roundd
     const idStr = (x) => (x?._id ? x._id.toString() : String(x));
     const sameId = (a, b) => a && b && idStr(a) === idStr(b);
-    const gestMatch = (wrap) => wrap?.gestiune && sameId(wrap.gestiune, firstInventary.gestiune);
+    // const gestMatch = (wrap) => wrap?.gestiune && sameId(wrap.gestiune, firstInventary.gestiune);
 
+    const gestMatch = (w) =>
+      !w?.gestiune || sameId(w.gestiune, firstInventary.gestiune);
     // fast accumulators by _id
     const depMap  = new Map(); // deletions / sheets → depVal
     const consMap = new Map(); // orders consumption → saleUnload
@@ -654,7 +656,7 @@ module.exports.compareScriptic = async (req, res) => {
     }
 
     function processLeaf(map, w, mult = 1) {
-      if (!w?.ing?._id || !gestMatch(w.ing)) return;
+      if (!w?.ing?._id || !gestMatch(w)) return;
       const qty = r((w.qty || 0) * (mult || 1));
       if (qty) addTo(map, w.ing, qty);
     }
@@ -662,7 +664,7 @@ module.exports.compareScriptic = async (req, res) => {
     function processComposite(map, w, mult = 1) {
       if (!w?.ing?.ings?.length) return;
       for (const sub of w.ing.ings) {
-        if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
+        if (!sub?.ing?._id || !gestMatch(sub)) continue;
         const qty = r((sub.qty || 0) * (w.qty || 0) * (mult || 1));
         if (qty) addTo(map, sub.ing, qty);
       }
@@ -682,7 +684,7 @@ module.exports.compareScriptic = async (req, res) => {
       for (const w of bp.ings || []) {
         if (w?.ing?.ings?.length) {
           for (const sub of w.ing.ings) {
-            if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
+            if (!sub?.ing?._id || !gestMatch(sub)) continue;
             const qty = r((sub.qty || 0) * (w.qty || 0));
             if (qty) addTo(depMap, sub.ing, qty);
           }
@@ -691,7 +693,7 @@ module.exports.compareScriptic = async (req, res) => {
       for (const w of bp.toppings || []) {
         if (w?.ing?.ings?.length) {
           for (const sub of w.ing.ings) {
-            if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
+            if (!sub?.ing?._id || !gestMatch(sub)) continue;
             const qty = r((sub.qty || 0) * (w.qty || 0));
             if (qty) addTo(depMap, sub.ing, qty);
           }
@@ -708,7 +710,7 @@ module.exports.compareScriptic = async (req, res) => {
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
-              if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
+              if (!sub?.ing?._id || !gestMatch(sub)) continue;
               const qty = r((sub.qty || 0) * (scaled.qty || 0));
               if (qty) addTo(consMap, sub.ing, qty);
             }
@@ -719,7 +721,7 @@ module.exports.compareScriptic = async (req, res) => {
           const scaled = { ...t, qty: r((t.qty || 0) * mult) };
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
-              if (!sub?.ing?._id || !gestMatch(sub.ing)) continue;
+              if (!sub?.ing?._id || !gestMatch(sub)) continue;
               const qty = r((sub.qty || 0) * (scaled.qty || 0));
               if (qty) addTo(consMap, sub.ing, qty);
             }
