@@ -211,6 +211,7 @@ const { parseStringPromise } = require('xml2js');
         currencyId,
         id
       };
+      console.log(invoiceSummary.products)
       return invoiceSummary
 };
 
