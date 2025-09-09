@@ -31,6 +31,7 @@ const mode = 'prod'
       for (const entry of zipEntries) {
           if (!entry.entryName.includes('semnatura')) {
           const xmlData = entry.getData().toString('utf8'); 
+          console.log(xmlData)
           try {
               const result = await parseXml(xmlData); 
               if(result.Invoice){
@@ -45,7 +46,6 @@ const mode = 'prod'
           }
           }
       }
-        console.log(invoice)
         return {invoice: invoice};
     } catch (error) {
       console.error('Error downloading or processing the ZIP file:', error);
