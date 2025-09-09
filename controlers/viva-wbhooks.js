@@ -14,63 +14,63 @@ module.exports.transactionCreated = async (req, res) => {
 
     const locatie = "655e2e7c5a3d53943c6b7c53"
 
-    console.log(webHookData)
+    // console.log(webHookData)
 
     try{
 
     const subId = webHookData.EventData.SubTypeId
-    if(subId === 101 || subId === 30){
-        let transactionType = subId === 101 ? 'card' : 'transfer'
-        let iban = subId === 30 ? webHookData.EventData.Iban : ''
-        let vivaAccountId = subId === 30 ? webHookData.EventData.BankAccountId : ''
-        let date = subId === 101 ? new Date(webHookData.EventData.ValueDate) : new Date (webHookData.EventData.Created)
-        const data = new Viva({
-            transactionType: transactionType || 'error',
-            date: date || new Date(),
-            description: webHookData.EventData.Description || 'error',
-            amount: Math.abs(webHookData.EventData.Amount),
-            iban: iban || 'error',
-            vivaAccountId: vivaAccountId || 'error',
-            transactionId: webHookData.EventData.WalletTransactionId || 'error',
-            locatie: locatie,
-        })
-        const savedData =  await data.save()
+    // if(subId === 101 || subId === 30){
+    //     let transactionType = subId === 101 ? 'card' : 'transfer'
+    //     let iban = subId === 30 ? webHookData.EventData.Iban : ''
+    //     let vivaAccountId = subId === 30 ? webHookData.EventData.BankAccountId : ''
+    //     let date = subId === 101 ? new Date(webHookData.EventData.ValueDate) : new Date (webHookData.EventData.Created)
+    //     const data = new Viva({
+    //         transactionType: transactionType || 'error',
+    //         date: date || new Date(),
+    //         description: webHookData.EventData.Description || 'error',
+    //         amount: Math.abs(webHookData.EventData.Amount),
+    //         iban: iban || 'error',
+    //         vivaAccountId: vivaAccountId || 'error',
+    //         transactionId: webHookData.EventData.WalletTransactionId || 'error',
+    //         locatie: locatie,
+    //     })
+    //     const savedData =  await data.save()
 
-        const string = subId === 101 ? savedData.description.split('-')[1].trim().split(' ')[0] : savedData.description.split('-')[1].trim()
-        const query = subId === 101 ? {name: {$regex: string, $options: 'i'}, locatie: locatie } : {account: {$regex: string, $options: 'i'}, locatie: locatie }
-        const suplier = await Suplier.findOne(query)
-        if(suplier){
-            savedData.asociat = {}
-            savedData.asociat.suplier = suplier._id
-            const nir = await Nir.findOne({suplier: suplier._id, totalDoc: savedData.amount, locatie: locatie})
-            const record = {
-                typeof: 'iesire',
-                document: {
-                    typeOf: transactionType,
-                    docId: savedData.transactionId,
-                    amount: savedData.amount,
-                    asociat: nir ? true : false
-                },
-                sold: suplier.sold - savedData.amount,
-                nir: nir ? [nir._id] : [],
-                description: savedData.description,
-                date: savedData.date,
-                salePoint: nir ? nir.salePoint : null
-            }
-            suplier.records.push(record)
-            suplier.sold = record.sold
-            await suplier.save()
-            if(nir){
-               savedData.asociat.nir = nir._id
-               await Nir.findByIdAndUpdate(nir._id, {payd: true})
-            }
-            await savedData.save()
-        }
-    } else {
-        const viva = new Viva({data: webHookData})
-        if(subId !== 83 || subId !== 13) await viva.save()
+    //     const string = subId === 101 ? savedData.description.split('-')[1].trim().split(' ')[0] : savedData.description.split('-')[1].trim()
+    //     const query = subId === 101 ? {name: {$regex: string, $options: 'i'}, locatie: locatie } : {account: {$regex: string, $options: 'i'}, locatie: locatie }
+    //     const suplier = await Suplier.findOne(query)
+    //     if(suplier){
+    //         savedData.asociat = {}
+    //         savedData.asociat.suplier = suplier._id
+    //         const nir = await Nir.findOne({suplier: suplier._id, totalDoc: savedData.amount, locatie: locatie})
+    //         const record = {
+    //             typeof: 'iesire',
+    //             document: {
+    //                 typeOf: transactionType,
+    //                 docId: savedData.transactionId,
+    //                 amount: savedData.amount,
+    //                 asociat: nir ? true : false
+    //             },
+    //             sold: suplier.sold - savedData.amount,
+    //             nir: nir ? [nir._id] : [],
+    //             description: savedData.description,
+    //             date: savedData.date,
+    //             salePoint: nir ? nir.salePoint : null
+    //         }
+    //         suplier.records.push(record)
+    //         suplier.sold = record.sold
+    //         await suplier.save()
+    //         if(nir){
+    //            savedData.asociat.nir = nir._id
+    //            await Nir.findByIdAndUpdate(nir._id, {payd: true})
+    //         }
+    //         await savedData.save()
+    //     }
+    // } else {
+    //     const viva = new Viva({data: webHookData})
+    //     if(subId !== 83 || subId !== 13) await viva.save()
        
-    }
+    // }
     } catch(error){
         console.log(error)
     }
