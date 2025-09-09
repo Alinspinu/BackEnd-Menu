@@ -53,42 +53,6 @@ const { parseStringPromise } = require('xml2js');
     };
 
 
-    // const products = invoiceData.Invoice["cac:InvoiceLine"].map(item => {
-    //     // Extract the name of the item
-    //     const itemName = Array.isArray(item["cac:Item"][0]["cbc:Name"]) 
-    //       ? item["cac:Item"][0]["cbc:Name"][0]["_"] || item["cac:Item"][0]["cbc:Name"][0] 
-    //       : item["cac:Item"][0]["cbc:Name"];
-      
-    //     // Extract the VAT percent
-    //     const vatPercent = Array.isArray(item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"]) 
-    //       ? +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]["_"] || +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0] 
-    //       : 0;
-      
-    //     // Extract price amount
-    //     const price = item["cac:Price"] && item["cac:Price"][0]["cbc:PriceAmount"]
-    //       ? +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"] || +item["cac:Price"][0]["cbc:PriceAmount"][0]
-    //       : 0;
-       
-    //     const invoicedQuantity = item["cbc:InvoicedQuantity"] && item["cbc:InvoicedQuantity"][0];
-    //     const quantity = invoicedQuantity ? parseFloat(invoicedQuantity["_"]) : 0;
-    //     console.log(quantity)
-    //     const unitCode = invoicedQuantity && invoicedQuantity["$"] ? invoicedQuantity["$"].unitCode : 'N/A';
-      
-    //     // Extract total amount excluding VAT
-    //     const totalNoVat = item["cbc:LineExtensionAmount"] 
-    //       ? +item["cbc:LineExtensionAmount"][0]["_"] || +item["cbc:LineExtensionAmount"][0] 
-    //       : 0;
-      
-    //     return {
-    //       name: itemName,
-    //       quantity: quantity,
-    //       unitCode: unitCode,
-    //       price: price,
-    //       totalNoVat: totalNoVat,
-    //       vatPrecent: vatPercent
-    //     };
-    //   })
-
 
     const products = invoiceData.Invoice["cac:InvoiceLine"].map(item => {
       // ------- helpers -------
