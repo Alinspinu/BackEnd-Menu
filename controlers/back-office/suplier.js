@@ -211,14 +211,16 @@ module.exports.addSuplier = async (req, res, next) => {
     // } else {
     //     sortedRecords[0].sold = -sortedRecords[0].document.amount
     // }
-    const updatetRecords =  sortedRecords.map(r => {
+    sortedRecords.forEach(r => {
             if(r.typeOf === 'intrare'){
-              return  r.sold = round( r.sold + r.document.amount)
+             suplier.sold = round( suplier.sold + r.document.amount)
+             r.sold = suplier.sold
             } else {
-              return  r.sold = round( r.sold - r.document.amount)
+             suplier.sold = round( suplier.sold - r.document.amount)
+             r.sold = suplier.sold
             }
         })
-      suplier.sold = updatetRecords[updatetRecords.length - 1].sold
+        suplier.record = sortedRecords
       return suplier
    }
 
