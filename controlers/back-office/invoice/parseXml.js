@@ -177,7 +177,7 @@ const { parseStringPromise } = require('xml2js');
         unitCode,
         price,               // net unit price after price-level discount (as per your sample)
         totalNoVat,
-        vatPrecent: vatPercent,
+        vatPercent: vatPercent,
     
         // NEW fields
         discountPerUnit,     // RON/unit from price-level AllowanceCharge (0 if none)
