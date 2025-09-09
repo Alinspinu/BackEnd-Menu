@@ -173,11 +173,6 @@ module.exports.addSuplier = async (req, res, next) => {
     const {loc} = req.query
     try{
         const supliers = await Suplier.find({locatie: loc}).select('-records')
-        // supliers.forEach(s => {
-        //     if(!s.vatNumber.includes('RO') && !s.vatNumber.includes('Ro') && !s.vatNumber.includes('ro')){
-        //         console.log(s)
-        //     }
-        //  })
         res.status(200).json(supliers)
     } catch(error){
         console.log(error)
@@ -191,9 +186,9 @@ module.exports.addSuplier = async (req, res, next) => {
     try{
         const suplier = await Suplier.findById(suplierId)
         if(suplier){
-            const s = updateSuplierRecords(suplier)
-            const ss = await s.save()
-            res.status(200).json(ss)
+            // const s = updateSuplierRecords(suplier)
+            // const ss = await s.save()
+            res.status(200).json(suplier)
         } else {
             res.status(404).json({message: 'Furnizorul nu a fost găsit'})
         }
