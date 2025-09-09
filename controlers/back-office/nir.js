@@ -372,8 +372,8 @@ module.exports.addEFacturaID = async (req, res, next) => {
 module.exports.seaveNirInvoice = async (req, res) => {
   try{
     const {nirInvoice, loc} = req.body
-    nirInvoice.supplier.bank =  nirInvoice.supplier.bank.toString()
-    nirInvoice.supplier.iban =  nirInvoice.supplier.iban.toString()
+    nirInvoice.supplier.bank =  nirInvoice.supplier.bank?.toString() || 'NO BANK'
+    nirInvoice.supplier.iban =  nirInvoice.supplier.iban?.toString() || 'NO IBAN'
     const inv = new NirInvoice(nirInvoice)
     inv.locatie = loc
     const savedInv = await inv.save()
