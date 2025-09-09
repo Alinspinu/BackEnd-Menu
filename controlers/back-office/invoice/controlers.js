@@ -285,6 +285,7 @@ module.exports.getInvoice = async (req, res) => {
           return res.status(500).json({ message: data.error });
         } 
         if(data.invoice){
+          console.log(data.invoice.products)
           res.status(200).json(data.invoice)
         }
         if(!data){
