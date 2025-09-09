@@ -2,6 +2,7 @@ const Suplier = require('../../models/office/suplier')
 const Locatie = require('../../models/office/locatie')
 const Table = require('../../models/utils/table')
 const SalePoint = require('../../models/utils/sale-point')
+const { round } = require('../../utils/functions')
 
 
 module.exports.addSuplier = async (req, res, next) => {
@@ -190,7 +191,9 @@ module.exports.addSuplier = async (req, res, next) => {
     try{
         const suplier = await Suplier.findById(suplierId)
         if(suplier){
-            res.status(200).json(suplier)
+            const s = updateSuplierRecords(suplier)
+            const ss = await s.save()
+            res.status(200).json(ss)
         } else {
             res.status(404).json({message: 'Furnizorul nu a fost găsit'})
         }
@@ -198,6 +201,25 @@ module.exports.addSuplier = async (req, res, next) => {
         console.log(error)
         res.status(500).json(error)
     }
+   }
+
+   function updateSuplierRecords(suplier){
+    suplier.sold = 0
+    const sortedRecords = suplier.records.sort((a,b)=>+new Date(a.date)-(+new Date(b.date)));
+    sortedRecords[0].sold = 0
+    // if(sortedRecords[0].typeOf === 'intrare'){
+    // } else {
+    //     sortedRecords[0].sold = -sortedRecords[0].document.amount
+    // }
+    const updatetRecords =  sortedRecords.map(r => {
+            if(r.typeOf === 'intrare'){
+                r.sold = round( r.sold + r.document.amount)
+            } else {
+                r.sold = round( r.sold - r.document.amount)
+            }
+        })
+      suplier.sold = updatetRecords[updatetRecords.length - 1].sold
+      return suplier
    }
 
    module.exports.deleteSuplier = async (req, res) => {
