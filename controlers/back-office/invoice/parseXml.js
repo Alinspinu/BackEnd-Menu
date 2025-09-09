@@ -270,7 +270,7 @@ function parseCreditNoteData(creditData, id) {
       unitCode,
       price: priceAmount,
       totalNoVat: totalNoVat,
-      vatPercent
+      vatPrecent: vatPercent
     };
   }) || [];
 
