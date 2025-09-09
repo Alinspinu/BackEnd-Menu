@@ -213,9 +213,9 @@ module.exports.addSuplier = async (req, res, next) => {
     // }
     const updatetRecords =  sortedRecords.map(r => {
             if(r.typeOf === 'intrare'){
-                r.sold = round( r.sold + r.document.amount)
+              return  r.sold = round( r.sold + r.document.amount)
             } else {
-                r.sold = round( r.sold - r.document.amount)
+              return  r.sold = round( r.sold - r.document.amount)
             }
         })
       suplier.sold = updatetRecords[updatetRecords.length - 1].sold
