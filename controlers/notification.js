@@ -185,7 +185,7 @@ async function sendPushNotifications(notification, userIds){
 
     for (const sub of subscriptions) {
       try {
-        console.log('subscriptions' sub)
+        console.log('subscriptions', sub)
        const res = await webPush.sendNotification(sub.subscription, JSON.stringify(payload));
        console.log(res)
       } catch (error) {
