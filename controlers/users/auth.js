@@ -532,6 +532,7 @@ module.exports.resetPassword = async (req, res, next) => {
                     email: user.email,
                     status: user.status,
                     telephone: user.telephone,
+                    checkIn: user.checkIn,
                     employee: user.employee,
                     locatie: user.locatie,
                     discount: user.discount,
