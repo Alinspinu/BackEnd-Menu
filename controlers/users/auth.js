@@ -487,6 +487,7 @@ module.exports.verifyToken = async (req, res, next) => {
 module.exports.sendEmailResetPassword = async (req, res, next) => {
     try {
         const { email, loc, url } = req.body;
+        console.log(url)
         const user = await User.findOne({ email: email}).populate({path: 'locatie'});
         if (user) {
             return sendResetEmail(user, url).then(response => {
