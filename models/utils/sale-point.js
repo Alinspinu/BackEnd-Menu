@@ -12,6 +12,8 @@ const SalePointSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Locatie'
 },
+  latitude: Number,
+  longitude: Number,
 });
 
 module.exports = mongoose.model('SalePoint', SalePointSchema);

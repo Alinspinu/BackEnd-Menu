@@ -285,7 +285,6 @@ module.exports.registerIn = async (req, res) => {
     try{
         const {name, password, confirmPassword, telephone, ciSerial, ciNumber, releaseId, address, releaseDate, userId, cnp, adminEmail} = req.body
         if(userId && userId.length){
-            console.log('hitttttt******** ')
             if (password === confirmPassword) {
                 const hashedPassword = hashPassword(password);
                 const user = await User.findById(userId).populate({path: 'locatie'})
@@ -488,7 +487,7 @@ module.exports.verifyToken = async (req, res, next) => {
 module.exports.sendEmailResetPassword = async (req, res, next) => {
     try {
         const { email, loc, url } = req.body;
-        const user = await User.findOne({ email: email, locatie: loc }).populate({path: 'locatie'});
+        const user = await User.findOne({ email: email}).populate({path: 'locatie'});
         if (user) {
             return sendResetEmail(user, url).then(response => {
                 const userData = {
