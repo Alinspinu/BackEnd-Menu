@@ -185,7 +185,9 @@ async function sendPushNotifications(notification, userIds){
 
     for (const sub of subscriptions) {
       try {
-        await webPush.sendNotification(sub.subscription, JSON.stringify(payload));
+        console.log('subscriptions' sub)
+       const res = await webPush.sendNotification(sub.subscription, JSON.stringify(payload));
+       console.log(res)
       } catch (error) {
         if (error.statusCode === 410 || error.statusCode === 404) {
           await Subscription.deleteOne({ _id: sub._id });
