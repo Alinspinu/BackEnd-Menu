@@ -27,7 +27,6 @@ webPush.setVapidDetails(
 module.exports.addReservationFromClient = async(req, res)  => {
     const {reservation} = req.body
     try{
-        // const userIds = (await User.find({'employee.active': true, 'checkIn.value': true }).select('_id')).map(u => u._id)
         const salePoint = await SalePoint.findById(reservation.salePoint)
         const userIds = salePoint.notifications.flatMap(u => {
             if (!u.reservation) return [];
@@ -57,7 +56,7 @@ module.exports.addReservationFromClient = async(req, res)  => {
             type: {
                 name: 'Rezervare Online',
                 data: {
-                url: `https://front.flowmanager.ro/reservation/${savedReservation._id}`
+                url: `https://front.flowmanager.ro/reservations/${savedReservation._id}`
                 },
             },
             message: `Rezevare${pendding}la ${salePoint.name} pe ${savedReservation.dateString}, pentru ${savedReservation.client.name}, ${savedReservation.guests} persoane, ${savedReservation.details}!`
