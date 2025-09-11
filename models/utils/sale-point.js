@@ -14,6 +14,22 @@ const SalePointSchema = new Schema({
 },
   latitude: Number,
   longitude: Number,
+  notifications: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      reservation: {
+        type: Boolean,
+        default: false
+      }, 
+      checkIn: {
+        type: Boolean,
+        default: false
+      } 
+    }
+  ]
 });
 
 module.exports = mongoose.model('SalePoint', SalePointSchema);
