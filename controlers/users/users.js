@@ -472,7 +472,7 @@ module.exports.deleteSalePoint = async (req, res) => {
 module.exports.getSalePoints = async (req, res) => {
     try{
         const {loc} = req.query
-        const points = await SalePoint.find({locatie: loc})
+        const points = await SalePoint.find({locatie: loc}).populate({path: 'notifications.user', select: 'employee', populate: {path: 'employee.employeePosition', select: 'name' }})
         res.status(200).json(points)
     } catch(error){
         console.log(error)
@@ -483,7 +483,7 @@ module.exports.getSalePoints = async (req, res) => {
 module.exports.editSalePoint = async (req, res) => {
     try{
         const {point} = req.body
-        const updatedPoint = await SalePoint.findByIdAndUpdate(point._id, point, {new: true})
+        const updatedPoint = await SalePoint.findByIdAndUpdate(point._id, point, {new: true}).populate({path: 'notifications.user', select: 'employee', populate: {path: 'employee.employeePosition', select: 'name' }})
         res.status(200).json({point: updatedPoint, message: 'Punctul de lucru a fost modificat cu success!'})
     } catch(error) {
         console.log(error)
