@@ -8,6 +8,7 @@ const Shedule = require('../models/users/shedule')
 const webPush = require('web-push');
 
 const io = require('socket.io-client');
+const SalePoint = require('../models/utils/sale-point');
 const socket = io("https://socket.flowmanager.ro")
 
 
@@ -17,21 +18,49 @@ webPush.setVapidDetails(
     process.env.WEB_PUSH_PRIVATE,
   );
 
+// module.exports.addNotification = async(req, res) => {
+//     const {notification, userId} = req.body
+//     try{
+//         let userIds = []
+//         if(userId === 'all'){
+//             userIds = (await User.find({'employee.active': true, 'checkIn.value': true }).select('_id')).map(u => u._id)
+//         } else {
+//             userIds = userId
+//         }
+//         if(!notification.reciver.length) notification.reciver = userIds
+//         const newNot = new Notification(notification)
+//         const savedNot = await newNot.save()
+//         socket.emit('notification', JSON.stringify(savedNot))
+//         await sendPushNotifications(savedNot, userIds)
+//         res.status(200).json(savedNot)  
+//     } catch(error){
+//         console.log(error)
+//         res.status(500).json(error)
+//     }
+// }
+
+
 module.exports.addNotification = async(req, res) => {
-    const {notification, userId} = req.body
+    const {notification, type, point} = req.body
     try{
-        let userIds = []
-        if(userId === 'all'){
-            userIds = (await User.find({'employee.active': true, 'checkIn.value': true }).select('_id')).map(u => u._id)
-        } else {
-            userIds = userId
-        }
-        if(!notification.reciver.length) notification.reciver = userIds
+      const sPoint = await SalePoint.findById(point)
+      if(sPoint){
+        const userIds = sPoint.notifications.flatMap(u => {
+          const ok = (type === 'reservation' && u.reservation) ||
+                     (type === 'checkIn'    && u.checkIn);
+          if (!ok) return [];
+          return [u.user];
+        });
+        console.log('users ids', userIds)
+        notification.reciver = userIds
         const newNot = new Notification(notification)
         const savedNot = await newNot.save()
         socket.emit('notification', JSON.stringify(savedNot))
         await sendPushNotifications(savedNot, userIds)
         res.status(200).json(savedNot)  
+      } else {
+        console.log('Nu a fost gasit punct de lucru pentru a trimite notificarile')
+      }
     } catch(error){
         console.log(error)
         res.status(500).json(error)
