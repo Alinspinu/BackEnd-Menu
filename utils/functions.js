@@ -223,10 +223,6 @@ function getNowShedule(schedules) {
 
     const startUTC = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
     const endUTC   = Date.UTC(end.getUTCFullYear(),   end.getUTCMonth(),   end.getUTCDate());
-    console.log('now ', todayUTC)
-    console.log('start ', startUTC)
-    console.log('end ', endUTC)
-
     // inclusive range [start, end]
     return todayUTC >= startUTC && todayUTC <= endUTC;
   });
