@@ -320,49 +320,49 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(9);
 
-        doc.rect(600, y+height + 45, 230, 60).stroke(); 
-        doc.text('Defalcare TVA', 603, y+height + 46, {
-          width: 60,
+        doc.rect(400, y+height + 45, 430, 80).stroke(); 
+        doc.text('Defalcare TVA', 403, y+height + 46, {
+          width: 80,
         }) 
-        doc.text('Achizitie', 663, y+height + 46, {
-          width: 90,
+        doc.text('Achizitie', 483, y+height + 46, {
+          width: 125,
           align: "center",
         }) 
-        doc.text('Vanzare', 753, y+height + 46, {
-          width: 80,
+        doc.text('Vanzare', 603, y+height + 46, {
+          width: 125,
           align: "center",
         }) 
         
         doc
-          .moveTo(600, y + height + 58)
+          .moveTo(400, y + height + 58)
           .lineTo(830, y + height + 58)
           .stroke();
 
           doc.font("public/font/RobotoSlab-Regular.ttf");
 
-          doc.text('Cota TVA', 603, y+height + 59, {
-            width: 60,
+          doc.text('Cota TVA', 403, y+height + 59, {
+            width: 80,
           }) 
-          doc.text('Baza', 663, y+height + 59, {
-            width: 45,
+          doc.text('Baza', 483, y+height + 59, {
+            width: 62.5,
             align: "center",
           }) 
-          doc.text('TVA', 707, y+height + 59, {
-            width: 45,
+          doc.text('TVA', 545.5, y+height + 59, {
+            width: 62.5,
             align: "center",
           }) 
 
-          doc.text('Baza', 752, y+height + 59, {
-            width: 40,
+          doc.text('Baza', 608, y+height + 59, {
+            width: 62.5,
             align: "center",
           }) 
-          doc.text('TVA', 792, y+height + 59, {
-            width: 40,
+          doc.text('TVA', 670.5, y+height + 59, {
+            width: 62.5,
             align: "center",
           }) 
 
           doc
-          .moveTo(600, y + height + 70)
+          .moveTo(400, y + height + 70)
           .lineTo(830, y + height + 70)
           .stroke();
 
