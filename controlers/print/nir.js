@@ -365,11 +365,34 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .moveTo(500, y + height + 70)
           .lineTo(830, y + height + 70)
           .stroke();
-
+          
+          vatValues.forEach((v, i)=> {
+            let hi = 71 + (i * 10)
+            doc.text(`${v.tva} %`, 503, y+height + hi, {
+              width: 80,
+            }) 
+            doc.text(v.acValue , 583, y+height + hi, {
+              width: 62.5,
+              align: "center",
+            }) 
+            doc.text(v.acTvaValue, 645.5, y+height + hi, {
+              width: 62.5,
+              align: "center",
+            }) 
+  
+            doc.text(v.sellPriceValue, 708, y+height + hi, {
+              width: 62.5,
+              align: "center",
+            }) 
+            doc.text(v.sellVatValue, 770.5, y+height + hi, {
+              width: 62.5,
+              align: "center",
+            }) 
+          })
 
 
         console.log(vatValues)
-        
+        doc.font("public/font/RobotoSlab-Bold.ttf");
         doc.text("Responsabil", 80, y + height + 145);
         doc.text(`Data`, 400, y + height + 145);
         doc.text("Semnatura", 680, y + height + 145);
