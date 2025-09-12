@@ -209,23 +209,47 @@ function generateSoketId(length) {
 }
 
 
+function getNowShedule(schedules) {
+  if (!Array.isArray(schedules)) return null;
 
-function getNowShedule(shedules){
-  // console.log(shedules)
-  const dateNow = new Date()
-  dateNow.setHours(0,0,0,0)
-  const shedule = shedules.find(s=> {
-    console.log('start date', new Date(s.days[0].date))
-    console.log('end date', new Date(s.days[s.days.length -1].date))
-      const startDate = new Date(s.days[0].date)
-      const endDate = new Date(s.days[s.days.length -1].date)
-      endDate.setHours(0,0,0,0)
-      startDate.setHours(0,0,0,0)
-      return dateNow.getTime() <= endDate.getTime() && dateNow.getTime() >= startDate.getTime()
-  })
-  console.log(shedule)
-  return shedule
+  const now = new Date();
+  const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+
+  const match = schedules.find(s => {
+    if (!s?.days?.length) return false;
+
+    const start = new Date(s.days[0].date);
+    const end   = new Date(s.days[s.days.length - 1].date);
+
+    const startUTC = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
+    const endUTC   = Date.UTC(end.getUTCFullYear(),   end.getUTCMonth(),   end.getUTCDate());
+
+    // inclusive range [start, end]
+    return todayUTC >= startUTC && todayUTC <= endUTC;
+  });
+
+  return match ?? null;
 }
+
+
+
+
+// function getNowShedule(shedules){
+//   // console.log(shedules)
+//   const dateNow = new Date()
+//   dateNow.setHours(0,0,0,0)
+//   const shedule = shedules.find(s=> {
+//     console.log('start date', new Date(s.days[0].date))
+//     console.log('end date', new Date(s.days[s.days.length -1].date))
+//       const startDate = new Date(s.days[0].date)
+//       const endDate = new Date(s.days[s.days.length -1].date)
+//       endDate.setHours(0,0,0,0)
+//       startDate.setHours(0,0,0,0)
+//       return dateNow.getTime() <= endDate.getTime() && dateNow.getTime() >= startDate.getTime()
+//   })
+//   console.log(shedule)
+//   return shedule
+// }
 module.exports = {
     comparePasswords, 
     hashPassword, 
