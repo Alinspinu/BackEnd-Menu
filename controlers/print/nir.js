@@ -193,7 +193,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         .moveTo(10, h)
         .lineTo(830, h)
         .stroke();
-        
+
         doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
         doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
         doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 25, align: "center" });
@@ -314,7 +314,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .lineTo(830, y + height + 35)
           .stroke();
 
-        doc.rect(10, y+height + 45, 200, 60).fill('#000')  // x, y, width, height
+        doc.rect(10, y+height + 45, 200, 60).stroke();  // x, y, width, height
   
 
         
