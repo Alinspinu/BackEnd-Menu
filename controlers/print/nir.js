@@ -336,7 +336,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     return doc
 }
 
-  function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 28) {
+  function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 24) {
     const result = [];
     // const l = arr.length
     // if(l < 26 && l > 18) firstChunkSize = 18
