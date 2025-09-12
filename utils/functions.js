@@ -211,6 +211,7 @@ function generateSoketId(length) {
 
 
 function getNowShedule(shedules){
+  console.log(shedules)
   const dateNow = new Date()
   dateNow.setHours(0,0,0,0)
   const shedule = shedules.find(s=> {
