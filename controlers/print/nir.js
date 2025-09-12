@@ -314,7 +314,8 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .lineTo(830, y + height + 35)
           .stroke();
 
-        doc.rect(10, y+height + 45, 400, 120).stroke(); 
+        doc.lineWidth(0.3);
+        doc.rect(600, y+height + 45, 230, 60).stroke(); 
   
 
         
@@ -337,9 +338,9 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
   function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 28) {
     const result = [];
-    const l = arr.length
-    if(l < 26 && l > 18) firstChunkSize = 18
-    if(l < 60 && l > 45) otherChunkSize = 22
+    // const l = arr.length
+    // if(l < 26 && l > 18) firstChunkSize = 18
+    // if(l < 60 && l > 45) otherChunkSize = 22
     // First chunk
     result.push(arr.slice(0, firstChunkSize));
   
