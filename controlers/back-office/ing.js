@@ -60,15 +60,6 @@ module.exports.saveIng = async(req, res, next) => {
         const totalItems = 1500
         const totalPages = Math.ceil(totalItems / limit);
 
-        for(let i of items){
-          if(i.ings.length && !i.production){
-            console.log(i)
-          }
-        }
-
-        // await modifyProducts(items)
-
-
         res.status(200).json({
           items,
           totalPages,

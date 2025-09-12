@@ -700,7 +700,7 @@ module.exports.printCompareInv = async (req, res) => {
     worksheet.eachRow(row => {
       row.eachCell(cell => {
         if (typeof cell.value === 'number') {
-          cell.numFmt = '0.000'; // or "0" if you want no decimals
+          cell.numFmt = '0.000'; //
         }
       });
     });

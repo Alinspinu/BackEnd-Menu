@@ -852,22 +852,6 @@ module.exports.compareScriptic = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function allocateFromNewest(entries, globalQty) {
     if (!Array.isArray(entries) || globalQty <= 0) {
       return 0;
