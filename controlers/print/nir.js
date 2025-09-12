@@ -142,13 +142,15 @@ function createNir (nir) {
       );
     });
 
+    const aggregateByTvaValues = aggregateByTva(nir.ingredients)
+
     let pageCount = ingChunks.length
     if(ingChunks[ingChunks.length -1].length > 30 || (ingChunks[ingChunks.length -1].length > 24) && ingChunks.length === 1 ) {
         pageCount = pageCount + 1
     }
 
     ingChunks.forEach((ch, i) => {
-        doc = addIngredients(doc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT, date, pageCount)
+        doc = addIngredients(doc, ch, lineHeigth, y, i+1, pages, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, firma.VAT, date, pageCount, aggregateByTvaValues)
     })
 
     return doc
@@ -156,7 +158,7 @@ function createNir (nir) {
 
 
 
-function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date, pageCount) {
+function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTotal, valoareIntTotal, valTvaTotal, valVanzare, valTvaVanzare, vat, date, pageCount, vatValues) {
        doc.fillColor('black')
     if(page !== 1) {
         y = y - 80
@@ -320,13 +322,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.rect(600, y+height + 45, 230, 60).stroke(); 
         doc.text('Defalcare TVA', 603, y+height + 46, {
-          width: 80,
+          width: 70,
         }) 
-        doc.text('Acizitie', 683, y+height + 46, {
+        doc.text('Achizitie', 673, y+height + 46, {
           width: 80,
           align: "center",
         }) 
-        doc.text('Vanzare', 743, y+height + 46, {
+        doc.text('Vanzare', 733, y+height + 46, {
           width: 80,
           align: "center",
         }) 
@@ -336,6 +338,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .lineTo(830, y + height + 58)
           .stroke();
 
+        console.log(vatValues)
         
         doc.text("Responsabil", 80, y + height + 125);
         doc.text(`Data`, 400, y + height + 125);
@@ -373,5 +376,48 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 function cap(value) {
     return String(value).charAt(0).toUpperCase() + String(value).slice(1);
   }
+
+
+
+
+function aggregateByTva(items) {
+ const acc = {};
+
+ for (const it of items) {
+   const tva = Number(it.tva) || 0;
+   const qty = Number(it.qty) || 0;
+
+   const value = Number(it.value) || 0;            // already net
+   const tvaValue = Number(it.tvaValue) || 0;      // already VAT amount
+   const unitSell = Number(it.sellPrice) || 0;     // unit gross (VAT-incl) or 0
+   const sellGross = unitSell * qty;               // gross total for this line
+
+   // Extract VAT from a VAT-included gross amount
+   const sellVatValue = tva > 0 ? sellGross * (tva / (100 + tva)) : 0;
+
+   if (!acc[tva]) {
+     acc[tva] = { tva, value: 0, tvaValue: 0, sellPrice: 0, sellVatValue: 0 };
+   }
+
+   acc[tva].value       += value;
+   acc[tva].tvaValue    += tvaValue;
+   acc[tva].sellPrice   += sellGross;
+   acc[tva].sellVatValue += sellVatValue;
+ }
+
+ // Optional: round to 2 decimals
+ const round2 = n => Math.round((n + Number.EPSILON) * 100) / 100;
+
+ return Object.values(acc)
+   .map(g => ({
+     tva: g.tva,
+     acValue: round2(g.value),
+     acTvaValue: round2(g.tvaValue),
+     sellPriceValue: round2(g.sellPrice),
+     sellVatValue: round2(g.sellVatValue),
+   }))
+   .sort((a, b) => a.tva - b.tva);
+}
+
 
 module.exports = {createNir}
