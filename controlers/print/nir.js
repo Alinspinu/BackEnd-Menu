@@ -337,7 +337,8 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
   function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 28) {
     const result = [];
-  
+    const l = arr.length
+    if(l < 26 && l > 18) firstChunkSize = 18
     // First chunk
     result.push(arr.slice(0, firstChunkSize));
   
