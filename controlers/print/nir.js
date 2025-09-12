@@ -308,7 +308,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .stroke();
 
         doc.rect(10, y+height + 45, 200, 60)  // x, y, width, height
-        .fill('#3498db');
+  
 
         
         doc.fontSize(9);
@@ -328,7 +328,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     return doc
 }
 
-  function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 31) {
+  function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 28) {
     const result = [];
   
     // First chunk
