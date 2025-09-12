@@ -320,21 +320,20 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.rect(600, y+height + 45, 230, 60).stroke(); 
         doc.text('Defalcare TVA', 603, y+height + 46, {
-          width: 60,
+          width: 80,
+        }) 
+        doc.text('Acizitie', 683, y+height + 46, {
+          width: 80,
           align: "center",
         }) 
-        doc.text('Acizitie', 663, y+height + 46, {
-          width: 60,
-          align: "center",
-        }) 
-        doc.text('Vanzare', 723, y+height + 46, {
-          width: 60,
+        doc.text('Vanzare', 743, y+height + 46, {
+          width: 80,
           align: "center",
         }) 
         
         doc
-          .moveTo(600, y + height + 56)
-          .lineTo(830, y + height + 56)
+          .moveTo(600, y + height + 58)
+          .lineTo(830, y + height + 58)
           .stroke();
 
         
