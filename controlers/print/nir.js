@@ -320,7 +320,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(9);
 
-        doc.rect(400, y+height + 45, 430, 80).stroke(); 
+        doc.rect(400, y+height + 45, 330, 80).stroke(); 
         doc.text('Defalcare TVA', 403, y+height + 46, {
           width: 80,
         }) 
