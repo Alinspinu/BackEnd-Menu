@@ -320,7 +320,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(9);
 
-        doc.rect(500, y+height + 45, 330, 80).stroke(); 
+        doc.rect(500, y+height + 45, 330, 60).stroke(); 
         doc.text('Defalcare TVA', 503, y+height + 46, {
           width: 80,
         }) 
@@ -340,7 +340,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
           doc.font("public/font/RobotoSlab-Regular.ttf");
 
-          doc.text('Cota TVA', 503, y+height + 59, {
+          doc.text('Cota', 503, y+height + 59, {
             width: 80,
           }) 
           doc.text('Baza', 583, y+height + 59, {
@@ -365,10 +365,10 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .moveTo(500, y + height + 70)
           .lineTo(830, y + height + 70)
           .stroke();
-          
+
           vatValues.forEach((v, i)=> {
             let hi = 71 + (i * 10)
-            doc.text(`${v.tva} %`, 503, y+height + hi, {
+            doc.text(`TVA ${v.tva} %`, 503, y+height + hi, {
               width: 80,
             }) 
             doc.text(v.acValue , 583, y+height + hi, {
@@ -393,13 +393,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         console.log(vatValues)
         doc.font("public/font/RobotoSlab-Bold.ttf");
-        doc.text("Responsabil", 80, y + height + 145);
-        doc.text(`Data`, 400, y + height + 145);
-        doc.text("Semnatura", 680, y + height + 145);
+        doc.text("Responsabil", 80, y + height + 125);
+        doc.text(`Data`, 400, y + height + 125);
+        doc.text("Semnatura", 680, y + height + 125);
         doc.font("public/font/RobotoSlab-Regular.ttf");
         doc.fontSize(9);
         // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
-        doc.text(`${date}`, 400, y + height + 135);
+        doc.text(`${date}`, 400, y + height + 115);
 
         doc.fontSize(7)
           .fillColor('gray')
