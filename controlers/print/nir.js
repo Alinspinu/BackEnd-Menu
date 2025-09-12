@@ -324,11 +324,11 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.text('Defalcare TVA', 603, y+height + 46, {
           width: 60,
         }) 
-        doc.text('Achizitie', 673, y+height + 46, {
+        doc.text('Achizitie', 663, y+height + 46, {
           width: 90,
           align: "center",
         }) 
-        doc.text('Vanzare', 733, y+height + 46, {
+        doc.text('Vanzare', 753, y+height + 46, {
           width: 80,
           align: "center",
         }) 
@@ -343,27 +343,27 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           doc.text('Cota TVA', 603, y+height + 59, {
             width: 60,
           }) 
-          doc.text('Baza', 673, y+height + 59, {
+          doc.text('Baza', 663, y+height + 59, {
             width: 45,
             align: "center",
           }) 
-          doc.text('TVA', 733, y+height + 59, {
+          doc.text('TVA', 707, y+height + 59, {
             width: 45,
             align: "center",
           }) 
 
-          doc.text('Baza', 673, y+height + 59, {
+          doc.text('Baza', 752, y+height + 59, {
             width: 40,
             align: "center",
           }) 
-          doc.text('TVA', 733, y+height + 59, {
+          doc.text('TVA', 792, y+height + 59, {
             width: 40,
             align: "center",
           }) 
 
           doc
-          .moveTo(600, y + height + 60)
-          .lineTo(830, y + height + 60)
+          .moveTo(600, y + height + 70)
+          .lineTo(830, y + height + 70)
           .stroke();
 
 
