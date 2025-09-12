@@ -213,7 +213,7 @@ function getNowShedule(schedules) {
   if (!Array.isArray(schedules)) return null;
 
   const now = new Date();
-  const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()).getTime();
+  const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
 
   const match = schedules.find(s => {
     if (!s?.days?.length) return false;
@@ -221,8 +221,11 @@ function getNowShedule(schedules) {
     const start = new Date(s.days[0].date);
     const end   = new Date(s.days[s.days.length - 1].date);
 
-    const startUTC = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate()).getTime();
-    const endUTC   = Date.UTC(end.getUTCFullYear(),   end.getUTCMonth(),   end.getUTCDate()).getTime();
+    const startUTC = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
+    const endUTC   = Date.UTC(end.getUTCFullYear(),   end.getUTCMonth(),   end.getUTCDate());
+    console.log('now ', todayUTC)
+    console.log('start ', startUTC)
+    console.log('end ', endUTC)
 
     // inclusive range [start, end]
     return todayUTC >= startUTC && todayUTC <= endUTC;
