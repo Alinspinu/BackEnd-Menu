@@ -339,7 +339,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
     const result = [];
     const l = arr.length
     if(l < 26 && l > 18) firstChunkSize = 18
-    if(l < 60 && l > 45) otherChunkSize = 19
+    if(l < 60 && l > 45) otherChunkSize = 22
     // First chunk
     result.push(arr.slice(0, firstChunkSize));
   
