@@ -322,10 +322,10 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.rect(600, y+height + 45, 230, 60).stroke(); 
         doc.text('Defalcare TVA', 603, y+height + 46, {
-          width: 70,
+          width: 60,
         }) 
         doc.text('Achizitie', 673, y+height + 46, {
-          width: 80,
+          width: 90,
           align: "center",
         }) 
         doc.text('Vanzare', 733, y+height + 46, {
@@ -337,6 +337,36 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .moveTo(600, y + height + 58)
           .lineTo(830, y + height + 58)
           .stroke();
+
+          doc.font("public/font/RobotoSlab-Regular.ttf");
+
+          doc.text('Cota TVA', 603, y+height + 59, {
+            width: 60,
+          }) 
+          doc.text('Baza', 673, y+height + 59, {
+            width: 45,
+            align: "center",
+          }) 
+          doc.text('TVA', 733, y+height + 59, {
+            width: 45,
+            align: "center",
+          }) 
+
+          doc.text('Baza', 673, y+height + 59, {
+            width: 40,
+            align: "center",
+          }) 
+          doc.text('TVA', 733, y+height + 59, {
+            width: 40,
+            align: "center",
+          }) 
+
+          doc
+          .moveTo(600, y + height + 60)
+          .lineTo(830, y + height + 60)
+          .stroke();
+
+
 
         console.log(vatValues)
         
