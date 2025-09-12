@@ -319,13 +319,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         
         doc.fontSize(9);
-        doc.text("Responsabil", 80, y + height + 165);
-        doc.text(`Data`, 400, y + height + 165);
-        doc.text("Semnatura", 680, y + height + 165);
+        doc.text("Responsabil", 80, y + height + 185);
+        doc.text(`Data`, 400, y + height + 185);
+        doc.text("Semnatura", 680, y + height + 185);
         doc.font("public/font/RobotoSlab-Regular.ttf");
         doc.fontSize(9);
         // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
-        doc.text(`${date}`, 400, y + height + 155);
+        doc.text(`${date}`, 400, y + height + 175);
 
         doc.fontSize(10)
           .fillColor('gray')
