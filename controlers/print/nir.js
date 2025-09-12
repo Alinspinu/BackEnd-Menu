@@ -320,49 +320,49 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(9);
 
-        doc.rect(400, y+height + 45, 330, 80).stroke(); 
-        doc.text('Defalcare TVA', 403, y+height + 46, {
+        doc.rect(500, y+height + 45, 330, 80).stroke(); 
+        doc.text('Defalcare TVA', 503, y+height + 46, {
           width: 80,
         }) 
-        doc.text('Achizitie', 483, y+height + 46, {
+        doc.text('Achizitie', 583, y+height + 46, {
           width: 125,
           align: "center",
         }) 
-        doc.text('Vanzare', 603, y+height + 46, {
+        doc.text('Vanzare', 703, y+height + 46, {
           width: 125,
           align: "center",
         }) 
         
         doc
-          .moveTo(400, y + height + 58)
+          .moveTo(500, y + height + 58)
           .lineTo(830, y + height + 58)
           .stroke();
 
           doc.font("public/font/RobotoSlab-Regular.ttf");
 
-          doc.text('Cota TVA', 403, y+height + 59, {
+          doc.text('Cota TVA', 503, y+height + 59, {
             width: 80,
           }) 
-          doc.text('Baza', 483, y+height + 59, {
+          doc.text('Baza', 583, y+height + 59, {
             width: 62.5,
             align: "center",
           }) 
-          doc.text('TVA', 545.5, y+height + 59, {
+          doc.text('TVA', 645.5, y+height + 59, {
             width: 62.5,
             align: "center",
           }) 
 
-          doc.text('Baza', 608, y+height + 59, {
+          doc.text('Baza', 708, y+height + 59, {
             width: 62.5,
             align: "center",
           }) 
-          doc.text('TVA', 670.5, y+height + 59, {
+          doc.text('TVA', 770.5, y+height + 59, {
             width: 62.5,
             align: "center",
           }) 
 
           doc
-          .moveTo(400, y + height + 70)
+          .moveTo(500, y + height + 70)
           .lineTo(830, y + height + 70)
           .stroke();
 
@@ -370,13 +370,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         console.log(vatValues)
         
-        doc.text("Responsabil", 80, y + height + 125);
-        doc.text(`Data`, 400, y + height + 125);
-        doc.text("Semnatura", 680, y + height + 125);
+        doc.text("Responsabil", 80, y + height + 145);
+        doc.text(`Data`, 400, y + height + 145);
+        doc.text("Semnatura", 680, y + height + 145);
         doc.font("public/font/RobotoSlab-Regular.ttf");
         doc.fontSize(9);
         // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
-        doc.text(`${date}`, 400, y + height + 115);
+        doc.text(`${date}`, 400, y + height + 135);
 
         doc.fontSize(7)
           .fillColor('gray')
