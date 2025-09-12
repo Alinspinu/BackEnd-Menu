@@ -187,6 +187,13 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.font("public/font/RobotoSlab-Regular.ttf");
 
     ingredients.forEach((produs, i) => {
+      const h = y + i * lineHeigth + lineHeigth - 2
+      doc.lineWidth(0.4);
+      doc
+        .moveTo(10, h)
+        .lineTo(830, h)
+        .stroke();
+        
         doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
         doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
         doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 25, align: "center" });
