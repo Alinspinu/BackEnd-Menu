@@ -211,7 +211,7 @@ function generateSoketId(length) {
 
 
 function getNowShedule(shedules){
-  console.log(shedules)
+  // console.log(shedules)
   const dateNow = new Date()
   dateNow.setHours(0,0,0,0)
   const shedule = shedules.find(s=> {
@@ -222,6 +222,7 @@ function getNowShedule(shedules){
       startDate.setHours(0,0,0,0)
       return dateNow.getTime() <= endDate.getTime() && dateNow.getTime() >= startDate.getTime()
   })
+  console.log(shedule)
   return shedule
 }
 module.exports = {
