@@ -258,7 +258,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
       
     let height = ingredients.length * lineHeigth;
     if(page < pageLenght){
-        doc.fontSize(10)
+        doc.fontSize(7)
           .fillColor('gray')
           .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
         doc.addPage()
@@ -315,11 +315,29 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .stroke();
 
         doc.lineWidth(0.3);
+
+        doc.fontSize(9);
+
         doc.rect(600, y+height + 45, 230, 60).stroke(); 
-  
+        doc.text('Defalcare TVA', 603, y+height + 46, {
+          width: 60,
+          align: "center",
+        }) 
+        doc.text('Acizitie', 663, y+height + 46, {
+          width: 60,
+          align: "center",
+        }) 
+        doc.text('Vanzare', 723, y+height + 46, {
+          width: 60,
+          align: "center",
+        }) 
+        
+        doc
+          .moveTo(600, y + height + 56)
+          .lineTo(830, y + height + 56)
+          .stroke();
 
         
-        doc.fontSize(9);
         doc.text("Responsabil", 80, y + height + 125);
         doc.text(`Data`, 400, y + height + 125);
         doc.text("Semnatura", 680, y + height + 125);
@@ -328,7 +346,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         // doc.text(`${cap(userLogat.nume)}`, 80, y + height + 120);
         doc.text(`${date}`, 400, y + height + 115);
 
-        doc.fontSize(10)
+        doc.fontSize(7)
           .fillColor('gray')
           .text(`Pagina ${page + extraPage} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
 
