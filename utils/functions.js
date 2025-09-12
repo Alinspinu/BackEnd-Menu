@@ -215,7 +215,8 @@ function getNowShedule(shedules){
   const dateNow = new Date()
   dateNow.setHours(0,0,0,0)
   const shedule = shedules.find(s=> {
-    console.log(s.days[0])
+    console.log('start date', new Date(s.days[0].date))
+    console.log('end date', new Date(s.days[s.days.length -1].date))
       const startDate = new Date(s.days[0].date)
       const endDate = new Date(s.days[s.days.length -1].date)
       endDate.setHours(0,0,0,0)
