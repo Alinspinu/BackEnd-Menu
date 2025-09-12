@@ -307,7 +307,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           .lineTo(830, y + height + 35)
           .stroke();
 
-        doc.rect(10, y+height + 45, 200, 60)  // x, y, width, height
+        doc.rect(10, y+height + 45, 200, 60).fill('#000')  // x, y, width, height
   
 
         
