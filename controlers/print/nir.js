@@ -334,6 +334,11 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         }) 
 
         doc
+        .moveTo(703, y + height + 45)
+        .lineTo(703, y + height + 45 + 26 + (vatValues.length * 11))
+        .stroke();
+
+        doc
         .moveTo(583, y + height + 45)
         .lineTo(583, y + height + 45 + 26 + (vatValues.length * 11))
         .stroke();
@@ -365,6 +370,16 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
             width: 62.5,
             align: "center",
           }) 
+
+          doc
+          .moveTo(645.5, y + height + 45)
+          .lineTo(645.5, y + height + 45 + 26 + (vatValues.length * 11))
+          .stroke();
+
+          doc
+          .moveTo(770.5, y + height + 45)
+          .lineTo(770.5, y + height + 45 + 26 + (vatValues.length * 11))
+          .stroke();
 
           doc
           .moveTo(500, y + height + 70)
