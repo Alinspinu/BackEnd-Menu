@@ -74,7 +74,7 @@ module.exports.saveIng = async(req, res, next) => {
 
     function verifyIngredients(ings){
       ings.forEach(i => {
-        const gest = i.invGestiune.find( g => g.gestiune.toString() === i.gest._id.toString())
+        const gest = i.invGestiune.find( g => g.gestiune.toString() === i.gest?._id.toString())
         if(gest.entries.length){
           const oldestEntry = gest.entries.reduce((oldest, current) => {
             return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
