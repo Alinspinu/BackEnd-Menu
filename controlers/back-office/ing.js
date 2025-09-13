@@ -75,6 +75,7 @@ module.exports.saveIng = async(req, res, next) => {
    async function verifyIngredients(ings){
 
     ings.forEach(i => {
+      console.log(i.uploadLog)
       if(i.uploadLog){
         i.uploadLog.forEach(l => {
           if(!l.uploadPrice){
