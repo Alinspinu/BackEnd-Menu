@@ -730,10 +730,10 @@ module.exports.printConsum = async (req, res) => {
     let ings = []
     let products = []
     const {dept, loc, startDate, endDate, point} = req.body
-    const start = new Date(startDate).setUTCHours(0,0,0,0)
-    const end = new Date(endDate).setUTCHours(23,59,59,0)
-    const startDateToShow = formatedDateToShow(startDate)
-    const endDateToShow = formatedDateToShow(endDate)
+    const start = new Date(startDate).setHours(0,0,0,0)
+    const end = new Date(endDate).setHours(23,59,59,0)
+    const startDateToShow = formatedDateToShow(start)
+    const endDateToShow = formatedDateToShow(end)
     const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: start, $lte: end}}).populate([
       {
         path: 'products.ings.ing', 
