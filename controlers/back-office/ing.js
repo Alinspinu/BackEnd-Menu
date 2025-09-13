@@ -59,7 +59,7 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'eFactura.gestiune', select: 'name'})
         const totalItems = 1500
         const totalPages = Math.ceil(totalItems / limit);
-
+        verifyIngredients(items)
         res.status(200).json({
           items,
           totalPages,
@@ -70,6 +70,20 @@ module.exports.saveIng = async(req, res, next) => {
         res.status(500).json({message: err})
       }
     };
+
+
+    function verifyIngredients(ings){
+      ings.forEach(i => {
+        const gest = i.invGestiune.find( g => g.gestiune.toString() === i.gestiune.toString())
+        const oldestEntry = gest.entries.reduce((oldest, current) => {
+          return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
+        });
+        if(oldestEntry && oldestEntry.priceNoVat === 0){
+          console.log(i.name, ' etry ', oldestEntry)
+        }
+      })
+
+  }
 
 
 
