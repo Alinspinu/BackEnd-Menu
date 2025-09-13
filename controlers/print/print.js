@@ -872,8 +872,8 @@ module.exports.printConsum = async (req, res) => {
             bold: true,
             size: 12
         },
-        cell.width = 20,
-        cell.alignment = { vertical: "middle", horizontal: 'middle'}
+        width = 20,
+        cell.alignment = { vertical: "middle", horizontal: 'center'}
         }) 
         pSheet.mergeCells(`A1:C1`)
 
