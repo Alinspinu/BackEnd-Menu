@@ -924,7 +924,7 @@ module.exports.printConsum = async (req, res) => {
 
 
       filterIngredients.forEach((ing, i) =>{
-        ing.invGestiune.entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
         const oldE = ing.invGestiune.entries[0]
 
         const priceNoVat = oldE.priceNoVat
