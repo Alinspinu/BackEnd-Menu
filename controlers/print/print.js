@@ -727,12 +727,12 @@ module.exports.printCompareInv = async (req, res) => {
 module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
-    const {dep, loc, startDate, endDate, point} = req.body
+    const {dept, loc, startDate, endDate, point} = req.body
     const start = new Date(startDate).setUTCHours(0,0,0,0)
-    const end = new Date(endDate).setUTCHours(0,0,0,0)
+    const end = new Date(endDate).setUTCHours(23,59,59,0)
     const startDateToShow = new Date(startDate).toISOString().split('T')[0]
     const endDateToShow = new Date(endDate).toISOString().split('T')[0]
-    const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lte: end}}).populate([
+    const orders = await Order.find({locatie: loc, salePoint: point, dept: dept, createdAt: {$gte: start, $lte: end}}).populate([
       {
         path: 'products.ings.ing', 
         populate: {path: 'ings.ing'}
@@ -825,9 +825,6 @@ module.exports.printConsum = async (req, res) => {
       } 
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       filterIngredients = ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
-      if(dep && dep.length){
-        filterIngredients = filterIngredients.filter(ing => ing.ing.dep === dep)
-      }
       const workbook = new exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
 
