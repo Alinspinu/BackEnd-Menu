@@ -850,7 +850,7 @@ module.exports.printConsum = async (req, res) => {
         const pHead = [
           'Nr',
           `Denumire Produs`,
-          'Cantitate',
+          'Cantitate (buc)',
         ]
         pSheet.addRow(pTitle)
         pSheet.addRow(pHead)
@@ -860,7 +860,7 @@ module.exports.printConsum = async (req, res) => {
             [
               `${i+1}`,
               `${p.name}`,
-              `${p.quantity} buc`,
+              `${p.quantity}`,
             ]
             )
         })
@@ -871,9 +871,9 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(3).eachCell((cell) => {
           cell.font = {
             bold: true,
-            size: 12
+            size: 14
         },
-        cell.alignment = { vertical: "middle", horizontal: 'center'}
+        cell.alignment = { vertical: "center", horizontal: 'center'}
         }) 
         pSheet.mergeCells(`A1:E1`)
 
