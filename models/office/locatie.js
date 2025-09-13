@@ -27,6 +27,13 @@ const locatieSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'AnafToken'
       },
+      contabil: {
+        email: String,
+        departament: {
+          type: Schema.Types.ObjectId,
+          ref: 'Dep'
+        }
+      },
       contactName: String,
       email: String,
       telephone: String,

@@ -729,7 +729,7 @@ module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
     let products = []
-    const {dept, loc, startDate, endDate, point} = req.body
+    const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
     const start = new Date(startDate).setHours(0,0,0,0)
     const end = new Date(endDate).setHours(23,59,59,0)
     const startDateToShow = formatedDateToShow(start)
@@ -999,7 +999,6 @@ module.exports.printConsum = async (req, res) => {
 
       const buffer = await workbook.xlsx.writeBuffer();
       const message = await sendBillToCustomer(buffer, 'alinz.spinu@gmail.com', locatie.gmail, 'Raport productie');
-      console.log(message)
 
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
