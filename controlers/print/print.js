@@ -964,10 +964,22 @@ module.exports.printConsum = async (req, res) => {
               size: 14
           }
       })
+      worksheet.getRow(1).eachCell((cell)=>{
+          cell.font = {
+              bold: true,
+              size: 14
+          }
+      })
+      worksheet.getRow(2).eachCell((cell)=>{
+          cell.font = {
+              bold: true,
+              size: 13
+          }
+      })
 
       worksheet.getColumn(1).width = 5;
-      worksheet.getColumn(2).width = 20; 
-      worksheet.getColumn(3).width = 10; 
+      worksheet.getColumn(2).width = 30; 
+      worksheet.getColumn(3).width = 15; 
       worksheet.getColumn(4).width = 6; 
       worksheet.getColumn(5).width = 9; 
       worksheet.getColumn(6).width = 13; 
