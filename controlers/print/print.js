@@ -747,7 +747,7 @@ module.exports.printConsum = async (req, res) => {
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
-            if(product.ings > 1){
+            if(product.ings.length > 1){
               const existingProduct = products.find(p => p._id === product._id)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
