@@ -860,14 +860,21 @@ module.exports.printConsum = async (req, res) => {
             [
               `${i+1}`,
               `${p.name}`,
-              `${p.quantity}`,
+              `${p.quantity} buc`,
             ]
             )
         })
 
         pSheet.getColumn(1).width = 5;
-        pSheet.getColumn(2).width = 30; 
-        pSheet.getColumn(3).width = 15; 
+        pSheet.getColumn(2).width = 40; 
+        pSheet.getColumn(3).eachCell((cell) => {
+          cell.font = {
+            bold: true,
+            size: 12
+        },
+        cell.width = 10,
+        cell.alignment = { vertical: "middle", horizontal: 'middle'}
+        }) 
         pSheet.mergeCells(`A1:C1`)
 
         pSheet.getRow(1).eachCell((cell)=>{
