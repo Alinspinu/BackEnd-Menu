@@ -728,6 +728,7 @@ module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
     const {dept, loc, startDate, endDate, point} = req.body
+    console.log(req.body)
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(23,59,59,0)
     const startDateToShow = new Date(startDate).toISOString().split('T')[0]
