@@ -75,11 +75,13 @@ module.exports.saveIng = async(req, res, next) => {
    async function verifyIngredients(ings){
 
     ings.forEach(i => {
-      i.uploadLog.forEach(l => {
-        if(!l.uploadPrice){
-          console.log(i.name, l)
-        }
-      })
+      if(i.uploadLog){
+        i.uploadLog.forEach(l => {
+          if(!l.uploadPrice){
+            console.log(i.name, l)
+          }
+        })
+      }
     })
 
       // const promises = ings.map(i => {
