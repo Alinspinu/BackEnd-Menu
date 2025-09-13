@@ -728,8 +728,8 @@ module.exports.printCompareInv = async (req, res) => {
 module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
+    let products = []
     const {dept, loc, startDate, endDate, point} = req.body
-    console.log(req.body)
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(23,59,59,0)
     const startDateToShow = new Date(startDate).toISOString().split('T')[0]
@@ -747,6 +747,14 @@ module.exports.printConsum = async (req, res) => {
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
+            if(product.ings > 1){
+              const existingProduct = products.find(p => p._id === product._id)
+              if(existingProduct){
+                existingProduct.quantity += product.quantity
+              } else {
+                products.push(product)
+              }
+            }
             product.ings.forEach(ing => {
              
               if(ing.ings && ing.ings.length){
@@ -826,9 +834,42 @@ module.exports.printConsum = async (req, res) => {
         })
       } 
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
+      products.sort((a, b) => a.name.localeCompare(b.name))
       const filterIngredients = ings.filter(i => i.ing.dept.toString() === dept._id.toString())
 
+
       const workbook = new exceljs.Workbook();
+
+      const pSheet = workbook.addWorksheet(`Produse vandute`);
+      const pTitle =  [
+        `Produse vandute de la data de ${startDateToShow} pana la ${endDateToShow}`,
+         '',
+         '',
+        ]
+      
+        const pHead = [
+          'Nr',
+          `Denumire Produs`,
+          'Cantitate',
+        ]
+        pSheet.addRow(pTitle)
+        pSheet.addRow(pHead)
+
+        products.forEach((p, i) => {
+          pSheet.addRow(
+            [
+              `${i+1}`,
+              `${p.name}`,
+              `${p.quantity}`,
+            ]
+            )
+        })
+
+        pSheet.getColumn(1).width = 5;
+        pSheet.getColumn(2).width = 30; 
+        pSheet.getColumn(3).width = 15; 
+        pSheet.mergeCells(`A1:C1`)
+
       const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
 
 
@@ -920,6 +961,7 @@ module.exports.printConsum = async (req, res) => {
         cell.alignment = { vertical: "middle", horizontal: 'right'}
       }) 
       worksheet.mergeCells(`A${totalsRowNumber}:F${totalsRowNumber}`)
+      worksheet.mergeCells(`A1:H1`)
 
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
