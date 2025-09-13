@@ -228,7 +228,7 @@ nirSchema.pre('save', async function (next){
           let ent = {
             qty: el.qty,
             inQty: el.qty,
-            date: doc.receptionDate || new Date(),
+            date: doc.documentDate || new Date(),
             priceNoVat: el.price,
             priceWithVat: roundd(el.price * (1 + el.tva / 100)),
             suplierNmae: sup.name,

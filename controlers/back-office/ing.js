@@ -72,21 +72,39 @@ module.exports.saveIng = async(req, res, next) => {
     };
 
 
-    function verifyIngredients(ings){
-      ings.forEach(i => {
+   async function verifyIngredients(ings){
+
+      const promises = ings.map(i => {
         const gest = i.invGestiune.find( g => g.gestiune.toString() === i.gest?._id.toString())
         if(gest?.entries.length){
           const oldestEntry = gest.entries.reduce((oldest, current) => {
             return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
           });
           if(oldestEntry && oldestEntry.priceNoVat === 0){
-            console.log(i.name, ' etry ', oldestEntry)
+            oldestEntry.priceNoVat = splitVAT(oldestEntry.priceWithVat, i.tva).net
+            console.log(i.name, ' etry updated ', oldestEntry.priceNoVat)
           }
-        } else {
-          console.log('Intredient fata intrari pe gestiune --**', i.name )
         }
+        return i.save()
       })
 
+      await Promise.all(promises)
+  }
+
+  function splitVAT(vatPrice, r, qty = 1, decimals = 2) {
+    const round = (n) => Math.round((n + Number.EPSILON) * 10**decimals) / 10**decimals;
+  
+    const gross = (Number(vatPrice) || 0) * (Number(qty) || 0);
+    const rate = Number(r) || 0;
+  
+    const net  = rate > 0 ? gross / (1 + rate / 100) : gross;
+    const vat  = gross - net;
+  
+    return {
+      gross: round(gross),
+      net:   round(net),
+      vat:   round(vat),
+    };
   }
 
 
