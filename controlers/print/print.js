@@ -927,7 +927,7 @@ module.exports.printConsum = async (req, res) => {
         ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
         const oldE = ing.ing.invGestiune[0].entries[0]
 
-        const priceNoVat = oldE.priceNoVat
+        const priceNoVat = oldE?.priceNoVat || 0
         const priceVat = priceNoVat * (ing.ing.tva / 100)
         const priceWithVat = priceNoVat + priceVat
         worksheet.addRow(
