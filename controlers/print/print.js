@@ -925,9 +925,9 @@ module.exports.printConsum = async (req, res) => {
 
       filterIngredients.forEach((ing, i) =>{
         ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
-        const oldE = ing.ing.invGestiune[0].entries[0]
+        const price = ing.ing.invGestiune[0].entries[0]?.priceNoVat || 0
 
-        const priceNoVat = oldE?.priceWithVat || 0
+        const priceNoVat = price * ing.qty
         const priceVat = priceNoVat * (ing.ing.tva / 100)
         const priceWithVat = priceNoVat + priceVat
         worksheet.addRow(
@@ -937,7 +937,7 @@ module.exports.printConsum = async (req, res) => {
             `${dept.name}`,
             `${ing.ing.um}`,
             `${ing.ing.tva} %`,
-            `${ing.ing.price}`,
+            `${price}`,
             `${round(priceNoVat)}`,
             `${round(ing.qty)}`,
           ]
