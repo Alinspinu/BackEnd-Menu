@@ -734,6 +734,7 @@ module.exports.printConsum = async (req, res) => {
     const end = new Date(endDate).setHours(23,59,59,0)
     const startDateToShow = formatedDateToShow(start)
     const endDateToShow = formatedDateToShow(end)
+    const locatie = await Locatie.findById(loc)
     const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: start, $lte: end}}).populate([
       {
         path: 'products.ings.ing', 
@@ -996,6 +997,10 @@ module.exports.printConsum = async (req, res) => {
       worksheet.mergeCells(`A${totalsRowNumber}:F${totalsRowNumber}`)
       worksheet.mergeCells(`A1:H1`)
 
+      const buffer = await workbook.xlsx.writeBuffer();
+      const message = await sendBillToCustomer(buffer, 'alinz.spinu@gmail.com', locatie.gmail, 'Raport productie');
+      console.log(message)
+
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
       workbook.xlsx.write(res)
@@ -1026,7 +1031,7 @@ module.exports.factura = async (req, res, next) => {
   doc.on("end", async () => {
     const pdfBuffer = Buffer.concat(buffers);
     if (mode) {
-      const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail, true);
+      const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.gmail, 'Factura');
       res.status(200).json(message);
     } else {
       res.type("application/pdf");
@@ -1059,7 +1064,7 @@ module.exports.printOrEmailRecipt = async (req, res) => {
     doc.on("end", async () => {
       const pdfBuffer = Buffer.concat(buffers);
       if (mode) {
-        const message = await sendBillToCustomer(pdfBuffer, email, recipt.locatie.gmail, false);
+        const message = await sendBillToCustomer(pdfBuffer, email, recipt.locatie.gmail, 'Chitanta');
         res.status(200).json(message);
       } else {
         res.type("application/pdf");

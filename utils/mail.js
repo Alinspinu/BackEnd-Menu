@@ -39,11 +39,12 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
           };
 };
 
-async  function sendBillToCustomer(buffer, email, gmail, inv) {
+async  function sendBillToCustomer(buffer, email, gmail, text, pdf) {
 
-    let text  = inv ?  'Factura' :  'Chitanța'
     const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);
 
+          let content =  pdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          let ext = pdf ? '.pdf' : '.xlsx'
           const transporter = nodemailer.createTransport({
               service: 'Gmail',
               auth: {
@@ -58,9 +59,9 @@ async  function sendBillToCustomer(buffer, email, gmail, inv) {
               text: `Gasiți ${text.toLowerCase()} dumneavoastră atașată.`,
               attachments: [
                 {
-                  filename: 'factura.pdf',
+                  filename: `${text}${ext}`,
                   content: buffer,
-                  contentType: 'application/pdf'
+                  contentType: content
                 }
               ]
              
