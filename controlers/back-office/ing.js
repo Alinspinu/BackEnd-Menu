@@ -75,11 +75,15 @@ module.exports.saveIng = async(req, res, next) => {
     function verifyIngredients(ings){
       ings.forEach(i => {
         const gest = i.invGestiune.find( g => g.gestiune.toString() === i.gest._id.toString())
-        const oldestEntry = gest.entries.reduce((oldest, current) => {
-          return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
-        });
-        if(oldestEntry && oldestEntry.priceNoVat === 0){
-          console.log(i.name, ' etry ', oldestEntry)
+        if(gest.entries.length){
+          const oldestEntry = gest.entries.reduce((oldest, current) => {
+            return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
+          });
+          if(oldestEntry && oldestEntry.priceNoVat === 0){
+            console.log(i.name, ' etry ', oldestEntry)
+          }
+        } else {
+          console.log('Intredient fata intrari pe gestiune --**', i.name )
         }
       })
 
