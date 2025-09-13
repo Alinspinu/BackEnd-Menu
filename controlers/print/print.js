@@ -727,12 +727,12 @@ module.exports.printCompareInv = async (req, res) => {
 module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
-    const {dep, loc, startDate, endDate, dont} = req.body
+    const {dep, loc, startDate, endDate, point} = req.body
     const start = new Date(startDate).setUTCHours(0,0,0,0)
     const end = new Date(endDate).setUTCHours(0,0,0,0)
     const startDateToShow = new Date(startDate).toISOString().split('T')[0]
     const endDateToShow = new Date(endDate).toISOString().split('T')[0]
-    const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lte: end}, dont: dont}).populate([
+    const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lte: end}}).populate([
       {
         path: 'products.ings.ing', 
         populate: {path: 'ings.ing'}
