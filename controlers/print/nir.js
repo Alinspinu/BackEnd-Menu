@@ -372,12 +372,12 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           }) 
 
           doc
-          .moveTo(645.5, y + height + 59)
+          .moveTo(645.5, y + height + 58)
           .lineTo(645.5, y + height + 45 + 26 + (vatValues.length * 11))
           .stroke();
 
           doc
-          .moveTo(770.5, y + height + 59)
+          .moveTo(770.5, y + height + 58)
           .lineTo(770.5, y + height + 45 + 26 + (vatValues.length * 11))
           .stroke();
 
