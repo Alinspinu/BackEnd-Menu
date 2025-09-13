@@ -21,7 +21,8 @@ const { formatedDateToShow } = require('../../utils/functions');
 
 const {createRecipt} = require('./recipt')
 const {createInfoice} =require('./invoice')
-const {createNir} = require('./nir')
+const {createNir} = require('./nir');
+const dep = require('../../models/office/product/dep');
 
 
 module.exports.printNir = async (req, res, next) => {
@@ -825,7 +826,7 @@ module.exports.printConsum = async (req, res) => {
         })
       } 
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
-      const filterIngredients = ings.filter(i => i.ing.dept.toString() === dept.toString())
+      const filterIngredients = ings.filter(i => i.ing.dept.toString() === dept._id.toString())
 
       const workbook = new exceljs.Workbook();
       const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
@@ -839,8 +840,7 @@ module.exports.printConsum = async (req, res) => {
          '',
          '',
          '',
-         '',
-         '',
+         ''
         ]
       const header = [
         'Nr',
@@ -850,9 +850,6 @@ module.exports.printConsum = async (req, res) => {
         'Cota Tva',
         `Pret/UM/F TVA`, 
         'Valoare F TVA',
-        'Valoare TVA',
-        'Valoare cu Tva',
-        'Pret Vanzare',
         `Consum`, 
       ]
       worksheet.addRow(docTitle)
@@ -874,14 +871,11 @@ module.exports.printConsum = async (req, res) => {
           [
             `${i+1}`,
             `${ing.ing.name}`,
-            `${ing.ing.dep}`,
+            `${dept.name}`,
             `${ing.ing.um}`,
             `${ing.ing.tva} %`,
             `${ing.ing.price}`,
             `${round(priceNoVat)}`,
-            `${round(priceVat)}`,
-            `${round(priceWithVat)}`,
-            `${ing.ing.sellPrice}`,
             `${round(ing.qty)}`,
           ]
           )
@@ -899,9 +893,6 @@ module.exports.printConsum = async (req, res) => {
         '',
         '',
         `${round(totals.priceNoVat)}`,
-        `${round(totals.priceVat)}`,
-        `${round(totals.priceWithVat)}`,
-        `${round(totals.sellPrice)}`
       ]
       worksheet.addRow(totalsRow)
 
@@ -920,10 +911,7 @@ module.exports.printConsum = async (req, res) => {
       worksheet.getColumn(5).width = 9; 
       worksheet.getColumn(6).width = 13; 
       worksheet.getColumn(7).width = 13; 
-      worksheet.getColumn(8).width = 13; 
-      worksheet.getColumn(9).width = 13; 
-      worksheet.getColumn(10).width = 13; 
-      worksheet.getColumn(11).eachCell((cell) => {
+      worksheet.getColumn(8).eachCell((cell) => {
         cell.font = {
           bold: true,
           size: 14
