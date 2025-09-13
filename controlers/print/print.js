@@ -870,7 +870,8 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(3).width = 20; 
         pSheet.getColumn(3).eachCell((cell) => {
           cell.font = {
-            size: 14
+            bold: true,
+            size: 13
         },
         cell.alignment = { vertical: "center", horizontal: 'center'}
         }) 
@@ -878,8 +879,7 @@ module.exports.printConsum = async (req, res) => {
 
         pSheet.getRow(1).eachCell((cell)=>{
           cell.font = {
-              bold: true,
-              size: 15
+              size: 14
           }
       })
         pSheet.getRow(2).eachCell((cell)=>{
