@@ -866,7 +866,7 @@ module.exports.printConsum = async (req, res) => {
         })
 
         pSheet.getColumn(1).width = 5;
-        pSheet.getColumn(2).width = 40; 
+        pSheet.getColumn(2).width = 50; 
         pSheet.getColumn(3).eachCell((cell) => {
           cell.font = {
             bold: true,
