@@ -59,7 +59,7 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'eFactura.gestiune', select: 'name'})
         const totalItems = 1500
         const totalPages = Math.ceil(totalItems / limit);
-        // verifyIngredients(items)
+        verifyIngredients(items)
         res.status(200).json({
           items,
           totalPages,
@@ -74,21 +74,29 @@ module.exports.saveIng = async(req, res, next) => {
 
    async function verifyIngredients(ings){
 
-      const promises = ings.map(i => {
-        const gest = i.invGestiune.find( g => g.gestiune.toString() === i.gest?._id.toString())
-        if(gest?.entries.length){
-          const oldestEntry = gest.entries.reduce((oldest, current) => {
-            return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
-          });
-          if(oldestEntry && oldestEntry.priceNoVat === 0){
-            oldestEntry.priceNoVat = splitVAT(oldestEntry.priceWithVat, i.tva).net
-            console.log(i.name, ' etry updated ', oldestEntry.priceNoVat)
-          }
+    ings.forEach(i => {
+      i.uploadLog.forEach(l => {
+        if(!l.uploadPrice){
+          console.log(i.name, l)
         }
-        return i.save()
       })
+    })
 
-      await Promise.all(promises)
+      // const promises = ings.map(i => {
+      //   const gest = i.invGestiune.find( g => g.gestiune.toString() === i.gest?._id.toString())
+      //   if(gest?.entries.length){
+      //     const oldestEntry = gest.entries.reduce((oldest, current) => {
+      //       return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
+      //     });
+      //     if(oldestEntry && oldestEntry.priceNoVat === 0){
+      //       oldestEntry.priceNoVat = splitVAT(oldestEntry.priceWithVat, i.tva).net
+      //       console.log(i.name, ' etry updated ', oldestEntry.priceNoVat)
+      //     }
+      //   }
+      //   return i.save()
+      // })
+
+      // await Promise.all(promises)
   }
 
   function splitVAT(vatPrice, r, qty = 1, decimals = 2) {
