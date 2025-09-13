@@ -748,7 +748,7 @@ module.exports.printConsum = async (req, res) => {
         orders.forEach(order=> {
           order.products.forEach(product => {
             if(product.ings.length > 1){
-              const existingProduct = products.find(p => p._id === product._id)
+              const existingProduct = products.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
               } else {
@@ -869,6 +869,19 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(2).width = 30; 
         pSheet.getColumn(3).width = 15; 
         pSheet.mergeCells(`A1:C1`)
+
+        pSheet.getRow(1).eachCell((cell)=>{
+          cell.font = {
+              bold: true,
+              size: 15
+          }
+      })
+        pSheet.getRow(2).eachCell((cell)=>{
+          cell.font = {
+              bold: true,
+              size: 13
+          }
+      })
 
       const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
 
