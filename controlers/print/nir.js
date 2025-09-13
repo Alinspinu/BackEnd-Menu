@@ -334,8 +334,8 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         }) 
 
         doc
-        .moveTo(583, y + height + 55)
-        .lineTo(583, y + height + 55 + 26 + (vatValues.length * 11))
+        .moveTo(583, y + height + 45)
+        .lineTo(583, y + height + 45 + 26 + (vatValues.length * 11))
         .stroke();
         
         doc
