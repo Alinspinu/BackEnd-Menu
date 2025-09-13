@@ -2,17 +2,13 @@ const Nir = require('../../models/office/nir');
 const exceljs = require('exceljs');
 const Ingredient = require('../../models/office/inv-ingredient')
 const Locatie = require('../../models/office/locatie')
-const Suplier = require('../../models/office/suplier')
 const Recipt = require('../../models/office/recipt')
 const Order = require('../../models/office/product/order')
 const Invoice = require('../../models/office/invoice')
-const User = require('../../models/users/user')
+const Dep = require('../../models/office/product/dep')
 const Inventary = require('../../models/office/inventary')
 const Product = require('../../models/office/product/product')
 const ComparedInventary = require('../../models/office/comp-inv')
-const PDFDocument = require("pdfkit");
-const { getProducts } = require('../back-office/product');
-const { saveProductIngredient } = require('../nutrition');
 const {createRaortXml} = require('../../utils/print/printOrders');
 
 const {sendBillToCustomer} = require('../../utils/mail');
@@ -730,6 +726,7 @@ module.exports.printConsum = async (req, res) => {
     let ings = []
     let products = []
     const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
+    const dep =  await Dep.findById(dept)
     const start = new Date(startDate).setHours(0,0,0,0)
     const end = new Date(endDate).setHours(23,59,59,0)
     const startDateToShow = formatedDateToShow(start)
@@ -836,7 +833,7 @@ module.exports.printConsum = async (req, res) => {
       } 
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       products.sort((a, b) => a.name.localeCompare(b.name))
-      const filterIngredients = ings.filter(i => i.ing.dept.toString() === dept._id.toString())
+      const filterIngredients = ings.filter(i => i.ing.dept.toString() === dep._id.toString())
 
 
       const workbook = new exceljs.Workbook();
@@ -997,19 +994,25 @@ module.exports.printConsum = async (req, res) => {
       worksheet.mergeCells(`A${totalsRowNumber}:F${totalsRowNumber}`)
       worksheet.mergeCells(`A1:H1`)
 
-      const buffer = await workbook.xlsx.writeBuffer();
-      const message = await sendBillToCustomer(buffer, 'alinz.spinu@gmail.com', locatie.gmail, 'Raport productie');
+      if(mail) {
+        const buffer = await workbook.xlsx.writeBuffer();
+        const message = await sendBillToCustomer(buffer, mail, locatie.gmail, 'Raport productie');
+        res.status(200).json({message: 'Raportul a fost creart ;i trimis la ', mail})
+      } else {
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+        workbook.xlsx.write(res)
+        .then(() => {
+          res.end();
+        })
+        .catch((error) => {
+          console.error('Error writing Excel file:', error);
+          res.status(500).send('Internal Server Error');
+        });
+      }
 
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
-      workbook.xlsx.write(res)
-      .then(() => {
-        res.end();
-      })
-      .catch((error) => {
-        console.error('Error writing Excel file:', error);
-        res.status(500).send('Internal Server Error');
-      });
+
+
   } catch(err){
     console.log(err)
   }
