@@ -50,7 +50,7 @@ module.exports.saveIng = async(req, res, next) => {
       const skip = (page - 1) * limit;
       try{  
         const items = await Ingredient.find({locatie: loc, salePoint: point}).skip(skip).limit(limit)
-          .select([ '-unloadLog', '-uploadLog'])
+
           .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
           .populate({path: 'ings.gestiune', select: 'name'})
           .populate({path: 'salePoint', select: 'name'})
@@ -75,7 +75,6 @@ module.exports.saveIng = async(req, res, next) => {
    async function verifyIngredients(ings){
 
     ings.forEach(i => {
-      console.log(i.uploadLog)
       if(i.uploadLog){
         i.uploadLog.forEach(l => {
           if(!l.uploadPrice){
