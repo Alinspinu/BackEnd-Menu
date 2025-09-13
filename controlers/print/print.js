@@ -842,7 +842,7 @@ module.exports.printConsum = async (req, res) => {
 
       const pSheet = workbook.addWorksheet(`Produse vandute`);
       const pTitle =  [
-        `Produse vandute de la data de ${startDateToShow} pana la ${endDateToShow}`,
+        `Produse vandute din ${startDateToShow} pana la ${endDateToShow}`,
          '',
          '',
         ]
@@ -870,7 +870,6 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(3).width = 20; 
         pSheet.getColumn(3).eachCell((cell) => {
           cell.font = {
-            bold: true,
             size: 14
         },
         cell.alignment = { vertical: "center", horizontal: 'center'}
@@ -966,7 +965,6 @@ module.exports.printConsum = async (req, res) => {
       })
       worksheet.getRow(1).eachCell((cell)=>{
           cell.font = {
-              bold: true,
               size: 14
           }
       })
