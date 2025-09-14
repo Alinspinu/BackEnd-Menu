@@ -164,7 +164,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
        let headerHeigth = y
         doc.font("public/font/RobotoSlab-Bold.ttf");
         doc.fontSize(9);
-        doc.text("Nr.", 10, headerHeigth, { width: 15 });
+        doc.text("Nr.", 12, headerHeigth, { width: 15 });
         doc.text("Denumire Articol", 30, headerHeigth, { width: 210 });
         doc.text("UM", 215, headerHeigth, { width: 25, align: "center" });
         doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
@@ -181,8 +181,8 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.text("Val Tva", 540, headerHeigth, { width: 40, align: "center" });
         doc.text("Total", 590, headerHeigth, { width: 50, align: "center" });
         doc.text("Pret Vanzare", 640, headerHeigth, { width: 65, align: "center" });
-        doc.text("Val Vanzare", 705, headerHeigth, { width: 60, align: "center" });
-        doc.text("Total Tva", 770, headerHeigth, { width: 60, align: "center" });
+        doc.text("Val Vanzare", 705, headerHeigth, { width: 50, align: "center" });
+        doc.text("Total Tva", 760, headerHeigth, { width: 60, align: "center" });
 
         doc.font("public/font/RobotoSlab-Regular.ttf");
 
@@ -194,7 +194,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         .lineTo(830, h)
         .stroke();
 
-        doc.text(`${i+1}.`, 10, y + i * lineHeigth + lineHeigth , { width: 15 });
+        doc.text(`${i+1}.`, 12, y + i * lineHeigth + lineHeigth , { width: 15 });
         doc.text(produs.name, 30, y + i * lineHeigth + lineHeigth , { width: 210 });
         doc.text(produs.um, 215, y + i * lineHeigth + lineHeigth, { width: 25, align: "center" });
         doc.text(round(produs.qty).toString(), 250, y + i * lineHeigth + lineHeigth, {
@@ -239,7 +239,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
           705,
           y + i * lineHeigth + lineHeigth,
-          { width: 60, align: "center" }
+          { width: 50, align: "center" }
         );
         doc.text(
           `${produs.sellPrice
@@ -248,7 +248,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
             )
             : "0"
           }`,
-          770,
+          760,
           y + i * lineHeigth + lineHeigth,
           { width: 60, align: "center" }
         );
