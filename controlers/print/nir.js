@@ -343,7 +343,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         
         doc
           .moveTo(500, y + height + 58)
-          .lineTo(830, y + height + 58)
+          .lineTo(820, y + height + 58)
           .stroke();
 
           doc.font("public/font/RobotoSlab-Regular.ttf");
@@ -381,7 +381,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
           doc
           .moveTo(500, y + height + 70)
-          .lineTo(830, y + height + 70)
+          .lineTo(820, y + height + 70)
           .stroke();
 
           vatValues.forEach((v, i)=> {
