@@ -888,7 +888,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                             values.inIngsProdBuc += (log.uploadPrice * log.qty)
                                         }
                                     }
-                                    if(ing.gest.name === 'Bar'){
+                                    if(ing.gest?.name === 'Bar'){
                                         if(!log.uploadPrice){
                                         values.inIngsProdBar += (ing.tvaPrice * log.qty)
                                     } else {
