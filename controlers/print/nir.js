@@ -52,7 +52,7 @@ function createNir (nir) {
       .fontSize(8)
       .text(
         `${firma.bussinessName} ${firma.vatNumber} ${firma.register} `,
-        10,
+        15,
         10,
         {
           width: 380,
@@ -164,7 +164,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
        let headerHeigth = y
         doc.font("public/font/RobotoSlab-Bold.ttf");
         doc.fontSize(9);
-        doc.text("Nr.", 12, headerHeigth, { width: 15 });
+        doc.text("Nr.", 15, headerHeigth, { width: 10 });
         doc.text("Denumire Articol", 30, headerHeigth, { width: 210 });
         doc.text("UM", 215, headerHeigth, { width: 25, align: "center" });
         doc.text("Qty", 250, headerHeigth, { width: 30, align: "center" });
@@ -181,7 +181,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.text("Val Tva", 540, headerHeigth, { width: 40, align: "center" });
         doc.text("Total", 590, headerHeigth, { width: 50, align: "center" });
         doc.text("Pret Vanzare", 640, headerHeigth, { width: 65, align: "center" });
-        doc.text("Val Vanzare", 705, headerHeigth, { width: 50, align: "center" });
+        doc.text("Val Vanzare", 705, headerHeigth, { width: 60, align: "center" });
         doc.text("Total Tva", 760, headerHeigth, { width: 60, align: "center" });
 
         doc.font("public/font/RobotoSlab-Regular.ttf");
@@ -239,7 +239,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
           705,
           y + i * lineHeigth + lineHeigth,
-          { width: 50, align: "center" }
+          { width: 60, align: "center" }
         );
         doc.text(
           `${produs.sellPrice
@@ -248,7 +248,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
             )
             : "0"
           }`,
-          760,
+          770,
           y + i * lineHeigth + lineHeigth,
           { width: 60, align: "center" }
         );
@@ -318,7 +318,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
         doc.fontSize(9);
 
-        doc.rect(500, y+height + 45, 330, 26 + (vatValues.length * 11)).stroke(); 
+        doc.rect(500, y+height + 45, 320, 26 + (vatValues.length * 11)).stroke(); 
         doc.text('Defalcare TVA', 503, y+height + 46, {
           width: 80,
         }) 
@@ -327,7 +327,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           align: "center",
         }) 
         doc.text('Vanzare', 703, y+height + 46, {
-          width: 125,
+          width: 115,
           align: "center",
         }) 
 
@@ -361,11 +361,11 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           }) 
 
           doc.text('Baza', 708, y+height + 59, {
-            width: 62.5,
+            width: 62,
             align: "center",
           }) 
           doc.text('TVA', 770.5, y+height + 59, {
-            width: 62.5,
+            width: 62,
             align: "center",
           }) 
 
