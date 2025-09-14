@@ -58,7 +58,7 @@ function createNir (nir) {
           width: 380,
         }
       );
-    doc.fontSize(7).text(`${firma.address}`, 10, 20, {
+    doc.fontSize(7).text(`${firma.address}`, 20, 20, {
       width: 380,
       underline: true
     });
