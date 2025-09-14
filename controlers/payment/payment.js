@@ -46,7 +46,7 @@ module.exports.getToken = async (req, res, next) => {
             allowRecurring: false,
             maxInstallments: 12,
             paymentNotification: true,
-            tipAmount: 100,
+            tipAmount: 0,
             disableExactAmount: false,
             disableCash: true,
             disableWallet: true,

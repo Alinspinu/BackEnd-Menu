@@ -238,7 +238,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           { width: 60, align: "center" }
         );
         doc.text(
-          `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
+          `${vatFromGross(produs)}`,
           705,
           y + i * lineHeigth + lineHeigth,
           { width: 60, align: "center" }
@@ -427,6 +427,19 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
 
     }
     return doc
+}
+
+function vatFromGross(produs) {
+  const rate = Number(produs.tva) || 0;
+  const qty = Number(produs.qty) || 0;
+  const total = (Number(produs.sellPrice) || 0) * qty;
+
+  // choose one:
+  // if price is NET:
+  // return total * (rate / 100);
+
+  // if price is GROSS (VAT-included):
+  return rate > 0 ? total * (rate / (100 + rate)) : 0;
 }
 
   function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 24) {
