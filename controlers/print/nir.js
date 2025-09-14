@@ -136,9 +136,7 @@ function createNir (nir) {
       valTvaTotal += parseFloat(produs.tvaValue);
       valVanzare += parseFloat(produs.sellPrice) * parseFloat(produs.qty);
       valTvaVanzare += round(
-        parseFloat(produs.sellPrice) *
-        parseFloat(produs.qty) *
-        (parseFloat(produs.tva) / 100)
+        vatFromGross(produs)
       );
     });
 
