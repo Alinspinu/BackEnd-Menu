@@ -888,7 +888,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                             values.inIngsProdBuc += (log.uploadPrice * log.qty)
                                         }
                                     }
-                                    if(ing.gest?.name === 'Bar'){
+                                    if(ing.gest.name === 'Bar'){
                                         if(!log.uploadPrice){
                                         values.inIngsProdBar += (ing.tvaPrice * log.qty)
                                     } else {
@@ -898,14 +898,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                 break
                             case 'Marfă': 
                                 // console.log(ing.gest.name)
-                                    if(ing.gest.name === 'Bucătărie'){
+                                    if(ing.gest?.name === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsMfBuc += (ing.tvaPrice * log.qty)
                                         } else {
                                             values.inIngsMfBuc += (log.uploadPrice * log.qty)
                                         }
                                     }
-                                    if(ing.gest.name === 'Bar'){
+                                    if(ing.gest?.name === 'Bar'){
                                         if(!log.uploadPrice){
                                         values.inIngsMfBar += (ing.tvaPrice * log.qty)
                                     } else {
