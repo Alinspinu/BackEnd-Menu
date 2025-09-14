@@ -238,7 +238,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
           { width: 60, align: "center" }
         );
         doc.text(
-          `${vatFromGross(produs)}`,
+          `${produs.sellPrice ? produs.sellPrice * produs.qty : 0}`,
           705,
           y + i * lineHeigth + lineHeigth,
           { width: 60, align: "center" }
@@ -246,7 +246,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.text(
           `${produs.sellPrice
             ? round(
-              produs.sellPrice * produs.qty * (produs.tva / 100)
+              vatFromGross(produs)
             )
             : "0"
           }`,
