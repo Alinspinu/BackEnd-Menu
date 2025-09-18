@@ -601,6 +601,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
         }
         
         for(let m of order.monitors){
+            console.log(m)
             if(m.section.toString() === section){
                 m.prep = false
                 m.products.forEach(p => p.prep = 'done')
