@@ -138,53 +138,12 @@ module.exports.updateProducts = async (req, res) => {
         })
         .populate({ path: 'ings.gestiune', select: 'name' })
         .lean();                        // <-- use lean for speed
-  
 
-    //   const products = await Product.find({locatie: loc, salePoint: point}).populate([
-    //     {path: 'category', select: 'name'}, 
-    //     {
-    //         path: 'subProducts', 
-    //         populate: [
-    //             {
-    //                 path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty', 
-    //                     populate: {
-    //                         path: 'ings.ing', select: 'name tvaPrice qty um' 
-    //                     }
-    //             },
-    //             {
-    //                  path: 'ings.gestiune', select: 'name'
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         path: 'toppings', select: 'qty name ing price um gestiune', 
-    //         populate: [
-    //             {
-    //             path: 'ing', select: 'name tvaPrice um ings productIngredient gestiune qty', 
-    //             populate: {
-    //                 path: 'ings', select: 'qty ing', 
-    //                 populate: {
-    //                     path: 'ing', select: 'name tvaPrice qty um'
-    //                 }
-    //             }
-    //             },
-    //             {
-    //                 path: 'gestiune', select: 'name'
-    //             }
-    //     ]
-    //     },
-    //     {
-    //         path: 'ings.ing', select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty', 
-    //             populate: {
-    //                 path: 'ings.ing', select: 'name tvaPrice qty um'
-    //             }
-    //     },
-    //     {
-    //         path: 'ings.gestiune', select: 'name'
-    //     }
-    // ]).lean()
-
-    //    modifyProducts(products)
+        products.forEach(p => {
+            if(!p.printSection){
+                console.log(p.name)
+            }
+        })
 
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
