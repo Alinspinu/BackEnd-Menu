@@ -617,7 +617,7 @@ module.exports.sendLogs =  async  (req, res) => {
 module.exports.handleAnafTokens = async (req, res) => {
         const { code, error } = req.query;
         const baseRedirectUrl = 'http://front.flowmanager.ro/config/efactura'
-        console.log(code, error)
+        console.log(req.query)
         if(error) {
             const redirectUrl = `${baseRedirectUrl}?error=${error}`
             return res.redirect(redirectUrl)
