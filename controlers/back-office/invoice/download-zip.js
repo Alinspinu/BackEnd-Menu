@@ -2,8 +2,8 @@ const axios = require('axios')
 const AdmZip = require('adm-zip');
 const {parseXml, parseInvoiceData, parseHeaderFromXml, parseCreditNoteData} = require('./parseXml')
 
-// const mode = 'test'
-const mode = 'prod'
+const mode = 'test'
+// const mode = 'prod'
 
   async function downloadZipFile(id, token) {
     try {
