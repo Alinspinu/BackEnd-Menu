@@ -33,8 +33,6 @@ module.exports.sendEmployees = async (req, res) => {
     const {loc} = req.query
     try{
         const user = await User.find({locatie: loc, client: false, 'employee.active': true}).select('-password').populate({path: 'employee.employeePosition'});
-        const teo = user.find(u => u.employee.fullName === 'Teodora Lulciuc')
-        console.log(teo)
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
         res.status(200).json(sortedUsers)
     } catch(err) {

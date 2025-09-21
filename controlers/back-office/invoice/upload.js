@@ -2,8 +2,8 @@ const axios = require('axios')
 const {parseHeaderFromXml} = require('./parseXml')
 
 
-// const mode = 'test'
-const mode = 'prod'
+const mode = 'test'
+// const mode = 'prod'
 
 
 async function uploadInvoice(xml, cif, cn = false, token) {

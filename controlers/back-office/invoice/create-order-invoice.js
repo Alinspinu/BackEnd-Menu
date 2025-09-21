@@ -6,6 +6,7 @@ function createOrderInvoice(order, customer, supplier) {
   const invoice = {
     serie: 'CAMPUS',
     unload: false,
+    invoiceCode: '751',
     issueDate: formatDateEFactura(order.updatedAt),
     dueDate: formatDateEFactura(order.updatedAt),
     currencyId: 'RON',

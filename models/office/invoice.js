@@ -14,6 +14,10 @@ const invoiceSchema = new Schema({
         default: true,
         required: true
     },
+    invoiceCode: {
+        type: String,
+        default: '380'
+    },
     unload: {
         type: Boolean,
         required: true
