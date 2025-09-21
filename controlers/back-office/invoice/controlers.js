@@ -208,8 +208,8 @@ module.exports.getMessages = async (req, res) => {
               'Content-Type': 'application/json',  
             }
           }
-          const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/listaMesajeFactura'
-          // const baseUrl = process.env.ANAF_DAYS_BASE_API_URL
+          // const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/listaMesajeFactura'
+          const baseUrl = process.env.ANAF_DAYS_BASE_API_URL
         const response = await axios.get(`${baseUrl}?zile=${days}&cif=${cif}&filtru=${filter}`, config)
         if(response){
             res.status(200).json(response.data)
