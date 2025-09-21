@@ -7,7 +7,8 @@ const mode = 'test'
 
   async function downloadZipFile(id, token) {
     try {
-      const response = await axios.get(`${process.env.ANAF_DOWNLOAD_BASE_URL}?id=${id}`, {
+      // ' https://api.anaf.ro/test/ FCTEL/rest/descarcare?id= {val1}'
+      const response = await axios.get(`https://api.anaf.ro/${mode}/FCTEL/rest/descarcare?id=${id}`, {
         responseType: 'arraybuffer',
         headers: {
           'Authorization': `Bearer ${token}`, 
