@@ -17,7 +17,7 @@ function buildEFacturaHeaderXML(invoice, date) {
         doc.ele('cbc:ID').txt(invoice.invoice ? invoice.invoiceNumber : invoice.invoiceNumber + " S").up(); // ensure this contains digits
         doc.ele('cbc:IssueDate').txt(invoice.invoice ? invoice.issueDate : date).up();
         doc.ele('cbc:DueDate').txt(invoice.dueDate).up();
-        doc.ele('cbc:InvoiceTypeCode').txt('380').up(); // standard invoice
+        doc.ele('cbc:InvoiceTypeCode').txt(invoice.invoiceCode).up(); // standard invoice
         doc.ele('cbc:DocumentCurrencyCode').txt('RON').up();
         doc.ele('cbc:TaxCurrencyCode').txt('RON').up();
   
