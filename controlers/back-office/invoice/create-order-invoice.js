@@ -7,6 +7,7 @@ function createOrderInvoice(order, customer, supplier) {
     serie: 'CAMPUS',
     unload: false,
     invoiceCode: '751',
+    note: 'Factură încasată cu bon fiscal la data de ' + formatDateEFactura(order.updatedAt),
     issueDate: formatDateEFactura(order.updatedAt),
     dueDate: formatDateEFactura(order.updatedAt),
     currencyId: 'RON',

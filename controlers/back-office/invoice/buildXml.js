@@ -20,6 +20,8 @@ function buildEFacturaHeaderXML(invoice, date) {
         doc.ele('cbc:InvoiceTypeCode').txt(invoice.invoiceCode).up(); // standard invoice
         doc.ele('cbc:DocumentCurrencyCode').txt('RON').up();
         doc.ele('cbc:TaxCurrencyCode').txt('RON').up();
+
+        if(invoice.note) doc.ele('cbc:Note').txt(invoice.note).up()
   
         if(!invoice.invoice){
           doc.ele('cac:BillingReference')
