@@ -18,10 +18,11 @@ function buildEFacturaHeaderXML(invoice, date) {
         doc.ele('cbc:IssueDate').txt(invoice.invoice ? invoice.issueDate : date).up();
         doc.ele('cbc:DueDate').txt(invoice.dueDate).up();
         doc.ele('cbc:InvoiceTypeCode').txt(invoice.invoiceCode).up(); // standard invoice
+        if(invoice.note) doc.ele('cbc:Note').txt(invoice.note).up()
         doc.ele('cbc:DocumentCurrencyCode').txt('RON').up();
         doc.ele('cbc:TaxCurrencyCode').txt('RON').up();
 
-        if(invoice.note) doc.ele('cbc:Note').txt(invoice.note).up()
+
   
         if(!invoice.invoice){
           doc.ele('cac:BillingReference')
