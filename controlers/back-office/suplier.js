@@ -186,8 +186,8 @@ module.exports.addSuplier = async (req, res, next) => {
     try{
         const suplier = await Suplier.findById(suplierId)
         if(suplier){
-            // const s = updateSuplierRecords(suplier)
-            // const ss = await s.save()
+            const s = updateSuplierRecords(suplier)
+            const ss = await s.save()
             res.status(200).json(suplier)
         } else {
             res.status(404).json({message: 'Furnizorul nu a fost găsit'})
