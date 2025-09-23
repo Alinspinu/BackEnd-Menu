@@ -86,7 +86,7 @@ async function sendVerificationEmail(newUser) {
         otp: newUser.otp,
         name: newUser.name,
         locatie: newUser.locatie.name,
-        logourl: newUser.locatie.name === 'T ZERO' ? 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg' : 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+        logoUrl: newUser.locatie.name === 'T ZERO' ? 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg' : 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
     };
     const renderedTemplate = ejs.render(templateSource, {data: templateData});
     
