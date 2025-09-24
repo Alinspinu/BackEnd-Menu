@@ -503,11 +503,14 @@ module.exports.changeBillTable = async (req, res) => {
 module.exports.setOrderTime = async (req, res, next) => {   
         const time = parseFloat(req.query.time);
         const orderId = req.query.orderId;
-        const adminEmail = req.query.email || `office@truefinecoffee.ro`
-    try {
-        const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true })
-                                    .populate({path: 'locatie'})
-                                    .populate({path: 'salePoint'});
+        
+        try {
+            const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true })
+                    .populate({path: 'locatie'})
+                    .populate({path: 'salePoint'});
+
+            const adminEmail = order.locatie.name === 'T ZERO' ? 'office@t-zero.ro' : `office@truefinecoffee.ro`
+
         if (order.clientInfo.name !== 'Neînregistrat'){
             sendMailToCustomer(order, [adminEmail, `${order.clientInfo.email}`])
         }

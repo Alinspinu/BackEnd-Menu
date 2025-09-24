@@ -53,9 +53,9 @@ body{
 <body>
   <div class="container-fluid vh-100 cont">
     <div class="text-center img-container col-lg-6 offset-lg-3">
-       <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg" alt="logo-image" class="img mb-4">
+       <img src="<%=logoUrl%>" alt="logo-image" class="img mb-4">
        <h1 class="mb-4">salut, <%=reservation.client.name%>!</h1>
-       <h2 class="mb-4">Ne bucurăm că vrei să vii la True Fine Coffee.</h2>
+       <h2 class="mb-4">Ne bucurăm că vrei să vii la <%=locatie.name%>.</h2>
        <%if(reservation.status === 'canceled') {%>
        <p>Din păcate, pe <%=reservation.dateString%> avem deja toate locurile ocupate la <%=reservation.salePoint.name%>. <br>Te rugăm să alegi un alt interval sau o altă zi pentru rezervare. <br> Îți mulțumim pentru înțelegere!</p>
        <%} else {%>

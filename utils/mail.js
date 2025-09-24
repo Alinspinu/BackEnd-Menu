@@ -172,6 +172,7 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
         link: `${baseUrlRedirect}reset-password?token=${token}`,
         name: newUser.name,
         locatie: newUser.locatie.name,
+        logoUrl: newUser.locatie.name === 'T ZERO' ? 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg' : 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
     };
     const renderedTemplate = ejs.render(templateSource, {data: templateData});
 
@@ -243,7 +244,8 @@ async function sendMailToCustomer(data, emails) {
 
 async function sendReservationEmail(reservation) {
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8');      
-        const renderedTemplate = ejs.render(templateSource,{reservation: reservation});
+    const url = reservation.locatie.name === 'T ZERO' ? 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg' : 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg' 
+        const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url});
     
         const appKey = decryptData(reservation.locatie.gmail.app.key, reservation.locatie.gmail.app.secret, reservation.locatie.gmail.app.iv);
     
