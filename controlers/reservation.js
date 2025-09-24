@@ -193,13 +193,13 @@ async function sendPushNotifications(notification, userIds){
 
 
 module.exports.createContact = async (req, res) => {
-    const {message} = req.body
+    const {message, adminEmail='office@truefinecoffee.ro'} = req.body
     try{
         const newMessage = new ContactMessage(message)
         const savedMessage = await newMessage.save()
         const locatie = await Locatie.findById(message.locatie)
         const data = { mess: savedMessage, locatie: locatie}
-        await sendAdminMessage(data)
+        await sendAdminMessage(data, adminEmail)
         res.status(200).json({message: 'All good'})
     } catch(error) {
         console.log(error)

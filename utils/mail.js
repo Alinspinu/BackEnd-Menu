@@ -273,7 +273,7 @@ async function sendReservationEmail(reservation) {
           }
 };
 
-async function sendAdminMessage(data) {
+async function sendAdminMessage(data, adminEmail = 'office@truefinecoffee.ro') {
     const templateSource = fs.readFileSync('views/layouts/contact.ejs', 'utf-8');      
         const renderedTemplate = ejs.render(templateSource,{data: data});
     
@@ -290,7 +290,7 @@ async function sendAdminMessage(data) {
               
                   const mailOptions = {
                       from: data.locatie.gmail.email,
-                      to: 'office@truefinecoffee.ro',
+                      to: adminEmail,
                       subject: 'Mesaj nou CONTACT',
                       html: renderedTemplate
                   };

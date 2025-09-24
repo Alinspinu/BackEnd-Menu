@@ -151,7 +151,7 @@ module.exports.checkAndNotifyReservations = async () => {
               type: {
                 name: 'Reamintire',
                 data: {
-                  url: 'https://cash-flow-waiters.web.app/reservations'
+                  url: 'https://front.flowmanager.ro/reservations'
                 },
               },
               message: `Avem o rezevare ${formatedDateToShow(reservation.date, +2)}, ${reservation.client.name}, ${reservation.guests} persoane, ${reservation.position}!`
@@ -199,9 +199,9 @@ async function sendPushNotifications(notification, userIds){
         notification: {
           title: notification.type.name,
           body: notification.message,
-          icon: "/assets/icon/coffee.svg",
-          badge: "/assets/icon/coffee.svg",
-          image: "/assets/icon/coffee.svg",
+          // icon: "/assets/icon/coffee.svg",
+          // badge: "/assets/icon/coffee.svg",
+          // image: "",
           data: {
             url: notification.type.name === "Rezervare" ? notification.type.data.url : `${notification.type.data.url}/${notification._id}`,
           },
