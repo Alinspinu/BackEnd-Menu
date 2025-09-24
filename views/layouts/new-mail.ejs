@@ -88,9 +88,9 @@
 <body>
     <div class="container-fluid vh-100 cont">
         <div class="text-center img-container col-lg-6 offset-lg-3">
-           <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg" alt="logo-image" class="img mb-4">
+           <img src="<%=url%>" alt="logo-image" class="img mb-4">
            <h1 class="font mb-4">SALUT <%=data.clientInfo.name%>,</h1>
-           <h2 class="font mb-4">Îți mulțumim că ai ales True Fine Coffee!</h2>
+           <h2 class="font mb-4">Îți mulțumim că ai ales <%=data.locatie.name%>!</h2>
            <p class="font mb-4">Comanda ta a fost confirmată și este în curs de pregătie. <br> Detaliile comenzii tale sunt următoarele:</p>
         </div>
         <div class="bill col-lg-6 offset-lg-3 p-0">
@@ -136,7 +136,7 @@
 
         </div>
         <div class="info">
-            <span class="address">Adresă Locație: <%= data.locatie.address %></span>
+            <span class="address">Adresă Locație: <%= data.salePoint.address %></span>
             <span class="time">Timp estimat de ridicare: <%= data.completetime / 1000 / 60 %> minute</span>
             <span class="mess">Te așteptăm cu drag să vii să îți ridici comanda!</span>
         </div>

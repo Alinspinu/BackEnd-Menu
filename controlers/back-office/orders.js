@@ -503,10 +503,13 @@ module.exports.changeBillTable = async (req, res) => {
 module.exports.setOrderTime = async (req, res, next) => {   
         const time = parseFloat(req.query.time);
         const orderId = req.query.orderId;
+        const adminEmail = req.query.email || `office@truefinecoffee.ro`
     try {
-        const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true }).populate({path: 'locatie'}) ;
+        const order = await Order.findOneAndUpdate({ _id: orderId }, { completetime: time, pending: false }, { new: true })
+                                    .populate({path: 'locatie'})
+                                    .populate({path: 'salePoint'});
         if (order.clientInfo.name !== 'Neînregistrat'){
-            sendMailToCustomer(order, [`office@truefinecoffee.ro`, `${order.clientInfo.email}`])
+            sendMailToCustomer(order, [adminEmail, `${order.clientInfo.email}`])
         }
         socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime, masa: order.masa, toGo: order.toGo}))
         console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
@@ -601,7 +604,6 @@ module.exports.prepStatusDone = async (req, res, next) => {
         }
         
         for(let m of order.monitors){
-            console.log(m)
             if(m.section.toString() === section){
                 m.prep = false
                 m.products.forEach(p => p.prep = 'done')

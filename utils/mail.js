@@ -208,8 +208,9 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
 
 
 async function sendMailToCustomer(data, emails) {
-    const templateSource = fs.readFileSync('views/layouts/new-mail.ejs', 'utf-8');      
-        const renderedTemplate = ejs.render(templateSource,{data: data});
+    const templateSource = fs.readFileSync('views/layouts/new-mail.ejs', 'utf-8');
+    const url = data.locatie.name === 'T ZERO' ? 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg' : 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'     
+        const renderedTemplate = ejs.render(templateSource,{data: data, url: url});
     
         const appKey = decryptData(data.locatie.gmail.app.key, data.locatie.gmail.app.secret, data.locatie.gmail.app.iv);
     
