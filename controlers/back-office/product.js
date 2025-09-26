@@ -100,7 +100,7 @@ module.exports.updateProducts = async (req, res) => {
         populate: [
             {
             path: 'ings.ing',
-            select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+            select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient invGestiune qty',
             populate: innerIngPopulate
             },
             { path: 'ings.gestiune', select: 'name' }
@@ -112,7 +112,7 @@ module.exports.updateProducts = async (req, res) => {
         populate: [
             {
             path: 'ing',
-            select: 'name tvaPrice um ings productIngredient gestiune qty',
+            select: 'name tvaPrice um ings productIngredient invGestiune gestiune qty',
             populate: {
                 path: 'ings',
                 select: 'qty ing gestiune',
@@ -133,7 +133,7 @@ module.exports.updateProducts = async (req, res) => {
         })
         .populate({
         path: 'ings.ing',
-        select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty',
+        select: 'gestiune name locatie price sellPrice tvaPrice tva invGestiune um productIngredient ings qty',
         populate: innerIngPopulate
         })
         .populate({ path: 'ings.gestiune', select: 'name' })
