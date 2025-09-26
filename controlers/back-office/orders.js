@@ -430,6 +430,8 @@ module.exports.saveOrder = async (req, res, next) => {
         order.soketId = generateSoketId(16)
         const table = await Table.findOne({locatie: loc, salePoint: order.salePoint, name: 'Comenzi Online'});
         console.log(table)
+        console.log(loc)
+        console.log(order)
         table ? order.masa = table.index : null
         table ? order.masaRest = table._id : null
         delete order._id
