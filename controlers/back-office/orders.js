@@ -428,7 +428,7 @@ module.exports.saveOrder = async (req, res, next) => {
     try {
         const {order, adminEmail, loc} = req.body
         order.soketId = generateSoketId(16)
-        const table = await Table.findOne({locatie: loc, salePoint: order.salePoint, name: 'Comenzi Online'});
+        const table = await Table.findOne({locatie: order.locatie, salePoint: order.salePoint, name: 'Comenzi Online'});
         console.log(table)
         console.log(loc)
         console.log(order)
