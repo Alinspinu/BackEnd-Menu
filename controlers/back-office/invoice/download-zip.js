@@ -32,7 +32,7 @@ const mode = 'prod'
       for (const entry of zipEntries) {
           if (!entry.entryName.includes('semnatura')) {
           const xmlData = entry.getData().toString('utf8'); 
-          // console.log(xmlData)
+          console.log(xmlData)
           try {
               const result = await parseXml(xmlData); 
               if(result.Invoice){
