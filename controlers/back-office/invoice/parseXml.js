@@ -157,9 +157,10 @@ const { parseStringPromise } = require('xml2js');
       }
     
       // Totals
-      const discountPerUnit = perUnitDiscount; // RON per unit (e.g., per kg/piece)
+      let discountPerUnit = perUnitDiscount; // RON per unit (e.g., per kg/piece)
       const discountFromPriceLevel = quantity ? +(discountPerUnit * quantity).toFixed(2) : 0; // total for the line
       const discountTotal = +(discountFromPriceLevel + lineDiscountTotal).toFixed(2);
+      if(discountPerUnit === 0 && discountTotal > 0) discountPerUnit = discountTotal / quantity
     
       // Percent (best-effort): prefer per-unit base; else infer from totals if possible
       let discountPercent = 0;
@@ -211,7 +212,6 @@ const { parseStringPromise } = require('xml2js');
         currencyId,
         id
       };
-      console.log(invoiceSummary.products)
       return invoiceSummary
 };
 
