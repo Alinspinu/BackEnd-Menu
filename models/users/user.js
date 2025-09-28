@@ -34,6 +34,9 @@ const UserTrueSchema = new Schema({
         type: Number,
         default: 0
     },
+    cahsBackData: {
+        
+    },
     power: {
         type: Boolean,
         default: false
@@ -63,7 +66,8 @@ const UserTrueSchema = new Schema({
                 cat:{
                         type: Schema.Types.ObjectId,
                         ref: 'Category'
-                    }
+                    },
+                point: String,
                     
             }
         ]

@@ -367,6 +367,8 @@ module.exports.login = async (req, res, next) => {
             query.locatie = loc
         }
 
+        console.log(query)
+
     try{
                const users = await User.find(query)
                             .select([
