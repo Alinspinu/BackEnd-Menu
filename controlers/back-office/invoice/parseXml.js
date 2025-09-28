@@ -176,7 +176,7 @@ const { parseStringPromise } = require('xml2js');
         name: itemName,
         quantity,
         unitCode,
-        price,               // net unit price after price-level discount (as per your sample)
+        price: price - discountPerUnit,               // net unit price after price-level discount (as per your sample)
         totalNoVat,
         vatPrecent: vatPercent,
     
