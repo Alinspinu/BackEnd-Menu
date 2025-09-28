@@ -370,8 +370,6 @@ module.exports.login = async (req, res, next) => {
             }
         }   
 
-        console.log(query)
-
     try{
                const users = await User.find(query)
                             .select([
@@ -383,8 +381,6 @@ module.exports.login = async (req, res, next) => {
                             .populate({
                                     path: 'locatie'
                             })
-
-            console.log(users)
 
          if(users.length > 1 && !loc){
             const locs = users.map(u =>{ return {name: u.locatie.name, id: u.locatie._id}})
