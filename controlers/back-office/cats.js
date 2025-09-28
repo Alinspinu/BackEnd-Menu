@@ -50,7 +50,10 @@ module.exports.sendCats = async (req, res, next) => {
 module.exports.searchCats = async (req, res, next) => {
     try{
         const {loc, search} = req.query
-        const cats = await Cat.find({locatie: loc})
+        const locs = [loc]
+        if(loc === '655e2e7c5a3d53943c6b7c53') {locs.push('6811d97d4a433774f3d02643')}
+        if(loc === '6811d97d4a433774f3d02643') {locs.push('655e2e7c5a3d53943c6b7c53')}
+        const cats = await Cat.find({locatie: locs}).populate({path: 'salePoint', select: 'name'})
         const sortedCats = cats.sort((a, b) => a.name.localeCompare(b.name))
         let filterCats = []
         filterCats = sortedCats.filter((object) =>
