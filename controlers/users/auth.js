@@ -386,11 +386,11 @@ module.exports.login = async (req, res, next) => {
 
             console.log(users)
 
-         if(users.length > 1 && !Array.isArray(loc)){
+         if(users.length > 1 && !loc){
             const locs = users.map(u =>{ return {name: u.locatie.name, id: u.locatie._id}})
             return res.status(200).json({message: 'Acest email este folosit în mai multe locații! Alege la ce locație vrei să te conectezi!', locs: locs, multiple: true})
          } 
-         if(users.length === 1){
+         if(users.length === 1 || Array.isArray(loc)){
             const user = users[0]
              if (!user || !comparePasswords(password, user.password)) {
                  return res.status(401).json({ message: 'Invalid email or password' });
