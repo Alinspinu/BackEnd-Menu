@@ -20,7 +20,7 @@ router.route('/print-unreg', authApi).post(payRoutes.printUnreg)
 // router.route('/save-bill-cloud', authApi).post(payRoutes.saveBillInCloud)
 router.route('/reprint-fiscal', authApi).post(payRoutes.reprinFiscal)
 
-// router.route('/pos2').get(payRoutes.getTokenForPos)
+router.route('/pos2').get(payRoutes.getTokenForPos)
 
 
 module.exports = router;
