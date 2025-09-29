@@ -10,6 +10,7 @@ const Order = require('../../models/office/product/order')
 const Table = require('../../models/utils/table')
 const RepBill = require('../../models/office/reprintedBill')
 const PrintServer = require('../../models/utils/print-server')
+const qs = require("qs");
 
 const { round, sendToPrint, handleError } = require('../../utils/functions')
 const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
@@ -88,8 +89,11 @@ module.exports.getTokenForPos = async (req, res, next) => {
             'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: `Basic ${credentials}`
         };
+        const data = qs.stringify({
+            grant_type: "client_credentials",
+          });
         const total = parseInt(req.query.amount) * 100;
-        const response = await axios.post(url, 'grant_type=client_credentials', { headers });
+        const response = await axios.post(url, data, { headers });
         console.log('token', response.data)
         const requestBody = {
             sessionId: "4bdebe62-c211-4ca0-a994-b2fbea2061c5",
