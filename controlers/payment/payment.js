@@ -78,6 +78,8 @@ module.exports.getToken = async (req, res, next) => {
 module.exports.getTokenForPos = async (req, res, next) => {
     try {
         console.log('hit')
+        console.log(process.env.VIVA_POS_CLIENT_ID)
+        console.log(process.env.VIVA_POS_SECRET)
         const clientId = process.env.VIVA_POS_CLIENT_ID;
         const clientSecret = process.env.VIVA_POS_SECRET;
         const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
