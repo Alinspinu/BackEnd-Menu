@@ -96,7 +96,7 @@ module.exports.getTokenForPos = async (req, res, next) => {
         const response = await axios.post(url, data, { headers });
         console.log('token', response.data)
         const requestBody = {
-            sessionId: "4bdebe62-c211-4ca0-a994-b2fbea2061c5",
+            sessionId: generateUUIDv4(),
             terminalId: "16450555",
             cashRegisterId: "TrueCampus1",
             amount: total,
@@ -121,7 +121,13 @@ module.exports.getTokenForPos = async (req, res, next) => {
     }
 }
 
-
+function generateUUIDv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
 
 
 
