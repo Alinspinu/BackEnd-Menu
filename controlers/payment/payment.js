@@ -113,7 +113,7 @@ module.exports.getTokenForPos = async (req, res, next) => {
                 Authorization: `Bearer ${response.data.access_token}`,
             }
         });
-        console.log('transaction', response2.data)
+        console.log('transaction', response2)
         res.status(200).json(response2.data);
     } catch (error) {
         console.error(error);
