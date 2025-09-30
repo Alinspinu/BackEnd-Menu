@@ -57,11 +57,10 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
     const xml = invoice.invoice ? buildEFacturaHeaderXML(invoice) : buildEFacturaHeaderXML(invoice, invoice.issueDate)
     let vatNumber = invoice.supplier.vatNumber.replace(/\D/g, '');
     const response = await uploadInvoice(xml, vatNumber, false, token)
-    console.log(response.data)
     invoice.eFacturaId = response.eFacturaId
     invoice.eFacturaError = response.eFacturaError
     invoice.eFacturaStatus = response.eFacturaStatus
-    const savedInvoice = await invoice.save()
+    const savedInvoice = await Invoice.findByIdAndUpdate(id, invoice, {new: true})
     res.status(200).json({message: response.message, invoice: savedInvoice})
   } catch(error){
     console.log(error)
@@ -162,8 +161,7 @@ module.exports.checkInvoiceUploadStatus = async (req, res) => {
       invoice.eFacturaId = response.eFacturaId
       invoice.eFacturaError = response.eFacturaError
       invoice.eFacturaStatus = response.eFacturaStatus
-      console.log(response)
-      const savedInvoice = await invoice.save()
+      const savedInvoice = await Invoice.findByIdAndUpdate(id, invoice, {new: true})
       res.status(200).json({message: response.message, invoice: savedInvoice})
     } else {
       res.status(200).josn({message: 'Factura nu a fost găsită', invoice: null})
@@ -185,7 +183,7 @@ module.exports.handleUplodErros = async (req, res) => {
     }
     const error = await downloadZipFileCheck(id, token)
     invoice.eFacturaError = error.errors
-    const updatedInvoice = await invoice.save()
+    const updatedInvoice = await Invoice.findByIdAndUpdate(invoiceId, invoice, {new: true})
     
     res.status(200).json({message: 'Erorare descată cu success!', invoice: updatedInvoice })
   } catch(error){
