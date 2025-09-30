@@ -78,9 +78,6 @@ module.exports.getToken = async (req, res, next) => {
 
 module.exports.getTokenForPos = async (req, res, next) => {
     try {
-        console.log('hit')
-        console.log(process.env.VIVA_POS_CLIENT_ID)
-        console.log(process.env.VIVA_POS_SECRET)
         const clientId = process.env.VIVA_POS_CLIENT_ID;
         const clientSecret = process.env.VIVA_POS_SECRET;
         const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
@@ -349,7 +346,7 @@ module.exports.printBill = async (req, res, next) => {
            socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key, address: mainServer.fiscalPrinter.driverAddress}))
         } 
         if(email && email.length){
-            const client = await User.findOne({email: email, locatie: bill.locatie})
+            const client = await User.findOne({email: email})
             if(client){
                 client.orders.push(bill)
                 client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
@@ -381,6 +378,7 @@ module.exports.printBill = async (req, res, next) => {
 
         const billId = new mongoose.Types.ObjectId(bill._id);
         await Table.findOneAndUpdate({bills: billId, locatie: bill.locatie, salePoint: bill.salePoint}, {$pull: {bills: billId}}) 
+        console.log(savedBill)
         socket.emit('billl', JSON.stringify({bill: savedBill}))
         if(savedBill){
         res.status(200).json({message: "Nota a fost salvată", bill: savedBill})
