@@ -153,44 +153,81 @@ async function generateResponse(prompt) {
 async function generateNutritionResponse(prompt) {
   console.log(prompt)
   try {
+    // const response = await openai.chat.completions.create({
+    //   model: 'gpt-4o-mini', 
+    //   messages: [
+    //     { role: 'user',
+    //      content: prompt,
+    //      },
+    //      {
+    //      role: 'system',
+    //      content: 
+    //      `You are a nutrition assistant. 
+    //       When given a list of ingredients 
+    //       with their quantities, respond 
+    //       only with the total nutritional 
+    //       values per 100g of the final product and the allergens found in those ingredients. Respond in the following JSON format:
+    //       {
+    //         \"nutrition\": {
+    //           \"energy\": {
+    //             \"kJ\": 0,
+    //             \"kcal\": 0
+    //           },
+    //           \"fat\": {
+    //             \"all\": 0,
+    //             \"satAcids\": 0
+    //           },
+    //           \"carbs\": {
+    //             \"all\": 0,
+    //             \"sugar\": 0
+    //           },
+    //           \"salts\": 0,
+    //           \"protein\": 0
+    //         },
+    //         \"allergens\": [\"Lista alergenilor trebuie să fie scrisă în limba română și să contină alergenii în acest format - gluten, crustacee, ouă, pește, arahide, soia, lapte, țelină, sulfiți, susan, muștar, lupin, moluște-.\"]
+    //       }
+    //       Please ensure you rely only on the correct nutritional values for each ingredient and always output them in the same way. ang give only the json format without any comments.`
+    //      } 
+    //     ],
+    //   temperature: 0.8,
+    //   top_p: 1
+    // });
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', 
+      model: 'gpt-4o-mini',
       messages: [
-        { role: 'user',
-         content: prompt,
-         },
-         {
-         role: 'system',
-         content: 
-         `You are a nutrition assistant. 
-          When given a list of ingredients 
-          with their quantities, respond 
-          only with the total nutritional 
-          values per 100g of the final product and the allergens found in those ingredients. Respond in the following JSON format:
-          {
-            \"nutrition\": {
-              \"energy\": {
-                \"kJ\": 0,
-                \"kcal\": 0
+        {
+          role: 'system',
+          content: `
+          You are a nutrition assistant. 
+          Always output only valid JSON.
+          Given a list of ingredients with their quantities, calculate the total nutritional values per 100g of the final product and list allergens.
+          
+          Format the response strictly as:
+    
+            {
+              "nutrition": {
+                "energy": { "kJ": 0, "kcal": 0 },
+                "fat": { "all": 0, "satAcids": 0 },
+                "carbs": { "all": 0, "sugar": 0 },
+                "salts": 0,
+                "protein": 0
               },
-              \"fat\": {
-                \"all\": 0,
-                \"satAcids\": 0
-              },
-              \"carbs\": {
-                \"all\": 0,
-                \"sugar\": 0
-              },
-              \"salts\": 0,
-              \"protein\": 0
-            },
-            \"allergens\": [\"Lista alergenilor trebuie să fie scrisă în limba română și să contină alergenii în acest format - gluten, crustacee, ouă, pește, arahide, soia, lapte, țelină, sulfiți, susan, muștar, lupin, moluște-.\"]
-          }
-          Please ensure you rely only on the correct nutritional values for each ingredient and always output them in the same way. ang give only the json format without any comments.`
-         } 
-        ],
-      temperature: 0.8,
-      top_p: 1
+              "allergens": [
+                "Lista alergenilor trebuie să fie scrisă în limba română și să conțină alergenii exact în acest format: gluten, crustacee, ouă, pește, arahide, soia, lapte, țelină, sulfiți, susan, muștar, lupin, moluște"
+              ]
+            }
+            
+            Do not add explanations, comments, or extra text.
+            `
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0, // deterministic
+      top_p: 1,
+      response_format: { type: "json_object" } // enforces JSON output
     });
     console.log(response.choices[0].message)
     return response.choices[0].message.content
