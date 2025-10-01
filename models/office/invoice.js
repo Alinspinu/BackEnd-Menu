@@ -6,7 +6,7 @@ const Counter = require('../utils/counter')
 const Client = require('../office/client')
 
 
-const {unloadIngs, createProductSaleReport, uploadIngs} = require('../../utils/inventary');
+const {unloadIngs, uploadIngs} = require('../../utils/inventary');
 
 const invoiceSchema = new Schema({
     invoice: {

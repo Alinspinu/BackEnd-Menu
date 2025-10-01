@@ -191,6 +191,7 @@ async function generateNutritionResponse(prompt) {
       temperature: 0.8,
       top_p: 1
     });
+    console.log(response)
     return response.choices[0].message.content
   } catch (error) {
     console.error('Error generating response:', error);
