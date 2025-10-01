@@ -188,7 +188,9 @@ async function generateNutritionResponse(prompt) {
       temperature: 0, // deterministic
       top_p: 1,
       response_format: { type: "json_object" } // enforces JSON output
-    });
+    })
+    console.log(prompt)
+    console.log(response.choices[0].message)
     return response.choices[0].message.content
   } catch (error) {
     console.error('Error generating response:', error);
