@@ -187,9 +187,9 @@ async function imageToEscPosRaster(imageUrl, maxWidth = 384, invert = false) {
   const result = Buffer.concat([header, body]);
 
   // 5. Debug preview (optional)
-  await sharp(Buffer.from(errorBuffer), {
-    raw: { width: w, height: h, channels: 1 }
-  }).toFile("debug-output.png");
+//   await sharp(Buffer.from(errorBuffer), {
+//     raw: { width: w, height: h, channels: 1 }
+//   }).toFile("debug-output.png");
 
   console.log(`✅ Preview saved to debug-output.png (${w}x${h})`);
 
