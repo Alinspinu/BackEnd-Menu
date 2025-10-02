@@ -46,6 +46,10 @@ const printServerSchema = new Schema({
             brand: String,
             ip: String,
             port: Number,
+            invoice: {
+                type: Boolean,
+                default: false
+            },
             section: [
                 {
                     type: Schema.Types.ObjectId,
