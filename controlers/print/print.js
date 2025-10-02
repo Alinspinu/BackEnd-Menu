@@ -1743,7 +1743,7 @@ module.exports.printProduction = async (req, res, next) => {
 module.exports.report = async (req, res) => {
   try{
     const {report} = req.body
-    createRaortXml(report)
+    // createRaortXml(report)
     res.status(200).json({message: 'Raport printat'})
   } catch(err) {
     console.log(err)
