@@ -110,6 +110,10 @@ const invoiceSchema = new Schema({
             ings: [
                 {
                     qty: Number,
+                    gestiune: {
+                        type: Schema.Types.ObjectId,
+                        ref: 'Gestiune'
+                     },
                     ing: {
                         type: Schema.Types.ObjectId,
                         ref: 'IngredientInv'
