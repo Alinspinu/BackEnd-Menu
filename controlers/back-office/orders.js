@@ -12,8 +12,7 @@ const {generateSoketId} = require('../../utils/functions')
 const {unloadIngs, uploadIngs, createProductSaleReport} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
 
-const {print} = require('../../utils/print/printOrders')
-const {printBill, posPayment} = require('../../utils/print/printFiscal')
+
 
 const io = require('socket.io-client');
 const socket = io("https://socket.flowmanager.ro")
