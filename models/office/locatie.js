@@ -66,6 +66,8 @@ const locatieSchema = new Schema({
         secret: String,
        }
       },
+      logoUrl: String,
+      qrUrl: String,
       pos: {
         vivaWalletLocal: {
           ip: String,
