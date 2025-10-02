@@ -15,6 +15,8 @@ const qs = require("qs");
 const { round, sendToPrint, handleError } = require('../../utils/functions')
 const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
 
+const {createBillForPrinter} = require('../../utils/print/thermalPrinter')
+
 
 const io = require('socket.io-client')
 const socket = io("https://socket.flowmanager.ro")
@@ -361,6 +363,12 @@ module.exports.printBill = async (req, res, next) => {
             tips: bill.tips,
             total: bill.total,
             clientInfo: bill.clientInfo
+        }
+
+
+        const bytes = await createBillForPrinter(bill)
+        if(bytes){
+            socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
         }
 
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
