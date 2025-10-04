@@ -139,7 +139,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
 
   parts.push(doubleW);
   if(order.payment.cash > 0) {
-    parts.push(Buffer.from(`${'Platit numerar '.padEnd(14, ' ') + order.payment.cash.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit cash '.padEnd(14, ' ') + order.payment.cash.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
   if(order.payment.card > 0) {
     parts.push(Buffer.from(`${'Platit card '.padEnd(14, ' ') + order.payment.card.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
