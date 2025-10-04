@@ -85,7 +85,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   parts.push(left, normalSize);
   order.products.forEach((item) => {
     const normalName = stripRomanianDiacritics(item.name);
-    const name = normalName.padEnd(23, " ");
+    const name = normalName.padEnd(21, " ");
     const price = item.price.toFixed(2).padStart(5, ' ');
     const t = +item.total
     const total = t.toFixed(2).padStart(5, ' ');
@@ -95,7 +95,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
 
     if (name.length > 23) {
       parts.push(Buffer.from(`${name}\n`, 'ascii'));
-      parts.push(Buffer.from(`${' '.padEnd(23, " ")}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
+      parts.push(Buffer.from(`${' '.padEnd(21, " ")}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
     } else {
       parts.push(Buffer.from(`${name}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
     }
@@ -118,7 +118,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     parts.push(Buffer.from(`${'Subtotal '.padEnd(37, ' ')  + order.totalProducts.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
-    parts.push(Buffer.from(`${'Discount '.padEnd(15, ' ') + '-' + discount} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Discount '.padEnd(13, ' ') + '-' + discount} LEI \n`, 'ascii'))
   }
 
   if(order.tips > 0){
@@ -126,26 +126,26 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     parts.push(Buffer.from(`${'Subtotal '.padEnd(37, ' ') + (order.totalProducts - discount).toFixed(2).padStart(5, ' ') } LEI \n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
-    parts.push(Buffer.from(`${'Bacsis '.padEnd(15, ' ') + order.tips.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Bacsis '.padEnd(13, ' ') + order.tips.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
 
   parts.push(normalSize);
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
   parts.push(doubleWH, boldOn);
-  parts.push(Buffer.from(`${'TOTAL'.padEnd(14, ' ') + order.total.toFixed(2)} LEI \n`, 'ascii'));
+  parts.push(Buffer.from(`${'TOTAL'.padEnd(13, ' ') + order.total.toFixed(2)} LEI \n`, 'ascii'));
   parts.push(boldOff, normalSize);
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
 
 
   parts.push(doubleW);
   if(order.payment.cash > 0) {
-    parts.push(Buffer.from(`${'Platit cash '.padEnd(14, ' ') + order.payment.cash.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit cash '.padEnd(13, ' ') + order.payment.cash.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
   if(order.payment.card > 0) {
-    parts.push(Buffer.from(`${'Platit card '.padEnd(14, ' ') + order.payment.card.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit card '.padEnd(13, ' ') + order.payment.card.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
   if(order.payment.online > 0) {
-    parts.push(Buffer.from(`${'Platit card '.padEnd(14, ' ')+ order.payment.online.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit card '.padEnd(13, ' ')+ order.payment.online.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
   parts.push(normalSize);
   
