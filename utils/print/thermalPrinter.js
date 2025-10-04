@@ -132,7 +132,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   parts.push(normalSize);
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
   parts.push(doubleWH, boldOn);
-  parts.push(Buffer.from(`${'TOTAL'.padEnd(12, ' ') + order.total.toFixed(2)} LEI \n`, 'ascii'));
+  parts.push(Buffer.from(`${'TOTAL'.padEnd(14, ' ') + order.total.toFixed(2)} LEI \n`, 'ascii'));
   parts.push(boldOff, normalSize);
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
 
