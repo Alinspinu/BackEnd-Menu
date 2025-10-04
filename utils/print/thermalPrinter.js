@@ -1,5 +1,6 @@
 const axios = require("axios");
 const sharp = require("sharp");
+const {round} = require('../functions')
 
 function getRawEscPosBytes(data, products) {
     const encoder = new TextEncoder();
@@ -110,18 +111,20 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     }
   });
 
+  const discount = order.discount > 0 ? round(order.discount) : 0
+
   if(order.discount > 0){
     parts.push(lf);
-    parts.push(Buffer.from(`${'Subtotal '.padEnd(43, ' ')  + order.totalProducts.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Subtotal '.padEnd(40, ' ')  + order.totalProducts.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
-    parts.push(Buffer.from(`${'Discount client '.padEnd(15, ' ') + ' - ' + order.discount} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Discount client '.padEnd(12, ' ') + '-' + discount} LEI \n`, 'ascii'))
   }
-  const discount = order.discount > 0 ? order.discount : 0
+
   if(order.tips > 0){
     parts.push(lf);
     parts.push(normalSize);
-    parts.push(Buffer.from(`${'Subtotal '.padEnd(43, ' ') + (order.totalProducts - discount).toFixed(2).padStart(5, ' ') } LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Subtotal '.padEnd(40, ' ') + (order.totalProducts - discount).toFixed(2).padStart(5, ' ') } LEI \n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
     parts.push(Buffer.from(`${'Bacsis '.padEnd(15, ' ') + order.tips.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
@@ -138,13 +141,13 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
 
   parts.push(doubleW);
   if(order.payment.cash > 0) {
-    parts.push(Buffer.from(`${'Platit Numerar '.padEnd(15, ' ') + order.payment.cash} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit numerar '.padEnd(15, ' ') + order.payment.cash.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
   if(order.payment.card > 0) {
-    parts.push(Buffer.from(`${'Platit Card '.padEnd(15, ' ') + order.payment.card} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit card '.padEnd(15, ' ') + order.payment.card.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
   if(order.payment.online > 0) {
-    parts.push(Buffer.from(`${'Platit card '.padEnd(15, ' ')+ order.payment.online} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit card '.padEnd(15, ' ')+ order.payment.online.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
   parts.push(normalSize);
   
