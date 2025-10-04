@@ -115,16 +115,16 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
 
   if(order.discount > 0){
     parts.push(lf);
-    parts.push(Buffer.from(`${'Subtotal '.padEnd(40, ' ')  + order.totalProducts.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Subtotal '.padEnd(37, ' ')  + order.totalProducts.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
-    parts.push(Buffer.from(`${'Discount client '.padEnd(12, ' ') + '-' + discount} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Discount '.padEnd(15, ' ') + '-' + discount} LEI \n`, 'ascii'))
   }
 
   if(order.tips > 0){
     parts.push(lf);
     parts.push(normalSize);
-    parts.push(Buffer.from(`${'Subtotal '.padEnd(40, ' ') + (order.totalProducts - discount).toFixed(2).padStart(5, ' ') } LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Subtotal '.padEnd(37, ' ') + (order.totalProducts - discount).toFixed(2).padStart(5, ' ') } LEI \n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
     parts.push(Buffer.from(`${'Bacsis '.padEnd(15, ' ') + order.tips.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
