@@ -147,8 +147,9 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   }
 
   
-  parts.push(lf, lf);
-  parts.push(Buffer.from('Aceasta este o nota de plata informativa. Ea trebuie sa fie insotita de bonul fiscal! \n',  'ascii'))
+  parts.push(lf, lf, center);
+  parts.push(Buffer.from('Aceasta este o nota de plata informativa. \n',  'ascii'))
+  parts.push(Buffer.from('Ea trebuie sa fie insotita de bonul fiscal! \n',  'ascii'))
   parts.push(Buffer.from('Pentru valorile nutritionale si meniul online scaneaza codul QR. \n',  'ascii'))
 
 
