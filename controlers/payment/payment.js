@@ -10,6 +10,7 @@ const Order = require('../../models/office/product/order')
 const Table = require('../../models/utils/table')
 const RepBill = require('../../models/office/reprintedBill')
 const PrintServer = require('../../models/utils/print-server')
+const Locatie = require('../../models/office/locatie')
 const qs = require("qs");
 
 const { round, sendToPrint, handleError } = require('../../utils/functions')
@@ -365,10 +366,12 @@ module.exports.printBill = async (req, res, next) => {
             clientInfo: bill.clientInfo
         }
 
-
-        const bytes = await createBillForPrinter(bill)
-        if(bytes){
-            socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
+        const locatie = await Locatie.findById(bill.locatie)
+        if(locatie){
+            const bytes = await createBillForPrinter(bill, locatie.logoUrl, locatie.qrUrl)
+            if(bytes){
+                socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
+            }
         }
 
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})

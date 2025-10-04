@@ -54,7 +54,7 @@ function getRawEscPosBytes(data, products) {
 
 
 
-async function createBillForPrinter(order, logoUrl = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1759341399/t-zero_bnvfsk.png', qrUrl = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1759342152/QR-Tzero_hvexry.png') {
+async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   const reset      = Buffer.from([0x1B, 0x40]);      // ESC @
   const boldOn     = Buffer.from([0x1B, 0x45, 0x01]); // ESC E 1
   const boldOff    = Buffer.from([0x1B, 0x45, 0x00]); // ESC E 0

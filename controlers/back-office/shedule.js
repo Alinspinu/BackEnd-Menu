@@ -19,7 +19,6 @@ module.exports.addShedule = async (req, res, next) => {
         {},
         { sort: { _id: -1 } }
       );
-  
       const weekdays = ['Duminica', 'Luni', 'Marti', 'Miercuri', 'Joi', 'Vineri', 'Sambata'];
   
       let baseDate;
