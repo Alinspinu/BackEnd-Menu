@@ -112,22 +112,23 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
 
   if(order.discount > 0){
     parts.push(lf);
-    parts.push(Buffer.from(`${'Subtotal '.padEnd(23, ' ')  + order.totalProducts.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Subtotal '.padEnd(43, ' ')  + order.totalProducts.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
-    parts.push(Buffer.from(`${'Discount client '.padEnd(16, ' ') + ' - ' + order.discount} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Discount client '.padEnd(15, ' ') + ' - ' + order.discount} LEI \n`, 'ascii'))
   }
   const discount = order.discount > 0 ? order.discount : 0
   if(order.tips > 0){
     parts.push(lf);
     parts.push(normalSize);
-    parts.push(Buffer.from(`${'Subtotal '.padEnd(23, ' ') + (order.totalProducts - discount).toFixed(2).padStart(5, ' ') } LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Subtotal '.padEnd(43, ' ') + (order.totalProducts - discount).toFixed(2).padStart(5, ' ') } LEI \n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
-    parts.push(Buffer.from(`${'Bacsis '.padEnd(16, ' ') + order.tips.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Bacsis '.padEnd(15, ' ') + order.tips.toFixed(2).padStart(5, ' ')} LEI \n`, 'ascii'))
   }
 
   parts.push(lf);
+  parts.push(normalSize);
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
   parts.push(doubleWH, boldOn);
   parts.push(Buffer.from(`${'TOTAL'.padEnd(12, ' ') + order.total.toFixed(2)} LEI \n`, 'ascii'));
@@ -135,22 +136,22 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
 
 
-
+  parts.push(doubleW);
   if(order.payment.cash > 0) {
-    parts.push(Buffer.from(`${'Platit Numerar '.padEnd(23, ' ') + order.payment.cash} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit Numerar '.padEnd(15, ' ') + order.payment.cash} LEI \n`, 'ascii'))
   }
   if(order.payment.card > 0) {
-    parts.push(Buffer.from(`${'Platit Card '.padEnd(23, ' ') + order.payment.card} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit Card '.padEnd(15, ' ') + order.payment.card} LEI \n`, 'ascii'))
   }
   if(order.payment.online > 0) {
-    parts.push(Buffer.from(`${'Platit card '.padEnd(23, ' ')+ order.payment.online} LEI \n`, 'ascii'))
+    parts.push(Buffer.from(`${'Platit card '.padEnd(15, ' ')+ order.payment.online} LEI \n`, 'ascii'))
   }
-
+  parts.push(normalSize);
   
   parts.push(lf, lf, center);
   parts.push(Buffer.from('Aceasta este o nota de plata informativa. \n',  'ascii'))
   parts.push(Buffer.from('Ea trebuie sa fie insotita de bonul fiscal! \n',  'ascii'))
-  parts.push(Buffer.from('Pentru valorile nutritionale si meniul online scaneaza codul QR. \n',  'ascii'))
+  parts.push(Buffer.from('Pentru valorile nutritionale si meniul online, \n scaneaza codul QR. \n',  'ascii'))
 
 
 
