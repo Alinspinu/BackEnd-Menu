@@ -860,7 +860,7 @@ module.exports.printConsum = async (req, res) => {
           `Denumire Produs`,
           `TVA`,
           `Pret / um`,
-          'Cantitate (buc)',
+          'Cantitate',
           'Total',
         ]
         pSheet.addRow(pTitle)
@@ -881,9 +881,9 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(1).width = 5;
         pSheet.getColumn(2).width = 40; 
         pSheet.getColumn(3).width = 5; 
-        pSheet.getColumn(4).width = 15; 
-        pSheet.getColumn(5).width = 15; 
-        pSheet.getColumn(5).width = 25; 
+        pSheet.getColumn(4).width = 10; 
+        pSheet.getColumn(5).width = 10; 
+        pSheet.getColumn(6).width = 25; 
         // pSheet.getColumn(3).eachCell((cell) => {
         //   cell.font = {
         //     bold: true,
@@ -918,7 +918,7 @@ module.exports.printConsum = async (req, res) => {
           `Denumire Produs`,
           `TVA`,
           `Pret / um`,
-          'Cantitate (buc)',
+          'Cantitate',
           'Total',
         ]
         mpSheet.addRow(mpTitle)
@@ -940,9 +940,9 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.getColumn(1).width = 5;
         mpSheet.getColumn(2).width = 40; 
         mpSheet.getColumn(3).width = 5; 
-        mpSheet.getColumn(4).width = 15; 
-        mpSheet.getColumn(5).width = 15; 
-        mpSheet.getColumn(5).width = 25; 
+        mpSheet.getColumn(4).width = 10; 
+        mpSheet.getColumn(5).width = 10; 
+        mpSheet.getColumn(6).width = 25; 
         // mpSheet.getColumn(3).eachCell((cell) => {
         //   cell.font = {
         //     bold: true,
