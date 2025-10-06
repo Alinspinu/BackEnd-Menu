@@ -55,7 +55,7 @@ async  function sendBillToCustomer(buffer, email, gmail, text, pdf) {
           const mailOptions = {
               from: gmail.email,
               to: email, 
-              subject: `${text} True Fine Coffee`,
+              subject: `${text}`,
               text: `Gasiți ${text.toLowerCase()} dumneavoastră atașată.`,
               attachments: [
                 {

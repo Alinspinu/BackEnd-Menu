@@ -1173,8 +1173,8 @@ module.exports.printConsum = async (req, res) => {
 
       if(mail) {
         const buffer = await workbook.xlsx.writeBuffer();
-        const message = await sendBillToCustomer(buffer, mail, locatie.gmail, 'Raport productie');
-        res.status(200).json({message: 'Raportul a fost creart ;i trimis la ', mail})
+        const message = await sendBillToCustomer(buffer, mail, locatie.gmail, 'Raport productie ' + locatie.bussinessName + ' perioada ' + startDateToShow + ' - ' + endDateToShow);
+        res.status(200).json({message: 'Raportul a fost creart si trimis la ', mail})
       } else {
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
