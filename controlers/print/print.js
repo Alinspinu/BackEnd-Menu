@@ -914,16 +914,28 @@ module.exports.printConsum = async (req, res) => {
         pSheet.addRow([
           '',
           `TOTAL 11%`,
+          '',
+          '',
+          '',
+          '',
           `${round(totProd11)}`,
         ])
         pSheet.addRow([
           '',
           `TOTAL 21%`,
+          '',
+          '',
+          '',
+          '',
           `${round(totProd21)}`,
         ])
         pSheet.addRow([
           '',
           `TOTAL GENERAL`,
+          '',
+          '',
+          '',
+          '',
           `${round(totProd11 + totProd21)}`
         ])
 
@@ -935,7 +947,13 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(6).width = 10; 
         pSheet.getColumn(7).width = 10; 
 
-
+        const lastRowNumber = pSheet.lastRow.number;
+        for (let i = lastRowNumber; i > lastRowNumber - 3; i--) {
+          const row = pSheet.getRow(i);
+          row.eachCell((cell) => {
+            cell.font = { bold: true, size: 15 };
+          });
+        }
 
         pSheet.mergeCells(`A1:G1`)
 
@@ -987,16 +1005,28 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.addRow([
           '',
           `TOTAL 11%`,
+          '',
+          '',
+          '',
+          '',
           `${round(totMarf11)}`,
         ])
         mpSheet.addRow([
           '',
           `TOTAL 21%`,
+          '',
+          '',
+          '',
+          '',
           `${round(totMarf21)}`,
         ])
         mpSheet.addRow([
           '',
           `TOTAL GENERAL`,
+          '',
+          '',
+          '',
+          '',
           `${round(totMarf11 + totMarf21)}`
         ])
 
@@ -1008,7 +1038,15 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.getColumn(6).width = 10; 
         mpSheet.getColumn(7).width = 10; 
 
-        mpSheet.mergeCells(`A1:E1`)
+        mpSheet.mergeCells(`A1:G1`)
+
+        const lastMRowNumber = mpSheet.lastRow.number;
+        for (let i = lastMRowNumber; i > lastMRowNumber - 3; i--) {
+          const row = mpSheet.getRow(i);
+          row.eachCell((cell) => {
+            cell.font = { bold: true, size: 15 };
+          });
+        }
 
         mpSheet.getRow(1).eachCell((cell)=>{
           cell.font = {
