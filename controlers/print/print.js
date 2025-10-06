@@ -945,11 +945,12 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(4).width = 10; 
         pSheet.getColumn(5).width = 10; 
         pSheet.getColumn(6).width = 10; 
-        pSheet.getColumn(7).width = 10; 
+        pSheet.getColumn(7).width = 15; 
 
         const lastRowNumber = pSheet.lastRow.number;
         for (let i = lastRowNumber; i > lastRowNumber - 3; i--) {
           const row = pSheet.getRow(i);
+          mSheet.mergeCells(`C${i}:F${i}`)
           row.eachCell((cell) => {
             cell.font = { bold: true, size: 15 };
           });
@@ -1036,12 +1037,13 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.getColumn(4).width = 10; 
         mpSheet.getColumn(5).width = 10; 
         mpSheet.getColumn(6).width = 10; 
-        mpSheet.getColumn(7).width = 10; 
+        mpSheet.getColumn(7).width = 15; 
 
         mpSheet.mergeCells(`A1:G1`)
 
         const lastMRowNumber = mpSheet.lastRow.number;
         for (let i = lastMRowNumber; i > lastMRowNumber - 3; i--) {
+          mpSheet.mergeCells(`C${i}:F${i}`)
           const row = mpSheet.getRow(i);
           row.eachCell((cell) => {
             cell.font = { bold: true, size: 15 };
