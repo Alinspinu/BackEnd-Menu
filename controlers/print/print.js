@@ -913,8 +913,8 @@ module.exports.printConsum = async (req, res) => {
         })
         pSheet.addRow([
           '',
-          `TOTAL 11%`,
           '',
+          `TOTAL 11%`,
           '',
           '',
           '',
@@ -922,8 +922,8 @@ module.exports.printConsum = async (req, res) => {
         ])
         pSheet.addRow([
           '',
-          `TOTAL 21%`,
           '',
+          `TOTAL 21%`,
           '',
           '',
           '',
@@ -931,8 +931,8 @@ module.exports.printConsum = async (req, res) => {
         ])
         pSheet.addRow([
           '',
-          `TOTAL GENERAL`,
           '',
+          `TOTAL GENERAL`,
           '',
           '',
           '',
@@ -950,6 +950,7 @@ module.exports.printConsum = async (req, res) => {
         const lastRowNumber = pSheet.lastRow.number;
         for (let i = lastRowNumber; i > lastRowNumber - 3; i--) {
           const row = pSheet.getRow(i);
+          pSheet.mergeCells(`A${i}:B${i}`)
           pSheet.mergeCells(`C${i}:F${i}`)
           row.eachCell((cell) => {
             cell.font = { bold: true, size: 15 };
@@ -1005,8 +1006,8 @@ module.exports.printConsum = async (req, res) => {
 
         mpSheet.addRow([
           '',
-          `TOTAL 11%`,
           '',
+          `TOTAL 11%`,
           '',
           '',
           '',
@@ -1014,8 +1015,8 @@ module.exports.printConsum = async (req, res) => {
         ])
         mpSheet.addRow([
           '',
-          `TOTAL 21%`,
           '',
+          `TOTAL 21%`,
           '',
           '',
           '',
@@ -1023,8 +1024,8 @@ module.exports.printConsum = async (req, res) => {
         ])
         mpSheet.addRow([
           '',
-          `TOTAL GENERAL`,
           '',
+          `TOTAL GENERAL`,
           '',
           '',
           '',
@@ -1043,6 +1044,7 @@ module.exports.printConsum = async (req, res) => {
 
         const lastMRowNumber = mpSheet.lastRow.number;
         for (let i = lastMRowNumber; i > lastMRowNumber - 3; i--) {
+          mpSheet.mergeCells(`A${i}:B${i}`)
           mpSheet.mergeCells(`C${i}:F${i}`)
           const row = mpSheet.getRow(i);
           row.eachCell((cell) => {
