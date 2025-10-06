@@ -725,6 +725,7 @@ module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
     let products = []
+    let marfaProducts = []
     const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
     const dep =  await Dep.findById(dept)
     const start = new Date(startDate).setHours(0,0,0,0)
@@ -745,21 +746,26 @@ module.exports.printConsum = async (req, res) => {
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
-            if(product.ings.length > 1){
+            if(product.dep === 'productie'){
               const existingProduct = products.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
               } else {
                 products.push(product)
               }
+            } 
+            if(product.dep === 'marfa') {
+              const existingProduct = marfaProducts.find(p => p.name === product.name)
+              if(existingProduct){
+                existingProduct.quantity += product.quantity
+              } else {
+                marfaProducts.push(product)
+              }
             }
             product.ings.forEach(ing => {
              
               if(ing.ings && ing.ings.length){
                 ing.ings.forEach(ig => {
-                  // if(ig.ing.name === "Lapte Vegetal"){
-                  //   console.log(ig.ing.qty)
-                  // }
                   const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
                     const updatedIng = {
@@ -767,7 +773,6 @@ module.exports.printConsum = async (req, res) => {
                       ing: existingIngredient.ing
                     }
                     ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                    // existingIngredient.qty += ig.qty 
                   } else {
                     ings.push(ig);
                   }
@@ -781,13 +786,11 @@ module.exports.printConsum = async (req, res) => {
                       ing: existingIngredient.ing
                     }
                     ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-                    // existingIngredient.qty += ing.qty
                   } else {
                     ings.push(ing);
                   }
                 }
                 else {
-                  // console.log(ing)
                 }
               }
             })
@@ -814,9 +817,6 @@ module.exports.printConsum = async (req, res) => {
                       qty: existingIngredient.qty + topping.qty,
                       ing: existingIngredient.ing
                     }
-                    // if(updatedIng.ing.name === "Lapte Vegetal"){
-                    //   console.log(updatedIng.qty)
-                    // }
                     ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
                   } else {
                     const ig = {
@@ -833,14 +833,15 @@ module.exports.printConsum = async (req, res) => {
       } 
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       products.sort((a, b) => a.name.localeCompare(b.name))
+      marfaProducts.sort((a, b) => a.name.localeCompare(b.name))
       const filterIngredients = ings.filter(i => i.ing.dept.toString() === dep._id.toString())
 
 
       const workbook = new exceljs.Workbook();
 
-      const pSheet = workbook.addWorksheet(`Produse vandute`);
+      const pSheet = workbook.addWorksheet(`Produse vandute din productie`);
       const pTitle =  [
-        `Produse vandute din ${startDateToShow} pana la ${endDateToShow}`,
+        `Perioada - ${startDateToShow} pana la ${endDateToShow}`,
          '',
          '',
         ]
@@ -881,6 +882,55 @@ module.exports.printConsum = async (req, res) => {
           }
       })
         pSheet.getRow(2).eachCell((cell)=>{
+          cell.font = {
+              bold: true,
+              size: 13
+          }
+      })
+
+      const mpSheet = workbook.addWorksheet(`Produse vandute ca marfa`);
+      const mpTitle =  [
+        `Perioada - ${startDateToShow} pana la ${endDateToShow}`,
+         '',
+         '',
+        ]
+      
+        const mpHead = [
+          'Nr',
+          `Denumire Produs`,
+          'Cantitate (buc)',
+        ]
+        mpSheet.addRow(mpTitle)
+        mpSheet.addRow(mpHead)
+
+        marfaProducts.forEach((p, i) => {
+          mpSheet.addRow(
+            [
+              `${i+1}`,
+              `${p.name}`,
+              `${p.quantity}`,
+            ]
+            )
+        })
+
+        mpSheet.getColumn(1).width = 5;
+        mpSheet.getColumn(2).width = 50; 
+        mpSheet.getColumn(3).width = 20; 
+        mpSheet.getColumn(3).eachCell((cell) => {
+          cell.font = {
+            bold: true,
+            size: 13
+        },
+        cell.alignment = { vertical: "center", horizontal: 'center'}
+        }) 
+        mpSheet.mergeCells(`A1:E1`)
+
+        mpSheet.getRow(1).eachCell((cell)=>{
+          cell.font = {
+              size: 14
+          }
+      })
+        mpSheet.getRow(2).eachCell((cell)=>{
           cell.font = {
               bold: true,
               size: 13
