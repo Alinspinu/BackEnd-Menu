@@ -17,6 +17,7 @@ const subProductSchema = new Schema({
     description: {
         type: String
     },
+    sellPriceNoVat: Number,
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
