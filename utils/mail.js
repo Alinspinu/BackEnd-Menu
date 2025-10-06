@@ -56,7 +56,7 @@ async  function sendBillToCustomer(buffer, email, gmail, text, pdf) {
               from: gmail.email,
               to: email, 
               subject: `${text}`,
-              text: `Gasiți ${text.toLowerCase()} dumneavoastră atașată.`,
+              text: `Gasiți ${text.toLowerCase()} dumneavoastră atașat.`,
               attachments: [
                 {
                   filename: `${text}${ext}`,
