@@ -834,8 +834,15 @@ module.exports.printConsum = async (req, res) => {
         })
       } 
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
-      products.sort((a, b) => a.name.localeCompare(b.name))
-      marfaProducts.sort((a, b) => a.name.localeCompare(b.name))
+      products.sort((a, b) => {
+        if (a.vat !== b.vat) return a.vat - b.vat;
+        return a.name.localeCompare(b.name);
+      });
+      
+      marfaProducts.sort((a, b) => {
+        if (a.vat !== b.vat) return a.vat - b.vat;
+        return a.name.localeCompare(b.name);
+      });
       const filterIngredients = ings.filter(i => i.ing.dept.toString() === dep._id.toString())
 
 
@@ -864,7 +871,7 @@ module.exports.printConsum = async (req, res) => {
             [
               `${i+1}`,
               `${p.name}`,
-              `${p.tva}`,
+              `${p.tva} %`,
               `${p.price}`,
               `${p.quantity}`,
               `${p.total}`,
@@ -884,7 +891,7 @@ module.exports.printConsum = async (req, res) => {
         // },
         // cell.alignment = { vertical: "center", horizontal: 'center'}
         // }) 
-        
+
         pSheet.mergeCells(`A1:E1`)
 
         pSheet.getRow(1).eachCell((cell)=>{
@@ -922,7 +929,7 @@ module.exports.printConsum = async (req, res) => {
             [
               `${i+1}`,
               `${p.name}`,
-              `${p.tva}`,
+              `${p.tva} %`,
               `${p.price}`,
               `${p.quantity}`,
               `${p.total}`,
