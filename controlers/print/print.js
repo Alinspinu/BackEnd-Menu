@@ -725,6 +725,10 @@ module.exports.printConsum = async (req, res) => {
   try{
     let ings = []
     let products = []
+    let totProd21 = 0
+    let totProd11 = 0
+    let totMarf21 = 0
+    let totMarf11 = 0
     let marfaProducts = []
     const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
     const dep =  await Dep.findById(dept)
@@ -747,14 +751,25 @@ module.exports.printConsum = async (req, res) => {
         orders.forEach(order=> {
           order.products.forEach(product => {
             product.tot = parseFloat(product.total)
-            console.log(product.name,'  --  ', product.price)
             if(product.dep === 'productie'){
               const existingProduct = products.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
                 existingProduct.tot += product.tot
                 existingProduct.discount += product.discount
+                if(product.tva === 11){
+                  totProd11 += product.tot - product.discount
+                }
+                if(product.tva === 21){
+                  totProd21 += product.tot - product.discount
+                }
               } else {
+                if(product.tva === 11){
+                  totProd11 += product.tot - product.discount
+                }
+                if(product.tva === 21){
+                  totProd21 += product.tot - product.discount
+                }
                 products.push(product)
               }
             } 
@@ -764,7 +779,19 @@ module.exports.printConsum = async (req, res) => {
                 existingProduct.quantity += product.quantity
                 existingProduct.tot += product.tot
                 existingProduct.discount += product.discount
+                if(product.tva === 11){
+                  totMarf11 += product.tot - product.discount
+                }
+                if(product.tva === 21){
+                  totMarf21 += product.tot - product.discount
+                }
               } else {
+                if(product.tva === 11){
+                  totMarf11 += product.tot - product.discount
+                }
+                if(product.tva === 21){
+                  totMarf21 += product.tot - product.discount
+                }
                 marfaProducts.push(product)
               }
             }
@@ -884,6 +911,17 @@ module.exports.printConsum = async (req, res) => {
             ]
             )
         })
+        pSheet.addRow([
+          `TOTAL 11%`,
+          '',
+          `${round(totProd11)}`,
+          `TOTAL 21%`,
+          ''
+          `${round(totProd21)}`
+          `TOTAL GENERAL`,
+          `${round(totProd11 + totProd21)}`
+        ])
+
         pSheet.getColumn(1).width = 5;
         pSheet.getColumn(2).width = 40; 
         pSheet.getColumn(3).width = 5; 
@@ -891,15 +929,10 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(5).width = 10; 
         pSheet.getColumn(6).width = 10; 
         pSheet.getColumn(7).width = 10; 
-        // pSheet.getColumn(3).eachCell((cell) => {
-        //   cell.font = {
-        //     bold: true,
-        //     size: 13
-        // },
-        // cell.alignment = { vertical: "center", horizontal: 'center'}
-        // }) 
 
-        pSheet.mergeCells(`A1:E1`)
+
+
+        pSheet.mergeCells(`A1:G1`)
 
         pSheet.getRow(1).eachCell((cell)=>{
           cell.font = {
@@ -946,6 +979,17 @@ module.exports.printConsum = async (req, res) => {
             )
         })
 
+        mpSheet.addRow([
+          `TOTAL 11%`,
+          '',
+          `${round(totMarf11)}`,
+          `TOTAL 21%`,
+          ''
+          `${round(totMarf21)}`
+          `TOTAL GENERAL`,
+          `${round(totMarf11 + totMarf21)}`
+        ])
+
         mpSheet.getColumn(1).width = 5;
         mpSheet.getColumn(2).width = 40; 
         mpSheet.getColumn(3).width = 5; 
@@ -953,13 +997,7 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.getColumn(5).width = 10; 
         mpSheet.getColumn(6).width = 10; 
         mpSheet.getColumn(7).width = 10; 
-        // mpSheet.getColumn(3).eachCell((cell) => {
-        //   cell.font = {
-        //     bold: true,
-        //     size: 13
-        // },
-        // cell.alignment = { vertical: "center", horizontal: 'center'}
-        // }) 
+
         mpSheet.mergeCells(`A1:E1`)
 
         mpSheet.getRow(1).eachCell((cell)=>{
