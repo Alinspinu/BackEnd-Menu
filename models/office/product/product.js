@@ -32,6 +32,7 @@ const productTrueSchema = new Schema({
     printOut:{
         type: Boolean,
     },
+    sellPriceNoVat: Number,
     toppings:[
             {
                 name: String,

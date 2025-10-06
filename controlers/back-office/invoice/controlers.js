@@ -85,7 +85,7 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
     const inv = await chageValues(invoiceData)
     const xml = buildEFacturaHeaderXML(inv, noteDate)
     let vatNumber = invoiceData.supplier.vatNumber.replace(/\D/g, '');
-    const response = await uploadInvoice(xml, vatNumber, token);
+    const response = await uploadInvoice(xml, vatNumber, false, token);
     inv.issueDate = noteDate;
     inv.eFacturaId = response.eFacturaId;
     inv.eFacturaStatus = response.eFacturaStatus;
