@@ -916,8 +916,8 @@ module.exports.printConsum = async (req, res) => {
           '',
           `${round(totProd11)}`,
           `TOTAL 21%`,
-          ''
-          `${round(totProd21)}`
+          '',
+          `${round(totProd21)}`,
           `TOTAL GENERAL`,
           `${round(totProd11 + totProd21)}`
         ])
@@ -984,8 +984,8 @@ module.exports.printConsum = async (req, res) => {
           '',
           `${round(totMarf11)}`,
           `TOTAL 21%`,
-          ''
-          `${round(totMarf21)}`
+          '',
+          `${round(totMarf21)}`,
           `TOTAL GENERAL`,
           `${round(totMarf11 + totMarf21)}`
         ])
