@@ -752,6 +752,7 @@ module.exports.printConsum = async (req, res) => {
                 existingProduct.quantity += product.quantity
                 existingProduct.total += +product.total
               } else {
+                product.total = +product.total
                 products.push(product)
               }
             } 
@@ -761,6 +762,7 @@ module.exports.printConsum = async (req, res) => {
                 existingProduct.quantity += product.quantity
                 existingProduct.total += +product.total
               } else {
+                product.total = +product.total
                 marfaProducts.push(product)
               }
             }
