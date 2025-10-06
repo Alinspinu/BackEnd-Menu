@@ -912,12 +912,17 @@ module.exports.printConsum = async (req, res) => {
             )
         })
         pSheet.addRow([
+          '',
           `TOTAL 11%`,
-          '',
           `${round(totProd11)}`,
-          `TOTAL 21%`,
+        ])
+        pSheet.addRow([
           '',
+          `TOTAL 21%`,
           `${round(totProd21)}`,
+        ])
+        pSheet.addRow([
+          '',
           `TOTAL GENERAL`,
           `${round(totProd11 + totProd21)}`
         ])
@@ -980,12 +985,17 @@ module.exports.printConsum = async (req, res) => {
         })
 
         mpSheet.addRow([
+          '',
           `TOTAL 11%`,
-          '',
           `${round(totMarf11)}`,
-          `TOTAL 21%`,
+        ])
+        mpSheet.addRow([
           '',
+          `TOTAL 21%`,
           `${round(totMarf21)}`,
+        ])
+        mpSheet.addRow([
+          '',
           `TOTAL GENERAL`,
           `${round(totMarf11 + totMarf21)}`
         ])
