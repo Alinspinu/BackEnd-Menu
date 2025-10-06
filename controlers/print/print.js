@@ -750,7 +750,7 @@ module.exports.printConsum = async (req, res) => {
               const existingProduct = products.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
-                existingProduct.total += product.total
+                existingProduct.total += +product.total
               } else {
                 products.push(product)
               }
@@ -759,7 +759,7 @@ module.exports.printConsum = async (req, res) => {
               const existingProduct = marfaProducts.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
-                existingProduct.total += product.total
+                existingProduct.total += +product.total
               } else {
                 marfaProducts.push(product)
               }
@@ -835,12 +835,12 @@ module.exports.printConsum = async (req, res) => {
       } 
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       products.sort((a, b) => {
-        if (a.vat !== b.vat) return a.vat - b.vat;
+        if (a.tva !== b.tva) return a.tva - b.tva;
         return a.name.localeCompare(b.name);
       });
       
       marfaProducts.sort((a, b) => {
-        if (a.vat !== b.vat) return a.vat - b.vat;
+        if (a.tva !== b.tva) return a.tva - b.tva;
         return a.name.localeCompare(b.name);
       });
       const filterIngredients = ings.filter(i => i.ing.dept.toString() === dep._id.toString())
@@ -874,7 +874,7 @@ module.exports.printConsum = async (req, res) => {
               `${p.tva} %`,
               `${p.price}`,
               `${p.quantity}`,
-              `${p.total}`,
+              `${round(p.total)}`,
             ]
             )
         })
@@ -932,7 +932,7 @@ module.exports.printConsum = async (req, res) => {
               `${p.tva} %`,
               `${p.price}`,
               `${p.quantity}`,
-              `${p.total}`,
+              `${round(p.total)}`,
             ]
             )
         })
