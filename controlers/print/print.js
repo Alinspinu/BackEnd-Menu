@@ -746,13 +746,14 @@ module.exports.printConsum = async (req, res) => {
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
+            console.log(product.name,'  --  ', product.total)
             if(product.dep === 'productie'){
               const existingProduct = products.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
-                existingProduct.total += +product.total
+                existingProduct.total += parseFloat(product.total)
               } else {
-                product.total = +product.total
+                product.total = parseFloat(product.total)
                 products.push(product)
               }
             } 
@@ -760,9 +761,9 @@ module.exports.printConsum = async (req, res) => {
               const existingProduct = marfaProducts.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
-                existingProduct.total += +product.total
+                existingProduct.total += parseFloat(product.total)
               } else {
-                product.total = +product.total
+                product.total = parseFloat(product.total)
                 marfaProducts.push(product)
               }
             }
