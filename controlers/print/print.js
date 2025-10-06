@@ -950,7 +950,7 @@ module.exports.printConsum = async (req, res) => {
         const lastRowNumber = pSheet.lastRow.number;
         for (let i = lastRowNumber; i > lastRowNumber - 3; i--) {
           const row = pSheet.getRow(i);
-          mSheet.mergeCells(`C${i}:F${i}`)
+          pSheet.mergeCells(`C${i}:F${i}`)
           row.eachCell((cell) => {
             cell.font = { bold: true, size: 15 };
           });
