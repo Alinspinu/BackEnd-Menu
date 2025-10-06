@@ -750,6 +750,7 @@ module.exports.printConsum = async (req, res) => {
               const existingProduct = products.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
+                existingProduct.total += product.total
               } else {
                 products.push(product)
               }
@@ -758,6 +759,7 @@ module.exports.printConsum = async (req, res) => {
               const existingProduct = marfaProducts.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
+                existingProduct.total += product.total
               } else {
                 marfaProducts.push(product)
               }
@@ -849,7 +851,10 @@ module.exports.printConsum = async (req, res) => {
         const pHead = [
           'Nr',
           `Denumire Produs`,
+          `TVA`,
+          `Pret / um`,
           'Cantitate (buc)',
+          'Total',
         ]
         pSheet.addRow(pTitle)
         pSheet.addRow(pHead)
@@ -859,21 +864,27 @@ module.exports.printConsum = async (req, res) => {
             [
               `${i+1}`,
               `${p.name}`,
+              `${p.tva}`,
+              `${p.price}`,
               `${p.quantity}`,
+              `${p.total}`,
             ]
             )
         })
-
         pSheet.getColumn(1).width = 5;
-        pSheet.getColumn(2).width = 50; 
-        pSheet.getColumn(3).width = 20; 
-        pSheet.getColumn(3).eachCell((cell) => {
-          cell.font = {
-            bold: true,
-            size: 13
-        },
-        cell.alignment = { vertical: "center", horizontal: 'center'}
-        }) 
+        pSheet.getColumn(2).width = 40; 
+        pSheet.getColumn(3).width = 5; 
+        pSheet.getColumn(4).width = 15; 
+        pSheet.getColumn(5).width = 15; 
+        pSheet.getColumn(5).width = 25; 
+        // pSheet.getColumn(3).eachCell((cell) => {
+        //   cell.font = {
+        //     bold: true,
+        //     size: 13
+        // },
+        // cell.alignment = { vertical: "center", horizontal: 'center'}
+        // }) 
+        
         pSheet.mergeCells(`A1:E1`)
 
         pSheet.getRow(1).eachCell((cell)=>{
@@ -898,7 +909,10 @@ module.exports.printConsum = async (req, res) => {
         const mpHead = [
           'Nr',
           `Denumire Produs`,
+          `TVA`,
+          `Pret / um`,
           'Cantitate (buc)',
+          'Total',
         ]
         mpSheet.addRow(mpTitle)
         mpSheet.addRow(mpHead)
@@ -908,21 +922,27 @@ module.exports.printConsum = async (req, res) => {
             [
               `${i+1}`,
               `${p.name}`,
+              `${p.tva}`,
+              `${p.price}`,
               `${p.quantity}`,
+              `${p.total}`,
             ]
             )
         })
 
         mpSheet.getColumn(1).width = 5;
-        mpSheet.getColumn(2).width = 50; 
-        mpSheet.getColumn(3).width = 20; 
-        mpSheet.getColumn(3).eachCell((cell) => {
-          cell.font = {
-            bold: true,
-            size: 13
-        },
-        cell.alignment = { vertical: "center", horizontal: 'center'}
-        }) 
+        mpSheet.getColumn(2).width = 40; 
+        mpSheet.getColumn(3).width = 5; 
+        mpSheet.getColumn(4).width = 15; 
+        mpSheet.getColumn(5).width = 15; 
+        mpSheet.getColumn(5).width = 25; 
+        // mpSheet.getColumn(3).eachCell((cell) => {
+        //   cell.font = {
+        //     bold: true,
+        //     size: 13
+        // },
+        // cell.alignment = { vertical: "center", horizontal: 'center'}
+        // }) 
         mpSheet.mergeCells(`A1:E1`)
 
         mpSheet.getRow(1).eachCell((cell)=>{
