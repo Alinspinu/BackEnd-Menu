@@ -753,6 +753,7 @@ module.exports.printConsum = async (req, res) => {
               if(existingProduct){
                 existingProduct.quantity += product.quantity
                 existingProduct.tot += product.tot
+                existingProduct.discount += product.discount
               } else {
                 products.push(product)
               }
@@ -762,6 +763,7 @@ module.exports.printConsum = async (req, res) => {
               if(existingProduct){
                 existingProduct.quantity += product.quantity
                 existingProduct.tot += product.tot
+                existingProduct.discount += product.discount
               } else {
                 marfaProducts.push(product)
               }
@@ -863,6 +865,7 @@ module.exports.printConsum = async (req, res) => {
           `TVA`,
           `Pret / um`,
           'Cantitate',
+          'Discount',
           'Total',
         ]
         pSheet.addRow(pTitle)
@@ -876,7 +879,8 @@ module.exports.printConsum = async (req, res) => {
               `${p.tva} %`,
               `${p.price}`,
               `${p.quantity}`,
-              `${round(p.tot)}`,
+              `${round(p.discount)}`,
+              `${round(p.tot - p.discount)}`,
             ]
             )
         })
@@ -885,7 +889,8 @@ module.exports.printConsum = async (req, res) => {
         pSheet.getColumn(3).width = 5; 
         pSheet.getColumn(4).width = 10; 
         pSheet.getColumn(5).width = 10; 
-        pSheet.getColumn(6).width = 25; 
+        pSheet.getColumn(6).width = 10; 
+        pSheet.getColumn(7).width = 10; 
         // pSheet.getColumn(3).eachCell((cell) => {
         //   cell.font = {
         //     bold: true,
@@ -921,6 +926,7 @@ module.exports.printConsum = async (req, res) => {
           `TVA`,
           `Pret / um`,
           'Cantitate',
+          'Discount',
           'Total',
         ]
         mpSheet.addRow(mpTitle)
@@ -934,7 +940,8 @@ module.exports.printConsum = async (req, res) => {
               `${p.tva} %`,
               `${p.price}`,
               `${p.quantity}`,
-              `${round(p.tot)}`,
+              `${round(p.discount)}`,
+              `${round(p.tot - p.discount)}`,
             ]
             )
         })
@@ -944,7 +951,8 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.getColumn(3).width = 5; 
         mpSheet.getColumn(4).width = 10; 
         mpSheet.getColumn(5).width = 10; 
-        mpSheet.getColumn(6).width = 25; 
+        mpSheet.getColumn(6).width = 10; 
+        mpSheet.getColumn(7).width = 10; 
         // mpSheet.getColumn(3).eachCell((cell) => {
         //   cell.font = {
         //     bold: true,
