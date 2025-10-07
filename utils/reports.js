@@ -881,7 +881,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                 
                                 utilitiesEntryes.push(uObject)
                             case 'Materie Primă':
-                                    if(ing.gest.name === 'Bucătărie'){
+                                    if(ing.gest?.name === 'Bucătărie'){
                                         if(!log.uploadPrice){
                                             values.inIngsProdBuc += (ing.tvaPrice * log.qty)
                                         } else {
