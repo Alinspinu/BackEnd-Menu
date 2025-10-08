@@ -54,6 +54,26 @@ const locatieSchema = new Schema({
         type: Boolean,
         required: true
       },
+      spendings: {
+        rent: {
+          type: Number,
+          default: 0,
+        },
+        utilities: {
+          type: Number,
+          default: 0
+        },
+        services: {
+          type: Number,
+          default: 0,
+        },
+        expendables: {
+          type: Number,
+          default: 0
+        }
+
+
+      },
       gmail: {
        email: String,
        app: {
