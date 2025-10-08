@@ -52,7 +52,6 @@ const { parseStringPromise } = require('xml2js');
         : 'Unknown VAT Number'
     };
 
-    console.log(invoiceData.Invoice)
 
     const products = invoiceData.Invoice["cac:InvoiceLine"].map(item => {
       // ------- helpers -------

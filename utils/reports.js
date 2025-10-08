@@ -805,7 +805,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                 }
                                 obInvEntryes.push(oObject)
                               break;
-                            case 'Marketing':                    
+                            case 'Marketing':   
+                               console.log(log)                 
                                 if(!log.uploadPrice){
                                     values.marketingValue += (ing.tvaPrice * log.qty)
                                 } else {
