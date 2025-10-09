@@ -828,8 +828,8 @@ module.exports.printConsum = async (req, res) => {
               }
             })
             if(product.toppings.length){
-              console.log(product.toppings.ing.name)
               product.toppings.forEach(topping=>{
+                console.log(topping.name)
                 if(topping.ing.ings.length){
                   topping.ing.ings.forEach(ig => {
                     const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
