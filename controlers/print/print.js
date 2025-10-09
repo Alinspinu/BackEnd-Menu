@@ -828,7 +828,7 @@ module.exports.printConsum = async (req, res) => {
               }
             })
             if(product.toppings.length){
-              console.log(product.toppings.name)
+              console.log(product.toppings.ing.name)
               product.toppings.forEach(topping=>{
                 if(topping.ing.ings.length){
                   topping.ing.ings.forEach(ig => {
