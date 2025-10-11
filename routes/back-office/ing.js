@@ -49,6 +49,8 @@ router.route('/gest')
     .put(depsRoutes.editGest)
     .delete(depsRoutes.deleteGest)
 
+router.route('/gest-report').post(ingRoutes.getGestReport)
+
 // router.route('/fix').get(ingRoutes.fixbuBulealaOvi)
 
 // router.route('/update-log').get(ingRoutes.updateUploadLog)

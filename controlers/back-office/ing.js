@@ -7,8 +7,36 @@ const DelProd = require('../../models/office/product/deletetProduct')
 const CigarsInv = require('../../models/cigars-inv')
 const salePoint = require('../../models/utils/sale-point')
 const ComparedInventary = require('../../models/office/comp-inv')
+const Nir = require('../../models/office/nir')
 
 
+
+
+module.exports.getGestReport = async(req, res) => {
+
+  const {start, end, dep, loc, point, gest, inv} = req.body
+
+  const startDate = new Date(start).setHours(0,0,0,0)
+  const endDate = new Date(end).setHours(23,59,59, 9999)
+
+  try{
+    let invValue = 0
+    const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name')
+    const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }})
+    const inv = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice'})
+
+    for(let ing of inv.ingredients){
+      invValue += ing.ing.sellPrice
+    } 
+
+    console.log(invValue)
+
+    res.status(200).json({})
+  } catch(e) {
+    console.log(e)
+    res.status(500).json(e)
+  }
+}
 
 
 
