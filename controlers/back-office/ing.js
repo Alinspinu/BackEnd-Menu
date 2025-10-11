@@ -37,19 +37,25 @@ module.exports.getGestReport = async(req, res) => {
       for(let nir of nirs){
         for(let i of nir.ingredients){
           if(i.ing.toString() === ing._id.toString()){
+            const existingEntry = entries.find(e => e.nirId === nir._id.toString())
+            if(existingEntry){
+                existingEntry.value += (i.sellPrice * i.qty)
+            } else {
               const entry = {
                 date: nir.documentDate,
                 suplier: nir.suplier.name,
                 nrDoc: nir.nrDoc,
                 value: i.sellPrice * i.qty,
-                type: 'intrare'
+                type: 'intrare',
+                nirId: nir._id.toString()
               }
               entries.push(entry)
+            }
           }
         }
       }
     }
-
+    
 
 
     res.status(200).json({value: invValue, entries: entries})
