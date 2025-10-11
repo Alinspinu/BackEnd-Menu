@@ -28,8 +28,8 @@ module.exports.getGestReport = async(req, res) => {
     if(inventary){
       console.log('ingrediente', inventary.ingredients.length)
       for(let ing of inventary.ingredients){
-        console.log('valoare', ing.ing.sellPrice)
-        invValue += ing.ing.sellPrice
+        console.log('valoare', ing.ing.sellPrice * ing.faptic)
+        invValue += ing.ing.sellPrice * ing.faptic
       } 
     }
 
