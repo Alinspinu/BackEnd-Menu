@@ -26,8 +26,9 @@ module.exports.getGestReport = async(req, res) => {
     const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice'})
 
     if(inventary){
-
+      console.log('ingrediente', inventary.ingredients.length)
       for(let ing of inventary.ingredients){
+        console.log('valoare', ing.ing.sellPrice)
         invValue += ing.ing.sellPrice
       } 
     }
