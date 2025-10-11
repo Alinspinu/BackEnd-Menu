@@ -23,12 +23,12 @@ module.exports.getGestReport = async(req, res) => {
     let invValue = 0
     const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name')
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }})
-    const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice'})
+    const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice name'})
 
     if(inventary){
       console.log('ingrediente', inventary.ingredients.length)
       for(let ing of inventary.ingredients){
-        console.log('valoare', ing.ing.sellPrice * ing.faptic)
+        console.log(ing.ing.name, ' ', ing.ing.sellPrice * ing.faptic)
         invValue += ing.ing.sellPrice * ing.faptic
       } 
     }
