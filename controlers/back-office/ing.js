@@ -28,6 +28,7 @@ module.exports.getGestReport = async(req, res) => {
     if(inventary){
       console.log('ingrediente', inventary.ingredients.length)
       for(let ing of inventary.ingredients){
+        console.log('departament ', ing.dep)
         console.log(ing.ing.name, ' ', ing.ing.sellPrice * ing.faptic, ' qty ', ing.faptic)
         invValue += ing.ing.sellPrice * ing.faptic
       } 
