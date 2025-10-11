@@ -21,22 +21,38 @@ module.exports.getGestReport = async(req, res) => {
 
   try{
     let invValue = 0
-    const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name')
-    const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }})
+
+    let entries = []
+    const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice')
+    const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }}).populate({path: 'suplier', select: 'name'})
     const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice name'})
 
     if(inventary){
-      console.log('ingrediente', inventary.ingredients.length)
       for(let ing of inventary.ingredients){
-        console.log('departament ', ing.dep)
-        console.log(ing.ing.name, ' ', ing.ing.sellPrice * ing.faptic, ' qty ', ing.faptic)
         invValue += ing.ing.sellPrice * ing.faptic
       } 
     }
 
-    console.log(invValue)
+    for(let ing of ings){
+      for(let nir of nirs){
+        for(let i of nir.ingredients){
+          if(i.ing.toString() === ing._id.toString()){
+              const entry = {
+                date: nir.documentDate,
+                suplier: nir.suplier.name,
+                nrDoc: nir.nrDoc,
+                value: i.sellPrice * i.qty,
+                type: 'intrare'
+              }
+              entries.push(entry)
+          }
+        }
+      }
+    }
 
-    res.status(200).json({value: invValue})
+
+
+    res.status(200).json({value: invValue, entries: entries})
   } catch(e) {
     console.log(e)
     res.status(500).json(e)
