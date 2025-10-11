@@ -21,7 +21,7 @@ module.exports.getGestReport = async(req, res) => {
 
   try{
     let invValue = 0
-
+    const days = getDaysBetween(startDate, endDate)
     let entries = []
     const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice')
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }}).populate({path: 'suplier', select: 'name'})
@@ -37,32 +37,56 @@ module.exports.getGestReport = async(req, res) => {
       for(let nir of nirs){
         for(let i of nir.ingredients){
           if(i.ing.toString() === ing._id.toString()){
-            const existingEntry = entries.find(e => e.nirId === nir._id.toString())
-            if(existingEntry){
-                existingEntry.value += (i.sellPrice * i.qty)
-            } else {
-              const entry = {
-                date: nir.documentDate,
-                suplier: nir.suplier.name,
-                nrDoc: nir.nrDoc,
-                value: i.sellPrice * i.qty,
-                type: 'intrare',
-                nirId: nir._id.toString()
+            const day = days.find(d => new Date(d.date) === new Date(nir.documentDate).setHours(0,0,0,0))
+            if(day){
+              const existingEntry = day.entries.find(e => e.nirId === nir._id.toString())
+              if(existingEntry){
+                  existingEntry.value += (i.sellPrice * i.qty)
+              } else {
+                const entry = {
+                  date: nir.documentDate,
+                  suplier: nir.suplier.name,
+                  nrDoc: nir.nrDoc,
+                  value: i.sellPrice * i.qty,
+                  type: 'intrare',
+                  nirId: nir._id.toString()
+                }
+                day.entries.push(entry)
               }
-              entries.push(entry)
             }
+
           }
         }
       }
     }
-    
-
-
-    res.status(200).json({value: invValue, entries: entries})
+  
+    res.status(200).json({value: invValue, days: days})
   } catch(e) {
     console.log(e)
     res.status(500).json(e)
   }
+}
+
+
+function getDaysBetween(startDateStr, endDateStr) {
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+  const result = [];
+
+  // Normalize time to midnight
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    result.push({
+      date: new Date(d).toISOString(),
+      in: 0,
+      out: 0,
+      entries: []
+    });
+  }
+
+  return result;
 }
 
 
