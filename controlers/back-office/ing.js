@@ -30,7 +30,24 @@ module.exports.getGestReport = async(req, res) => {
     for(let o of orders){
       for(let p of o.products){
         if(p.dep === 'marfa'){
-          console.log(p.name, ' disc ', p.discount, ' price ', p.price , ' qty ', p.quantity , ' total ',p.total)
+          // console.log(p.name, ' disc ', p.discount, ' price ', p.price , ' qty ', p.quantity , ' total ',p.total)
+          const day = days.find(d => new Date(d.date).getDate() === new Date(o.updatedAt).getDate())
+          if(day){
+            const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul')
+            if(existingEntry){
+              existingEntry.value += round((p.price * p.quantity) - p.discount)
+            } else {
+              const entry = {
+                date: o.createdAt,
+                description: 'Vanzare cu amanuntul',
+                nrDoc: o.dayCounter,
+                value: round((p.price * p.quantity) - p.discount),
+                type: 'iesire',
+                docId: o._id.toString()
+              }
+              day.entries.push(entry)
+            }
+          }
         }
       }
     }
@@ -47,18 +64,17 @@ module.exports.getGestReport = async(req, res) => {
           if(i.ing.toString() === ing._id.toString()){
             const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
             if(day){
-              const existingEntry = day.entries.find(e => e.nirId === nir._id.toString())
+              const existingEntry = day.entries.find(e => e.docId === nir._id.toString())
               if(existingEntry){
                   existingEntry.value += (i.sellPrice * i.qty)
-                  
               } else {
                 const entry = {
                   date: nir.documentDate,
-                  suplier: nir.suplier.name,
+                  description: nir.suplier.name,
                   nrDoc: nir.nrDoc,
                   value: i.sellPrice * i.qty,
                   type: 'intrare',
-                  nirId: nir._id.toString()
+                  docId: nir._id.toString()
                 }
                 day.entries.push(entry)
               }
