@@ -29,7 +29,7 @@ module.exports.getGestReport = async(req, res) => {
 
     for(let o of orders){
       for(let p of o.products){
-        if(p.dep === 'marfa'){
+        if(p.dep === 'marfa' && p.ings[0].gestiune.toString() === gest){
           // console.log(p.name, ' disc ', p.discount, ' price ', p.price , ' qty ', p.quantity , ' total ',p.total)
           const day = days.find(d => new Date(d.date).getDate() === new Date(o.updatedAt).getDate())
           if(day){
@@ -61,27 +61,29 @@ module.exports.getGestReport = async(req, res) => {
     for(let ing of ings){
       for(let nir of nirs){
         for(let i of nir.ingredients){
-          if(i.ing.toString() === ing._id.toString()){
-            const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
-            if(day){
-              const existingEntry = day.entries.find(e => e.docId === nir._id.toString())
-              if(existingEntry){
-                  existingEntry.value += (i.sellPrice * i.qty)
-              } else {
-                const entry = {
-                  date: nir.documentDate,
-                  description: nir.suplier.name,
-                  nrDoc: nir.nrDoc,
-                  value: i.sellPrice * i.qty,
-                  type: 'intrare',
-                  docId: nir._id.toString()
+          if(i.invGestiune.toString() === gest){
+            if(i.ing.toString() === ing._id.toString()){
+              const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
+              if(day){
+                const existingEntry = day.entries.find(e => e.docId === nir._id.toString())
+                if(existingEntry){
+                    existingEntry.value += (i.sellPrice * i.qty)
+                } else {
+                  const entry = {
+                    date: nir.documentDate,
+                    description: nir.suplier.name,
+                    nrDoc: nir.nrDoc,
+                    value: i.sellPrice * i.qty,
+                    type: 'intrare',
+                    docId: nir._id.toString()
+                  }
+                  day.entries.push(entry)
                 }
-                day.entries.push(entry)
               }
+  
             }
-
           }
-        }
+          }
       }
     }
 
