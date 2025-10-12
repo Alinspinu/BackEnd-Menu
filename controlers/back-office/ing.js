@@ -22,27 +22,34 @@ module.exports.getGestReport = async(req, res) => {
   try{
     let invValue = 0
     const days = getDaysBetween(startDate, endDate)
-    let entries = []
     const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice')
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }}).populate({path: 'suplier', select: 'name'})
     const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice name'})
+    const orders = await Order.find({locatie: loc, salePoint: point, updatedAt: {$gte: startDate, $lte: endDate}, 'products.dep': 'marfa'}) 
+
+    for(let o of orders){
+      for(let p of o.products){
+        if(p.dep === 'marfa'){
+          console.log(p.name, ' disc ', p.discount, ' price ', p.price , ' qty ', p.quantity , ' total ',p.total)
+        }
+      }
+    }
 
     if(inventary){
       for(let ing of inventary.ingredients){
         invValue += ing.ing.sellPrice * ing.faptic
       } 
     }
-
     for(let ing of ings){
       for(let nir of nirs){
         for(let i of nir.ingredients){
           if(i.ing.toString() === ing._id.toString()){
             const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
-            console.log(day)
             if(day){
               const existingEntry = day.entries.find(e => e.nirId === nir._id.toString())
               if(existingEntry){
                   existingEntry.value += (i.sellPrice * i.qty)
+                  day.
               } else {
                 const entry = {
                   date: nir.documentDate,
@@ -60,6 +67,8 @@ module.exports.getGestReport = async(req, res) => {
         }
       }
     }
+
+
   
     res.status(200).json({value: invValue, days: days})
   } catch(e) {
