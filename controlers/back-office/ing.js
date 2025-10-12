@@ -37,7 +37,8 @@ module.exports.getGestReport = async(req, res) => {
       for(let nir of nirs){
         for(let i of nir.ingredients){
           if(i.ing.toString() === ing._id.toString()){
-            const day = days.find(d => new Date(d.date) === new Date(nir.documentDate).setHours(0,0,0,0))
+            const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
+            console.log(day)
             if(day){
               const existingEntry = day.entries.find(e => e.nirId === nir._id.toString())
               if(existingEntry){
