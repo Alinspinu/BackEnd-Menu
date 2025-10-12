@@ -40,6 +40,7 @@ module.exports.getGestReport = async(req, res) => {
         invValue += ing.ing.sellPrice * ing.faptic
       } 
     }
+
     for(let ing of ings){
       for(let nir of nirs){
         for(let i of nir.ingredients){
@@ -49,7 +50,7 @@ module.exports.getGestReport = async(req, res) => {
               const existingEntry = day.entries.find(e => e.nirId === nir._id.toString())
               if(existingEntry){
                   existingEntry.value += (i.sellPrice * i.qty)
-                  day.
+                  
               } else {
                 const entry = {
                   date: nir.documentDate,
@@ -68,7 +69,7 @@ module.exports.getGestReport = async(req, res) => {
       }
     }
 
-
+  
   
     res.status(200).json({value: invValue, days: days})
   } catch(e) {
