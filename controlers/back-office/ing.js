@@ -79,7 +79,7 @@ module.exports.getGestReport = async(req, res) => {
           }
   
           if(tva === 0){
-            console.log('ing with 0 vat ', ing.ing.name, 'price ', ing.priceNoVat, ' --- ', ing.price)
+            console.log('ing with 0 vat ', ing.ing.name, 'price ', ing.ing.priceNoVat, ' --- ', ing.ing.price)
             inv0Value += ing.ing.sellPrice * ing.faptic
           }
           if(tva === 11){
