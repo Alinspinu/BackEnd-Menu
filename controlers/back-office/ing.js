@@ -106,10 +106,10 @@ module.exports.getGestReport = async(req, res) => {
             days[i].out -= e.value
           }
         }
+        days[i+1].in = days[i].out
       } else {
         console.log(days[i])
       }
-      days[i+1].in = days[i].out
    }
   
   
