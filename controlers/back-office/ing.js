@@ -34,7 +34,6 @@ module.exports.getGestReport = async(req, res) => {
           if(p.dep === 'marfa'){
             if(p.ings[0]){
               if(p.ings[0].gestiune.toString() === gest){
-                // console.log(p.name, ' disc ', p.discount, ' price ', p.price , ' qty ', p.quantity , ' total ',p.total)
                 const day = days.find(d => new Date(d.date).getDate() === new Date(o.updatedAt).getDate())
                 if(day){
                   const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul')
@@ -64,6 +63,7 @@ module.exports.getGestReport = async(req, res) => {
     if(inventary){
       for(let ing of inventary.ingredients){
         if(ing.ing.tva === 0){
+          console.log('ing with 0 vat ', ing.ing.name)
           inv0Value += ing.ing.sellPrice * ing.faptic
         }
         if(ing.ing.tva === 11){
