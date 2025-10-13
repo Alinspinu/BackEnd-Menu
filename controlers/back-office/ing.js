@@ -95,21 +95,21 @@ module.exports.getGestReport = async(req, res) => {
     for(let ing of ings){
       for(let nir of nirs){
         for(let i of nir.ingredients){
-          let tva = i.tva
-          if(tva === 0){
-            console.log('hit', i.name)
-            const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
-            if(prod && prod.tva){
-              tva = prod.tva
-            } else {
-              const sub = await SubProduct.findOne({'ings.ing': i.ing}).select('tva').lean()
-              if(sub && sub.tva){
-                tva = sub.tva
-              }
-            }
-          }
           if(i.invGestiune.toString() === gest){
             if(i.ing.toString() === ing._id.toString()){
+              let tva = i.tva
+              if(tva === 0){
+                console.log('hit', i.name)
+                const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
+                if(prod && prod.tva){
+                  tva = prod.tva
+                } else {
+                  const sub = await SubProduct.findOne({'ings.ing': i.ing}).select('tva').lean()
+                  if(sub && sub.tva){
+                    tva = sub.tva
+                  }
+                }
+              }
               const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
               if(day){
                 const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === tva)
