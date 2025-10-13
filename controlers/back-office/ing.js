@@ -35,25 +35,29 @@ module.exports.getGestReport = async(req, res) => {
       for(let p of o.products){
           if(p.dep === 'marfa'){
             if(p.ings[0]){
-              if(p.ings[0].gestiune.toString() === gest){
-                const day = days.find(d => new Date(d.date).getDate() === new Date(o.updatedAt).getDate())
-                if(day){
-                  const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul')
-                  if(existingEntry){
-                    existingEntry.value += round((p.price * p.quantity) - p.discount)
-                  } else {
-                    const entry = {
-                      date: o.createdAt,
-                      description: 'Vanzare cu amanuntul',
-                      nrDoc: o.dayCounter,
-                      value: round((p.price * p.quantity) - p.discount),
-                      type: 'iesire',
-                      docId: o._id.toString(),
-                      tva: p.tva
+              if(p.ings[0].gestiune){
+                if(p.ings[0].gestiune.toString() === gest){
+                  const day = days.find(d => new Date(d.date).getDate() === new Date(o.updatedAt).getDate())
+                  if(day){
+                    const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul')
+                    if(existingEntry){
+                      existingEntry.value += round((p.price * p.quantity) - p.discount)
+                    } else {
+                      const entry = {
+                        date: o.createdAt,
+                        description: 'Vanzare cu amanuntul',
+                        nrDoc: o.dayCounter,
+                        value: round((p.price * p.quantity) - p.discount),
+                        type: 'iesire',
+                        docId: o._id.toString(),
+                        tva: p.tva
+                      }
+                      day.entries.push(entry)
                     }
-                    day.entries.push(entry)
                   }
                 }
+              } else {
+                console.log('ingredient fara gestiune', p.ings[0])
               }
             } else {
               console.log('produs fara ingredient  **** ', p.name)
