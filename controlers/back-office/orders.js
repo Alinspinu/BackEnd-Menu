@@ -66,7 +66,6 @@ async function updateDelProducts(orders){
         for(let p of o.products){
             for(let i of p.ings){
                 if(!i.gestiune){
-                    console.log(i.ing)
                     console.log('produs gasit cu ingredient fara gestiune ', p.name)
                     i.gestiune =  i.ing.invGestiune[0].gestiune
                     console.log('i-am adaugat gestiune ', i.gestiune)
