@@ -96,15 +96,19 @@ module.exports.getGestReport = async(req, res) => {
     days[0].in = invValue
 
     for (let i = 0; i <= days.length; i++) {
-      for(let e of days[i].entries){
-        days[i].out =  days[i].in
-        if(e.type === 'intrare'){
-          days[i].out += e.value
+      if(days[i]){
+        for(let e of days[i].entries){
+          days[i].out =  days[i].in
+          if(e.type === 'intrare'){
+            days[i].out += e.value
+          }
+          if(e.type === 'iesire'){
+            days[i].out -= e.value
+          }
+          days[i+1].in = days[i].out
         }
-        if(e.type === 'iesire'){
-          days[i].out -= e.value
-        }
-        days[i+1].in = days[i].out
+      } else {
+        console.log(days[i])
       }
    }
   
