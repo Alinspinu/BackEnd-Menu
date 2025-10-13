@@ -20,11 +20,13 @@ module.exports.getGestReport = async(req, res) => {
   const endDate = new Date(end).setHours(23,59,59, 9999)
 
   try{
-    let invValue = 0
+    let inv11Value = 0
+    let inv21Value = 0
+    let inv0Value = 0
     const days = getDaysBetween(startDate, endDate)
     const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice')
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }}).populate({path: 'suplier', select: 'name'})
-    const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice name'})
+    const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice name tva'})
     const orders = await Order.find({locatie: loc, salePoint: point, updatedAt: {$gte: startDate, $lte: endDate}, 'products.dep': 'marfa'}) 
 
     for(let o of orders){
@@ -45,7 +47,8 @@ module.exports.getGestReport = async(req, res) => {
                       nrDoc: o.dayCounter,
                       value: round((p.price * p.quantity) - p.discount),
                       type: 'iesire',
-                      docId: o._id.toString()
+                      docId: o._id.toString(),
+                      tva: p.tva
                     }
                     day.entries.push(entry)
                   }
@@ -60,7 +63,15 @@ module.exports.getGestReport = async(req, res) => {
 
     if(inventary){
       for(let ing of inventary.ingredients){
-        invValue += ing.ing.sellPrice * ing.faptic
+        if(ing.ing.tva === 0){
+          inv0Value += ing.ing.sellPrice * ing.faptic
+        }
+        if(ing.ing.tva === 11){
+          inv11Value += ing.ing.sellPrice * ing.faptic
+        }
+        if(ing.ing.tva === 21){
+          inv21Value += ing.ing.sellPrice * ing.faptic
+        }
       } 
     }
 
@@ -71,7 +82,7 @@ module.exports.getGestReport = async(req, res) => {
             if(i.ing.toString() === ing._id.toString()){
               const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
               if(day){
-                const existingEntry = day.entries.find(e => e.docId === nir._id.toString())
+                const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === i.tva)
                 if(existingEntry){
                     existingEntry.value += (i.sellPrice * i.qty)
                 } else {
@@ -81,7 +92,8 @@ module.exports.getGestReport = async(req, res) => {
                     nrDoc: nir.nrDoc,
                     value: i.sellPrice * i.qty,
                     type: 'intrare',
-                    docId: nir._id.toString()
+                    docId: nir._id.toString(),
+                    tva: i.tva
                   }
                   day.entries.push(entry)
                 }
@@ -92,7 +104,9 @@ module.exports.getGestReport = async(req, res) => {
           }
       }
     }
-    days[0].in = invValue;
+    days[0].in0 = inv0Value;
+    days[0].in11 = inv11Value;
+    days[0].in21 = inv21Value;
 
     for (let i = 0; i < days.length; i++) {
       const day = days[i];
@@ -102,33 +116,62 @@ module.exports.getGestReport = async(req, res) => {
         continue;
       }
     
-      day.out = day.in || 0;
+      day.out0 = day.in0 || 0;
+      day.out11 = day.in11 || 0;
+      day.out21 = day.in21 || 0;
     
       console.log(`📅 Day ${i + 1} (${day.date || 'no date'})`);
-      console.log(`   Starting IN: ${day.in}`);
+      console.log(`   Starting IN 0%: ${day.in0}`);
+      console.log(`   Starting IN 11%: ${day.in11}`);
+      console.log(`   Starting IN 21%: ${day.in21}`);
     
       for (let e of day.entries || []) {
         if (e.type === 'intrare') {
-          day.out += e.value;
-          console.log(`   ➕ Intrare: +${e.value} → OUT: ${day.out}`);
+          if(e.tva === 0){
+            day.out0 += e.value;
+            console.log(`   ➕ Intrare: +${e.value} → OUT 0%: ${day.out0}`);
+          } else if(e.tva === 11){
+            day.out11 += e.value;
+            console.log(`   ➕ Intrare: +${e.value} → OUT 11%: ${day.out11}`);
+          } else if(e.tva === 21){
+            day.out21 += e.value;
+            console.log(`   ➕ Intrare: +${e.value} → OUT 21%: ${day.out21}`);
+          } else {
+            console.log(`   ⚠️ Unknown entry TVA:`, e.tva);
+          }
+
         } else if (e.type === 'iesire') {
-          day.out -= e.value;
-          console.log(`   ➖ Iesire: -${e.value} → OUT: ${day.out}`);
+          if(e.tva === 0){
+            day.out0 -= e.value;
+            console.log(`   ➖ Iesire: -${e.value} → OUT 0%: ${day.out0}`);
+          } else if(e.tva === 11){
+            day.out11 -= e.value;
+            console.log(`   ➖ Iesire: -${e.value} → OUT 11%: ${day.out11}`);
+          } else if( e.tva === 21){
+            day.out21 -= e.value;
+            console.log(`   ➖ Iesire: -${e.value} → OUT 21%: ${day.out21}`);
+          } else{
+            console.log(`   ⚠️ Unknown entry TVA:`, e.tva);
+          }
         } else {
           console.log(`   ⚠️ Unknown entry type:`, e);
         }
       }
     
-      console.log(`   🔄 Resulting OUT: ${day.out}`);
+      console.log(`   🔄 Resulting OUT 0%: ${day.out0}`);
+      console.log(`   🔄 Resulting OUT 11%: ${day.out11}`);
+      console.log(`   🔄 Resulting OUT 21%: ${day.out21}`);
       console.log('----------------------------------------');
     
       if (days[i + 1]) {
-        days[i + 1].in = day.out;
+        days[i + 1].in0 = day.out0;
+        days[i + 1].in11 = day.out11;
+        days[i + 1].in21 = day.out21;
       }
     }
   
   
-    res.status(200).json({value: invValue, days: days})
+    res.status(200).json({days: days})
   } catch(e) {
     console.log(e)
     res.status(500).json(e)
@@ -148,8 +191,12 @@ function getDaysBetween(startDateStr, endDateStr) {
   for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
     result.push({
       date: new Date(d).toISOString(),
-      in: 0,
-      out: 0,
+      in0: 0,
+      in11: 0,
+      in21: 0,
+      out0: 0,
+      out11: 0,
+      out21: 0,
       entries: []
     });
   }
