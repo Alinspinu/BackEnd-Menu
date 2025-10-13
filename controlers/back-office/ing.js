@@ -97,6 +97,7 @@ module.exports.getGestReport = async(req, res) => {
         for(let i of nir.ingredients){
           let tva = i.tva
           if(tva === 0){
+            console.log('hit', i.name)
             const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
             if(prod && prod.tva){
               tva = prod.tva
