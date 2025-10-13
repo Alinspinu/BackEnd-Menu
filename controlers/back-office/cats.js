@@ -41,19 +41,19 @@ module.exports.sendCats = async (req, res, next) => {
         .lean({ virtuals: false })
         .maxTimeMS(20000);
 
-    //    await modyfySubProducts(cats)
+       await modyfySubProducts(cats)
 
         res.status(200).json(cats);
     } catch (err) {
         console.log(err)
-        res.status(500).json({ message: err.error.message })
+        res.status(500).json({ message: err.error?.message })
     }
 }
 
 
 async function modyfySubProducts(cats){
     for(let cat of cats) {
-        for(let p of cat.products){
+        for(let p of cat.product){
             for(let s of p.subProducts){
                 for(let i of s.ings){
                     if(!i.gestiune){
