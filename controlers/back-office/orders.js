@@ -62,45 +62,46 @@ module.exports.getOrder = async (req, res, next) => {
 
 async function updateDelProducts(orders){
 
-    for(let o of orders){
+    // for(let o of orders){
+    //     for(let p of o.products){
+    //         for(let i of p.ings){
+    //             if(!i.gestiune){
+    //                 console.log('produs gasit cu ingredient fara gestiune ', p.name)
+    //                 i.gestiune =  i.ing.invGestiune[0].gestiune
+    //                 console.log('i-am adaugat gestiune ', i.gestiune)
+    //             }
+    //         }
+    //         for(let t of p.toppings){
+    //             if(!t.gestiune){
+                 
+    //                 t.gestiune =  t.ing.invGestiune[0].gestiune
+    //                 console.log('i-am adaugat gestiune ', t.gestiune)
+    //             }
+    //         }
+    //     }
+    // }
+
+
+    const promises = orders.map(o => {
         for(let p of o.products){
             for(let i of p.ings){
                 if(!i.gestiune){
-                    console.log('produs gasit cu ingredient fara gestiune ', p.name)
-                    i.gestiune =  i.ing.invGestiune[0].gestiune
+                    console.log('produs gasit cu topping fara gestiune ', p.name)
+                    i.gestiune = i.ing.invGestiune[0].gestiune
                     console.log('i-am adaugat gestiune ', i.gestiune)
                 }
             }
             for(let t of p.toppings){
                 if(!t.gestiune){
-                    console.log('produs gasit cu topping fara gestiune ', p.name)
-                    t.gestiune =  t.ing.invGestiune[0].gestiune
-                    console.log('i-am adaugat gestiune ', t.gestiune)
+                    t.gestiune = t.ing.invGestiune[0].gestiune
                 }
             }
-        }
-    }
-
-
-    // const promises = orders.map(o => {
-    //     for(let p of o.products){
-    //         for(let i of p.ings){
-    //             if(!i.gestiune){
-    //                 console.log(p.name)
-    //                 i.gestiune = i.ing.invGestiune[0].gestiune
-    //             }
-    //         }
-    //         for(let t of p.toppings){
-    //             if(!t.gestiune){
-    //                 t.gestiune = t.ing.invGestiune[0].gestiune
-    //             }
-    //         }
             
-    //     }
-    //     return o.save()
-    // })
+        }
+        return o.save()
+    })
 
-    //  await Promise.all(promises);
+     await Promise.all(promises);
 
 }
 
