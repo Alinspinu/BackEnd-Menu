@@ -90,11 +90,11 @@ async function updateDelProducts(orders){
                     console.log('i-am adaugat gestiune ', i.gestiune)
                 }
             }
-            for(let t of p.toppings){
-                if(!t.gestiune){
-                    t.gestiune = t.ing.invGestiune[0].gestiune
-                }
-            }
+            // for(let t of p.toppings){
+            //     if(!t.gestiune){
+            //         t.gestiune = t.ing.invGestiune[0].gestiune
+            //     }
+            // }
             
         }
         return o.save()
