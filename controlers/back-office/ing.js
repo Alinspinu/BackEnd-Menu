@@ -57,7 +57,7 @@ module.exports.getGestReport = async(req, res) => {
                   }
                 }
               } else {
-                console.log('ingredient fara gestiune', p.ings[0])
+                console.log('ingredient fara gestiune', p.name)
               }
             } else {
               console.log('produs fara ingredient  **** ', p.name)
