@@ -67,6 +67,7 @@ module.exports.getGestReport = async(req, res) => {
         if(normalizeText(ing.dep) === 'marfa'){
           let tva = ing.ing.tva
           if(tva === 0){
+            console.log('hit ', ing.name)
             const prod = await Product.findOne({'ings.ing': ing.ing}).select('tva').lean()
             if(prod && prod.tva){
               tva = prod.tva
@@ -99,7 +100,6 @@ module.exports.getGestReport = async(req, res) => {
             if(i.ing.toString() === ing._id.toString()){
               let tva = i.tva
               if(tva === 0){
-                console.log('hit', i.name)
                 const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
                 if(prod && prod.tva){
                   tva = prod.tva
