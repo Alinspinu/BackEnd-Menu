@@ -105,11 +105,11 @@ module.exports.getGestReport = async(req, res) => {
           if(e.type === 'iesire'){
             days[i].out -= e.value
           }
-          days[i+1].in = days[i].out
         }
       } else {
         console.log(days[i])
       }
+      days[i+1].in = days[i].out
    }
   
   
