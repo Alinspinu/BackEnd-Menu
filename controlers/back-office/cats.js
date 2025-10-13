@@ -38,7 +38,7 @@ module.exports.sendCats = async (req, res, next) => {
                 }
             ]
         })
-        .lean({ virtuals: false })
+        // .lean({ virtuals: false })
         .maxTimeMS(20000);
 
        await modyfySubProducts(cats)
@@ -60,7 +60,7 @@ async function modyfySubProducts(cats){
                         console.log('sub produs gasit fara gestiune la ingredient', s.name)
                         i.gestiune = i.ing.invGestiune[0].gestiune
                         console.log('gestiune adaugata ', i.gestiune)
-                        // await s.save()
+                        await s.save()
                     }
                 }
             }
