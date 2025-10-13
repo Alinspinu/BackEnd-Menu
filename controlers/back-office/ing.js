@@ -64,7 +64,6 @@ module.exports.getGestReport = async(req, res) => {
 
     if(inventary){
       for(let ing of inventary.ingredients){
-        console.log(ing.dep)
         if(normalizeText(ing.dep) === 'marfa'){
           let tva = ing.ing.tva
           if(tva === 0){
@@ -80,7 +79,7 @@ module.exports.getGestReport = async(req, res) => {
           }
   
           if(tva === 0){
-            console.log('ing with 0 vat ', ing.ing.name)
+            console.log('ing with 0 vat ', ing.ing.name, 'price ', ing.priceNoVat, ' --- ', ing.price)
             inv0Value += ing.ing.sellPrice * ing.faptic
           }
           if(tva === 11){
