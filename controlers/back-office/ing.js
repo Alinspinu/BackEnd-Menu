@@ -64,6 +64,7 @@ module.exports.getGestReport = async(req, res) => {
 
     if(inventary){
       for(let ing of inventary.ingredients){
+        console.log(ing.dep)
         if(ing.dep === 'marfa'){
           let tva = ing.ing.tva
           if(tva === 0){
