@@ -30,7 +30,10 @@ module.exports.getOrder = async (req, res, next) => {
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
+                .populate({path: 'products.ings.ing', select: 'invGestiune'})
+                .populate({path: 'products.toppings.ing', select: 'invGestiune'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
+        await updateDelProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -57,36 +60,48 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
-async function updateDelProducts(products){
-    const promises = products.map(o => {
-        // for(let t of p.billProduct.toppings){
-        //     if(!t.gestiune){
-        //         t.gestiune = t.ing.gest
-        //     }
-        // }
+async function updateDelProducts(orders){
 
+    for(let o of orders){
         for(let p of o.products){
             for(let i of p.ings){
                 if(!i.gestiune){
-                    i.gestiune = i.ing.gest
+                    console.log('produs gasit cu ingredient fara gestiune ', p.name)
+                    i.gestiune =  i.ing.invGestiune[0].gestiune
+                    console.log('i-am adaugat gestiune ', i.gestiune)
                 }
             }
             for(let t of p.toppings){
                 if(!t.gestiune){
-                    t.gestiune = t.ing.gest
+                    console.log('produs gasit cu topping fara gestiune ', p.name)
+                    t.gestiune =  t.ing.invGestiune[0].gestiune
+                    console.log('i-am adaugat gestiune ', t.gestiune)
                 }
             }
+        }
+    }
+
+
+    // const promises = orders.map(o => {
+    //     for(let p of o.products){
+    //         for(let i of p.ings){
+    //             if(!i.gestiune){
+    //                 console.log(p.name)
+    //                 i.gestiune = i.ing.invGestiune[0].gestiune
+    //             }
+    //         }
+    //         for(let t of p.toppings){
+    //             if(!t.gestiune){
+    //                 t.gestiune = t.ing.invGestiune[0].gestiune
+    //             }
+    //         }
             
-        }
-        return o.save()
-    })
+    //     }
+    //     return o.save()
+    // })
 
-        const savedProducts = await Promise.all(promises);
+    //  await Promise.all(promises);
 
-        // Log each product’s toppings/ings
-        for (const prod of savedProducts) {
-       console.log('Order Saved')
-        }
 }
 
 
