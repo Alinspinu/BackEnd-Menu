@@ -29,9 +29,10 @@ module.exports.getOrder = async (req, res, next) => {
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
+            .populate({path: 'products.ings.ing', select: 'invGestiune'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
-        // await updateDelProducts(orders)
+        await updateDelProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -84,7 +85,7 @@ async function updateDelProducts(orders){
         for(let p of o.products){
             for(let i of p.ings){
                 if(!i.gestiune){
-                    console.log('produs gasit cu topping fara gestiune ', p.name)
+                    console.log('produs gasit cu ing fara gestiune ', p.name)
                     i.gestiune = i.ing.invGestiune[0].gestiune
                     console.log('i-am adaugat gestiune ', i.gestiune)
                 }
