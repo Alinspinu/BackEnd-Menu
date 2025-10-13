@@ -4,6 +4,8 @@ const Inventary = require('../../models/office/inventary')
 const Order = require('../../models/office/product/order')
 const ImpSheet = require('../../models/office/imp-sheet')
 const DelProd = require('../../models/office/product/deletetProduct')
+const Product = require('../../models/office/product/product')
+const SubProduct = require('../../models/office/product/sub-product')
 const CigarsInv = require('../../models/cigars-inv')
 const salePoint = require('../../models/utils/sale-point')
 const ComparedInventary = require('../../models/office/comp-inv')
@@ -24,7 +26,7 @@ module.exports.getGestReport = async(req, res) => {
     let inv21Value = 0
     let inv0Value = 0
     const days = getDaysBetween(startDate, endDate)
-    const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice')
+    const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice tva')
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }}).populate({path: 'suplier', select: 'name'})
     const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice name tva'})
     const orders = await Order.find({locatie: loc, salePoint: point, updatedAt: {$gte: startDate, $lte: endDate}, 'products.dep': 'marfa'}) 
@@ -78,11 +80,23 @@ module.exports.getGestReport = async(req, res) => {
     for(let ing of ings){
       for(let nir of nirs){
         for(let i of nir.ingredients){
+          let tva = i.tva
+          if(tva === 0){
+            const prod = await Product.findOne({'ings.ing': i.ing}).select('tva')
+            if(prod && prod.tva){
+              tva = prod.tva
+            } else {
+              const sub = await SubProduct.findOne({'ings.ing': i.ing}).select('tva')
+              if(sub && sub.tva){
+                tva = sub.tva
+              }
+            }
+          }
           if(i.invGestiune.toString() === gest){
             if(i.ing.toString() === ing._id.toString()){
               const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
               if(day){
-                const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === i.tva)
+                const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === tva)
                 if(existingEntry){
                     existingEntry.value += (i.sellPrice * i.qty)
                 } else {
@@ -93,7 +107,7 @@ module.exports.getGestReport = async(req, res) => {
                     value: i.sellPrice * i.qty,
                     type: 'intrare',
                     docId: nir._id.toString(),
-                    tva: i.tva
+                    tva: tva
                   }
                   day.entries.push(entry)
                 }
