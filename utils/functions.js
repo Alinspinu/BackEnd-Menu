@@ -231,6 +231,15 @@ function getNowShedule(schedules) {
 }
 
 
+function normalizeText(text) {
+  return text
+    .replace(/[ăâ]/gi, "a")
+    .replace(/[î]/gi, "i")
+    .replace(/[șş]/gi, "s")
+    .replace(/[țţ]/gi, "t")
+    .toLowerCase();
+}
+
 
 
 // function getNowShedule(shedules){
@@ -265,7 +274,8 @@ module.exports = {
     generateSoketId,
     getNowShedule,
     formatedDateToShowDots,
-    formatDateEFactura
+    formatDateEFactura,
+    normalizeText
 }
 
 

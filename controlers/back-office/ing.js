@@ -1,5 +1,5 @@
 const Ingredient = require('../../models/office/inv-ingredient')
-const {round, formatedDateToShow} = require('./../../utils/functions')
+const {round, formatedDateToShow, normalizeText} = require('./../../utils/functions')
 const Inventary = require('../../models/office/inventary')
 const Order = require('../../models/office/product/order')
 const ImpSheet = require('../../models/office/imp-sheet')
@@ -65,7 +65,7 @@ module.exports.getGestReport = async(req, res) => {
     if(inventary){
       for(let ing of inventary.ingredients){
         console.log(ing.dep)
-        if(ing.dep === 'marfa'){
+        if(normalizeText(ing.dep) === 'marfa'){
           let tva = ing.ing.tva
           if(tva === 0){
             const prod = await Product.findOne({'ings.ing': ing.ing}).select('tva').lean()
