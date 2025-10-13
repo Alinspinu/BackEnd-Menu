@@ -64,14 +64,27 @@ module.exports.getGestReport = async(req, res) => {
 
     if(inventary){
       for(let ing of inventary.ingredients){
-        if(ing.ing.tva === 0){
+        let tva = ing.ing.tva
+        if(tva === 0){
+          const prod = await Product.findOne({'ings.ing': ing.ing}).select('tva').lean()
+          if(prod && prod.tva){
+            tva = prod.tva
+          } else {
+            const sub = await SubProduct.findOne({'ings.ing': ing.ing}).select('tva').lean()
+            if(sub && sub.tva){
+              tva = sub.tva
+            }
+          }
+        }
+
+        if(tva === 0){
           console.log('ing with 0 vat ', ing.ing.name)
           inv0Value += ing.ing.sellPrice * ing.faptic
         }
-        if(ing.ing.tva === 11){
+        if(tva === 11){
           inv11Value += ing.ing.sellPrice * ing.faptic
         }
-        if(ing.ing.tva === 21){
+        if(tva === 21){
           inv21Value += ing.ing.sellPrice * ing.faptic
         }
       } 
@@ -82,11 +95,11 @@ module.exports.getGestReport = async(req, res) => {
         for(let i of nir.ingredients){
           let tva = i.tva
           if(tva === 0){
-            const prod = await Product.findOne({'ings.ing': i.ing}).select('tva')
+            const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
             if(prod && prod.tva){
               tva = prod.tva
             } else {
-              const sub = await SubProduct.findOne({'ings.ing': i.ing}).select('tva')
+              const sub = await SubProduct.findOne({'ings.ing': i.ing}).select('tva').lean()
               if(sub && sub.tva){
                 tva = sub.tva
               }
