@@ -14,7 +14,7 @@ module.exports.sendCats = async (req, res, next) => {
                     path: 'subProducts', select: '-saleLog',
                     populate: [
                             {
-                            path: 'ings.ing', select: 'name um ings productIngredient qty', 
+                            path: 'ings.ing', select: 'name um ings productIngredient qty invGestiune', 
                                 populate: {
                                     path: 'ings.ing', select: 'name um qty' 
                                 }
@@ -40,10 +40,30 @@ module.exports.sendCats = async (req, res, next) => {
         })
         .lean({ virtuals: false })
         .maxTimeMS(20000);
+
+       await modyfySubProducts(cats)
+       
         res.status(200).json(cats);
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: err.error.message })
+    }
+}
+
+
+async function modyfySubProducts(cats){
+    for(let cat of cats) {
+        for(let p of cat.products){
+            for(let s of p.subProducts){
+                for(let i of s.ings){
+                    if(!i.gestiune){
+                        console.log('sub produs gasit fara gestiune la ingredient', s.name)
+                        i.gestiune = i.ing.invGestiune[0].gestiune
+                        console.log('gestiune adaugata ', i.gestiune)
+                    }
+                }
+            }
+        }
     }
 }
 
