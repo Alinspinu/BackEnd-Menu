@@ -95,7 +95,7 @@ module.exports.getGestReport = async(req, res) => {
 
     days[0].in = invValue
 
-    for (let i = 0; i <= days; i++) {
+    for (let i = 0; i <= days.length; i++) {
       for(let e of days[i].entries){
         days[i].out =  days[i].in
         if(e.type === 'intrare'){
