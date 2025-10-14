@@ -21,7 +21,7 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
         worksheet.addRow(header)
 
         data.forEach((el, i) => {
-          const head =  worksheet.addRow([`${i+1}`,`${el.date.split('T')[0]}`,`Sold initial`,`${el.in11}`,`${0}`,`${el.in21}`, `${0}` ])
+          const head =  worksheet.addRow([`${i+1}`,`${el.date}`,`Sold initial`,`${el.in11}`,`${0}`,`${el.in21}`, `${0}` ])
             head.eachCell((cell) => {
                 cell.font = {
                 size: 13,
@@ -47,12 +47,12 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
                         out21 = el.value
                     }
                 }
-               const e = worksheet.addRow([`${i+1}`,`${el.date.split('T')[0]}`,`${el.description}`,`${in11}`,`${out11}`, `${in21}`, `${out21}`])
+               const e = worksheet.addRow([`${i+1}`,`${el.date}`,`${el.description}`,`${in11}`,`${out11}`, `${in21}`, `${out21}`])
             //    const sum = e.getCell(5)
             //    sum.font =  { color:  {argb: el.tip === 'income' ?  'FF00B050' : 'FF0000'} }
             });
          
-           const foot =  worksheet.addRow(['',`${el.date.split('T')[0]}`,`Sold final`,`${0}`,`${el.out11}`, `${0}`, `${el.out21}`])
+           const foot =  worksheet.addRow(['',`${el.date}`,`Sold final`,`${0}`,`${el.out11}`, `${0}`, `${el.out21}`])
 
             foot.eachCell((cell) => {
                 cell.font = {
