@@ -75,7 +75,7 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
             });
            const emptyRow =  worksheet.addRow([])
            const num = emptyRow.number
-           worksheet.mergeCells(num, 1, num, 8);
+           worksheet.mergeCells(num, 1, num, 7);
         
         })
    
@@ -91,9 +91,9 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
                 size: 14
             }
         })
-        worksheet.getColumn(1).width = 7;
-        worksheet.getColumn(2).width = 12; 
-        worksheet.getColumn(3).width = 40; 
+        worksheet.getColumn(1).width = 4;
+        worksheet.getColumn(2).width = 16; 
+        worksheet.getColumn(3).width = 30; 
         worksheet.getColumn(4).width = 10; 
         worksheet.getColumn(5).width = 10; 
         worksheet.mergeCells('A1:B2')
