@@ -20,7 +20,7 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
         worksheet.addRow(header)
 
         data.forEach((el, i) => {
-            const headVat =  worksheet.addRow(['',``,'','', `TVA 11%`, '', 'TVA 21%',''])
+            const headVat =  worksheet.addRow(['',``,'', `TVA 11%`, '', 'TVA 21%',''])
 
             const rowNumber = headVat.number;
             worksheet.mergeCells(rowNumber, 1, rowNumber, 3); // Columns A–D
