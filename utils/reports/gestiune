@@ -1,0 +1,224 @@
+
+const Product = require('../../models/office/product/product')
+const SubProduct = require('../../models/office/product/sub-product')
+
+const {normalizeText} = require('../functions')
+
+
+
+async function createRG(start, end, nirs, ings, inventary, gest, orders){
+
+    const startDate = new Date(start).setHours(0,0,0,0)
+    const endDate = new Date(end).setHours(23,59,59, 9999)
+    const days = getDaysBetween(startDate, endDate)
+
+    let inv11Value = 0
+    let inv21Value = 0
+    let inv0Value = 0
+    for(let o of orders){
+      for(let p of o.products){
+          if(p.dep === 'marfa'){
+            if(p.ings[0]){
+              if(p.ings[0].gestiune){
+                if(p.ings[0].gestiune.toString() === gest){
+                  const day = days.find(d => new Date(d.date).getDateString() === new Date(o.updatedAt).getDateString())
+                  if(day){
+                    const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul')
+                    if(existingEntry){
+                      existingEntry.value += round((p.price * p.quantity) - p.discount)
+                    } else {
+                      const entry = {
+                        date: o.createdAt,
+                        description: 'Vanzare cu amanuntul',
+                        nrDoc: o.dayCounter,
+                        value: round((p.price * p.quantity) - p.discount),
+                        type: 'iesire',
+                        docId: o._id.toString(),
+                        tva: p.tva
+                      }
+                      day.entries.push(entry)
+                    }
+                  }
+                }
+              } else {
+                console.log('ingredient fara gestiune', p.name)
+              }
+            } else {
+              console.log('produs fara ingredient  **** ', p.name)
+            }
+          }
+      }
+    }
+
+    if(inventary){
+      for(let ing of inventary.ingredients){
+        if(normalizeText(ing.dep) === 'marfa'){
+          let tva = ing.ing.tva
+          if(tva === 0){
+            console.log('hit ', ing.name)
+            const prod = await Product.findOne({'ings.ing': ing.ing}).select('tva').lean()
+            if(prod && prod.tva){
+              tva = prod.tva
+            } else {
+              const sub = await SubProduct.findOne({'ings.ing': ing.ing}).select('tva').lean()
+              if(sub && sub.tva){
+                tva = sub.tva
+              }
+            }
+          }
+  
+          if(tva === 0){
+            console.log('ing with 0 vat ', ing.ing.name, 'price ', ing.ing.priceNoVat, ' --- ', ing.ing.price)
+            inv0Value += ing.ing.sellPrice * ing.faptic
+          }
+          if(tva === 11){
+            inv11Value += ing.ing.sellPrice * ing.faptic
+          }
+          if(tva === 21){
+            inv21Value += ing.ing.sellPrice * ing.faptic
+          }
+        } 
+        }
+    }
+
+    for(let ing of ings){
+      for(let nir of nirs){
+        for(let i of nir.ingredients){
+          if(i.invGestiune.toString() === gest){
+            if(i.ing.toString() === ing._id.toString()){
+              let tva = i.tva
+              if(tva === 0){
+                const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
+                if(prod && prod.tva){
+                  tva = prod.tva
+                } else {
+                  const sub = await SubProduct.findOne({'ings.ing': i.ing}).select('tva').lean()
+                  if(sub && sub.tva){
+                    tva = sub.tva
+                  }
+                }
+              }
+              const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
+              if(day){
+                const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === tva)
+                if(existingEntry){
+                    existingEntry.value += (i.sellPrice * i.qty)
+                } else {
+                  const entry = {
+                    date: nir.documentDate,
+                    description: nir.suplier.name,
+                    nrDoc: nir.nrDoc,
+                    value: i.sellPrice * i.qty,
+                    type: 'intrare',
+                    docId: nir._id.toString(),
+                    tva: tva
+                  }
+                  day.entries.push(entry)
+                }
+              }
+  
+            }
+          }
+          }
+      }
+    }
+    days[0].in0 = inv0Value;
+    days[0].in11 = inv11Value;
+    days[0].in21 = inv21Value;
+
+    for (let i = 0; i < days.length; i++) {
+      const day = days[i];
+    
+      if (!day) {
+        console.warn(`⚠️ Missing day at index ${i}`);
+        continue;
+      }
+    
+      day.out0 = day.in0 || 0;
+      day.out11 = day.in11 || 0;
+      day.out21 = day.in21 || 0;
+    
+      console.log(`📅 Day ${i + 1} (${day.date || 'no date'})`);
+      console.log(`   Starting IN 0%: ${day.in0}`);
+      console.log(`   Starting IN 11%: ${day.in11}`);
+      console.log(`   Starting IN 21%: ${day.in21}`);
+    
+      for (let e of day.entries || []) {
+        if (e.type === 'intrare') {
+          if(e.tva === 0){
+            day.out0 += e.value;
+            console.log(`   ➕ Intrare: +${e.value} → OUT 0%: ${day.out0}`);
+          } else if(e.tva === 11){
+            day.out11 += e.value;
+            console.log(`   ➕ Intrare: +${e.value} → OUT 11%: ${day.out11}`);
+          } else if(e.tva === 21){
+            day.out21 += e.value;
+            console.log(`   ➕ Intrare: +${e.value} → OUT 21%: ${day.out21}`);
+          } else {
+            console.log(`   ⚠️ Unknown entry TVA:`, e.tva);
+          }
+
+        } else if (e.type === 'iesire') {
+          if(e.tva === 0){
+            day.out0 -= e.value;
+            console.log(`   ➖ Iesire: -${e.value} → OUT 0%: ${day.out0}`);
+          } else if(e.tva === 11){
+            day.out11 -= e.value;
+            console.log(`   ➖ Iesire: -${e.value} → OUT 11%: ${day.out11}`);
+          } else if( e.tva === 21){
+            day.out21 -= e.value;
+            console.log(`   ➖ Iesire: -${e.value} → OUT 21%: ${day.out21}`);
+          } else{
+            console.log(`   ⚠️ Unknown entry TVA:`, e.tva);
+          }
+        } else {
+          console.log(`   ⚠️ Unknown entry type:`, e);
+        }
+      }
+    
+      console.log(`   🔄 Resulting OUT 0%: ${day.out0}`);
+      console.log(`   🔄 Resulting OUT 11%: ${day.out11}`);
+      console.log(`   🔄 Resulting OUT 21%: ${day.out21}`);
+      console.log('----------------------------------------');
+    
+      if (days[i + 1]) {
+        days[i + 1].in0 = day.out0;
+        days[i + 1].in11 = day.out11;
+        days[i + 1].in21 = day.out21;
+      }
+    }
+
+    return days
+}
+
+
+
+function getDaysBetween(startDateStr, endDateStr) {
+    const startDate = new Date(startDateStr);
+    const endDate = new Date(endDateStr);
+    const result = [];
+  
+    // Normalize time to midnight
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+  
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      result.push({
+        date: new Date(d).toISOString(),
+        in0: 0,
+        in11: 0,
+        in21: 0,
+        out0: 0,
+        out11: 0,
+        out21: 0,
+        entries: []
+      });
+    }
+  
+    return result;
+  }
+
+
+
+
+module.exports = {createRG, getDaysBetween}
