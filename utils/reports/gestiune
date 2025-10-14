@@ -23,7 +23,7 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
                 if(p.ings[0].gestiune.toString() === gest){
                   const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
                   if(day){
-                    const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul')
+                    const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul' && e.tva === p.tva)
                     if(existingEntry){
                       existingEntry.value += round((p.price * p.quantity) - p.discount)
                     } else {
