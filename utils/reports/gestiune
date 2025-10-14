@@ -193,25 +193,56 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
 
 
 
-function getDaysBetween(startDateStr, endDateStr) {
+// function getDaysBetween(startDateStr, endDateStr) {
+//     const startDate = new Date(startDateStr);
+//     const endDate = new Date(endDateStr);
+//     const result = [];
+  
+//     // Normalize time to midnight
+//     startDate.setHours(0, 0, 0, 0);
+//     endDate.setHours(0, 0, 0, 0);
+  
+//     for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+//       result.push({
+//         date: new Date(d).toISOString(),
+//         in0: 0,
+//         in11: 0,
+//         in21: 0,
+//         out0: 0,
+//         out11: 0,
+//         out21: 0,
+//         entries: []
+//       });
+//     }
+  
+//     return result;
+//   }
+
+  function getDaysBetween(startDateStr, endDateStr) {
     const startDate = new Date(startDateStr);
     const endDate = new Date(endDateStr);
     const result = [];
   
-    // Normalize time to midnight
+    // Normalize time to midnight local time
     startDate.setHours(0, 0, 0, 0);
     endDate.setHours(0, 0, 0, 0);
   
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    for (
+      let d = new Date(startDate);
+      d.getTime() <= endDate.getTime();
+      d.setDate(d.getDate() + 1)
+    ) {
+      // Clone and format date safely
+      const localDate = new Date(d);
       result.push({
-        date: new Date(d).toISOString(),
+        date: localDate.toISOString(),
         in0: 0,
         in11: 0,
         in21: 0,
         out0: 0,
         out11: 0,
         out21: 0,
-        entries: []
+        entries: [],
       });
     }
   
