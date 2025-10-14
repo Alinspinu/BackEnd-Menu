@@ -21,7 +21,7 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
             if(p.ings[0]){
               if(p.ings[0].gestiune){
                 if(p.ings[0].gestiune.toString() === gest){
-                  const day = days.find(d => new Date(d.date).getDateString() === new Date(o.updatedAt).getDateString())
+                  const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
                   if(day){
                     const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul')
                     if(existingEntry){
@@ -98,7 +98,7 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
                   }
                 }
               }
-              const day = days.find(d => new Date(d.date).getDate() === new Date(nir.documentDate).getDate())
+              const day = days.find(d => new Date(d.date).toDateString() === new Date(nir.documentDate).toDateString())
               if(day){
                 const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === tva)
                 if(existingEntry){
