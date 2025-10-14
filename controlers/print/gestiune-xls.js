@@ -29,7 +29,7 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
 
             const headInOut =  worksheet.addRow(['',``,'','Intrare', `Iesire`, 'Intrare', 'Iesire'])
 
-            const headInNumber = headVat.number;
+            const headInNumber = headInOut.number;
             worksheet.mergeCells(headInNumber, 1, headInNumber, 3); // Columns A–D
 
           const head =  worksheet.addRow([`${i+1}`,`${el.date}`,`Sold initial`,`${el.in11}`,`${0}`,`${el.in21}`, `${0}` ])
