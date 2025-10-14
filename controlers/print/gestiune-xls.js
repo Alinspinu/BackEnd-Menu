@@ -13,11 +13,11 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
         const docTitle =  [
             `${locatie}`,'',`Raport de gestiune ${period}`,'','']
         // const head = ['',``,'', `TVA 11%`, '', 'TVA 21%','']
-        const header = ['Nr',`Data`,'Descriere','', ``, '', '']
+        // const header = ['Nr',`Data`,'Descriere','', ``, '', '']
         worksheet.addRow(docTitle)
         worksheet.addRow([])
         worksheet.addRow([])
-        worksheet.addRow(header)
+        // worksheet.addRow(header)
 
         data.forEach((el, i) => {
             const headVat =  worksheet.addRow(['',``,'', `TVA 11%`, '', 'TVA 21%',''])
@@ -27,10 +27,10 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
             worksheet.mergeCells(rowNumber, 4, rowNumber, 5); // Columns E–F
             worksheet.mergeCells(rowNumber, 6, rowNumber, 7); 
 
-            const headInOut =  worksheet.addRow(['',``,'','Intrare', `Iesire`, 'Intrare', 'Iesire'])
+            const headInOut =  worksheet.addRow(['Nr',`Data`,'Descriere','Intrare', `Iesire`, 'Intrare', 'Iesire'])
 
-            const headInNumber = headInOut.number;
-            worksheet.mergeCells(headInNumber, 1, headInNumber, 3); // Columns A–D
+            // const headInNumber = headInOut.number;
+            // worksheet.mergeCells(headInNumber, 1, headInNumber, 3); // Columns A–D
 
           const head =  worksheet.addRow([`${i+1}`,`${el.date}`,`Sold initial`,`${el.in11}`,`${0}`,`${el.in21}`, `${0}` ])
             head.eachCell((cell) => {
