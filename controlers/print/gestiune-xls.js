@@ -17,7 +17,6 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
         worksheet.addRow(docTitle)
         worksheet.addRow([])
         worksheet.addRow([])
-        worksheet.addRow(head)
         worksheet.addRow(header)
 
         data.forEach((el, i) => {
