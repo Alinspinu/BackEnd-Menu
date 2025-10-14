@@ -12,27 +12,31 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
         const worksheet = workbook.addWorksheet('Raport de gestiune');
         const docTitle =  [
             `${locatie}`,'',`Raport de gestiune ${period}`,'','']
-        // const head = ['',``,'', `TVA 11%`, '', 'TVA 21%','']
-        // const header = ['Nr',`Data`,'Descriere','', ``, '', '']
         worksheet.addRow(docTitle)
         worksheet.addRow([])
         worksheet.addRow([])
-        // worksheet.addRow(header)
 
         data.forEach((el, i) => {
+
+            const d = formatedDateToShow(el.date).split('ora')[0]
+
             const headVat =  worksheet.addRow(['',``,'', `TVA 11%`, '', 'TVA 21%',''])
+            headVat.eachCell((cell) => {
+                cell.font = {
+                bold: true,
+                },
+                cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            });
 
             const rowNumber = headVat.number;
             worksheet.mergeCells(rowNumber, 1, rowNumber, 3); // Columns A–D
             worksheet.mergeCells(rowNumber, 4, rowNumber, 5); // Columns E–F
             worksheet.mergeCells(rowNumber, 6, rowNumber, 7); 
 
-            const headInOut =  worksheet.addRow(['Nr',`Data`,'Descriere','Intrare', `Iesire`, 'Intrare', 'Iesire'])
+            worksheet.addRow(['Nr',`Data`,'Descriere','Intrare', `Iesire`, 'Intrare', 'Iesire'])
 
-            // const headInNumber = headInOut.number;
-            // worksheet.mergeCells(headInNumber, 1, headInNumber, 3); // Columns A–D
 
-          const head =  worksheet.addRow([`${i+1}`,`${el.date}`,`Sold initial`,`${el.in11}`,`${0}`,`${el.in21}`, `${0}` ])
+          const head =  worksheet.addRow([`${i+1}`,`${d}`,`Sold initial`,`${el.in11}`,`${0}`,`${el.in21}`, `${0}` ])
             head.eachCell((cell) => {
                 cell.font = {
                 size: 13,
@@ -58,12 +62,10 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
                         out21 = el.value
                     }
                 }
-               const e = worksheet.addRow([`${i+1}`,`${el.date}`,`${el.description}`,`${in11}`,`${out11}`, `${in21}`, `${out21}`])
-            //    const sum = e.getCell(5)
-            //    sum.font =  { color:  {argb: el.tip === 'income' ?  'FF00B050' : 'FF0000'} }
+               const e = worksheet.addRow([`${i+1}`,`${d}`,`${el.description}`,`${in11}`,`${out11}`, `${in21}`, `${out21}`])
             });
          
-           const foot =  worksheet.addRow(['',`${el.date}`,`Sold final`,`${0}`,`${el.out11}`, `${0}`, `${el.out21}`])
+           const foot =  worksheet.addRow(['',`${d}`,`Sold final`,`${0}`,`${el.out11}`, `${0}`, `${el.out21}`])
 
             foot.eachCell((cell) => {
                 cell.font = {
@@ -71,7 +73,9 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
                 bold: true,
                 };
             });
-            worksheet.addRow([])
+           const emptyRow =  worksheet.addRow([])
+           const num = emptyRow.number
+           worksheet.mergeCells(num, 1, num, 8);
         
         })
    
@@ -89,11 +93,11 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
         })
         worksheet.getColumn(1).width = 7;
         worksheet.getColumn(2).width = 12; 
-        worksheet.getColumn(3).width = 60; 
+        worksheet.getColumn(3).width = 40; 
         worksheet.getColumn(4).width = 10; 
         worksheet.getColumn(5).width = 10; 
         worksheet.mergeCells('A1:B2')
-        worksheet.mergeCells('C1:E2')
+        worksheet.mergeCells('C1:G2')
 
 
   // ✨ Return the Excel file as a Buffer
