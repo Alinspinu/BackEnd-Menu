@@ -10,7 +10,7 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
 
     const startDate = new Date(start).setHours(0,0,0,0)
     const endDate = new Date(end).setHours(23,59,59, 9999)
-    const days = getDaysBetween(startDate, endDate)
+    const days = getDaysBetween(start, end)
 
     let inv11Value = 0
     let inv21Value = 0
