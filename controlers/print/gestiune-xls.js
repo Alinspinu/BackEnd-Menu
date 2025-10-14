@@ -1,6 +1,6 @@
 // utils/exportExcel.js
 const ExcelJS = require("exceljs");
-const {formatedDateToShow}  = require('../../utils/functions')
+const {formatedDateToShow, formatDateDMY}  = require('../../utils/functions')
 
 async function createExcelBuffer(data, locatie) {
 
@@ -18,7 +18,7 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
 
         data.forEach((el, i) => {
 
-            const d = formatedDateToShow(el.date).split('ora')[0]
+            const d = formatDateDMY(el.date)
 
             const headVat =  worksheet.addRow(['',``,'', `TVA 11%`, '', 'TVA 21%',''])
             headVat.eachCell((cell) => {

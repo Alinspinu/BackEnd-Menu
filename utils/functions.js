@@ -63,6 +63,19 @@ function formatDateEFactura(dat){
     return '1111-11-11'
   }
 }
+function formatDateDMY(dat){
+  if(dat){
+  const date = new Date(dat); 
+
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0'); 
+
+  return `${day}.${month}.${year}`;
+  } else {
+    return '1111-11-11'
+  }
+}
 
 
 
@@ -275,7 +288,8 @@ module.exports = {
     getNowShedule,
     formatedDateToShowDots,
     formatDateEFactura,
-    normalizeText
+    normalizeText,
+    formatDateDMY
 }
 
 
