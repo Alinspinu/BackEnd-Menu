@@ -48,21 +48,26 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
                let out11 = 0
                let in21 = 0
                let out21 = 0
+               let text = ''
                if(el.tva === 11){
                     if(el.type === 'intrare'){
                         in11 = el.value
+                        text = ' (intrare 11%)'
                     } else {
                         out11 = el.value
+                        text = ' (iesire 11%)'
                     }
                 }
                 if(el.tva === 21){
                     if(el.type === 'intrare'){
                         in21 = el.value
+                        text = ' (intrare 21%)'
                     } else {
                         out21 = el.value
+                        text = ' (iesire 21%)'
                     }
                 }
-               const e = worksheet.addRow([`${i+1}`,`${d}`,`${el.description}`,`${in11}`,`${out11}`, `${in21}`, `${out21}`])
+               const e = worksheet.addRow([`${i+1}`,`${d}`,`${el.description + text}`,`${in11}`,`${out11}`, `${in21}`, `${out21}`])
             });
          
            const foot =  worksheet.addRow(['',`${d}`,`Sold final`,`${0}`,`${el.out11}`, `${0}`, `${el.out21}`])
@@ -92,8 +97,8 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
             }
         })
         worksheet.getColumn(1).width = 4;
-        worksheet.getColumn(2).width = 16; 
-        worksheet.getColumn(3).width = 30; 
+        worksheet.getColumn(2).width = 14; 
+        worksheet.getColumn(3).width = 35; 
         worksheet.getColumn(4).width = 10; 
         worksheet.getColumn(5).width = 10; 
         worksheet.mergeCells('A1:B2')
