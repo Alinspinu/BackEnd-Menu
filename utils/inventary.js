@@ -171,7 +171,7 @@ function calcRecipeTotal(ings) {
 async function uploadIngs (ings, qtyProdus) {
   try{
     for (const ing of ings) {
-        const ingredientInv = await IngInv.findById(ing.ing).exec();
+        const ingredientInv = await IngInv.findById(ing.ing).populate({path: 'ings.ing', select: 'price tva'}).exec();
         if (!ingredientInv) {
             console.error(`Eorare! Ingredientul nu a fost găsit în baza de date. la incarcare de stoc`);
           } else {

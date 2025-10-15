@@ -646,11 +646,20 @@ module.exports.resetOrderCounter = async (req, res) => {
     }
 }
 
+module.exports.deleteOrder = async (req, res) => {
+    const  {id} = req.query
+    try{
+        await Order.findByIdAndDelete(id)
+        res.status(200).json({message: 'Comanda a fost șteasă cu success!'})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
 
 
 
-
-module.exports.deleteOrder = async (req, res, next) => {
+module.exports.deleteOrders = async (req, res, next) => {
     try {
         const { data } = req.body;
 
