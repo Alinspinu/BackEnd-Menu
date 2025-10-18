@@ -240,8 +240,8 @@ module.exports.createXcel = async (req, res, next) => {
     const endDateToShow = new Date(endDate).toISOString().split('T')[0]
     try{
         const workbook = new exceljs.Workbook();
-        const worksheet = workbook.addWorksheet('Sheet 1');
         const days = await Day.find({locatie: loc, date:{ $gte: start, $lte: end}, salePoint: point }).populate({ path: 'entry' }).populate({path: 'locatie'})      
+        const worksheet = workbook.addWorksheet('Sheet 1');
         const docTitle =  [
             `${days[0].locatie.bussinessName}`,'',`Registru de casă perioadă ${startDateToShow} -- ${endDateToShow}`,'','']
         const header = ['Nr',`Data`,'Descriere','Tip', `Lei`]

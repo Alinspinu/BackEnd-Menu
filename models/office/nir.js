@@ -259,7 +259,7 @@ nirSchema.pre('save', async function (next){
         {
           $set: {
             tva: el.tva,
-            price: ingredient.price === 0 ? el.price : ingredient.price,
+            price: el.price,
             tvaPrice: ingredient.tvaPrice === 0 ? roundd(el.price * (1 + el.tva / 100)) : ingredient.tvaPrice,
             sellPrice: el.sellPrice,
             invGestiune: invGestiune,
