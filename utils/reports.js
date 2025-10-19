@@ -869,6 +869,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                 } else {
                                     values.rentValue += (log.uploadPrice * log.qty)
                                 }
+                                console.log(log)
                                 const rObject = {
                                     date: log.date,
                                     name: ing.name,
