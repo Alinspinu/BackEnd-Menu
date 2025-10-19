@@ -103,6 +103,7 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
+                gestiune: String,
             }
         ]
     },
@@ -121,6 +122,7 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
+                gestiune: String,
             }
         ]
     },
@@ -135,6 +137,7 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
+                gestiune: String,
             }
         ]
     },
@@ -149,6 +152,7 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
+                gestiune: String,
             }
         ]
     },
@@ -163,6 +167,7 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
+                gestiune: String,
             }
         ]
     },
@@ -177,6 +182,7 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
+                gestiune: String,
             }
         ]
     },
@@ -191,6 +197,7 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
+                gestiune: String,
             }
         ]
     },
@@ -205,6 +212,7 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
+                gestiune: String,
             }
         ]
     },

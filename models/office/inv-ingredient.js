@@ -42,6 +42,10 @@ const invIngSchema = new Schema({
         index: true
       },
       invoiceName: String,
+      gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+      }
     }
   ],
   unloadLog: [

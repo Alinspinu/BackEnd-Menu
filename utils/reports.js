@@ -791,7 +791,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details,
                                     logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)'
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
                                 }
                                 servEntryes.push(sObject)
                               break;
@@ -808,7 +809,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details,
                                     logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)'
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
                                 }
                                 obInvEntryes.push(oObject)
                               break;
@@ -826,7 +828,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details,
                                     logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)'
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
                                 }
                                 marketingEntryes.push(mObject)
                               break;
@@ -843,7 +846,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details,
                                     logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)'
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
                                 }
                                 amenajariEntryes.push(aObject)
                               break;
@@ -860,7 +864,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details,
                                     logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)'
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
                                 }
                                 combsEntryes.push(bObject)
                               break;
@@ -878,7 +883,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details,
                                     logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)'
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
                                 }
                                 rentEntryes.push(rObject)
                               break;
@@ -895,7 +901,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details,
                                     logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)'
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
                                 }
                                 
                                 utilitiesEntryes.push(uObject)
