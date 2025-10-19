@@ -40,7 +40,8 @@ const invIngSchema = new Schema({
       logId: {
         type: String,
         index: true
-      }
+      },
+      invoiceName: String,
     }
   ],
   unloadLog: [

@@ -771,7 +771,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                   name: ing.name,
                                   price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                   qty: log.qty,
-                                  suplier: log.operation.details
+                                  suplier: log.operation.details,
+                                  logId: log.logId,
+                                  invoiceName: log.invoiceName || '(No Name)'
                               }
                               consEntryes.push(cObject)
                               break;
@@ -786,7 +788,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     name: ing.name,
                                     price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
-                                    suplier: log.operation.details
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)'
                                 }
                                 servEntryes.push(sObject)
                               break;
@@ -801,7 +805,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     name: ing.name,
                                     price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
-                                    suplier: log.operation.details
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)'
                                 }
                                 obInvEntryes.push(oObject)
                               break;
@@ -817,7 +823,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     name: ing.name,
                                     price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
-                                    suplier: log.operation.details
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)'
                                 }
                                 marketingEntryes.push(mObject)
                               break;
@@ -832,7 +840,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     name: ing.name,
                                     price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
-                                    suplier: log.operation.details
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)'
                                 }
                                 amenajariEntryes.push(aObject)
                               break;
@@ -847,7 +857,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     name: ing.name,
                                     price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
-                                    suplier: log.operation.details
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)'
                                 }
                                 combsEntryes.push(bObject)
                               break;
@@ -862,7 +874,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     name: ing.name,
                                     price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
-                                    suplier: log.operation.details
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)'
                                 }
                                 rentEntryes.push(rObject)
                               break;
@@ -877,7 +891,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     name: ing.name,
                                     price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
                                     qty: log.qty,
-                                    suplier: log.operation.details
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)'
                                 }
                                 
                                 utilitiesEntryes.push(uObject)

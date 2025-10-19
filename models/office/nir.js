@@ -76,6 +76,9 @@ const nirSchema = new Schema({
         type: String,
         required: true,
       },
+      invoiceName: {
+        type: String
+      },
       um: {
         type: String,
         required: true,
@@ -192,7 +195,8 @@ nirSchema.pre('save', async function (next){
           qty: el.qty,
           operation,
           uploadPrice: roundd(el.price * (1 + el.tva / 100)),
-          logId: el.logId
+          logId: el.logId,
+          invoiceName: el.invoiceName
         }
       ];
 
