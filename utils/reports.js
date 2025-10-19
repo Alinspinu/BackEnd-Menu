@@ -216,16 +216,16 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
 
-    const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'})
-    const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee')
-    const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'})
-    const dbUsers = await User.find({locatie: loc, client: false, 'employee.salePoint': point, 'employee.salary.inHeand': {$gte: 0} }).select('employee').populate({path: 'employee.employeePosition'})
+    const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'}).lean()
+    const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee').lean()
+    const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'}).lean()
+    const dbUsers = await User.find({locatie: loc, client: false, 'employee.salePoint': point, 'employee.salary.inHeand': {$gte: 0} }).select('employee').populate({path: 'employee.employeePosition'}).lean()
     const allIngs = await Ingredient.find({locatie: loc, productIngredient: false, salePoint: point})
-                    .select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune', 'dept', 'gest'])
+                    .select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune', 'dept', 'gest', 'invGestiune'])
                     .populate({path: 'gest', select: 'name'})
-                    .populate({path: 'dept', select: 'name'})
+                    .populate({path: 'dept', select: 'name'}).lean()
     const impSheets = await ImpSheet.find({locatie: loc, salePoint: point, date: {$gte: startTime, $lte: endTime}})
-                                .populate({path: 'ings.ing', select: 'name um ings tvaPrice productIngredient', populate: {path: 'ings.ing', select: 'name um tvaPrice' }})
+                                .populate({path: 'ings.ing', select: 'name um ings tvaPrice productIngredient', populate: {path: 'ings.ing', select: 'name um tvaPrice' }}).lean()
     const values = {
         workValueTotal: 0,
         dayRent: 60000 / daysNumber,
@@ -773,7 +773,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                   qty: log.qty,
                                   suplier: log.operation.details,
                                   logId: log.logId,
-                                  invoiceName: log.invoiceName || '(No Name)'
+                                  invoiceName: log.invoiceName || '(No Name)',
+                                  gestiune: log.gestiune || ing.invGestiune[0].gestiune
                               }
                               consEntryes.push(cObject)
                               break;
