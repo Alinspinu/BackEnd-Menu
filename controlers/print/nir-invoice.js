@@ -246,7 +246,9 @@ invoice.products.forEach((el, i) => {
     console.log('totalNoVat', el.totalNoVat)
     if(value === el.totalNoVat){
       doc.lineWidth(0.2);
-      doc.moveTo(26, newValue).lineTo(530, newValue).stroke();
+      doc.strokeColor('red');
+      doc.moveTo(26, newValue + rowHeigth -1).lineTo(272, newValue + rowHeigth -1).stroke();
+      doc.strokeColor('black');
     }
     heghtValue += rowHeigth
 })
