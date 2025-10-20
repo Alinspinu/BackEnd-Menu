@@ -219,12 +219,11 @@ module.exports.printNirByIngLogId = async (req, res) => {
   try{
 
     const nir = await Nir.findOne({'ingredients.logId': logId})
-    console.log(nir)
     if(nir){
-      console.log(nir.nirInvoice)
       const nirInvoice = await NirInvoice.findById(nir.nirInvoice)
       if(nirInvoice){
-        const doc = createNirInvoice(nirInvoice)
+        const value = nir.ingredients.find(i => i.logId === logId).value
+        const doc = createNirInvoice(nirInvoice, value)
         doc.end();
         res.type("application/pdf");
         doc.pipe(res);

@@ -242,6 +242,8 @@ invoice.products.forEach((el, i) => {
     doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
     doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
     doc.text(`${round((el.price * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
+    console.log('value', value)
+    console.log('totalNoVat', totalNoVat)
     if(value === el.totalNoVat){
       doc.lineWidth(0.2);
       doc.moveTo(26, newValue).lineTo(530, newValue).stroke();
