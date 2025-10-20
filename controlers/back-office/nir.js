@@ -213,6 +213,41 @@ module.exports.payBill = async (req, res, next) => {
   }
 }
 
+module.exports.printNirByIngLogId = async (req, res) => {
+  const {logId, loc, point} = req.body
+
+  try{
+
+    const nir = await Nir.findOne({'ingredients.logId': logId})
+    if(nir){
+      const nirInvoice = await NirInvoice.findById(nir.nirInvoice)
+      if(nirInvoice){
+        const doc = createNirInvoice(nirInvoice)
+        doc.end();
+        res.type("application/pdf");
+        doc.pipe(res);
+        res.once("finish", () => {
+          const chunks = [];
+          doc.on("data", (chunk) => {
+            chunks.push(chunk);
+          });
+          doc.on("end", () => {
+            const buffer = Buffer.concat(chunks);
+            const base64String = buffer.toString("base64");
+            res.status(200).send(base64String)
+          });
+        });
+      }
+    }
+
+
+  } catch(err){
+    console.log(err)
+    res.status(500).json(err)
+  }
+
+}
+
 
 module.exports.getNirs = async(req, res, next) => {
   const {loc, point} = req.body

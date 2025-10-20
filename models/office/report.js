@@ -103,7 +103,10 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
-                gestiune: String,
+                gestiune:  {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                  }
             }
         ]
     },
@@ -122,7 +125,10 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
-                gestiune: String,
+                gestiune:  {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                  }
             }
         ]
     },
@@ -137,7 +143,10 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
-                gestiune: String,
+                gestiune:  {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                  }
             }
         ]
     },
@@ -152,7 +161,10 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
-                gestiune: String,
+                gestiune:  {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                  }
             }
         ]
     },
@@ -167,7 +179,10 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
-                gestiune: String,
+                gestiune:  {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                  }
             }
         ]
     },
@@ -182,7 +197,10 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
-                gestiune: String,
+                gestiune:  {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                  }
             }
         ]
     },
@@ -197,7 +215,10 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
-                gestiune: String,
+                gestiune:  {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                  }
             }
         ]
     },
@@ -212,7 +233,10 @@ const reportSchema = new Schema({
                 suplier: String,
                 logId: String,
                 invoiceName: String,
-                gestiune: String,
+                gestiune:  {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                  }
             }
         ]
     },

@@ -2,7 +2,7 @@ const PDFDocument = require("pdfkit");
 
 const {round} = require('../../utils/functions')
 
-function createNirInvoice(invoice){
+function createNirInvoice(invoice, value = 0){
 
   const doc = new PDFDocument({
     size: "A4",
@@ -242,6 +242,10 @@ invoice.products.forEach((el, i) => {
     doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
     doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
     doc.text(`${round((el.price * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
+    if(value === el.totalNoVat){
+      doc.lineWidth(0.2);
+      doc.moveTo(26, newValue).lineTo(530, newValue).stroke();
+    }
     heghtValue += rowHeigth
 })
 

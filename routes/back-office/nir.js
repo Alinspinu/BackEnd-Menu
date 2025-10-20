@@ -13,6 +13,8 @@ router.route('/get-nirs')
 router.route('/nir')
     .get(nirRoutes.getNir)
     .delete(nirRoutes.deleteNir)
+    .post(nirRoutes.printNirByIngLogId)
+    
 router.route('/pay').post(nirRoutes.payBill)
 
 router.route('/delete-nirs').put(nirRoutes.deleteNirs)
