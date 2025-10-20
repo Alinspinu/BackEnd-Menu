@@ -219,8 +219,8 @@ module.exports.printNirByIngLogId = async (req, res) => {
   try{
 
     const nir = await Nir.findOne({'ingredients.logId': logId})
+    console.log(nir)
     if(nir){
-      console.log(nir)
       console.log(nir.nirInvoice)
       const nirInvoice = await NirInvoice.findById(nir.nirInvoice)
       if(nirInvoice){
