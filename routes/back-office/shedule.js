@@ -9,6 +9,8 @@ router.route('/')
     .put(sheduleRoutes.updateShedule)
     .delete(sheduleRoutes.deletEntry)
 
+router.route('/d').delete(sheduleRoutes.deleteShedule)
+
 router.route('/pontaj')
     .get(sheduleRoutes.getPontaj)
     .post(sheduleRoutes.addPontaj)

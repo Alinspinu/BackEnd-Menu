@@ -110,6 +110,26 @@ function getDaysInMonth(year, month) {
   }
 
 
+  module.exports.deleteShedule = async (req, res) => {
+    const {id} = req.query
+    try{
+      const sh = await Shedule.findById(id)
+      if(sh){
+        if(sh.users.length){
+          res.status(401).json({messgae: 'Sunt pontați oameni pe acest program, pentru a-l putea șterge trebuie să fie gol!'})
+        } else {
+          await sh.delete()
+          res.status(200).json({message: 'Programul a fost șters cu succes!'})
+        }
+      } else {
+        res.status(404).json({message: 'Erorare, programul nu a fost gasit, id- ' + id})
+      }
+    } catch(error) {
+      console.log(error)
+      res.status(500).json(error)
+    }
+  }
+
   
 module.exports.addPontaj = async (req, res, next) => {
     const months = [
