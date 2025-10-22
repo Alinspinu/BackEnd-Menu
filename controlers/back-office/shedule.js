@@ -118,7 +118,7 @@ function getDaysInMonth(year, month) {
         if(sh.users?.length){
           res.status(401).json({messgae: 'Sunt pontați oameni pe acest program, pentru a-l putea șterge trebuie să fie gol!'})
         } else {
-          await sh.delete()
+          await Shedule.findByIdAndDelete(id)
           res.status(200).json({message: 'Programul a fost șters cu succes!'})
         }
       } else {
