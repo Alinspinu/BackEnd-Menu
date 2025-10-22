@@ -125,7 +125,7 @@ function getDaysInMonth(year, month) {
           await Shedule.findByIdAndDelete(id)
           res.status(200).json({message: 'Programul a fost șters cu succes!'})
         } else {
-          res.status(401).json({messgae: 'Sunt pontați oameni pe acest program, pentru a-l putea șterge trebuie să fie gol!'})
+          res.status(401).json({message: 'Sunt pontați oameni pe acest program, pentru a-l putea șterge trebuie să fie gol!'})
         }
       } else {
         res.status(404).json({message: 'Erorare, programul nu a fost gasit, id- ' + id})
