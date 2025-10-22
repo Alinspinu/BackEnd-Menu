@@ -115,7 +115,7 @@ function getDaysInMonth(year, month) {
     try{
       const sh = await Shedule.findById(id)
       if(sh){
-        if(sh.users.length){
+        if(sh.users?.length){
           res.status(401).json({messgae: 'Sunt pontați oameni pe acest program, pentru a-l putea șterge trebuie să fie gol!'})
         } else {
           await sh.delete()
