@@ -115,11 +115,17 @@ function getDaysInMonth(year, month) {
     try{
       const sh = await Shedule.findById(id)
       if(sh){
-        if(sh.users?.length){
-          res.status(401).json({messgae: 'Sunt pontați oameni pe acest program, pentru a-l putea șterge trebuie să fie gol!'})
-        } else {
+        let areUsers = false
+        for(let d of sh.days){
+            if(d.users.length){
+              areUsers = true
+            }
+        } 
+        if(!areUsers) {
           await Shedule.findByIdAndDelete(id)
           res.status(200).json({message: 'Programul a fost șters cu succes!'})
+        } else {
+          res.status(401).json({messgae: 'Sunt pontați oameni pe acest program, pentru a-l putea șterge trebuie să fie gol!'})
         }
       } else {
         res.status(404).json({message: 'Erorare, programul nu a fost gasit, id- ' + id})
