@@ -420,74 +420,132 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
 
     function createDepartaments(billProducts){
-        let departaments = []
+        let productsGest = gests.map(g => {
+            return {
+                total: 0,
+                showType: false,
+                name: g.name,
+                dep: [
+                    {
+                      name: '',
+                      total: 0,
+                    }
+                  ],
+                products: []
+            }
+        })
         for(let prod of billProducts){
             const price = (prod.price*prod.quantity) - prod.discount
             if(!prod.mainCat){
                 prod.mainCat = 'Nedefinit'
             }
-            const existingDep = departaments.find(d => d.name === prod.mainCat)
-            if(existingDep) {
-                const existingProduct = existingDep.products.find(p => p.name === prod.name)
+
+            // const d = departamentss.find()
+
+            const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
+
+            if(g){
+                const existingProduct = g.products.find(p => p.name === prod.name)
                 if(existingProduct){
                     existingProduct.qty = existingProduct.qty + prod.quantity
                     existingDep.total += price
-                    const existingType = existingDep.dep.find(p => (p.name === prod.dep))
-                    if(existingType) {
-                        existingType.total = existingType.total + round(price)
-                      } else {
-                        existingDep.dep.push(
-                          {
-                            name: prod.dep,
-                            total: price,
-                          }
-                           )
-                      }
-                } else {
-                    const product = {
-                        name: prod.name,
-                        dep: prod.dep,
-                        qty: prod.quantity,
-                        price: prod.price - prod.discount
-                      }
-                      existingDep.total += round(product.price * product.qty)
-                      existingDep.products.push(product)
-                      const existingType = existingDep.dep.find(p => (p.name === prod.dep))
-                      if(existingType) {
-                        existingType.total = existingType.total + round(price)
-                      } else {
-                        existingDep.dep.push(
-                          {
-                            name: prod.dep,
-                            total: price,
-                          }
+                    const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
+                    if(existingDep){
+                        existingDep.total = existingDep.total + round(price)
+                    } else {
+                        g.dep.push(
+                            {
+                              name: prod.productId.departament.name,
+                              total: price,
+                            }
                           )
-                      }
-                }
-            } else {
-                const dep = {
-                    total: price,
-                    showType: false,
-                    name: prod.mainCat,
-                    dep: [
-                        {
-                          name: prod.dep,
-                          total: price,
                         }
-                      ],
-                    products: [
-                      {
-                        name: prod.name,
-                        dep: prod.dep,
-                        qty: prod.quantity,
-                        price: prod.price - prod.discount
-                      }
-                    ]
-                  }
-                departaments.push(dep)
-            }
-        }
-        return departaments
+                    } else {
+                        const product = {
+                            name: prod.name,
+                            dep: prod.prod.productId.departament.name,
+                            qty: prod.quantity,
+                            price: prod.price - prod.discount
+                          }
+                          g.total += round(product.price * product.qty)
+                          g.products.push(product)
+                          const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
+                          if(existingDep) {
+                            existingDep.total = existingDep.total + round(price)
+                          } else {
+                            g.dep.push(
+                              {
+                                name: prod.productId.departament.name,
+                                total: price,
+                              }
+                              )
+                          }
+                    }
+                }
+            
+
+        //     const existingDep = departamentss.find(d => d.name === prod.mainCat)
+        //     if(existingDep) {
+        //         const existingProduct = existingDep.products.find(p => p.name === prod.name)
+        //         if(existingProduct){
+        //             existingProduct.qty = existingProduct.qty + prod.quantity
+        //             existingDep.total += price
+        //             const existingType = existingDep.dep.find(p => (p.name === prod.dep))
+        //             if(existingType) {
+        //                 existingType.total = existingType.total + round(price)
+        //               } else {
+        //                 existingDep.dep.push(
+        //                   {
+        //                     name: prod.dep,
+        //                     total: price,
+        //                   }
+        //                    )
+        //               }
+        //         } else {
+        //             const product = {
+        //                 name: prod.name,
+        //                 dep: prod.dep,
+        //                 qty: prod.quantity,
+        //                 price: prod.price - prod.discount
+        //               }
+        //               existingDep.total += round(product.price * product.qty)
+        //               existingDep.products.push(product)
+        //               const existingType = existingDep.dep.find(p => (p.name === prod.dep))
+        //               if(existingType) {
+        //                 existingType.total = existingType.total + round(price)
+        //               } else {
+        //                 existingDep.dep.push(
+        //                   {
+        //                     name: prod.dep,
+        //                     total: price,
+        //                   }
+        //                   )
+        //               }
+        //         }
+        //     } else {
+        //         const dep = {
+        //             total: price,
+        //             showType: false,
+        //             name: prod.mainCat,
+        //             dep: [
+        //                 {
+        //                   name: prod.dep,
+        //                   total: price,
+        //                 }
+        //               ],
+        //             products: [
+        //               {
+        //                 name: prod.name,
+        //                 dep: prod.dep,
+        //                 qty: prod.quantity,
+        //                 price: prod.price - prod.discount
+        //               }
+        //             ]
+        //           }
+        //         departaments.push(dep)
+        //     }
+        // }
+        return productsGest
     }
 
 
@@ -1088,8 +1146,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     })
     const newRep = await report.save()
     // console.log(values)
-    console.log(newRep.spendingsDeps)
-    console.log(newRep.inGest)
+    console.log(newRep.departaments)
+    // console.log(newRep.inGest)
     // console.log(values)
     return newRep
 }

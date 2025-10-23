@@ -213,6 +213,17 @@ module.exports.getHavyOrders = async (req, res, next) => {
                                         }
                                     })
                                     .populate({
+                                        path: 'products.productId', select: 'gestiune departament',
+                                        populate: [
+                                            {
+                                                path: 'departament', select: 'name'
+                                            },
+                                            {
+                                                path: 'gestiune', select: 'name'
+                                            }
+                                        ]
+                                    })
+                                    .populate({
                                         path: 'products.toppings.ing', 
                                         select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
                                         populate: {
@@ -227,7 +238,6 @@ module.exports.getHavyOrders = async (req, res, next) => {
              console.log('comenzi', orders.length)                                   
             const result = await getBillProducts(orders, filter)
             const ingredients = await getIngredients(result.allProd)
-            console.log('result ings', ingredients.length)
             if(report === 'report'){
                const report = await createDayReport(result.allProd, ingredients, loc, orders, startTime, point)
                res.status(200).json(report)
