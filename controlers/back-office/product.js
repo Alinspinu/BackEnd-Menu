@@ -137,14 +137,14 @@ module.exports.updateProducts = async (req, res) => {
         populate: innerIngPopulate
         })
         .populate({ path: 'ings.gestiune', select: 'name' })
-        .lean();                        // <-- use lean for speed
+        // .lean();                        // <-- use lean for speed
 
         products.forEach(p => {
             if(!p.printSection){
                 console.log(p.name)
             }
         })
-    //   modifyProducts(products)
+      modifyProducts(products)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -157,26 +157,28 @@ module.exports.updateProducts = async (req, res) => {
     const productPromises = products.map(p => {
 
         if(p.dep === 'productie'){
-            p.departament = '68fa9edf08cd93508089107d'
+            p.departament = '68faa2ad354b9cb7e354f5a2'
         }
         if(p.dep === 'marfa'){
-            p.departament = '679a63901feadad813f609e1'
+            p.departament = '689b29715defa52bb24ee756'
         }
 
-        if(normalizeText(p.mainCat) === 'bar' || normalizeText(p.mainCat) === 'coffee'){
-            p.gestiune = '679a635e1feadad813f5f86e'
-        }
+        p.gestiune = '689b27ed5defa52bb24ebcb2'
 
-        if(normalizeText(p.mainCat) === 'food'){
-            p.gestiune = '68fa8f3f6647b8fc0cf3fef8'
-        }
+        // if(normalizeText(p.mainCat) === 'bar' || normalizeText(p.mainCat) === 'coffee'){
+        //     p.gestiune = '679a635e1feadad813f5f86e'
+        // }
 
-        if(normalizeText(p.mainCat) === 'shop'){
-             p.gestiune = '68fa9feb08cd935080894004'
-        }
-        if(normalizeText(p.mainCat) === 'holesale'){
-             p.gestiune = '679b5975d68f3003a018ead6'
-        }
+        // if(normalizeText(p.mainCat) === 'food'){
+        //     p.gestiune = '68fa8f3f6647b8fc0cf3fef8'
+        // }
+
+        // if(normalizeText(p.mainCat) === 'shop'){
+        //      p.gestiune = '68fa9feb08cd935080894004'
+        // }
+        // if(normalizeText(p.mainCat) === 'holesale'){
+        //      p.gestiune = '679b5975d68f3003a018ead6'
+        // }
   
 
         return p.save().then(savedP => {
