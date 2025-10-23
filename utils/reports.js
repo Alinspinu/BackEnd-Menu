@@ -10,8 +10,7 @@ const ImpSheet = require('../models/office/imp-sheet')
 
 
 async function getBillProducts(orders, filter) {
-    console.log('comezi la produse', orders.lenght)
-    console.log('prima comanda', orders[0])
+    console.log('comezi la produse', orders.length)
 
     let products = [];
     let modifiedProducts = []
@@ -68,7 +67,7 @@ async function getBillProducts(orders, filter) {
            product.ingr = await getIngredients([product])
            modifiedProducts.push(product)
     }
-
+    console.log('produse modificate', modifiedProducts.length)
     for(const product of modifiedProducts){
         console.log(product.section)
         switch(product.section) {
