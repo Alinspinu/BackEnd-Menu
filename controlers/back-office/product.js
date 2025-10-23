@@ -137,7 +137,7 @@ module.exports.updateProducts = async (req, res) => {
         populate: innerIngPopulate
         })
         .populate({ path: 'ings.gestiune', select: 'name' })
-        .lean();                        // <-- use lean for speed
+                              // <-- use lean for speed
 
         products.forEach(p => {
             if(!p.printSection){
