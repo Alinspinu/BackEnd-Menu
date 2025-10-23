@@ -991,7 +991,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     }
 
     for(let d of spendingsDeps){
-        console.log(d.name)
+        console.log(normalizeText(d.name))
         if(normalizeText(d.name).includes('marfa')){
             for(let e of d.entries){
                 const g = inGest.find(g => g._id === e.gestiune)
