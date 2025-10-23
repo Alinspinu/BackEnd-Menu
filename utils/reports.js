@@ -477,7 +477,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 departaments.push(dep)
             }
         }
-        console.log('departaments', departaments)
         return departaments
     }
 
@@ -1018,7 +1017,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     // console.log(report.impairment)
     // console.log('total values', values)
     const newRep = await report.save()
-    // console.log(values)
+    console.log(values)
     return newRep
 }
 
