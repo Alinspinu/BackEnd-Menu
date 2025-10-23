@@ -995,8 +995,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         if(normalizeText(d.name).includes('marfa')){
             console.log('hitt first')
             for(let e of d.entries){
-                const g = inGest.find(g => g._id === e.gestiune)
-                console.log(e.gestiune)
+                const g = inGest.find(g => g._id.toString() === e.gestiune.toString())
                 if(g){
                     console.log('hit second')
                     g.total += e.price
@@ -1006,7 +1005,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
         if(normalizeText(d.name).includes('materie')){
             for(let e of d.entries){
-                const g = inGest.find(g => g._id === e.gestiune)
+                const g = inGest.find(g => g._id.toString() === e.gestiune.toString())
                 if(g){
                     g.total += e.price
                 }
