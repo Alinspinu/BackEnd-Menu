@@ -137,14 +137,14 @@ module.exports.updateProducts = async (req, res) => {
         populate: innerIngPopulate
         })
         .populate({ path: 'ings.gestiune', select: 'name' })
-        // .lean();                        // <-- use lean for speed
+        .lean();                        // <-- use lean for speed
 
         products.forEach(p => {
             if(!p.printSection){
                 console.log(p.name)
             }
         })
-      modifyProducts(products)
+    //   modifyProducts(products)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
