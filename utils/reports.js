@@ -991,6 +991,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     }
 
     for(let d of spendingsDeps){
+        console.log(d.name)
         if(normalizeText(d.name).includes('marfa')){
             for(let e of d.entries){
                 const g = inGest.find(g => g._id === e.gestiune)
@@ -1078,8 +1079,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
     })
-    // console.log(report.impairment)
-    // console.log('total values', values)
     console.log(inGest)
     const newRep = await report.save()
     // console.log(values)
