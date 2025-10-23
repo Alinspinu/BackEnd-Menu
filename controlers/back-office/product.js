@@ -137,14 +137,14 @@ module.exports.updateProducts = async (req, res) => {
         populate: innerIngPopulate
         })
         .populate({ path: 'ings.gestiune', select: 'name' })
-        .lean();                        // <-- use lean for speed
+        // .lean();                        // <-- use lean for speed
 
         products.forEach(p => {
             if(!p.printSection){
                 console.log(p.name)
             }
         })
-    //   modifyProducts(products)
+      modifyProducts(products)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -157,14 +157,14 @@ module.exports.updateProducts = async (req, res) => {
     const productPromises = products.map(p => {
 
         if(p.dep === 'productie'){
-            p.departament = '68fa9a7a6647b8fc0cf402dc'
+            p.departament = '68fa9edf08cd93508089107d'
         }
         if(p.dep === 'marfa'){
-            p.departament = '6811e47748bed4e7935f58ca'
+            p.departament = '679a63901feadad813f609e1'
         }
 
         if(normalizeText(p.mainCat) === 'bar' || normalizeText(p.mainCat) === 'coffee'){
-            p.gestiune = '6811e3d748bed4e79359d1fe'
+            p.gestiune = '679a635e1feadad813f5f86e'
         }
 
         if(normalizeText(p.mainCat) === 'food'){
@@ -172,7 +172,10 @@ module.exports.updateProducts = async (req, res) => {
         }
 
         if(normalizeText(p.mainCat) === 'shop'){
-             p.gestiune = '68d5406e794d607a90df6c5b'
+             p.gestiune = '68fa9feb08cd935080894004'
+        }
+        if(normalizeText(p.mainCat) === 'holesale'){
+             p.gestiune = '679b5975d68f3003a018ead6'
         }
   
 
