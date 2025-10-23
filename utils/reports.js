@@ -1,5 +1,5 @@
 
-const {round} = require('./functions')
+const {round, normalizeText} = require('./functions')
 const Report = require('./../models/office/report')
 const Pontaj = require('./../models/users/pontaj')
 const DelProd = require('./../models/office/product/deletetProduct')
@@ -8,6 +8,7 @@ const User = require('./../models/users/user')
 const Entry = require('../models/office/cash-register/entry')
 const ImpSheet = require('../models/office/imp-sheet')
 const Dep = require('../models/office/product/dep')
+const Gestiune = require('../models/office/product/gestiune')
 
 
 async function getBillProducts(orders, filter) {
@@ -219,6 +220,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
 
     const departaments = await Dep.find({locatie: loc, salePoint: point})
+    const gests = await Gestiune.find({locatie: loc, salePoint: point})
     const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'}).lean()
     const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee').lean()
     const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'}).lean()
@@ -280,6 +282,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     let rentEntryes = []
     let spendingsDeps = departaments.map(d => {
         return {name: d.name, total: 0, entries: [], _id: d._id}
+    })
+    inGest = gests.map(g => {
+        return {name: g.name, total: 0, _id: g._id, }
     })
  
 
@@ -790,6 +795,11 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                             console.log('ingredient fara departament', ing.dept, ing.name)
                         }
 
+
+
+
+
+
                         switch (ing.dept.name) {
                             case 'Consumabil':                       
                                 if(!log.uploadPrice){
@@ -980,6 +990,29 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         } 
     }
 
+    for(let d of spendingsDeps){
+        if(normalizeText(d.name).includes('marfa')){
+            for(let e of d.entries){
+                const g = inGest.find(g => g._id === e.gestiune)
+                if(g){
+                    g.total += e.price
+                }
+            }
+        }
+
+        if(normalizeText(d.name).includes('materie')){
+            for(let e of d.entries){
+                const g = inGest.find(g => g._id === e.gestiune)
+                if(g){
+                    g.total += e.price
+                }
+            }
+        }
+    }
+
+
+
+
     const report = new Report({
         locatie: loc,
         salePoint: point,
@@ -1039,6 +1072,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             total: round(values.utilitiesValue),
             entries: utilitiesEntryes
         },
+        spendingsDeps,
         departaments: createDepartaments(billProducts),
         hours: calcIncomeHours(bills),
         users: usersShow(bills),
@@ -1046,7 +1080,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     })
     // console.log(report.impairment)
     // console.log('total values', values)
-    console.log(spendingsDeps)
+    console.log(inGest)
     const newRep = await report.save()
     // console.log(values)
     return newRep
