@@ -9,7 +9,7 @@ const Gestiune = require('../../models/office/product/gestiune')
 const mongoose = require('mongoose')
 const cloudinary = require('cloudinary').v2;
 
-const {checkTopping, round} = require('../../utils/functions')
+const {checkTopping, round, normalizeText} = require('../../utils/functions')
 
 
 const innerIngPopulate = [
@@ -144,7 +144,7 @@ module.exports.updateProducts = async (req, res) => {
                 console.log(p.name)
             }
         })
-
+      modifyProducts(products)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -155,16 +155,25 @@ module.exports.updateProducts = async (req, res) => {
 
   function modifyProducts(products) {
     const productPromises = products.map(p => {
- 
-      p.ings.forEach(i => {
-        i.gestiune = i.ing.invGestiune[0].gestiune;
-        console.log('Gestiune modificata pe ingredientele de la PRODUS', i.ing.invGestiune[0].name);
-      });
-  
-      p.toppings.forEach(t => {
-        t.gestiune = t.ing.invGestiune[0].gestiune;
-        console.log('Gestiune modificata pe Toppingurile de la PRODUS', t.ing.invGestiune[0].name);
-      });
+
+        if(p.dep === 'productie'){
+            p.departament = '68fa9a7a6647b8fc0cf402dc'
+        }
+        if(p.dep === 'marfa'){
+            p.departament = '6811e47748bed4e7935f58ca'
+        }
+
+        if(normalizeText(p.mainCat) === 'bar' || normalizeText(p.mainCat) === 'coffee'){
+            p.gestiune = '6811e3d748bed4e79359d1fe'
+        }
+
+        if(normalizeText(p.mainCat) === 'food'){
+            p.gestiune = '68fa8f3f6647b8fc0cf3fef8'
+        }
+
+        if(normalizeText(p.mainCat) === 'shop'){
+             p.gestiune = '68d5406e794d607a90df6c5b'
+        }
   
 
         return p.save().then(savedP => {
