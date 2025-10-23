@@ -46,6 +46,45 @@ const reportSchema = new Schema({
     rent: {
         type: Number
     },
+    spendingDeps: [
+        {
+            total: Number,
+            name: String,
+            dep: {
+                type: Schema.Types.ObjectId,
+                ref: 'Dep'
+            },
+            entries: [
+                {
+                    date: Date,
+                    name: String,
+                    qty: Number,
+                    price: Number,
+                    suplier: String,
+                    logId: String,
+                    invoiceName: String,
+                    gestiune:  {
+                        type: Schema.Types.ObjectId,
+                        ref: 'Gestiune'
+                      }
+                }
+            ]
+        }
+    ],
+
+    inGest: [
+        {
+            name: String,
+            total: Number,
+            marfa: Number,
+            materie: Number,
+            gest: {
+                type: Schema.Types.ObjectId,
+                ref: 'Gestiune'
+            }
+        }
+    ],
+
     diverse:{
         total: Number,
         entry: [

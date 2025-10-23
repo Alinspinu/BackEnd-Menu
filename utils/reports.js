@@ -281,10 +281,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     let combsEntryes = []
     let rentEntryes = []
     let spendingsDeps = departaments.map(d => {
-        return {name: d.name, total: 0, entries: [], _id: d._id}
+        return {name: d.name, total: 0, entries: [], dep: d._id}
     })
     inGest = gests.map(g => {
-        return {name: g.name, marfa: 0, materie: 0, total: 0, _id: g._id, }
+        return {name: g.name, marfa: 0, materie: 0, total: 0, gest: g._id, }
     })
  
 
@@ -771,7 +771,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     const logDate = new Date(log.date).setHours(12, 0, 0, 0)
                     if(startTime <= logDate && logDate < endTime) {
                         
-                        const dep = spendingsDeps.find(d => d._id.toString() === ing.dept._id.toString())
+                        const dep = spendingsDeps.find(d => d.dep.toString() === ing.dept._id.toString())
                         if(dep){
                             if(!log.uploadPrice){
                                 dep.total += (ing.tvaPrice * log.qty) 
@@ -993,7 +993,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     for(let d of spendingsDeps){
         if(normalizeText(d.name).includes('marfa')){
             for(let e of d.entries){
-                const g = inGest.find(g => g._id.toString() === e.gestiune.toString())
+                const g = inGest.find(g => g.gest.toString() === e.gestiune.toString())
                 if(g){
                     g.marfa += e.price
                     g.total += e.price
@@ -1001,7 +1001,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             }
         }  else if(normalizeText(d.name).includes('materie')){
             for(let e of d.entries){
-                const g = inGest.find(g => g._id.toString() === e.gestiune.toString())
+                const g = inGest.find(g => g.gest.toString() === e.gestiune.toString())
                 if(g){
                     g.materie += e.price
                     g.total += e.price
@@ -1009,7 +1009,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             }
         } else {
             for(let e of d.entries){
-                const g = inGest.find(g => g._id.toString() === e.gestiune.toString())
+                const g = inGest.find(g => g.gest.toString() === e.gestiune.toString())
                 if(g){
                     g.total += e.price
                 }
@@ -1080,13 +1080,16 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             entries: utilitiesEntryes
         },
         spendingsDeps,
+        inGest,
         departaments: createDepartaments(billProducts),
         hours: calcIncomeHours(bills),
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
     })
-    console.log(inGest)
     const newRep = await report.save()
+    // console.log(values)
+    console.log(newRep.spendingDeps)
+    console.log(newRep.inGest)
     // console.log(values)
     return newRep
 }
