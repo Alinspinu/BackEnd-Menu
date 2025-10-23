@@ -94,7 +94,7 @@ async function getBillProducts(orders, filter) {
         }
     }
 
-    console.log('produse default', productsToSend.default.length)
+    console.log('produse default', productsToSend.default.products.length)
     
     productsToSend.buc.ings = await getIngredients(productsToSend.buc.products)
     productsToSend.bar.ings = await getIngredients(productsToSend.bar.products)
