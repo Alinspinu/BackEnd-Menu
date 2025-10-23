@@ -477,6 +477,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 departaments.push(dep)
             }
         }
+        console.log('departaments', departaments)
         return departaments
     }
 
