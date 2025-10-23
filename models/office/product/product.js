@@ -195,10 +195,18 @@ const productTrueSchema = new Schema({
         }
     ],
 
-    category:
-    {
+    category:{
         type: Schema.Types.ObjectId,
         ref: 'Category'
+    },
+    
+    departament: {
+        type: Schema.Types.ObjectId,
+        ref: 'Dep'
+    },
+    gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
     },
     locatie: {
         type: Schema.Types.ObjectId,
@@ -220,7 +228,6 @@ const productTrueSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Section'
     }
-
 })
 
 productTrueSchema.pre('deleteOne', { document: true }, async function (next) {

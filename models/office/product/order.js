@@ -284,6 +284,14 @@ const orderTrueSchema = new Schema({
                         }
                       },
                 ],
+                departament: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Dep'
+                },
+                gestiune: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Gestiune'
+                },
                 energy: Number,
                 comment: String,
                 tva: Number,
