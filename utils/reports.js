@@ -7,6 +7,7 @@ const Ingredient = require('./../models/office/inv-ingredient')
 const User = require('./../models/users/user')
 const Entry = require('../models/office/cash-register/entry')
 const ImpSheet = require('../models/office/imp-sheet')
+const Dep = require('../models/office/product/dep')
 
 
 async function getBillProducts(orders, filter) {
@@ -217,6 +218,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
 
+    const departaments = await Dep.find({locatie: loc, salePoint: point})
     const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'}).lean()
     const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee').lean()
     const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'}).lean()
@@ -276,6 +278,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     let utilitiesEntryes = []
     let combsEntryes = []
     let rentEntryes = []
+    let spendingsDeps = departaments.map(d => {
+        return {name: d.name, total: 0, entries: [], _id: d._id}
+    })
  
 
 
@@ -760,7 +765,31 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             for(const log of ing.uploadLog) {
                     const logDate = new Date(log.date).setHours(12, 0, 0, 0)
                     if(startTime <= logDate && logDate < endTime) {
-                        console.log('departament', ing.dept.name)
+                        
+                        const dep = spendingsDeps.find(d => d._id === ing.dept._id)
+                        if(dep){
+                            if(!log.uploadPrice){
+                                dep.total += (ing.tvaPrice * log.qty) 
+                            } else {
+                                dep.total += (log.uploadPrice * log.qty) 
+                            }
+                            dep.entries.push(
+                                {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                                }
+                            )
+                            
+                        } else {
+                            console.log('ingredient fara departament', ing.dept, ing.name)
+                        }
+
                         switch (ing.dept.name) {
                             case 'Consumabil':                       
                                 if(!log.uploadPrice){
@@ -941,7 +970,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     }
                                 break
                             default:                    
-                                console.log('default' ,ing.dep, ing.name)
+                                console.log('default' ,ing.dept, ing.name)
                                     
                                  
                         }
@@ -1017,6 +1046,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     })
     // console.log(report.impairment)
     // console.log('total values', values)
+    console.log(spendingsDeps)
     const newRep = await report.save()
     // console.log(values)
     return newRep
