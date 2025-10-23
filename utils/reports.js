@@ -69,7 +69,7 @@ async function getBillProducts(orders, filter) {
     }
     console.log('produse modificate', modifiedProducts.length)
     for(const product of modifiedProducts){
-        console.log(product.section)
+        console.log(product)
         switch(product.section) {
             case 'buc': 
                  productsToSend.buc.products.push(product)
