@@ -284,7 +284,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         return {name: d.name, total: 0, entries: [], _id: d._id}
     })
     inGest = gests.map(g => {
-        return {name: g.name, marfa: 0, materie: 0, _id: g._id, }
+        return {name: g.name, marfa: 0, materie: 0, total: 0, _id: g._id, }
     })
  
 
@@ -991,23 +991,27 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     }
 
     for(let d of spendingsDeps){
-        console.log(normalizeText(d.name))
         if(normalizeText(d.name).includes('marfa')){
-            console.log('hitt first')
             for(let e of d.entries){
                 const g = inGest.find(g => g._id.toString() === e.gestiune.toString())
                 if(g){
-                    console.log('hit second', e.price)
                     g.marfa += e.price
+                    g.total += e.price
                 }
             }
-        }
-
-        if(normalizeText(d.name).includes('materie')){
+        }  else if(normalizeText(d.name).includes('materie')){
             for(let e of d.entries){
                 const g = inGest.find(g => g._id.toString() === e.gestiune.toString())
                 if(g){
                     g.materie += e.price
+                    g.total += e.price
+                }
+            }
+        } else {
+            for(let e of d.entries){
+                const g = inGest.find(g => g._id.toString() === e.gestiune.toString())
+                if(g){
+                    g.total += e.price
                 }
             }
         }
