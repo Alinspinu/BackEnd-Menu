@@ -46,7 +46,7 @@ const reportSchema = new Schema({
     rent: {
         type: Number
     },
-    spendingDeps: [
+    spendingsDeps: [
         {
             total: Number,
             name: String,
