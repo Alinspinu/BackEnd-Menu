@@ -67,7 +67,6 @@ async function getBillProducts(orders, filter) {
            product.ingr = await getIngredients([product])
            modifiedProducts.push(product)
     }
-    console.log('produse modificate', modifiedProducts.length)
     for(const product of modifiedProducts){
         switch(product.section) {
             case 'buc': 
@@ -93,8 +92,6 @@ async function getBillProducts(orders, filter) {
                 break
         }
     }
-
-    console.log('produse default', productsToSend.default.products.length)
     
     productsToSend.buc.ings = await getIngredients(productsToSend.buc.products)
     productsToSend.bar.ings = await getIngredients(productsToSend.bar.products)
