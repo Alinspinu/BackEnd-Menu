@@ -226,6 +226,8 @@ module.exports.getHavyOrders = async (req, res, next) => {
                                         }).lean({virtuals: false})    
              console.log('comenzi', orders.length)                                   
             const result = await getBillProducts(orders, filter)
+            console.log(result.length)
+            console.log(result[0])
             const ingredients = await getIngredients(result.allProd)
             if(report === 'report'){
                const report = await createDayReport(result.allProd, ingredients, loc, orders, startTime, point)
