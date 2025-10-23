@@ -10,6 +10,9 @@ const ImpSheet = require('../models/office/imp-sheet')
 
 
 async function getBillProducts(orders, filter) {
+    console.log('comezi la produse', orders.lenght)
+    console.log('prima comanda', orders[0])
+
     let products = [];
     let modifiedProducts = []
     let productsToSend = {
@@ -67,6 +70,7 @@ async function getBillProducts(orders, filter) {
     }
 
     for(const product of modifiedProducts){
+        console.log(product.section)
         switch(product.section) {
             case 'buc': 
                  productsToSend.buc.products.push(product)
@@ -875,7 +879,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                 } else {
                                     values.rentValue += (log.uploadPrice * log.qty)
                                 }
-                                console.log(log)
                                 const rObject = {
                                     date: log.date,
                                     name: ing.name,
