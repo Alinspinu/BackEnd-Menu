@@ -463,7 +463,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     } else {
                         const product = {
                             name: prod.name,
-                            dep: prod.prod.productId.departament.name,
+                            dep: prod.productId.departament.name,
                             qty: prod.quantity,
                             price: prod.price - prod.discount
                           }
