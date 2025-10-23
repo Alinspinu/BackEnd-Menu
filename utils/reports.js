@@ -766,7 +766,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     const logDate = new Date(log.date).setHours(12, 0, 0, 0)
                     if(startTime <= logDate && logDate < endTime) {
                         
-                        const dep = spendingsDeps.find(d => d._id === ing.dept._id)
+                        const dep = spendingsDeps.find(d => d._id.toString() === ing.dept._id.toString())
                         if(dep){
                             if(!log.uploadPrice){
                                 dep.total += (ing.tvaPrice * log.qty) 
