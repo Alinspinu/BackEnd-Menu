@@ -144,7 +144,7 @@ module.exports.updateProducts = async (req, res) => {
                 console.log(p.name)
             }
         })
-    //   modifyProducts(products)
+      modifyProducts(products.filter(p => p.mainCat === 'food'))
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -156,22 +156,10 @@ module.exports.updateProducts = async (req, res) => {
   function modifyProducts(products) {
     const productPromises = products.map(p => {
 
-        if(p.dep === 'productie'){
-            p.departament = '68faa2ad354b9cb7e354f5a2'
+
+        if(normalizeText(p.mainCat) === 'food'){
+            p.gestiune = '679a634e1feadad813f5f86c'
         }
-        if(p.dep === 'marfa'){
-            p.departament = '689b29715defa52bb24ee756'
-        }
-
-        p.gestiune = '689b27ed5defa52bb24ebcb2'
-
-        // if(normalizeText(p.mainCat) === 'bar' || normalizeText(p.mainCat) === 'coffee'){
-        //     p.gestiune = '679a635e1feadad813f5f86e'
-        // }
-
-        // if(normalizeText(p.mainCat) === 'food'){
-        //     p.gestiune = '68fa8f3f6647b8fc0cf3fef8'
-        // }
 
         // if(normalizeText(p.mainCat) === 'shop'){
         //      p.gestiune = '68fa9feb08cd935080894004'
