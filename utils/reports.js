@@ -448,7 +448,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 const existingProduct = g.products.find(p => p.name === prod.name)
                 if(existingProduct){
                     existingProduct.qty = existingProduct.qty + prod.quantity
-                    existingDep.total += price
+                    g.total += price
                     const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
                     if(existingDep){
                         existingDep.total = existingDep.total + round(price)
