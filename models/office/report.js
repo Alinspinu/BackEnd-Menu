@@ -281,13 +281,15 @@ const reportSchema = new Schema({
     },
     departaments: [
         {
-            total: Number,
+            totalIn: Number,
+            totalOut: Number,
             procent: Number,
             name: String,
             dep: [
                 {
                     name: String,
-                    total: Number,
+                    totalIn: Number,
+                    totalOut: Number,
                     procent: Number
                 }
             ],

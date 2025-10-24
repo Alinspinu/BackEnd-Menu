@@ -283,71 +283,313 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     let spendingsDeps = departaments.map(d => {
         return {name: d.name, total: 0, entries: [], dep: d._id}
     })
-    inGest = gests.map(g => {
-        return {name: g.name, marfa: 0, materie: 0, total: 0, gest: g._id, }
+    // let gest = gests.map(g => {
+    //     return {name: g.name, marfa: {in: 0, out: 0}, materie: {in: 0, out: 0}, total: {in: 0, out: 0}, gest: g._id, }
+    // })
+    let productsGest = gests.map(g => {
+        return {
+            totalIn: 0,
+            totalOut: 0,
+            showType: false,
+            name: g.name,
+            id: g._id,
+            dep: [
+                {
+                  name: '',
+                  totalIn: 0,
+                  totalOut: 0,
+                }
+              ],
+            products: []
+        }
     })
+
+
+
+    for(const ing of allIngs){
+        if(ing.uploadLog){
+            for(const log of ing.uploadLog) {
+                    const logDate = new Date(log.date).setHours(12, 0, 0, 0)
+                    if(startTime <= logDate && logDate < endTime) {
+                        
+                        const dep = spendingsDeps.find(d => d.dep.toString() === ing.dept._id.toString())
+                        if(dep){
+                            if(!log.uploadPrice){
+                                dep.total += (ing.tvaPrice * log.qty) 
+                            } else {
+                                dep.total += (log.uploadPrice * log.qty) 
+                            }
+                            dep.entries.push(
+                                {
+                                    date: log.date,
+                                    name: ing.name,
+                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                                    qty: log.qty,
+                                    suplier: log.operation.details,
+                                    logId: log.logId,
+                                    invoiceName: log.invoiceName || '(No Name)',
+                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                                }
+                            )
+                            
+                        } else {
+                            console.log('ingredient fara departament', ing.dept, ing.name)
+                        }
+
+                        // switch (ing.dept.name) {
+                        //     case 'Consumabil':                       
+                        //         if(!log.uploadPrice){
+                        //             values.totalSuplies += (ing.tvaPrice * log.qty) 
+                        //         } else {
+                        //             values.totalSuplies += (log.uploadPrice * log.qty) 
+                        //         }
+                        //         const cObject = {
+                        //           date: log.date,
+                        //           name: ing.name,
+                        //           price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                        //           qty: log.qty,
+                        //           suplier: log.operation.details,
+                        //           logId: log.logId,
+                        //           invoiceName: log.invoiceName || '(No Name)',
+                        //           gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                        //       }
+                        //       consEntryes.push(cObject)
+                        //       break;
+                        //     case 'Servicii':                        
+                        //         if(!log.uploadPrice){
+                        //             values.serviceValue += (ing.tvaPrice * log.qty) 
+                        //         } else {
+                        //             values.serviceValue += (log.uploadPrice * log.qty) 
+                        //         }
+                        //         const sObject = {
+                        //             date: log.date,
+                        //             name: ing.name,
+                        //             price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                        //             qty: log.qty,
+                        //             suplier: log.operation.details,
+                        //             logId: log.logId,
+                        //             invoiceName: log.invoiceName || '(No Name)',
+                        //             gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                        //         }
+                        //         servEntryes.push(sObject)
+                        //       break;
+                        //     case 'Obiecte de inventar':                 
+                        //         if(!log.uploadPrice){
+                        //             values.inventarySpendings += (ing.tvaPrice * log.qty)
+                        //         } else {
+                        //             values.inventarySpendings += (log.uploadPrice * log.qty)
+                        //         }
+                        //         const oObject = {
+                        //             date: log.date,
+                        //             name: ing.name,
+                        //             price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                        //             qty: log.qty,
+                        //             suplier: log.operation.details,
+                        //             logId: log.logId,
+                        //             invoiceName: log.invoiceName || '(No Name)',
+                        //             gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                        //         }
+                        //         obInvEntryes.push(oObject)
+                        //       break;
+                        //     case 'Marketing':   
+                        //        console.log(log)                 
+                        //         if(!log.uploadPrice){
+                        //             values.marketingValue += (ing.tvaPrice * log.qty)
+                        //         } else {
+                        //             values.marketingValue += (log.uploadPrice * log.qty)
+                        //         }
+                        //         const mObject = {
+                        //             date: log.date,
+                        //             name: ing.name,
+                        //             price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                        //             qty: log.qty,
+                        //             suplier: log.operation.details,
+                        //             logId: log.logId,
+                        //             invoiceName: log.invoiceName || '(No Name)',
+                        //             gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                        //         }
+                        //         marketingEntryes.push(mObject)
+                        //       break;
+                        //     case 'Amenajări':                
+                        //         if(!log.uploadPrice){
+                        //             values.constructionsValue += (ing.tvaPrice * log.qty)
+                        //         } else {
+                        //             values.constructionsValue += (log.uploadPrice * log.qty)
+                        //         }
+                        //         const aObject = {
+                        //             date: log.date,
+                        //             name: ing.name,
+                        //             price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                        //             qty: log.qty,
+                        //             suplier: log.operation.details,
+                        //             logId: log.logId,
+                        //             invoiceName: log.invoiceName || '(No Name)',
+                        //             gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                        //         }
+                        //         amenajariEntryes.push(aObject)
+                        //       break;
+                        //     case 'Combustibil':                  
+                        //         if(!log.uploadPrice){
+                        //             values.gasValue += (ing.tvaPrice * log.qty)
+                        //         } else {
+                        //             values.gasValue += (log.uploadPrice * log.qty)
+                        //         }
+                        //         const bObject = {
+                        //             date: log.date,
+                        //             name: ing.name,
+                        //             price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                        //             qty: log.qty,
+                        //             suplier: log.operation.details,
+                        //             logId: log.logId,
+                        //             invoiceName: log.invoiceName || '(No Name)',
+                        //             gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                        //         }
+                        //         combsEntryes.push(bObject)
+                        //       break;
+                        //     case 'Chirie':             
+                        //         if(!log.uploadPrice){
+                        //             values.rentValue += (ing.tvaPrice * log.qty)
+                        //         } else {
+                        //             values.rentValue += (log.uploadPrice * log.qty)
+                        //         }
+                        //         const rObject = {
+                        //             date: log.date,
+                        //             name: ing.name,
+                        //             price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                        //             qty: log.qty,
+                        //             suplier: log.operation.details,
+                        //             logId: log.logId,
+                        //             invoiceName: log.invoiceName || '(No Name)',
+                        //             gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                        //         }
+                        //         rentEntryes.push(rObject)
+                        //       break;
+                        //     case 'Utilități':        
+                        //         if(!log.uploadPrice){
+                        //             values.utilitiesValue += (ing.tvaPrice * log.qty)
+                        //         } else {
+                        //             values.utilitiesValue += (log.uploadPrice * log.qty)
+                        //         }
+                        //         const uObject = {
+                        //             date: log.date,
+                        //             name: ing.name,
+                        //             price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
+                        //             qty: log.qty,
+                        //             suplier: log.operation.details,
+                        //             logId: log.logId,
+                        //             invoiceName: log.invoiceName || '(No Name)',
+                        //             gestiune: log.gestiune || ing.invGestiune[0].gestiune
+                        //         }
+                                
+                        //         utilitiesEntryes.push(uObject)
+                        //     case 'Materie Primă':
+                        //             if(ing.gest?.name === 'Bucătărie'){
+                        //                 if(!log.uploadPrice){
+                        //                     values.inIngsProdBuc += (ing.tvaPrice * log.qty)
+                        //                 } else {
+                        //                     values.inIngsProdBuc += (log.uploadPrice * log.qty)
+                        //                 }
+                        //             }
+                        //             if(ing.gest?.name === 'Bar'){
+                        //                 if(!log.uploadPrice){
+                        //                 values.inIngsProdBar += (ing.tvaPrice * log.qty)
+                        //             } else {
+                        //                 values.inIngsProdBar += (log.uploadPrice * log.qty)
+                        //             }
+                        //             }
+                        //         break
+                        //     case 'Marfă': 
+                        //         // console.log(ing.gest.name)
+                        //             if(ing.gest?.name === 'Bucătărie'){
+                        //                 if(!log.uploadPrice){
+                        //                     values.inIngsMfBuc += (ing.tvaPrice * log.qty)
+                        //                 } else {
+                        //                     values.inIngsMfBuc += (log.uploadPrice * log.qty)
+                        //                 }
+                        //             }
+                        //             if(ing.gest?.name === 'Bar'){
+                        //                 if(!log.uploadPrice){
+                        //                 values.inIngsMfBar += (ing.tvaPrice * log.qty)
+                        //             } else {
+                        //                 values.inIngsMfBar += (log.uploadPrice * log.qty)
+                        //             }
+                        //             }
+                        //         break
+                        //     default:                    
+                        //         console.log('default' ,ing.dept, ing.name)
+                                    
+                                 
+                        // }
+                                 
+                } 
+            }
+        } 
+    }
  
 
 
-    //CALC DEIVERSE
-
-    entries.forEach(entry => {
-        const index = entryy.find(e => e.index === entry.index)
-        if(!index){
-            values.diverse += Math.abs(entry.amount)
-            const ent = {
-                value: Math.abs(entry.amount),
-                reason: entry.description,
-                index: entry.index,
-                date: entry.date
+  
+    for(let prod of billProducts){
+        const price = (prod.price*prod.quantity) - prod.discount
+        const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
+        if(g){
+            const existingProduct = g.products.find(p => p.name === prod.name)
+            if(existingProduct){
+                existingProduct.qty = existingProduct.qty + prod.quantity
+                g.totalOut += price
+                const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
+                if(existingDep){
+                    existingDep.totalOut = existingDep.totalOut + round(price)
+                } else {
+                    g.dep.push(
+                        {
+                            name: prod.productId.departament.name,
+                            totalOut: price,
+                            totalIn: 0,
+                        }
+                        )
+                    }
+                } else {
+                  const product = {
+                        name: prod.name,
+                        dep: prod.productId.departament.name,
+                        qty: prod.quantity,
+                        price: prod.price - prod.discount
+                    }
+                    g.totalOut += round(product.price * product.qty)
+                    g.products.push(product)
+                    const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
+                    if(existingDep) {
+                        existingDep.totalOut = existingDep.totalOut + round(price)
+                    } else {
+                        g.dep.push(
+                            {
+                                name: prod.productId.departament.name,
+                                totalOut: price,
+                                totalIn: 0,
+                            }
+                        )
+                    }
+                }
             }
-            entryy.push(ent)
-        } else {
-            console.log(index)
+
+    }
+
+    for(let d of spendingsDeps){
+        for(let e of d.entries){
+            const g = productsGest.find(ge => ge.id.toString() === e.gestiune.toString())
+                if(g){
+                    g.totalIn += e.price
+                 const de = g.dep.find(dp => dp.name === d.name)
+                 if(de){
+                    de.totalIn = d.total
+                 }
+                }
         }
-    })
+    }
 
 
-    // CALC BILLS TOTALS
-
-    bills.forEach(bill => {
-        if(bill.discount > 0 || bill.discount > 0 && bill.status === 'done'){
-                discountBills.push(bill)
-        }
-        if(bill.cashBack > 0 && bill.status === 'done'){
-                cashBackBills.push(bill)
-        }
-        if(bill.voucher > 0 && bill.status === 'done'){
-                voucherBills.push(bill)
-        }
-        if(bill.discount === 0 && bill.cashBack === 0 && bill.status === 'done') {
-            fullBills.push(bill)
-          }
-        if(bill.payment.cash){
-            values.cash += bill.payment.cash
-        }
-        if(bill.payment.card){
-            values.card += bill.payment.card
-        }
-        if(bill.payment.viva){
-            values.vivaWallet += bill.payment.viva
-        }
-        if(bill.payment.voucher){
-            values.voucher += bill.payment.voucher
-        }
-        if(bill.payment.online){
-            values.payOnline += bill.payment.online
-        } 
-        values.tips += bill.tips
-        values.cashBack += bill.cashBack
-        values.discounts += bill.discount
-        values.totalBills += bill.total
-
-
-    })
-
-
-    // CREATE PAYMENT METHODS
+        // CREATE PAYMENT METHODS
 
     function createPaymentMethods(values){
         let paymentMethods = []
@@ -419,135 +661,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     }
 
 
-    function createDepartaments(billProducts){
-        let productsGest = gests.map(g => {
-            return {
-                total: 0,
-                showType: false,
-                name: g.name,
-                dep: [
-                    {
-                      name: '',
-                      total: 0,
-                    }
-                  ],
-                products: []
-            }
-        })
-        for(let prod of billProducts){
-            const price = (prod.price*prod.quantity) - prod.discount
-            if(!prod.mainCat){
-                prod.mainCat = 'Nedefinit'
-            }
-
-            // const d = departamentss.find()
-
-            const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
-
-            if(g){
-                const existingProduct = g.products.find(p => p.name === prod.name)
-                if(existingProduct){
-                    existingProduct.qty = existingProduct.qty + prod.quantity
-                    g.total += price
-                    const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
-                    if(existingDep){
-                        existingDep.total = existingDep.total + round(price)
-                    } else {
-                        g.dep.push(
-                            {
-                              name: prod.productId.departament.name,
-                              total: price,
-                            }
-                          )
-                        }
-                    } else {
-                        const product = {
-                            name: prod.name,
-                            dep: prod.productId.departament.name,
-                            qty: prod.quantity,
-                            price: prod.price - prod.discount
-                          }
-                          g.total += round(product.price * product.qty)
-                          g.products.push(product)
-                          const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
-                          if(existingDep) {
-                            existingDep.total = existingDep.total + round(price)
-                          } else {
-                            g.dep.push(
-                              {
-                                name: prod.productId.departament.name,
-                                total: price,
-                              }
-                              )
-                          }
-                    }
-                }
-            
-
-        //     const existingDep = departamentss.find(d => d.name === prod.mainCat)
-        //     if(existingDep) {
-        //         const existingProduct = existingDep.products.find(p => p.name === prod.name)
-        //         if(existingProduct){
-        //             existingProduct.qty = existingProduct.qty + prod.quantity
-        //             existingDep.total += price
-        //             const existingType = existingDep.dep.find(p => (p.name === prod.dep))
-        //             if(existingType) {
-        //                 existingType.total = existingType.total + round(price)
-        //               } else {
-        //                 existingDep.dep.push(
-        //                   {
-        //                     name: prod.dep,
-        //                     total: price,
-        //                   }
-        //                    )
-        //               }
-        //         } else {
-        //             const product = {
-        //                 name: prod.name,
-        //                 dep: prod.dep,
-        //                 qty: prod.quantity,
-        //                 price: prod.price - prod.discount
-        //               }
-        //               existingDep.total += round(product.price * product.qty)
-        //               existingDep.products.push(product)
-        //               const existingType = existingDep.dep.find(p => (p.name === prod.dep))
-        //               if(existingType) {
-        //                 existingType.total = existingType.total + round(price)
-        //               } else {
-        //                 existingDep.dep.push(
-        //                   {
-        //                     name: prod.dep,
-        //                     total: price,
-        //                   }
-        //                   )
-        //               }
-        //         }
-        //     } else {
-        //         const dep = {
-        //             total: price,
-        //             showType: false,
-        //             name: prod.mainCat,
-        //             dep: [
-        //                 {
-        //                   name: prod.dep,
-        //                   total: price,
-        //                 }
-        //               ],
-        //             products: [
-        //               {
-        //                 name: prod.name,
-        //                 dep: prod.dep,
-        //                 qty: prod.quantity,
-        //                 price: prod.price - prod.discount
-        //               }
-        //             ]
-        //           }
-        //         departaments.push(dep)
-        //     }
-        }
-        return productsGest
-    }
-
 
     function calcIncomeHours(bills){
         let hours = []
@@ -570,6 +683,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
           return hours
     }
 
+
     function usersShow(bills){
         let users = []
         for(let bill of bills) {
@@ -588,6 +702,62 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     }
 
 
+        //CALC DEIVERSE
+
+        entries.forEach(entry => {
+            const index = entryy.find(e => e.index === entry.index)
+            if(!index){
+                values.diverse += Math.abs(entry.amount)
+                const ent = {
+                    value: Math.abs(entry.amount),
+                    reason: entry.description,
+                    index: entry.index,
+                    date: entry.date
+                }
+                entryy.push(ent)
+            } else {
+                console.log(index)
+            }
+        })
+    
+    
+        // CALC BILLS TOTALS
+    
+        bills.forEach(bill => {
+            if(bill.discount > 0 || bill.discount > 0 && bill.status === 'done'){
+                    discountBills.push(bill)
+            }
+            if(bill.cashBack > 0 && bill.status === 'done'){
+                    cashBackBills.push(bill)
+            }
+            if(bill.voucher > 0 && bill.status === 'done'){
+                    voucherBills.push(bill)
+            }
+            if(bill.discount === 0 && bill.cashBack === 0 && bill.status === 'done') {
+                fullBills.push(bill)
+              }
+            if(bill.payment.cash){
+                values.cash += bill.payment.cash
+            }
+            if(bill.payment.card){
+                values.card += bill.payment.card
+            }
+            if(bill.payment.viva){
+                values.vivaWallet += bill.payment.viva
+            }
+            if(bill.payment.voucher){
+                values.voucher += bill.payment.voucher
+            }
+            if(bill.payment.online){
+                values.payOnline += bill.payment.online
+            } 
+            values.tips += bill.tips
+            values.cashBack += bill.cashBack
+            values.discounts += bill.discount
+            values.totalBills += bill.total
+    
+    
+        })
 
     // CALC VAT
 
@@ -823,257 +993,36 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
     //CALC SUPLIES
 
-    for(const ing of allIngs){
-        if(ing.uploadLog){
-            for(const log of ing.uploadLog) {
-                    const logDate = new Date(log.date).setHours(12, 0, 0, 0)
-                    if(startTime <= logDate && logDate < endTime) {
-                        
-                        const dep = spendingsDeps.find(d => d.dep.toString() === ing.dept._id.toString())
-                        if(dep){
-                            if(!log.uploadPrice){
-                                dep.total += (ing.tvaPrice * log.qty) 
-                            } else {
-                                dep.total += (log.uploadPrice * log.qty) 
-                            }
-                            dep.entries.push(
-                                {
-                                    date: log.date,
-                                    name: ing.name,
-                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                    qty: log.qty,
-                                    suplier: log.operation.details,
-                                    logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)',
-                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                                }
-                            )
-                            
-                        } else {
-                            console.log('ingredient fara departament', ing.dept, ing.name)
-                        }
 
 
+    // for(let d of spendingsDeps){
 
 
-
-
-                        switch (ing.dept.name) {
-                            case 'Consumabil':                       
-                                if(!log.uploadPrice){
-                                    values.totalSuplies += (ing.tvaPrice * log.qty) 
-                                } else {
-                                    values.totalSuplies += (log.uploadPrice * log.qty) 
-                                }
-                                const cObject = {
-                                  date: log.date,
-                                  name: ing.name,
-                                  price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                  qty: log.qty,
-                                  suplier: log.operation.details,
-                                  logId: log.logId,
-                                  invoiceName: log.invoiceName || '(No Name)',
-                                  gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                              }
-                              consEntryes.push(cObject)
-                              break;
-                            case 'Servicii':                        
-                                if(!log.uploadPrice){
-                                    values.serviceValue += (ing.tvaPrice * log.qty) 
-                                } else {
-                                    values.serviceValue += (log.uploadPrice * log.qty) 
-                                }
-                                const sObject = {
-                                    date: log.date,
-                                    name: ing.name,
-                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                    qty: log.qty,
-                                    suplier: log.operation.details,
-                                    logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)',
-                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                                }
-                                servEntryes.push(sObject)
-                              break;
-                            case 'Obiecte de inventar':                 
-                                if(!log.uploadPrice){
-                                    values.inventarySpendings += (ing.tvaPrice * log.qty)
-                                } else {
-                                    values.inventarySpendings += (log.uploadPrice * log.qty)
-                                }
-                                const oObject = {
-                                    date: log.date,
-                                    name: ing.name,
-                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                    qty: log.qty,
-                                    suplier: log.operation.details,
-                                    logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)',
-                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                                }
-                                obInvEntryes.push(oObject)
-                              break;
-                            case 'Marketing':   
-                               console.log(log)                 
-                                if(!log.uploadPrice){
-                                    values.marketingValue += (ing.tvaPrice * log.qty)
-                                } else {
-                                    values.marketingValue += (log.uploadPrice * log.qty)
-                                }
-                                const mObject = {
-                                    date: log.date,
-                                    name: ing.name,
-                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                    qty: log.qty,
-                                    suplier: log.operation.details,
-                                    logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)',
-                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                                }
-                                marketingEntryes.push(mObject)
-                              break;
-                            case 'Amenajări':                
-                                if(!log.uploadPrice){
-                                    values.constructionsValue += (ing.tvaPrice * log.qty)
-                                } else {
-                                    values.constructionsValue += (log.uploadPrice * log.qty)
-                                }
-                                const aObject = {
-                                    date: log.date,
-                                    name: ing.name,
-                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                    qty: log.qty,
-                                    suplier: log.operation.details,
-                                    logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)',
-                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                                }
-                                amenajariEntryes.push(aObject)
-                              break;
-                            case 'Combustibil':                  
-                                if(!log.uploadPrice){
-                                    values.gasValue += (ing.tvaPrice * log.qty)
-                                } else {
-                                    values.gasValue += (log.uploadPrice * log.qty)
-                                }
-                                const bObject = {
-                                    date: log.date,
-                                    name: ing.name,
-                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                    qty: log.qty,
-                                    suplier: log.operation.details,
-                                    logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)',
-                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                                }
-                                combsEntryes.push(bObject)
-                              break;
-                            case 'Chirie':             
-                                if(!log.uploadPrice){
-                                    values.rentValue += (ing.tvaPrice * log.qty)
-                                } else {
-                                    values.rentValue += (log.uploadPrice * log.qty)
-                                }
-                                const rObject = {
-                                    date: log.date,
-                                    name: ing.name,
-                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                    qty: log.qty,
-                                    suplier: log.operation.details,
-                                    logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)',
-                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                                }
-                                rentEntryes.push(rObject)
-                              break;
-                            case 'Utilități':        
-                                if(!log.uploadPrice){
-                                    values.utilitiesValue += (ing.tvaPrice * log.qty)
-                                } else {
-                                    values.utilitiesValue += (log.uploadPrice * log.qty)
-                                }
-                                const uObject = {
-                                    date: log.date,
-                                    name: ing.name,
-                                    price: log.uploadPrice ? log.uploadPrice * log.qty : ing.tvaPrice * log.qty,
-                                    qty: log.qty,
-                                    suplier: log.operation.details,
-                                    logId: log.logId,
-                                    invoiceName: log.invoiceName || '(No Name)',
-                                    gestiune: log.gestiune || ing.invGestiune[0].gestiune
-                                }
-                                
-                                utilitiesEntryes.push(uObject)
-                            case 'Materie Primă':
-                                    if(ing.gest?.name === 'Bucătărie'){
-                                        if(!log.uploadPrice){
-                                            values.inIngsProdBuc += (ing.tvaPrice * log.qty)
-                                        } else {
-                                            values.inIngsProdBuc += (log.uploadPrice * log.qty)
-                                        }
-                                    }
-                                    if(ing.gest?.name === 'Bar'){
-                                        if(!log.uploadPrice){
-                                        values.inIngsProdBar += (ing.tvaPrice * log.qty)
-                                    } else {
-                                        values.inIngsProdBar += (log.uploadPrice * log.qty)
-                                    }
-                                    }
-                                break
-                            case 'Marfă': 
-                                // console.log(ing.gest.name)
-                                    if(ing.gest?.name === 'Bucătărie'){
-                                        if(!log.uploadPrice){
-                                            values.inIngsMfBuc += (ing.tvaPrice * log.qty)
-                                        } else {
-                                            values.inIngsMfBuc += (log.uploadPrice * log.qty)
-                                        }
-                                    }
-                                    if(ing.gest?.name === 'Bar'){
-                                        if(!log.uploadPrice){
-                                        values.inIngsMfBar += (ing.tvaPrice * log.qty)
-                                    } else {
-                                        values.inIngsMfBar += (log.uploadPrice * log.qty)
-                                    }
-                                    }
-                                break
-                            default:                    
-                                console.log('default' ,ing.dept, ing.name)
-                                    
-                                 
-                        }
-                                 
-                } 
-            }
-        } 
-    }
-
-    for(let d of spendingsDeps){
-        if(normalizeText(d.name).includes('marfa')){
-            for(let e of d.entries){
-                const g = inGest.find(g => g.gest.toString() === e.gestiune.toString())
-                if(g){
-                    g.marfa += e.price
-                    g.total += e.price
-                }
-            }
-        }  else if(normalizeText(d.name).includes('materie')){
-            for(let e of d.entries){
-                const g = inGest.find(g => g.gest.toString() === e.gestiune.toString())
-                if(g){
-                    g.materie += e.price
-                    g.total += e.price
-                }
-            }
-        } else {
-            for(let e of d.entries){
-                const g = inGest.find(g => g.gest.toString() === e.gestiune.toString())
-                if(g){
-                    g.total += e.price
-                }
-            }
-        }
-    }
+    //     if(normalizeText(d.name).includes('marfa')){
+    //         for(let e of d.entries){
+    //             const g = gest.find(g => g.gest.toString() === e.gestiune.toString())
+    //             if(g){
+    //                 g.marfa.in += e.price
+    //                 g.total.in += e.price
+    //             }
+    //         }
+    //     }  else if(normalizeText(d.name).includes('materie')){
+    //         for(let e of d.entries){
+    //             const g = gest.find(g => g.gest.toString() === e.gestiune.toString())
+    //             if(g){
+    //                 g.materie.in += e.price
+    //                 g.total.in += e.price
+    //             }
+    //         }
+    //     } else {
+    //         for(let e of d.entries){
+    //             const g = gest.find(g => g.gest.toString() === e.gestiune.toString())
+    //             if(g){
+    //                 g.total.in += e.price
+    //             }
+    //         }
+    //     }
+    // }
 
 
 
@@ -1138,8 +1087,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             entries: utilitiesEntryes
         },
         spendingsDeps,
-        inGest,
-        departaments: createDepartaments(billProducts),
+        // productstGest,
+        departaments: productsGest,
         hours: calcIncomeHours(bills),
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
@@ -1147,7 +1096,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const newRep = await report.save()
     // console.log(values)
     console.log(newRep.departaments)
-    // console.log(newRep.inGest)
+    // console.log(newRep.departaments)
     // console.log(values)
     return newRep
 }
