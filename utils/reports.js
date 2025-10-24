@@ -743,23 +743,27 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             }
         if(bill.payment.cash){
             values.cash += bill.payment.cash
+            values.totalBills += bill.payment.cash
         }
         if(bill.payment.card){
             values.card += bill.payment.card
+            values.totalBills += bill.payment.card
         }
         if(bill.payment.viva){
             values.vivaWallet += bill.payment.viva
+            values.totalBills += bill.payment.viva
         }
         if(bill.payment.voucher){
             values.voucher += bill.payment.voucher
         }
         if(bill.payment.online){
             values.payOnline += bill.payment.online
+            values.totalBills += bill.payment.online
         } 
         values.tips += bill.tips
         values.cashBack += bill.cashBack
         values.discounts += bill.discount
-        values.totalBills += bill.total
+        // values.totalBills += bill.totalProducts
 
 
     })
