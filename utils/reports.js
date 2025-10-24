@@ -595,7 +595,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         const de = g.dep.find(dp => dp.depId.toString() === d.dep.toString())
                         if(de){
                            de.totalIn += e.price
-                        } 
+                        } else {
+                            console.log('gestiune deps ', g.dep, 'spend dep ', d)
+                        }
                     } else {
                         console.log('entry gestiune ', e.gestiune, 'entry name ', e.name)
                         console.log('product gestiune ', g.id, 'gestiune name ', g.name)
