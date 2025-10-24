@@ -590,8 +590,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 if(g){
                     g.totalIn += e.price
                     g.entries.push(e)
-                 const de = g.dep.find(dp => dp.depId === d.dep.toString())
+                 const de = g.dep.find(dp => dp.depId.toString() === d.dep.toString())
                  if(de){
+                    console.log('hit')
                     de.totalIn = d.total
                  }
                 }
