@@ -59,6 +59,7 @@ const subProductSchema = new Schema({
             ]
         }
     ],
+    productionCost: Number,
     ings: [
         {
        

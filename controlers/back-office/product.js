@@ -153,24 +153,61 @@ module.exports.updateProducts = async (req, res) => {
     }
   }
 
+
+
   function modifyProducts(products) {
     const productPromises = products.map(p => {
-
-        let cost = 0
-        for(let i of p.ings){
-         const price = i.qty * i.ing.tvaPrice 
-         cost += price
+      const subPromises = p.subProducts.map(async s => {
+        let cost = 0;
+        for (let i of s.ings) {
+          const price = i.qty * i.ing.tvaPrice;
+          cost += price;
         }
-        p.productionCost = round(cost)
-
-        return p.save().then(savedP => {
-          console.log(savedP.name, 'a fost modificat cu success! ', savedP.productionCost);
-        });
+  
+        // optionally update the subproduct
+        s.productionCost = round(cost);
+  
+        const savedP = await s.save();
+        console.log(`${savedP.name} a fost modificat cu success! ${savedP.productionCost}`);
+        return savedP;
       });
   
+      // Return a promise that resolves when *all* subproducts are saved
+      return Promise.all(subPromises);
+    });
+  
+    // Return a promise that resolves when *all* products (and subproducts) are done
     return Promise.all(productPromises);
   }
+
+//   function modifyProducts(products) {
+//     const productPromises = products.map(p => {
+//         const subPromises = p.subProducts.map(s => {
+//             let cost = 0
+//             for(let i of s.ings){
+//              const price = i.qty * i.ing.tvaPrice 
+//              cost += price
+//             }
+//             return s.save().then(savedP => {
+//                 console.log(savedP.name, 'a fost modificat cu success! ', savedP.productionCost);
+//               });
+//         })
+
+//       });
   
+//     return Promise.all(productPromises);
+//   }
+  
+
+
+//   for(let s of p.subProducts){
+       
+//     s.productionCost = round(cost)
+// }
+
+// return p.save().then(savedP => {
+//   console.log(savedP.name, 'a fost modificat cu success! ', savedP.productionCost);
+// });
 
 
 
