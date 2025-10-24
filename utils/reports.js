@@ -257,10 +257,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         tips: 0,
         card: 0,
         rent: 0,
-        // inIngsProdBuc: 0,
-        // inIngsMfBuc: 0,
-        // inIngsProdBar: 0,
-        // inIngsMfBar: 0, 
     }
 
     let workDays = []
@@ -272,14 +268,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     let oldProd = []
     let depProducts = []
     let entryy = []
-    // let servEntryes = []
-    // let obInvEntryes = []
-    // let marketingEntryes = []
-    // let consEntryes = []
-    // let amenajariEntryes = []
-    // let utilitiesEntryes = []
-    // let combsEntryes = []
-    // let rentEntryes = []
     let spendingsDeps = departaments.map(d => {
         return {name: d.name, total: 0, entries: [], dep: d._id}
     })
@@ -731,9 +719,11 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     bills.forEach(bill => {
         if(bill.discount > 0 || bill.discount > 0 && bill.status === 'done'){
                 discountBills.push(bill)
+                values.discounts += bill.discount
         }
         if(bill.cashBack > 0 && bill.status === 'done'){
                 cashBackBills.push(bill)
+                values.cashBack += bill.cashBack
         }
         if(bill.voucher > 0 && bill.status === 'done'){
                 voucherBills.push(bill)
@@ -761,10 +751,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             values.totalBills += bill.payment.online
         } 
         values.tips += bill.tips
-        values.cashBack += bill.cashBack
-        values.discounts += bill.discount
-        // values.totalBills += bill.totalProducts
-
 
     })
 
@@ -1024,45 +1010,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             tax: round(values.taxValue),
             users: users
         },
-        // supliesValue: { 
-        //     total: round(values.totalSuplies),
-        //     entries: consEntryes
-        // }, 
-        // supliesProdBuc: round(values.inIngsProdBuc),
-        // supliesMfBuc: round(values.inIngsMfBuc),
-        // supliesProdBar: round(values.inIngsProdBar),
-        // supliesMfBar: round(values.inIngsMfBar),
-
-        // serviceValue: {
-        //     total: round(values.serviceValue),
-        //     entries: servEntryes
-        // },
-        // marketingValue: {
-        //     total: round(values.marketingValue),
-        //     entries: marketingEntryes
-        // },
-        // inventarySpendings: {
-        //     total: round(values.inventarySpendings),
-        //     entries: obInvEntryes
-        // },
-        // gasValue: {
-        //     total: round(values.gasValue),
-        //     entries: combsEntryes
-        // },
-        // constructionsValue: {
-        //     total: round(values.constructionsValue),
-        //     entries: amenajariEntryes
-        // },
-        // rent: {
-        //     total: round(values.rentValue),
-        //     entries: rentEntryes
-        // },
-        // utilities: {
-        //     total: round(values.utilitiesValue),
-        //     entries: utilitiesEntryes
-        // },
         spendingsDeps,
-        // productstGest,
         departaments: productsGest,
         hours: calcIncomeHours(bills),
         users: usersShow(bills),
