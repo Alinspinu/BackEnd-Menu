@@ -521,21 +521,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
     //CALC SALES
   
-    for(let prod of billProducts){
-
-        // if(!prod.productionCost){
-        //     let ingsCost = 0
-        //     let toppingsCost = 0
-        //     for(let i of prod.ings){
-        //         ingsCost += (i.ing.tvaPrice * i.qty)
-        //     }
-        //     for(let t of prod.toppings){
-        //         toppingsCost += (t.ingPrice * t.qty)
-        //     }
-        //     prod.productionCost = round(ingsCost + toppingsCost)
-        // }   
+    for(let prod of billProducts){ 
         const price = (prod.price*prod.quantity) - prod.discount
-        // const productionPrice = (prod.productionCost * prod.qty)
         const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
         if(g){
             const existingProduct = g.products.find(p => p.name === prod.name)
@@ -1015,7 +1002,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         locatie: loc,
         salePoint: point,
         day: startTime,
-        cashIn: round(values.totalBills),
+        cashIn: round(values.totalBills - values.discounts),
         vatValue: round(values.vatVal),
         cashInNoVat: round(values.totalBills - values.vatVal),
         ingsValue: round(values.totalIngredients),
