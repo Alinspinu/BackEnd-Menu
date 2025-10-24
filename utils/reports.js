@@ -1006,9 +1006,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         locatie: loc,
         salePoint: point,
         day: startTime,
-        cashIn: round(values.totalBills - values.discounts),
+        cashIn: round(values.totalBills),
         vatValue: round(values.vatVal),
-        cashInNoVat: round(values.totalBills - values.discounts - values.vatVal),
+        cashInNoVat: round(values.totalBills - values.vatVal),
         ingsValue: round(values.totalIngredients),
         rentValue: round(values.dayRent),
         diverse: {
