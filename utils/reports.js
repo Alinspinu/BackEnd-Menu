@@ -1010,7 +1010,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             tax: round(values.taxValue),
             users: users
         },
-        spendingsDeps,
+        spendingsDeps: spendingsDeps.map(d => ({...d, total: round(d.total)})),
         departaments: productsGest,
         hours: calcIncomeHours(bills),
         users: usersShow(bills),
