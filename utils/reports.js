@@ -1079,7 +1079,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     })
     const newRep = await report.save()
     // console.log(values)
-    console.log(newRep.departaments)
+    // console.log(newRep.departaments)
     // console.log(newRep.departaments)
     // console.log(values)
     return newRep
