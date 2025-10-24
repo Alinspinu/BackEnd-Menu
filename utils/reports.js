@@ -572,6 +572,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                             {
                                 name: prod.productId.departament.name,
                                 totalOut: price,
+                                depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
                                 totalIn: 0,
                             }
                         )
