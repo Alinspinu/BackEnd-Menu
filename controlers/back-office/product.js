@@ -137,14 +137,14 @@ module.exports.updateProducts = async (req, res) => {
         populate: innerIngPopulate
         })
         .populate({ path: 'ings.gestiune', select: 'name' })
-        .lean();                        // <-- use lean for speed
+        // .lean();                        // <-- use lean for speed
 
         products.forEach(p => {
             if(!p.printSection){
                 console.log(p.name)
             }
         })
-    //   modifyProducts(products.filter(p => p.mainCat === 'food'))
+      modifyProducts()
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -156,21 +156,15 @@ module.exports.updateProducts = async (req, res) => {
   function modifyProducts(products) {
     const productPromises = products.map(p => {
 
-
-        if(normalizeText(p.mainCat) === 'food'){
-            p.gestiune = '679a634e1feadad813f5f86c'
+        let cost = 0
+        for(let i of p.ings){
+         const price = i.qty * i.ing.tvaPrice 
+         cost += price
         }
-
-        // if(normalizeText(p.mainCat) === 'shop'){
-        //      p.gestiune = '68fa9feb08cd935080894004'
-        // }
-        // if(normalizeText(p.mainCat) === 'holesale'){
-        //      p.gestiune = '679b5975d68f3003a018ead6'
-        // }
-  
+        p.productionCost = round(cost)
 
         return p.save().then(savedP => {
-          console.log(savedP.name, 'a fost modificat cu success!');
+          console.log(savedP.name, 'a fost modificat cu success! ', savedP.productionCost);
         });
       });
   

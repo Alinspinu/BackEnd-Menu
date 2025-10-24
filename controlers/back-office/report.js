@@ -314,14 +314,13 @@ async function createReport(reports){
                 // existingDep.procent = round(existingDep.total * 100 / report.cashIn)
 
                 dep.dep.forEach(dp => {
-                    const index = existingDep.dep.findIndex(d=> d.name === dp.name)
-                    if(index !== -1){
-                        existingDep.dep[index].totalIn += +dp.totalIn
-                        existingDep.dep[index].totalOut += +dp.totalOut
+                    const d = existingDep.dep.find(d=> d.name === dp.name)
+                    if(d){
+                        d.totalIn += dp.totalIn
+                        d.totalOut += dp.totalOut
                         // existingDep.dep[index].procent = round(existingDep.dep[index].total * 100 / +dep.total)
                     } else{
-                        const dept = dp
-                        existingDep.dep.push(dept)
+                        existingDep.dep.push(dp)
                     }
                 })
 

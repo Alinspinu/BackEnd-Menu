@@ -59,6 +59,7 @@ const productTrueSchema = new Schema({
     subId: String,
     preOrder: Boolean,
     preOrderPrice: Number,
+    productionCost: Number,
     paring: [
         {
             type: Schema.Types.ObjectId,
@@ -199,7 +200,7 @@ const productTrueSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Category'
     },
-    
+
     departament: {
         type: Schema.Types.ObjectId,
         ref: 'Dep'
