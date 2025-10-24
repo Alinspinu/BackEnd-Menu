@@ -560,13 +560,13 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         name: prod.name,
                         dep: prod.productId.departament.name,
                         qty: prod.quantity,
-                        price: prod.price - prod.discount
+                        price: price
                     }
-                    g.totalOut += round(product.price * product.qty)
+                    g.totalOut += price
                     g.products.push(product)
                     const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
                     if(existingDep) {
-                        existingDep.totalOut = existingDep.totalOut + round(price)
+                        existingDep.totalOut += price
                     } else {
                         g.dep.push(
                             {
