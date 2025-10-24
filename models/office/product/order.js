@@ -269,6 +269,7 @@ const orderTrueSchema = new Schema({
                         }
                     }
                 ],
+                productionCost: Number,
                 ings: [
                     {
                         qty: {
