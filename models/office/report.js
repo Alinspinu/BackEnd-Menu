@@ -300,6 +300,21 @@ const reportSchema = new Schema({
                     dep: String,
                     price: Number,
                 }
+            ],
+            entries: [
+                {
+                    date: Date,
+                    name: String,
+                    qty: Number,
+                    price: Number,
+                    suplier: String,
+                    logId: String,
+                    invoiceName: String,
+                    gestiune:  {
+                        type: Schema.Types.ObjectId,
+                        ref: 'Gestiune'
+                      }
+                }
             ]
         }
     ],

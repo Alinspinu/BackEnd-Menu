@@ -293,13 +293,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             showType: false,
             name: g.name,
             id: g._id,
-            dep: [
-                {
-                  name: '',
-                  totalIn: 0,
-                  totalOut: 0,
-                }
-              ],
+            dep: [],
+            entries: [],
             products: []
         }
     })
@@ -580,6 +575,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             const g = productsGest.find(ge => ge.id.toString() === e.gestiune.toString())
                 if(g){
                     g.totalIn += e.price
+                    g.entries.push(e)
                  const de = g.dep.find(dp => dp.name === d.name)
                  if(de){
                     de.totalIn = d.total
