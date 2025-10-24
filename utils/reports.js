@@ -596,7 +596,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         if(de){
                            de.totalIn += e.price
                         } else {
-                            console.log('gestiune deps ', g.dep, 'spend dep ', d)
+                            console.log('gestiune deps ', g.dep, 'spend dep ', d.name)
                         }
                     } else {
                         console.log('entry gestiune ', e.gestiune, 'entry name ', e.name)
