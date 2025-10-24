@@ -72,18 +72,18 @@ const reportSchema = new Schema({
         }
     ],
 
-    inGest: [
-        {
-            name: String,
-            total: Number,
-            marfa: Number,
-            materie: Number,
-            gest: {
-                type: Schema.Types.ObjectId,
-                ref: 'Gestiune'
-            }
-        }
-    ],
+    // inGest: [
+    //     {
+    //         name: String,
+    //         total: Number,
+    //         marfa: Number,
+    //         materie: Number,
+    //         gest: {
+    //             type: Schema.Types.ObjectId,
+    //             ref: 'Gestiune'
+    //         }
+    //     }
+    // ],
 
     diverse:{
         total: Number,
@@ -131,166 +131,168 @@ const reportSchema = new Schema({
                 }
             ]
         },
-    supliesValue: {
-        total: Number,
-        entries: [
-            {
-                date: Date,
-                name: String,
-                qty: Number,
-                price: Number,
-                suplier: String,
-                logId: String,
-                invoiceName: String,
-                gestiune:  {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Gestiune'
-                  }
-            }
-        ]
-    },
-    supliesProdBuc: Number,
-    supliesMfBuc: Number,
-    supliesProdBar: Number,
-    supliesMfBar: Number,
-    serviceValue: {
-        total: Number,
-        entries: [
-            {
-                date: Date,
-                name: String,
-                qty: Number,
-                price: Number,
-                suplier: String,
-                logId: String,
-                invoiceName: String,
-                gestiune:  {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Gestiune'
-                  }
-            }
-        ]
-    },
-    marketingValue: {
-        total: Number,
-        entries: [
-            {
-                date: Date,
-                name: String,
-                qty: Number,
-                price: Number,
-                suplier: String,
-                logId: String,
-                invoiceName: String,
-                gestiune:  {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Gestiune'
-                  }
-            }
-        ]
-    },
-    inventarySpendings: {
-        total: Number,
-        entries: [
-            {
-                date: Date,
-                name: String,
-                qty: Number,
-                price: Number,
-                suplier: String,
-                logId: String,
-                invoiceName: String,
-                gestiune:  {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Gestiune'
-                  }
-            }
-        ]
-    },
-    gasValue:{
-        total: Number,
-        entries: [
-            {
-                date: Date,
-                name: String,
-                qty: Number,
-                price: Number,
-                suplier: String,
-                logId: String,
-                invoiceName: String,
-                gestiune:  {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Gestiune'
-                  }
-            }
-        ]
-    },
-    constructionsValue: {
-        total: Number,
-        entries: [
-            {
-                date: Date,
-                name: String,
-                qty: Number,
-                price: Number,
-                suplier: String,
-                logId: String,
-                invoiceName: String,
-                gestiune:  {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Gestiune'
-                  }
-            }
-        ]
-    },
-    rent: {
-        total: Number,
-        entries: [
-            {
-                date: Date,
-                name: String,
-                qty: Number,
-                price: Number,
-                suplier: String,
-                logId: String,
-                invoiceName: String,
-                gestiune:  {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Gestiune'
-                  }
-            }
-        ]
-    },
-    utilities: {
-        total: Number,
-        entries: [
-            {
-                date: Date,
-                name: String,
-                qty: Number,
-                price: Number,
-                suplier: String,
-                logId: String,
-                invoiceName: String,
-                gestiune:  {
-                    type: Schema.Types.ObjectId,
-                    ref: 'Gestiune'
-                  }
-            }
-        ]
-    },
+    // supliesValue: {
+    //     total: Number,
+    //     entries: [
+    //         {
+    //             date: Date,
+    //             name: String,
+    //             qty: Number,
+    //             price: Number,
+    //             suplier: String,
+    //             logId: String,
+    //             invoiceName: String,
+    //             gestiune:  {
+    //                 type: Schema.Types.ObjectId,
+    //                 ref: 'Gestiune'
+    //               }
+    //         }
+    //     ]
+    // },
+    // supliesProdBuc: Number,
+    // supliesMfBuc: Number,
+    // supliesProdBar: Number,
+    // supliesMfBar: Number,
+    // serviceValue: {
+    //     total: Number,
+    //     entries: [
+    //         {
+    //             date: Date,
+    //             name: String,
+    //             qty: Number,
+    //             price: Number,
+    //             suplier: String,
+    //             logId: String,
+    //             invoiceName: String,
+    //             gestiune:  {
+    //                 type: Schema.Types.ObjectId,
+    //                 ref: 'Gestiune'
+    //               }
+    //         }
+    //     ]
+    // },
+    // marketingValue: {
+    //     total: Number,
+    //     entries: [
+    //         {
+    //             date: Date,
+    //             name: String,
+    //             qty: Number,
+    //             price: Number,
+    //             suplier: String,
+    //             logId: String,
+    //             invoiceName: String,
+    //             gestiune:  {
+    //                 type: Schema.Types.ObjectId,
+    //                 ref: 'Gestiune'
+    //               }
+    //         }
+    //     ]
+    // },
+    // inventarySpendings: {
+    //     total: Number,
+    //     entries: [
+    //         {
+    //             date: Date,
+    //             name: String,
+    //             qty: Number,
+    //             price: Number,
+    //             suplier: String,
+    //             logId: String,
+    //             invoiceName: String,
+    //             gestiune:  {
+    //                 type: Schema.Types.ObjectId,
+    //                 ref: 'Gestiune'
+    //               }
+    //         }
+    //     ]
+    // },
+    // gasValue:{
+    //     total: Number,
+    //     entries: [
+    //         {
+    //             date: Date,
+    //             name: String,
+    //             qty: Number,
+    //             price: Number,
+    //             suplier: String,
+    //             logId: String,
+    //             invoiceName: String,
+    //             gestiune:  {
+    //                 type: Schema.Types.ObjectId,
+    //                 ref: 'Gestiune'
+    //               }
+    //         }
+    //     ]
+    // },
+    // constructionsValue: {
+    //     total: Number,
+    //     entries: [
+    //         {
+    //             date: Date,
+    //             name: String,
+    //             qty: Number,
+    //             price: Number,
+    //             suplier: String,
+    //             logId: String,
+    //             invoiceName: String,
+    //             gestiune:  {
+    //                 type: Schema.Types.ObjectId,
+    //                 ref: 'Gestiune'
+    //               }
+    //         }
+    //     ]
+    // },
+    // rent: {
+    //     total: Number,
+    //     entries: [
+    //         {
+    //             date: Date,
+    //             name: String,
+    //             qty: Number,
+    //             price: Number,
+    //             suplier: String,
+    //             logId: String,
+    //             invoiceName: String,
+    //             gestiune:  {
+    //                 type: Schema.Types.ObjectId,
+    //                 ref: 'Gestiune'
+    //               }
+    //         }
+    //     ]
+    // },
+    // utilities: {
+    //     total: Number,
+    //     entries: [
+    //         {
+    //             date: Date,
+    //             name: String,
+    //             qty: Number,
+    //             price: Number,
+    //             suplier: String,
+    //             logId: String,
+    //             invoiceName: String,
+    //             gestiune:  {
+    //                 type: Schema.Types.ObjectId,
+    //                 ref: 'Gestiune'
+    //               }
+    //         }
+    //     ]
+    // },
     departaments: [
         {
             totalIn: Number,
             totalOut: Number,
-            procent: Number,
+            // procentIn: Number,
+            // procentOut: Number,
             name: String,
             dep: [
                 {
                     name: String,
                     totalIn: Number,
                     totalOut: Number,
-                    procent: Number
+                    // procentIn: Number,
+                    // procentOut: Number
                 }
             ],
             products: [

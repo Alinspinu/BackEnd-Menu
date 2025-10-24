@@ -197,42 +197,44 @@ async function createReport(reports){
             tax: 0,
             users: []
         },
-        supliesProdBuc: 0,
-        supliesMfBuc: 0,
-        supliesProdBar: 0,
-        supliesMfBar: 0,
-        supliesValue: {
-            total: 0,
-            entries: []
-        },
-        serviceValue: {
-            total: 0,
-            entries: []
-        },
-        marketingValue: {
-            total: 0,
-            entries: []
-        },
-        inventarySpendings: {
-            total: 0,
-            entries: []
-        },
-        gasValue: {
-            total: 0,
-            entries: []
-        },
-        constructionsValue: {
-            total: 0,
-            entries: []
-        },
-        rent: {
-            total: 0,
-            entries: [],
-        },
-        utilities: {
-            total: 0,
-            entries: []
-        },
+        spendingsDeps: [],
+
+        // supliesProdBuc: 0,
+        // supliesMfBuc: 0,
+        // supliesProdBar: 0,
+        // supliesMfBar: 0,
+        // supliesValue: {
+        //     total: 0,
+        //     entries: []
+        // },
+        // serviceValue: {
+        //     total: 0,
+        //     entries: []
+        // },
+        // marketingValue: {
+        //     total: 0,
+        //     entries: []
+        // },
+        // inventarySpendings: {
+        //     total: 0,
+        //     entries: []
+        // },
+        // gasValue: {
+        //     total: 0,
+        //     entries: []
+        // },
+        // constructionsValue: {
+        //     total: 0,
+        //     entries: []
+        // },
+        // rent: {
+        //     total: 0,
+        //     entries: [],
+        // },
+        // utilities: {
+        //     total: 0,
+        //     entries: []
+        // },
         departaments: [],
         paymentMethods: [],
         hours: [],
@@ -247,38 +249,48 @@ async function createReport(reports){
         report.impairment.total = round(report.impairment.total + rep.impairment.total)
         report.workValue.total = round(report.workValue.total + rep.workValue.total)
         report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
-        report.supliesProdBuc = round(report.supliesProdBuc + rep.supliesProdBuc)
-        report.supliesMfBuc = round(report.supliesMfBuc + rep.supliesMfBuc)
-        report.supliesProdBar = round(report.supliesProdBar + rep.supliesProdBar)
-        report.supliesMfBar = round(report.supliesMfBar + rep.supliesMfBar)
-        report.supliesValue = {
-            total: round(report.supliesValue.total + rep.supliesValue.total),
-            entries: [...report.supliesValue.entries, ...rep.supliesValue.entries]
+
+        for(let d of rep.spendingsDeps){
+            const existingD = report.spendingsDeps.find(dd => dd.dep.toString() === d.dep.toString())
+            if(existingD){
+                existingD.total += d.total
+                existingD.entries = [...existingD.entries, ...d.entries]
+            } else {
+                report.spendingsDeps.push(d)
+            }
         }
-        report.serviceValue = {
-            total: round(report.serviceValue.total + rep.serviceValue.total),
-            entries: [...report.serviceValue.entries, ...rep.serviceValue.entries]
-        }
-        report.marketingValue = {
-            total: round(report.marketingValue.total + rep.marketingValue.total),
-            entries: [...report.marketingValue.entries, ...rep.marketingValue.entries]
-        }
-        report.inventarySpendings = {
-            total: round(report.inventarySpendings.total + rep.inventarySpendings.total),
-            entries: [...report.inventarySpendings.entries, ...rep.inventarySpendings.entries]
-        }
-        report.gasValue = {
-            total: round(report.gasValue.total + rep.gasValue.total),
-            entries: [...report.gasValue.entries, ...rep.gasValue.entries]
-        }
-        report.rent = {
-            total: round(report.rent.total + rep.rent.total),
-            entries: [...report.rent.entries, ...rep.rent.entries]
-        }
-        report.utilities = {
-            total: round(report.utilities.total + rep.utilities.total),
-            entries: [...report.utilities.entries, ...rep.utilities.entries]
-        }
+        // report.supliesProdBuc = round(report.supliesProdBuc + rep.supliesProdBuc)
+        // report.supliesMfBuc = round(report.supliesMfBuc + rep.supliesMfBuc)
+        // report.supliesProdBar = round(report.supliesProdBar + rep.supliesProdBar)
+        // report.supliesMfBar = round(report.supliesMfBar + rep.supliesMfBar)
+        // report.supliesValue = {
+        //     total: round(report.supliesValue.total + rep.supliesValue.total),
+        //     entries: [...report.supliesValue.entries, ...rep.supliesValue.entries]
+        // }
+        // report.serviceValue = {
+        //     total: round(report.serviceValue.total + rep.serviceValue.total),
+        //     entries: [...report.serviceValue.entries, ...rep.serviceValue.entries]
+        // }
+        // report.marketingValue = {
+        //     total: round(report.marketingValue.total + rep.marketingValue.total),
+        //     entries: [...report.marketingValue.entries, ...rep.marketingValue.entries]
+        // }
+        // report.inventarySpendings = {
+        //     total: round(report.inventarySpendings.total + rep.inventarySpendings.total),
+        //     entries: [...report.inventarySpendings.entries, ...rep.inventarySpendings.entries]
+        // }
+        // report.gasValue = {
+        //     total: round(report.gasValue.total + rep.gasValue.total),
+        //     entries: [...report.gasValue.entries, ...rep.gasValue.entries]
+        // }
+        // report.rent = {
+        //     total: round(report.rent.total + rep.rent.total),
+        //     entries: [...report.rent.entries, ...rep.rent.entries]
+        // }
+        // report.utilities = {
+        //     total: round(report.utilities.total + rep.utilities.total),
+        //     entries: [...report.utilities.entries, ...rep.utilities.entries]
+        // }
 
 
         for (let user of rep.workValue.users){
@@ -296,29 +308,33 @@ async function createReport(reports){
     
             const existingDep = report.departaments.find(d => d.name === dep.name)
             if(existingDep){
-                existingDep.total = round(existingDep.total + dep.total)
-                existingDep.procent = round(existingDep.total * 100 / report.cashIn)
+                existingDep.totalIn = round(existingDep.totalIn + dep.totalIn)
+                existingDep.totalOut = round(existingDep.totalOut + dep.totalOut)
+                // existingDep.procent = round(existingDep.total * 100 / report.cashIn)
+                // existingDep.procent = round(existingDep.total * 100 / report.cashIn)
 
-                dep._doc.dep.forEach(dep => {
-                    const index = existingDep.dep.findIndex(d=> d.name === dep.name)
+                dep.dep.forEach(dp => {
+                    const index = existingDep.dep.findIndex(d=> d.name === dp.name)
                     if(index !== -1){
-                        existingDep.dep[index].total += +dep.total
-                        existingDep.dep[index].procent = round(existingDep.dep[index].total * 100 / +dep.total)
+                        existingDep.dep[index].totalIn += +dp.totalIn
+                        existingDep.dep[index].totalOut += +dp.totalOut
+                        // existingDep.dep[index].procent = round(existingDep.dep[index].total * 100 / +dep.total)
                     } else{
-                        const dept = dep._doc
+                        const dept = dp
                         existingDep.dep.push(dept)
                     }
                 })
 
-                dep._doc.products.forEach(prod => {
+                dep.products.forEach(prod => {
                     let index = existingDep.products.findIndex(p => p.name === prod.name)
                     if(index !== -1 ){
                         existingDep.products[index].qty += prod.qty
                     } else {
-                        const product = prod._doc
+                        const product = prod
                         existingDep.products.push(product)
                     }
                 })
+                existingDep.entries = [...existingDep.entries, ...dep.entries]
             } else {
                 report.departaments.push(dep)
             }
