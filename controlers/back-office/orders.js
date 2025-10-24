@@ -202,7 +202,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
             const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
                                     .populate({
                                         path: 'products.ings.ing',
-                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
+                                        select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog dept', 
                                         populate: {
                                             path: 'ings.ing', 
                                             select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog', 

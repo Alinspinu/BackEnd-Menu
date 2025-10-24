@@ -522,7 +522,20 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     //CALC SALES
   
     for(let prod of billProducts){
+
+        // if(!prod.productionCost){
+        //     let ingsCost = 0
+        //     let toppingsCost = 0
+        //     for(let i of prod.ings){
+        //         ingsCost += (i.ing.tvaPrice * i.qty)
+        //     }
+        //     for(let t of prod.toppings){
+        //         toppingsCost += (t.ingPrice * t.qty)
+        //     }
+        //     prod.productionCost = round(ingsCost + toppingsCost)
+        // }   
         const price = (prod.price*prod.quantity) - prod.discount
+        // const productionPrice = (prod.productionCost * prod.qty)
         const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
         if(g){
             const existingProduct = g.products.find(p => p.name === prod.name)
@@ -536,6 +549,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     g.dep.push(
                         {
                             name: prod.productId.departament.name,
+                            depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
                             totalOut: price,
                             totalIn: 0,
                         }
@@ -576,7 +590,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 if(g){
                     g.totalIn += e.price
                     g.entries.push(e)
-                 const de = g.dep.find(dp => dp.name === d.name)
+                 const de = g.dep.find(dp => dp.depId === d.dep.toString())
                  if(de){
                     de.totalIn = d.total
                  }
@@ -698,62 +712,62 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     }
 
 
-        //CALC DEIVERSE
+    //CALC DEIVERSE
 
-        entries.forEach(entry => {
-            const index = entryy.find(e => e.index === entry.index)
-            if(!index){
-                values.diverse += Math.abs(entry.amount)
-                const ent = {
-                    value: Math.abs(entry.amount),
-                    reason: entry.description,
-                    index: entry.index,
-                    date: entry.date
-                }
-                entryy.push(ent)
-            } else {
-                console.log(index)
+    entries.forEach(entry => {
+        const index = entryy.find(e => e.index === entry.index)
+        if(!index){
+            values.diverse += Math.abs(entry.amount)
+            const ent = {
+                value: Math.abs(entry.amount),
+                reason: entry.description,
+                index: entry.index,
+                date: entry.date
             }
-        })
-    
-    
-        // CALC BILLS TOTALS
-    
-        bills.forEach(bill => {
-            if(bill.discount > 0 || bill.discount > 0 && bill.status === 'done'){
-                    discountBills.push(bill)
+            entryy.push(ent)
+        } else {
+            console.log(index)
+        }
+    })
+
+
+    // CALC BILLS TOTALS
+
+    bills.forEach(bill => {
+        if(bill.discount > 0 || bill.discount > 0 && bill.status === 'done'){
+                discountBills.push(bill)
+        }
+        if(bill.cashBack > 0 && bill.status === 'done'){
+                cashBackBills.push(bill)
+        }
+        if(bill.voucher > 0 && bill.status === 'done'){
+                voucherBills.push(bill)
+        }
+        if(bill.discount === 0 && bill.cashBack === 0 && bill.status === 'done') {
+            fullBills.push(bill)
             }
-            if(bill.cashBack > 0 && bill.status === 'done'){
-                    cashBackBills.push(bill)
-            }
-            if(bill.voucher > 0 && bill.status === 'done'){
-                    voucherBills.push(bill)
-            }
-            if(bill.discount === 0 && bill.cashBack === 0 && bill.status === 'done') {
-                fullBills.push(bill)
-              }
-            if(bill.payment.cash){
-                values.cash += bill.payment.cash
-            }
-            if(bill.payment.card){
-                values.card += bill.payment.card
-            }
-            if(bill.payment.viva){
-                values.vivaWallet += bill.payment.viva
-            }
-            if(bill.payment.voucher){
-                values.voucher += bill.payment.voucher
-            }
-            if(bill.payment.online){
-                values.payOnline += bill.payment.online
-            } 
-            values.tips += bill.tips
-            values.cashBack += bill.cashBack
-            values.discounts += bill.discount
-            values.totalBills += bill.total
-    
-    
-        })
+        if(bill.payment.cash){
+            values.cash += bill.payment.cash
+        }
+        if(bill.payment.card){
+            values.card += bill.payment.card
+        }
+        if(bill.payment.viva){
+            values.vivaWallet += bill.payment.viva
+        }
+        if(bill.payment.voucher){
+            values.voucher += bill.payment.voucher
+        }
+        if(bill.payment.online){
+            values.payOnline += bill.payment.online
+        } 
+        values.tips += bill.tips
+        values.cashBack += bill.cashBack
+        values.discounts += bill.discount
+        values.totalBills += bill.total
+
+
+    })
 
     // CALC VAT
 
