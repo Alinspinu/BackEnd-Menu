@@ -141,7 +141,7 @@ return doc
 
 
 
-function addIngredients(doc, ch, rowHeigth, y, headerHeight, rectHeigth, rectStartH, heghtValue, page, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value){
+function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value){
      doc.fillColor('black') 
   if(page !== 1) {
       y = y - 180
@@ -305,7 +305,7 @@ function addIngredients(doc, ch, rowHeigth, y, headerHeight, rectHeigth, rectSta
 
     console.log(page)
     console.log(pageLenght)
-    
+
     if(page < pageLenght){
       doc.fontSize(7)
         .fillColor('gray')
