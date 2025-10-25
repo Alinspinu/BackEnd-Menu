@@ -108,7 +108,7 @@ if(productsCount <= 28){
 }
 
 if(productsCount > 28){
-  firstChunk = 42
+  firstChunk = 41
   restChunks = 55
 }
 
@@ -145,13 +145,12 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
       headerHeight = headerHeight - 160
       rectStartH = rectStartH - 160
     }  else {
-      rectHeigth = rectHeigth - 120
+      rectHeigth = rectHeigth - 150
     }
 
 
     if(page === pageLenght){
-      console.log('hitt ', page)
-      rectHeigth = rectHeigth - 100
+      rectHeigth = rectHeigth - 80
     }
 
     //header produsex
