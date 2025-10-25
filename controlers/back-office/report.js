@@ -114,12 +114,27 @@ module.exports.getReportsDates = async (req, res) => {
 
 module.exports.getAllReports = async(req, res, next) => {
     try{
-        const {loc, point} = req.query
-        const reports = await Report.find({locatie: loc, salePoint: point}).sort({day: -1}).limit(30)
+        const {loc, point, limit = 30} = req.query
+        const reports = await Report.find({locatie: loc, salePoint: point, period: { $exists: false }}).sort({day: -1}).limit(limit)
         res.status(200).json(reports)
     } catch(err) {
         console.log(err)
         res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.getPeriodReports = async (req, res) => {
+    const {loc, point, limit = 30} = req.query
+    try{
+       const reports = await Report.find({locatie: loc, salePoint: point, period: { $exists: true }})
+                .sort({day: -1})
+                .limit(limit)
+                .populate({path: 'reports', select: 'cashIn ingsValue workValue day impairment'})
+                
+       res.status(200).json(reports)
+    } catch (e){
+        console.log(e)
+        res.status(500).json(e)
     }
 }
 
