@@ -4,7 +4,7 @@ const {round} = require('../../utils/functions')
 
 function createNirInvoice(invoice, value = 0){
 
-  const doc = new PDFDocument({
+  let doc = new PDFDocument({
     size: "A4",
     layout: "portrait",
 });
