@@ -143,7 +143,6 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
      doc.fillColor('black') 
 
 
-
      if(page !== 1) {
         y = y - 160
         headerHeight = headerHeight - 160
@@ -155,6 +154,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
      if(page === 2) index = 1 + 41
      if(page === 3) index = 41 + 54
      if(page === 4) index = 41 + 54 + 54
+     if(page === 5) index = 41 + 54 + 54 + 54
 
 
     if(page === pageLenght){
@@ -314,8 +314,6 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
     let pageWidth = doc.page.width;
     let pageHeight = doc.page.height;
 
-    console.log(page)
-    console.log(pageLenght)
 
     if(page < pageLenght){
       doc.fontSize(7)
@@ -346,6 +344,9 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
     doc.text('TOTAL', 382, 745)
     doc.text(`${round(taxInclusiveAmount)} Lei`, 445, 745,{ width: 150, align: 'left' })
 
+    doc.fontSize(7)
+    .fillColor('gray')
+    .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
   }
 
 
