@@ -95,6 +95,7 @@ let headerHeight = 200
 // radare produse
 y = 237
 let heghtValue = 12
+
 // doc.font("Courier");
 doc.fontSize(9)
 let productsCount = invoice.products.length
@@ -140,13 +141,20 @@ return doc
 
 function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value){
      doc.fillColor('black') 
-  if(page !== 1) {
-      y = y - 160
-      headerHeight = headerHeight - 160
-      rectStartH = rectStartH - 160
-    }  else {
-      rectHeigth = rectHeigth - 150
-    }
+
+     let index = 1
+
+     if(page !== 1) {
+        y = y - 160
+        headerHeight = headerHeight - 160
+        rectStartH = rectStartH - 160
+      }  else {
+        rectHeigth = rectHeigth - 150
+     }
+
+     if(page === 2) index = 41
+     if(page === 3) index = 41 + 54
+     if(page === 4) index = 41 + 54 + 54
 
 
     if(page === pageLenght){
