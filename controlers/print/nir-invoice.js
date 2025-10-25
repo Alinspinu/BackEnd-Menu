@@ -142,7 +142,7 @@ return doc
 function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value){
      doc.fillColor('black') 
 
-     let index = 1
+
 
      if(page !== 1) {
         y = y - 160
@@ -151,8 +151,8 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
       }  else {
         rectHeigth = rectHeigth - 150
      }
-
-     if(page === 2) index = 41
+     let index = 1
+     if(page === 2) index = 1 + 41
      if(page === 3) index = 41 + 54
      if(page === 4) index = 41 + 54 + 54
 
