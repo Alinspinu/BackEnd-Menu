@@ -346,7 +346,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
     doc.fontSize(7)
     .fillColor('gray')
-    .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, 663);
+    .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, 655);
   }
 
 
