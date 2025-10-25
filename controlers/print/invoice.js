@@ -57,9 +57,9 @@ doc.text(`200 lei`, 130 + 10, 74);
 // doc.font("Courier");
 doc.text(`${invoice.supplier.address.city.toUpperCase()}, Strada ${invoice.supplier.address.street}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
 
-doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 140)
-doc.text(`${invoice.supplier.bank}`, 60 + 10, 152)
-doc.text(`${invoice.supplier.iban}`, 55 + 10, 164)
+doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 110)
+doc.text(`${invoice.supplier.bank}`, 60 + 10, 122)
+doc.text(`${invoice.supplier.iban}`, 55 + 10, 134)
 
 //HEADER CLIENT
 //Nume client
@@ -95,25 +95,25 @@ doc.text(`${invoice.client.address.city.toUpperCase()}, Strada ${invoice.client.
 
 //Titlu factura
 
-doc.roundedRect(210, 220, 150, 54, 1)
+doc.roundedRect(210, 220, 120, 54, 1)
 doc.lineWidth(0.8);
 doc.stroke()
 // doc.font('Courier')
 doc.fontSize(24)
 doc.font('public/font/Montserrat-Bold.ttf')
-doc.text('FACTURĂ', 228, 190)
+doc.text('FACTURĂ', 228, 160)
 doc.fontSize(8)
 doc.font("public/font/Montserrat-Regular.ttf");
-doc.text('Serie/Nr.', 230, 192 + 35, { width: 40, align: "left" })
-doc.text('Emisă', 230, 207 + 35, { width: 40, align: "left" })
-doc.text('Scadentă', 230, 222 + 35, { width: 40, align: "left" })
+doc.text('Serie/Nr.', 230, 162 + 35, { width: 40, align: "left" })
+doc.text('Emisă', 230, 177 + 35, { width: 40, align: "left" })
+doc.text('Scadentă', 230, 192 + 35, { width: 40, align: "left" })
 
 // Titlu Factura Date
 doc.font('public/font/Montserrat-Bold.ttf')
 doc.fontSize(9)
-doc.text(`${invoice.invoiceNumber}`, 275, 190 + 35)
-doc.text(`${invoice.issueDate}`, 275, 205 + 35)
-doc.text(`${invoice.dueDate}`, 275, 220 + 35)
+doc.text(`${invoice.invoiceNumber}`, 275, 160 + 35)
+doc.text(`${invoice.issueDate}`, 275, 175 + 35)
+doc.text(`${invoice.dueDate}`, 275, 190 + 35)
 
 
 
