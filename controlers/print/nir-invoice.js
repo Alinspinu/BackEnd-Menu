@@ -109,7 +109,7 @@ if(productsCount <= 28){
 
 if(productsCount > 28){
   firstChunk = 41
-  restChunks = 55
+  restChunks = 54
 }
 
 
