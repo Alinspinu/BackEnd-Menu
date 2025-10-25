@@ -367,7 +367,222 @@ return doc
 }
 
 
+function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value){
+  doc.fillColor('black') 
 
+
+  if(page !== 1) {
+     y = y - 160
+     headerHeight = headerHeight - 160
+     rectStartH = rectStartH - 160
+   }  else {
+     rectHeigth = rectHeigth - 150
+  }
+  let index = 1
+  if(page === 2) index = 1 + 41
+  if(page === 3) index = 41 + 54
+  if(page === 4) index = 41 + 54 + 54
+  if(page === 5) index = 41 + 54 + 54 + 54
+
+
+ if(page === pageLenght){
+   rectHeigth = rectHeigth - 80
+ }
+
+ //header produsex
+ doc.rect(25, headerHeight, 18, 30)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.font("public/font/Montserrat-Regular.ttf");
+ doc.fontSize(9)
+ doc.text('Nr.', 26, headerHeight + 1)
+ doc.text('crt.', 26, headerHeight + 16)
+
+ doc.rect(43, headerHeight, 230, 30)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('Denumirea produselor si serviciilor', 44, headerHeight + 13, { width: 228, align: "center" })
+
+ doc.rect(273, headerHeight, 30, 30)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('U.M.', 275, headerHeight + 13, { width: 28, align: "center" })
+
+ doc.rect(303, headerHeight, 60, 30)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('Cantitate', 305, headerHeight + 13, { width: 58, align: "center" })
+
+ doc.rect(363, headerHeight, 60, 30)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('Pret unitar', 365, headerHeight + 7, { width: 58, align: "center" })
+ doc.text('fara T.V.A.', 365, headerHeight + 19, { width: 58, align: "center" })
+
+ doc.rect(423, headerHeight, 60, 30)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('Valoare', 425, headerHeight + 7, { width: 58, align: "center" })
+ doc.text('fara T.V.A.', 425, headerHeight + 19, { width: 58, align: "center" })
+
+ doc.rect(483, headerHeight, 77, 30)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('T.V.A.', 485, headerHeight + 5, { width: 75, align: "center" })
+ doc.text('Cota', 485, headerHeight + 19, { width: 35, align: "left" })
+ doc.text('Valoare', 521, headerHeight + 19, { width: 38, align: "right" })
+
+ //little header
+ doc.rect(25, headerHeight + 31, 18, 15)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('0', 26, headerHeight + 35, { width: 17, align: "center" })
+
+ doc.rect(43, headerHeight + 31, 230, 15)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('1', 44, headerHeight + 35, { width: 228, align: "center" })
+
+ doc.rect(273, headerHeight + 31, 30, 15)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('2', 274, headerHeight + 35, { width: 28, align: "center" })
+
+ doc.rect(303, headerHeight + 31, 60, 15)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('3', 304, headerHeight + 35, { width: 58, align: "center" })
+
+ doc.rect(363, headerHeight + 31, 60, 15)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('4', 364, headerHeight + 35, { width: 58, align: "center" })
+
+ doc.rect(423, headerHeight + 31, 60, 15)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('5 = 3 x 4', 424, headerHeight + 35, { width: 58, align: "center" })
+
+ doc.rect(483, headerHeight + 31, 77, 15)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.text('6', 484, headerHeight + 35, { width: 75, align: "center" })
+
+
+
+
+
+ //Body produse
+ doc.rect(25, rectStartH, 18, rectHeigth)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.rect(43, rectStartH, 230, rectHeigth)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.rect(273, rectStartH, 30, rectHeigth)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.rect(303, rectStartH, 60, rectHeigth)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.rect(363, rectStartH, 60, rectHeigth)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.rect(423, rectStartH, 60, rectHeigth)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+ doc.rect(483, rectStartH, 77, rectHeigth)
+ doc.lineWidth(0.5);
+ doc.stroke()
+
+
+
+
+
+
+ // doc.fontSize(8)
+ ch.forEach((el, i) => {
+     let newValue = y + heghtValue
+     doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
+     doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
+     doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
+     doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
+     doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
+     doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
+     doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
+     doc.text(`${round((el.price * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
+     if(value === el.totalNoVat){
+       doc.lineWidth(0.2);
+       doc.strokeColor('red');
+       doc.moveTo(26, newValue + rowHeigth -1).lineTo(272, newValue + rowHeigth -1).stroke();
+       doc.strokeColor('black');
+     }
+     heghtValue += rowHeigth
+ })
+ let pageWidth = doc.page.width;
+ let pageHeight = doc.page.height;
+
+
+ if(page < pageLenght){
+   doc.fontSize(7)
+     .fillColor('gray')
+     .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
+   doc.addPage()
+} else { 
+
+ doc.fontSize(10)
+ //footer factura
+ doc.rect(25, 669, 338, 105)
+ doc.lineWidth(0.5);
+ doc.stroke()
+ // doc.image('public/icons/logo-stanga.png', 35, 689, {width: 300})
+
+ doc.rect(363, 669, 197, 105)
+ doc.lineWidth(0.5);
+ doc.stroke()
+ doc.fontSize(7)
+ doc.text('(Total fără T.V.A.)', 380, 692, { width: 60, align: 'center' })
+ doc.text('(Total T.V.A.)', 488, 692, { width: 60, align: 'center' })
+ doc.font('public/font/Montserrat-Bold.ttf')
+ doc.fontSize(12)
+ doc.text(`${round(taxExclusiveAmount)} Lei`, 365, 678, { width: 90, align: 'center' })
+ doc.text(`${round(vatAmount)} Lei`, 480, 678, { width: 75, align: 'center' })
+
+ doc.fontSize(16)
+ doc.text('TOTAL', 382, 745)
+ doc.text(`${round(taxInclusiveAmount)} Lei`, 445, 745,{ width: 150, align: 'left' })
+
+ if(page !== 1){
+   doc.font("public/font/Montserrat-Regular.ttf");
+   doc.fontSize(7)
+   .fillColor('gray')
+   .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, 658);
+ }
+}
+
+
+return doc
+}
 
 
 
