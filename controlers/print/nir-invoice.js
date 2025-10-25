@@ -130,7 +130,7 @@ if(ingChunks[ingChunks.length -1].length > 40 || (ingChunks[ingChunks.length -1]
 }
 
 ingChunks.forEach((ch, i) => {
-    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount)
+    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, value)
 })
 
 
@@ -141,7 +141,7 @@ return doc
 
 
 
-function addIngredients(doc, ch, rowHeigth, y, headerHeight, rectHeigth, rectStartH, heghtValue, page, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount){
+function addIngredients(doc, ch, rowHeigth, y, headerHeight, rectHeigth, rectStartH, heghtValue, page, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value){
      doc.fillColor('black') 
   if(page !== 1) {
       y = y - 180
