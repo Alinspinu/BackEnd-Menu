@@ -282,7 +282,7 @@ function addIngredients(doc, ch, rowHeigth, y, headerHeight, rectHeigth, rectSta
 
 
     // doc.fontSize(8)
-    invoice.products.forEach((el, i) => {
+    ch.forEach((el, i) => {
         let newValue = y + heghtValue
         doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
         doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
