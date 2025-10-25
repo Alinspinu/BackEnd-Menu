@@ -68,7 +68,7 @@ doc.text(`${invoice.locatie.vatNumber}`, 485  - 40, 62+rh , { width: 145, align:
 
 //Titlu factura
 
-doc.roundedRect(200, 120, 200, 54, 1)
+doc.roundedRect(185, 140, 200, 54, 1)
 doc.lineWidth(0.8);
 doc.stroke()
 // doc.font('Courier')
