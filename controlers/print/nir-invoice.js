@@ -102,7 +102,7 @@ let rowHeigth = 12
 
 let firstChunk = 0
 let restChunks = 0
-
+console.log('products count', productsCount)
 if(productsCount <= 28){
   firstChunk = 28
 }
