@@ -201,7 +201,7 @@ if(productsCount >= 41 && productsCount <= 50){
 }
 if(productsCount > 50){
   doc.fontSize(5)
-  rowHeigth = 7
+  rowHeigth = 4
 }
 
 
