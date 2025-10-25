@@ -100,21 +100,21 @@ doc.fontSize(9)
 let productsCount = invoice.products.length
 let rowHeigth = 14
 
-if(productsCount >= 25 && productsCount <= 40){
-  doc.fontSize(8)
-  rowHeigth = 10
-}
-if(productsCount >= 41 && productsCount <= 50){
-  doc.fontSize(6)
-  rowHeigth = 8
-}
-if(productsCount > 50){
-  doc.fontSize(5)
-  rowHeigth = 5
-}
-if(productsCount > 60){
-  rectHeigth
-}
+// if(productsCount >= 25 && productsCount <= 40){
+//   doc.fontSize(8)
+//   rowHeigth = 10
+// }
+// if(productsCount >= 41 && productsCount <= 50){
+//   doc.fontSize(6)
+//   rowHeigth = 8
+// }
+// if(productsCount > 50){
+//   doc.fontSize(5)
+//   rowHeigth = 5
+// }
+// if(productsCount > 60){
+//   rectHeigth
+// }
 
 
  
@@ -164,7 +164,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
     doc.lineWidth(0.5);
     doc.stroke()
 
-    doc.text('Denumirea produselor si serviciilor', 44, 293, { width: 228, align: "center" })
+    doc.text('Denumirea produselor si serviciilor', 44, headerHeight + 13, { width: 228, align: "center" })
 
     doc.rect(273, headerHeight, 30, 30)
     doc.lineWidth(0.5);
