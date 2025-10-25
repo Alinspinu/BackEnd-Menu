@@ -100,26 +100,31 @@ doc.fontSize(9)
 let productsCount = invoice.products.length
 let rowHeigth = 12
 
-// if(productsCount >= 25 && productsCount <= 40){
-//   doc.fontSize(8)
-//   rowHeigth = 10
-// }
-// if(productsCount >= 41 && productsCount <= 50){
-//   doc.fontSize(6)
-//   rowHeigth = 8
-// }
-// if(productsCount > 50){
-//   doc.fontSize(5)
-//   rowHeigth = 5
-// }
-// if(productsCount > 60){
-//   rectHeigth
-// }
+let firstChunk = 0
+let restChunks = 0
+
+if(productsCount <= 28){
+  firstChunk = 28
+}
+
+if(productsCount > 28 && productsCount <= 39){
+  firstChunk = 40
+  restChunks = 32
+}
+if(productsCount >= 41 && productsCount <= 50){
+
+}
+if(productsCount > 50){
+
+}
+if(productsCount > 60){
+
+}
 
 
  
 
-let ingChunks = splitIngredients(invoice.products)
+let ingChunks = splitIngredients(invoice.products, firstChunk, restChunks)
 
 
 let pages = ingChunks.length
@@ -342,7 +347,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
 
 
-function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 24) {
+function splitIngredients(arr, firstChunkSize = 30, otherChunkSize = 24) {
   const result = [];
 
   // First chunk
