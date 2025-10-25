@@ -130,7 +130,7 @@ let ingChunks = splitIngredients(invoice.products, firstChunk, restChunks)
 let pages = ingChunks.length
 
 let pageCount = ingChunks.length
-if(ingChunks[ingChunks.length -1].length > 30 || (ingChunks[ingChunks.length -1].length > 24) && ingChunks.length === 1 ) {
+if(ingChunks[ingChunks.length -1].length > firstChunk || (ingChunks[ingChunks.length -1].length > restChunks) && ingChunks.length === 1 ) {
     pageCount = pageCount + 1
 }
 
