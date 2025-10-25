@@ -90,10 +90,10 @@ doc.text(`${invoice.dueDate}`, 275, 140 + 35)
 
 
 let rectStartH = 247
-let rectHeigth = 330
+let rectHeigth = 430
 let headerHeight = 200
 // radare produse
-y = 217
+y = 237
 let heghtValue = 12
 // doc.font("Courier");
 doc.fontSize(9)
