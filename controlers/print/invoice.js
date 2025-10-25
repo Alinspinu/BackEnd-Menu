@@ -136,10 +136,16 @@ if(productsCount <= 30){
   firstChunk = 28
 }
 
-if(productsCount > 30){
+if(productsCount > 30 && productsCount <= 41){
+  firstChunk = 30
+  restChunks = 54
+}
+
+if(productsCount > 40){
   firstChunk = 41
   restChunks = 54
 }
+
 
 
 
