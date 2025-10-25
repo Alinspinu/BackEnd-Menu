@@ -97,7 +97,7 @@ y = 317
 let heghtValue = 12
 // doc.font("Courier");
 doc.fontSize(9)
-const productsCount = invoice.products.length
+let productsCount = invoice.products.length
 let rowHeigth = 14
 
 if(productsCount >= 25 && productsCount <= 40){
@@ -119,7 +119,7 @@ if(productsCount > 60){
 
  
 
-const ingChunks = splitIngredients(invoice.products)
+let ingChunks = splitIngredients(invoice.products)
 
 
 let pages = ingChunks.length
@@ -300,8 +300,8 @@ function addIngredients(doc, ch, rowHeigth, y, headerHeight, rectHeigth, rectSta
         }
         heghtValue += rowHeigth
     })
-    const pageWidth = doc.page.width;
-    const pageHeight = doc.page.height;
+    let pageWidth = doc.page.width;
+    let pageHeight = doc.page.height;
 
     if(page < pageLenght){
       doc.fontSize(7)
