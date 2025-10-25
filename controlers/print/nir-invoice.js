@@ -152,12 +152,13 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
       y = y - 160
       headerHeight = headerHeight - 160
       rectStartH = rectStartH - 160
-      rectHeigth = rectHeigth - 50
+      rectHeigth = rectHeigth - 80
   } 
 
-  if(page === pageLenght){
-    rectHeigth = rectHeigth - 50
-  }
+    if(page === pageLenght){
+      console.log('hitt ', page)
+      rectHeigth = rectHeigth - 50
+    }
 
     //header produsex
     doc.rect(25, headerHeight, 18, 30)
