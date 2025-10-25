@@ -183,9 +183,9 @@ doc.text('6', 484, 315, { width: 75, align: "center" })
 
 
 //Body produse
-doc.rect(25, 327, 18, 330)
-doc.lineWidth(0.5);
-doc.stroke()
+// doc.rect(25, 327, 18, 330)
+// doc.lineWidth(0.5);
+// doc.stroke()
 
 doc.rect(43, 327, 230, 330)
 doc.lineWidth(0.5);
