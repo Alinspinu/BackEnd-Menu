@@ -156,7 +156,7 @@ if(ingChunks[ingChunks.length -1].length > firstChunk || (ingChunks[ingChunks.le
 }
 
 ingChunks.forEach((ch, i) => {
-    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, value)
+    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount)
 })
 
 //header produsex
@@ -367,7 +367,7 @@ return doc
 }
 
 
-function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value){
+function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount){
   doc.fillColor('black') 
 
 
@@ -531,12 +531,6 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
      doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
      doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
      doc.text(`${round((el.price * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
-     if(value === el.totalNoVat){
-       doc.lineWidth(0.2);
-       doc.strokeColor('red');
-       doc.moveTo(26, newValue + rowHeigth -1).lineTo(272, newValue + rowHeigth -1).stroke();
-       doc.strokeColor('black');
-     }
      heghtValue += rowHeigth
  })
  let pageWidth = doc.page.width;
