@@ -303,6 +303,9 @@ function addIngredients(doc, ch, rowHeigth, y, headerHeight, rectHeigth, rectSta
     let pageWidth = doc.page.width;
     let pageHeight = doc.page.height;
 
+    console.log(page)
+    console.log(pageLenght)
+    
     if(page < pageLenght){
       doc.fontSize(7)
         .fillColor('gray')
