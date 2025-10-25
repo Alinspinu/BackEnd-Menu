@@ -118,7 +118,7 @@ doc.text(`${invoice.dueDate}`, 275, 190 + 15)
 
 
 let rectStartH = 247 + 50
-let rectHeigth = 650 + 50
+let rectHeigth = 650 - 50
 let headerHeight = 200 + 50
 // radare produse
 y = 237 + 50
