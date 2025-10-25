@@ -510,50 +510,54 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     //CALC SALES
   
     for(let prod of billProducts){ 
-        const price = (prod.price*prod.quantity) - prod.discount
-        const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
-        if(g){
-            const existingProduct = g.products.find(p => p.name === prod.name)
-            if(existingProduct){
-                existingProduct.qty = existingProduct.qty + prod.quantity
-                g.totalOut += price
-                const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
-                if(existingDep){
-                    existingDep.totalOut = existingDep.totalOut + round(price)
-                } else {
-                    g.dep.push(
-                        {
-                            name: prod.productId.departament.name,
-                            depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
-                            totalOut: price,
-                            totalIn: 0,
-                        }
-                        )
-                    }
-                } else {
-                  const product = {
-                        name: prod.name,
-                        dep: prod.productId.departament.name,
-                        qty: prod.quantity,
-                        price: price
-                    }
+        if(prod.productId){
+            const price = (prod.price*prod.quantity) - prod.discount
+            const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
+            if(g){
+                const existingProduct = g.products.find(p => p.name === prod.name)
+                if(existingProduct){
+                    existingProduct.qty = existingProduct.qty + prod.quantity
                     g.totalOut += price
-                    g.products.push(product)
-                    const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
-                    if(existingDep) {
-                        existingDep.totalOut += price
+                    const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
+                    if(existingDep){
+                        existingDep.totalOut = existingDep.totalOut + round(price)
                     } else {
                         g.dep.push(
                             {
                                 name: prod.productId.departament.name,
-                                totalOut: price,
                                 depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
+                                totalOut: price,
                                 totalIn: 0,
                             }
-                        )
+                            )
+                        }
+                    } else {
+                      const product = {
+                            name: prod.name,
+                            dep: prod.productId.departament.name,
+                            qty: prod.quantity,
+                            price: price
+                        }
+                        g.totalOut += price
+                        g.products.push(product)
+                        const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
+                        if(existingDep) {
+                            existingDep.totalOut += price
+                        } else {
+                            g.dep.push(
+                                {
+                                    name: prod.productId.departament.name,
+                                    totalOut: price,
+                                    depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
+                                    totalIn: 0,
+                                }
+                            )
+                        }
                     }
                 }
-            }
+        } else {
+            consol.log(prod.name)
+        }
 
     }
 
