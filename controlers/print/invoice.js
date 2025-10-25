@@ -95,25 +95,25 @@ doc.text(`${invoice.client.address.city.toUpperCase()}, Strada ${invoice.client.
 
 //Titlu factura
 
-doc.roundedRect(210, 190, 150, 54, 1)
+doc.roundedRect(210, 170, 150, 54, 1)
 doc.lineWidth(0.8);
 doc.stroke()
 // doc.font('Courier')
 doc.fontSize(24)
 doc.font('public/font/Montserrat-Bold.ttf')
-doc.text('FACTURĂ', 228, 160)
+doc.text('FACTURĂ', 228, 140)
 doc.fontSize(8)
 doc.font("public/font/Montserrat-Regular.ttf");
-doc.text('Serie/Nr.', 230, 162 + 35, { width: 40, align: "left" })
-doc.text('Emisă', 230, 177 + 35, { width: 40, align: "left" })
-doc.text('Scadentă', 230, 192 + 35, { width: 40, align: "left" })
+doc.text('Serie/Nr.', 230, 162 + 15, { width: 40, align: "left" })
+doc.text('Emisă', 230, 177 + 15, { width: 40, align: "left" })
+doc.text('Scadentă', 230, 192 + 15, { width: 40, align: "left" })
 
 // Titlu Factura Date
 doc.font('public/font/Montserrat-Bold.ttf')
 doc.fontSize(9)
-doc.text(`${invoice.invoiceNumber}`, 275, 160 + 35)
-doc.text(`${invoice.issueDate}`, 275, 175 + 35)
-doc.text(`${invoice.dueDate}`, 275, 190 + 35)
+doc.text(`${invoice.invoiceNumber}`, 275, 160 + 15)
+doc.text(`${invoice.issueDate}`, 275, 175 + 15)
+doc.text(`${invoice.dueDate}`, 275, 190 + 15)
 
 
 
