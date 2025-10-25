@@ -343,11 +343,13 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
     doc.fontSize(16)
     doc.text('TOTAL', 382, 745)
     doc.text(`${round(taxInclusiveAmount)} Lei`, 445, 745,{ width: 150, align: 'left' })
-    
-    doc.font("public/font/Montserrat-Regular.ttf");
-    doc.fontSize(7)
-    .fillColor('gray')
-    .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, 658);
+
+    if(page !== 1){
+      doc.font("public/font/Montserrat-Regular.ttf");
+      doc.fontSize(7)
+      .fillColor('gray')
+      .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, 658);
+    }
   }
 
 
