@@ -191,18 +191,18 @@ doc.fontSize(9)
 const productsCount = invoice.products.length
 let rowHeigth = 14
 
-// if(productsCount >= 25 && productsCount <= 40){
-//   doc.fontSize(8)
-//   rowHeigth = 10
-// }
-// if(productsCount >= 41 && productsCount <= 50){
-//   doc.fontSize(6)
-//   rowHeigth = 8
-// }
-// if(productsCount > 50){
-//   doc.fontSize(5)
-//   rowHeigth = 7
-// }
+if(productsCount >= 25 && productsCount <= 40){
+  doc.fontSize(8)
+  rowHeigth = 10
+}
+if(productsCount >= 41 && productsCount <= 50){
+  doc.fontSize(6)
+  rowHeigth = 8
+}
+if(productsCount > 50){
+  doc.fontSize(5)
+  rowHeigth = 7
+}
 
 
 
@@ -240,7 +240,7 @@ doc.stroke()
 
 
 
-doc.fontSize(8)
+// doc.fontSize(8)
 invoice.products.forEach((el, i) => {
     let newValue = y + heghtValue
     doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
