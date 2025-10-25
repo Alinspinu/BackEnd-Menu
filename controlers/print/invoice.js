@@ -132,11 +132,11 @@ let rowHeigth = 12
 let firstChunk = 0
 let restChunks = 0
 
-if(productsCount <= 28){
+if(productsCount <= 30){
   firstChunk = 28
 }
 
-if(productsCount > 28){
+if(productsCount > 30){
   firstChunk = 41
   restChunks = 54
 }
