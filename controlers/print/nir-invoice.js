@@ -68,30 +68,30 @@ doc.text(`${invoice.locatie.vatNumber}`, 485  - 40, 62+rh , { width: 145, align:
 
 //Titlu factura
 
-doc.roundedRect(210, 220, 150, 54, 1)
+doc.roundedRect(200, 120, 180, 54, 1)
 doc.lineWidth(0.8);
 doc.stroke()
 // doc.font('Courier')
 doc.fontSize(24)
 doc.font('public/font/Montserrat-Bold.ttf')
-doc.text('FACTURĂ', 228, 190)
+doc.text('FACTURĂ', 218, 90)
 doc.fontSize(8)
 doc.font("public/font/Montserrat-Regular.ttf");
-doc.text('Serie/Nr.', 230, 192 + 35, { width: 40, align: "left" })
-doc.text('Emisă', 230, 207 + 35, { width: 40, align: "left" })
-doc.text('Scadentă', 230, 222 + 35, { width: 40, align: "left" })
+doc.text('Serie/Nr.', 230, 92 + 35, { width: 40, align: "left" })
+doc.text('Emisă', 230, 107 + 35, { width: 40, align: "left" })
+doc.text('Scadentă', 230, 122 + 35, { width: 40, align: "left" })
 
 // Titlu Factura Date
 doc.font('public/font/Montserrat-Bold.ttf')
 doc.fontSize(9)
-doc.text(`${invoice.invoiceNumber}`, 275, 190 + 35)
-doc.text(`${invoice.issueDate}`, 275, 205 + 35)
-doc.text(`${invoice.dueDate}`, 275, 220 + 35)
+doc.text(`${invoice.invoiceNumber}`, 275, 90 + 35)
+doc.text(`${invoice.issueDate}`, 275, 105 + 35)
+doc.text(`${invoice.dueDate}`, 275, 120 + 35)
 
 
-let rectStartH = 327
-let rectHeigth = 330
-let headerHeight = 280
+let rectStartH = 127
+let rectHeigth = 130
+let headerHeight = 180
 // radare produse
 y = 317
 let heghtValue = 12
@@ -146,7 +146,6 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
   if(page !== 1) {
       y = y - 180
       headerHeight = headerHeight - 180
-      rectHeigth = rectHeigth - 180
       rectStartH = rectStartH - 180
   } 
 
