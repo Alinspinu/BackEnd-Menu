@@ -93,7 +93,7 @@ let rectStartH = 247
 let rectHeigth = 330
 let headerHeight = 200
 // radare produse
-y = 227
+y = 217
 let heghtValue = 12
 // doc.font("Courier");
 doc.fontSize(9)
