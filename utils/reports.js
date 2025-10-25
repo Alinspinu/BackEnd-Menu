@@ -556,7 +556,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     }
                 }
         } else {
-            consol.log(prod.name)
+            console.log(prod.name)
         }
 
     }
