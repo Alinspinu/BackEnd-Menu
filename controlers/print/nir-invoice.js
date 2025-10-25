@@ -183,9 +183,6 @@ doc.text('6', 484, 315, { width: 75, align: "center" })
 
 
 
-
-
-
 // radare produse
 y = 317
 let heghtValue = 12
@@ -194,38 +191,19 @@ doc.fontSize(9)
 const productsCount = invoice.products.length
 let rowHeigth = 14
 
-if(productsCount >= 25 && productsCount <= 40){
-  doc.fontSize(8)
-  rowHeigth = 10
-}
-if(productsCount >= 41 && productsCount <= 50){
-  doc.fontSize(6)
-  rowHeigth = 8
-}
-if(productsCount > 50){
-  doc.fontSize(5)
-  rowHeigth = 7
-}
+// if(productsCount >= 25 && productsCount <= 40){
+//   doc.fontSize(8)
+//   rowHeigth = 10
+// }
+// if(productsCount >= 41 && productsCount <= 50){
+//   doc.fontSize(6)
+//   rowHeigth = 8
+// }
+// if(productsCount > 50){
+//   doc.fontSize(5)
+//   rowHeigth = 7
+// }
 
-doc.fontSize(8)
-invoice.products.forEach((el, i) => {
-    let newValue = y + heghtValue
-    doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
-    doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
-    doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
-    doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
-    doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
-    doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
-    doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
-    doc.text(`${round((el.price * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
-    if(value === el.totalNoVat){
-      doc.lineWidth(0.2);
-      doc.strokeColor('red');
-      doc.moveTo(26, newValue + rowHeigth -1).lineTo(272, newValue + rowHeigth -1).stroke();
-      doc.strokeColor('black');
-    }
-    heghtValue += rowHeigth
-})
 
 
 //Body produse
@@ -256,6 +234,34 @@ doc.stroke()
 doc.rect(483, 327, 77, 330)
 doc.lineWidth(0.5);
 doc.stroke()
+
+
+
+
+
+
+doc.fontSize(8)
+invoice.products.forEach((el, i) => {
+    let newValue = y + heghtValue
+    doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
+    doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
+    doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
+    doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
+    doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
+    doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
+    doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
+    doc.text(`${round((el.price * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
+    if(value === el.totalNoVat){
+      doc.lineWidth(0.2);
+      doc.strokeColor('red');
+      doc.moveTo(26, newValue + rowHeigth -1).lineTo(272, newValue + rowHeigth -1).stroke();
+      doc.strokeColor('black');
+    }
+    heghtValue += rowHeigth
+})
+
+
+
 
 
 
