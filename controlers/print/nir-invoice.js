@@ -103,12 +103,19 @@ let rowHeigth = 12
 
 let firstChunk = 0
 let restChunks = 0
+let secondIndex = 30
 
-if(productsCount <= 28){
+if(productsCount <= 30){
   firstChunk = 28
 }
 
-if(productsCount > 28){
+if(productsCount > 30 && productsCount <= 40){
+  firstChunk = 30
+  restChunks = 54
+}
+
+if(productsCount > 40){
+  secondIndex = 41
   firstChunk = 41
   restChunks = 54
 }
@@ -128,7 +135,7 @@ if(ingChunks[ingChunks.length -1].length > firstChunk || (ingChunks[ingChunks.le
 }
 
 ingChunks.forEach((ch, i) => {
-    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, value)
+    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, value, secondIndex)
 })
 
 
@@ -139,7 +146,7 @@ return doc
 
 
 
-function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value){
+function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, value, secondIndex){
      doc.fillColor('black') 
 
 
@@ -151,7 +158,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
         rectHeigth = rectHeigth - 150
      }
      let index = 1
-     if(page === 2) index = 1 + 41
+     if(page === 2) index = 1 + secondIndex
      if(page === 3) index = 41 + 54
      if(page === 4) index = 41 + 54 + 54
      if(page === 5) index = 41 + 54 + 54 + 54

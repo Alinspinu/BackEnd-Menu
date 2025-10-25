@@ -167,208 +167,7 @@ ingChunks.forEach((ch, i) => {
     doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, secondIndex)
 })
 
-//header produsex
-// doc.rect(25, 280, 18, 30)
-// doc.lineWidth(0.5);
-// doc.stroke()
 
-// doc.font("public/font/Montserrat-Regular.ttf");
-// doc.fontSize(9)
-// doc.text('Nr.', 26, 281)
-// doc.text('crt.', 26, 296)
-
-// doc.rect(43, 280, 230, 30)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('Denumirea produselor si serviciilor', 44, 293, { width: 228, align: "center" })
-
-// doc.rect(273, 280, 30, 30)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('U.M.', 275, 293, { width: 28, align: "center" })
-
-// doc.rect(303, 280, 60, 30)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('Cantitate', 305, 293, { width: 58, align: "center" })
-
-// doc.rect(363, 280, 60, 30)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('Pret unitar', 365, 287, { width: 58, align: "center" })
-// doc.text('fara T.V.A.', 365, 299, { width: 58, align: "center" })
-
-// doc.rect(423, 280, 60, 30)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('Valoare', 425, 287, { width: 58, align: "center" })
-// doc.text('fara T.V.A.', 425, 299, { width: 58, align: "center" })
-
-// doc.rect(483, 280, 77, 30)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('T.V.A.', 485, 285, { width: 75, align: "center" })
-// doc.text('Cota', 485, 299, { width: 35, align: "left" })
-// doc.text('Valoare', 521, 299, { width: 38, align: "right" })
-
-// //little header
-// doc.rect(25, 311, 18, 15)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('0', 26, 315, { width: 17, align: "center" })
-
-// doc.rect(43, 311, 230, 15)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('1', 44, 315, { width: 228, align: "center" })
-
-// doc.rect(273, 311, 30, 15)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('2', 274, 315, { width: 28, align: "center" })
-
-// doc.rect(303, 311, 60, 15)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('3', 304, 315, { width: 58, align: "center" })
-
-// doc.rect(363, 311, 60, 15)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('4', 364, 315, { width: 58, align: "center" })
-
-// doc.rect(423, 311, 60, 15)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('5 = 3 x 4', 424, 315, { width: 58, align: "center" })
-
-// doc.rect(483, 311, 77, 15)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.text('6', 484, 315, { width: 75, align: "center" })
-
-
-// //Body produse
-// doc.rect(25, 327, 18, 330)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.rect(43, 327, 230, 330)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.rect(273, 327, 30, 330)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.rect(303, 327, 60, 330)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.rect(363, 327, 60, 330)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.rect(423, 327, 60, 330)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// doc.rect(483, 327, 77, 330)
-// doc.lineWidth(0.5);
-// doc.stroke()
-
-// let products = []
-
-// for(let p of invoice.products){
-//   const existingProduct = products.find(pa => pa.name === p.name)
-//   if(existingProduct){
-//     existingProduct.quantity += p.quantity
-//     existingProduct.totalNoVat += p.totalNoVat
-//     existingProduct.total += p.total
-//   } else {
-//     products.push(p)
-//   }
-// }
-
-// invoice.products = products
-
-
-
-
-// // radare produse
-// y = 317
-// let heghtValue = 12
-// // doc.font("Courier");
-// doc.fontSize(9)
-// const productsCount = invoice.products.length
-// let rowHeigth = 14
-
-// if(productsCount >= 25 && productsCount <= 40){
-//   doc.fontSize(8)
-//   rowHeigth = 10
-// }
-// if(productsCount >= 41 && productsCount <= 50){
-//   doc.fontSize(6)
-//   rowHeigth = 8
-// }
-// if(productsCount > 50){
-//   doc.fontSize(5)
-//   rowHeigth = 7
-// }
-
-
-
-
-// invoice.products.forEach((el, i) => {
-//   if(el.name.length > 30){
-//     el.name = el.name.slice(0, 40)
-//   }
-//     let newValue = y + heghtValue
-//     doc.text(`${i + 1}`, 26, newValue, { width: 17, align: "center" })
-//     doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
-//     doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
-//     doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
-//     doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
-//     doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
-//     doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
-//     doc.text(`${round(el.total - el.totalNoVat)}`, 496, newValue, { width: 60, align: "right" })
-//     heghtValue += rowHeigth
-// })
-
-// doc.fontSize(10)
-// //footer factura
-// doc.rect(25, 669, 338, 105)
-// doc.lineWidth(0.5);
-// doc.stroke()
-// doc.image('public/icons/logo-stanga.png', 35, 689, {width: 300})
-
-// doc.rect(363, 669, 197, 105)
-// doc.lineWidth(0.5);
-// doc.stroke()
-// doc.fontSize(7)
-// doc.text('(Total fără T.V.A.)', 380, 692, { width: 60, align: 'center' })
-// doc.text('(Total T.V.A.)', 488, 692, { width: 60, align: 'center' })
-// doc.font('public/font/Montserrat-Bold.ttf')
-// doc.fontSize(12)
-// doc.text(`${round(invoice.taxExclusiveAmount)} Lei`, 365, 678, { width: 90, align: 'center' })
-// doc.text(`${round(invoice.vatAmount)} Lei`, 480, 678, { width: 75, align: 'center' })
-
-// doc.fontSize(16)
-// doc.text('TOTAL', 382, 745)
-// doc.text(`${round(invoice.taxInclusiveAmount)} Lei`, 445, 745,{ width: 150, align: 'left' })
 
 return doc
 
@@ -490,10 +289,6 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
  doc.text('6', 484, headerHeight + 35, { width: 75, align: "center" })
 
-
-
-
-
  //Body produse
  doc.rect(25, rectStartH, 18, rectHeigth)
  doc.lineWidth(0.5);
@@ -522,10 +317,6 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
  doc.rect(483, rectStartH, 77, rectHeigth)
  doc.lineWidth(0.5);
  doc.stroke()
-
-
-
-
 
 
  // doc.fontSize(8)
@@ -581,7 +372,6 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
    .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, 658);
  }
 }
-
 
 return doc
 }
