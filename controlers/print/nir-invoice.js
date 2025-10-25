@@ -102,24 +102,16 @@ let rowHeigth = 12
 
 let firstChunk = 0
 let restChunks = 0
-console.log('products count', productsCount)
+
 if(productsCount <= 28){
   firstChunk = 28
 }
 
 if(productsCount > 28){
-  firstChunk = 40
-  restChunks = 50
+  firstChunk = 42
+  restChunks = 55
 }
-if(productsCount > 39){
 
-}
-if(productsCount > 39 && productsCount <= 50){
-
-}
-if(productsCount > 50){
-
-}
 
 
  
@@ -153,7 +145,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
       headerHeight = headerHeight - 160
       rectStartH = rectStartH - 160
     }  else {
-      rectHeigth = rectHeigth - 150
+      rectHeigth = rectHeigth - 120
     }
 
 
