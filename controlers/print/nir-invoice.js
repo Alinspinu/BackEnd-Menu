@@ -77,16 +77,16 @@ doc.font('public/font/Montserrat-Bold.ttf')
 doc.text('FACTURĂ', 218, 110)
 doc.fontSize(8)
 doc.font("public/font/Montserrat-Regular.ttf");
-doc.text('Serie/Nr.', 230, 112 + 35, { width: 40, align: "left" })
-doc.text('Emisă', 230, 127 + 35, { width: 40, align: "left" })
-doc.text('Scadentă', 230, 142 + 35, { width: 40, align: "left" })
+doc.text('Serie/Nr.', 215, 112 + 35, { width: 40, align: "left" })
+doc.text('Emisă', 215, 127 + 35, { width: 40, align: "left" })
+doc.text('Scadentă', 215, 142 + 35, { width: 40, align: "left" })
 
 // Titlu Factura Date
 doc.font('public/font/Montserrat-Bold.ttf')
 doc.fontSize(9)
-doc.text(`${invoice.invoiceNumber}`, 275, 110 + 35)
-doc.text(`${invoice.issueDate}`, 275, 125 + 35)
-doc.text(`${invoice.dueDate}`, 275, 140 + 35)
+doc.text(`${invoice.invoiceNumber}`, 260, 110 + 35)
+doc.text(`${invoice.issueDate}`, 260, 125 + 35)
+doc.text(`${invoice.dueDate}`, 260, 140 + 35)
 
 
 let rectStartH = 247
@@ -346,7 +346,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
     doc.fontSize(7)
     .fillColor('gray')
-    .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, 655);
+    .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, 658);
   }
 
 
