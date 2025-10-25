@@ -98,7 +98,7 @@ let heghtValue = 12
 // doc.font("Courier");
 doc.fontSize(9)
 let productsCount = invoice.products.length
-let rowHeigth = 14
+let rowHeigth = 12
 
 // if(productsCount >= 25 && productsCount <= 40){
 //   doc.fontSize(8)
@@ -125,7 +125,7 @@ let ingChunks = splitIngredients(invoice.products)
 let pages = ingChunks.length
 
 let pageCount = ingChunks.length
-if(ingChunks[ingChunks.length -1].length > 40 || (ingChunks[ingChunks.length -1].length > 36) && ingChunks.length === 1 ) {
+if(ingChunks[ingChunks.length -1].length > 30 || (ingChunks[ingChunks.length -1].length > 24) && ingChunks.length === 1 ) {
     pageCount = pageCount + 1
 }
 
@@ -343,7 +343,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
 
 
-function splitIngredients(arr, firstChunkSize = 40, otherChunkSize = 40) {
+function splitIngredients(arr, firstChunkSize = 26, otherChunkSize = 24) {
   const result = [];
 
   // First chunk
