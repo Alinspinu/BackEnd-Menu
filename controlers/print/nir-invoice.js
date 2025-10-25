@@ -182,34 +182,7 @@ doc.stroke()
 doc.text('6', 484, 315, { width: 75, align: "center" })
 
 
-//Body produse
-// doc.rect(25, 327, 18, 330)
-// doc.lineWidth(0.5);
-// doc.stroke()
 
-doc.rect(43, 327, 230, 330)
-doc.lineWidth(0.5);
-doc.stroke()
-
-doc.rect(273, 327, 30, 330)
-doc.lineWidth(0.5);
-doc.stroke()
-
-doc.rect(303, 327, 60, 330)
-doc.lineWidth(0.5);
-doc.stroke()
-
-doc.rect(363, 327, 60, 330)
-doc.lineWidth(0.5);
-doc.stroke()
-
-doc.rect(423, 327, 60, 330)
-doc.lineWidth(0.5);
-doc.stroke()
-
-doc.rect(483, 327, 77, 330)
-doc.lineWidth(0.5);
-doc.stroke()
 // radare produse
 y = 317
 let heghtValue = 12
@@ -242,8 +215,6 @@ invoice.products.forEach((el, i) => {
     doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
     doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
     doc.text(`${round((el.price * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
-    console.log('value', value)
-    console.log('totalNoVat', el.totalNoVat)
     if(value === el.totalNoVat){
       doc.lineWidth(0.2);
       doc.strokeColor('red');
@@ -252,6 +223,36 @@ invoice.products.forEach((el, i) => {
     }
     heghtValue += rowHeigth
 })
+
+
+//Body produse
+doc.rect(25, 327, 18, 20)
+doc.lineWidth(0.5);
+doc.stroke()
+
+doc.rect(43, 327, 230, 330)
+doc.lineWidth(0.5);
+doc.stroke()
+
+doc.rect(273, 327, 30, 330)
+doc.lineWidth(0.5);
+doc.stroke()
+
+doc.rect(303, 327, 60, 330)
+doc.lineWidth(0.5);
+doc.stroke()
+
+doc.rect(363, 327, 60, 330)
+doc.lineWidth(0.5);
+doc.stroke()
+
+doc.rect(423, 327, 60, 330)
+doc.lineWidth(0.5);
+doc.stroke()
+
+doc.rect(483, 327, 77, 330)
+doc.lineWidth(0.5);
+doc.stroke()
 
 doc.fontSize(10)
 //footer factura
