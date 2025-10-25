@@ -90,7 +90,7 @@ doc.text(`${invoice.dueDate}`, 275, 140 + 35)
 
 
 let rectStartH = 247
-let rectHeigth = 550
+let rectHeigth = 650
 let headerHeight = 200
 // radare produse
 y = 237
@@ -153,13 +153,13 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
       headerHeight = headerHeight - 160
       rectStartH = rectStartH - 160
     }  else {
-      rectHeigth = rectHeigth - 50
+      rectHeigth = rectHeigth - 150
     }
 
 
     if(page === pageLenght){
       console.log('hitt ', page)
-      // rectHeigth = rectHeigth - 50
+      rectHeigth = rectHeigth - 100
     }
 
     //header produsex
