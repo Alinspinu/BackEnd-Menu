@@ -237,8 +237,6 @@ async function createReport(reports){
         users: [],
     }
     for(const rep of reports) {
-        console.log('spendings ', rep.totalSpendings )
-        console.log('gestIncome ', rep.totalGestIncome )
         report.cashIn = round(report.cashIn + rep.cashIn)
         report.vatValue = round(report.vatValue + rep.vatValue)
         report.cashInNoVat = round(report.cashInNoVat + rep.cashInNoVat)
@@ -247,9 +245,11 @@ async function createReport(reports){
         report.impairment.total = round(report.impairment.total + rep.impairment.total)
         report.workValue.total = round(report.workValue.total + rep.workValue.total)
         report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
-        report.totalSpendings = round(report.totalSpendings +  +rep.totalSpendings)
-        report.totalGestIncome = round(report.totalGestIncome +  +rep.totalGestIncome)
+        report.totalSpendings = round(report.totalSpendings +  rep.totalSpendings)
+        report.totalGestIncome = round(report.totalGestIncome +  rep.totalGestIncome)
         report.totalProfit = round(report.totalProfit +  rep.totalProfit)
+        console.log('spendings ', report.totalSpendings )
+        console.log('gestIncome ', report.totalGestIncome )
 
         for(let d of rep.spendingsDeps){
             const existingD = report.spendingsDeps.find(dd => dd.dep.toString() === d.dep.toString())
