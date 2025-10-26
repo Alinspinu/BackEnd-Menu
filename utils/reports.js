@@ -257,6 +257,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         tips: 0,
         card: 0,
         rent: 0,
+        totalIncome: 0,
+        totalSpendings: 0,
+        profit: 0,
     }
 
     let workDays = []
@@ -521,16 +524,19 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
   
     for(let prod of billProducts){ 
         if(prod.productId){
-            const price = (prod.price*prod.quantity) - prod.discount
             const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
             if(g){
+                const price = (prod.price*prod.quantity) - prod.discount
+                const totalRecipe = calacProductRecipe(prod)
                 const existingProduct = g.products.find(p => p.name === prod.name)
                 if(existingProduct){
                     existingProduct.qty = existingProduct.qty + prod.quantity
+                    existingProduct.price = round(existingProduct.price + price)
+                    existingProduct.totalRecipe = round(existingProduct.totalRecipe + totalRecipe)
                     g.totalOut += price
                     const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
                     if(existingDep){
-                        existingDep.totalRecipes += calacProductRecipe(prod)
+                        existingDep.totalRecipes += totalRecipe
                         existingDep.totalOut = existingDep.totalOut + round(price)
                     } else {
                         g.dep.push(
@@ -541,7 +547,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                 totalIn: 0,
                                 totalInvIn: 0,
                                 totalInvOut: 0,
-                                totalRecipes: calacProductRecipe(prod),
+                                totalRecipes: totalRecipe,
                             }
                             )
                         }
@@ -551,13 +557,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                             dep: prod.productId.departament.name,
                             depId: prod.productId.departament._id,
                             qty: prod.quantity,
-                            price: price
+                            price: price,
+                            totalRecipe: totalRecipe
                         }
                         g.totalOut += price
                         g.products.push(product)
                         const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
                         if(existingDep) {
-                            existingDep.totalRecipes += calacProductRecipe(prod)
+                            existingDep.totalRecipes += totalRecipe
                             existingDep.totalOut += price
                         } else {
                             g.dep.push(
@@ -568,7 +575,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     totalIn: 0,
                                     totalInvIn: 0,
                                     totalInvOut: 0,
-                                    totalRecipes: calacProductRecipe(prod),
+                                    totalRecipes: totalRecipe,
                                 }
                             )
                         }
@@ -601,6 +608,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         console.log('product gestiune ', g.id, 'gestiune name ', g.name)
                     }
                 }
+        }
+        if(!normalizeText(d.name).includes('marfa') && !normalizeText(d.name).includes('materie')){
+            values.totalSpendings += d.total
         }
     }
 
@@ -1009,6 +1019,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         }
     }
 
+    for(let g of productsGest){
+        values.totalIncome += g.totalOut
+    }
+
 
 
     const report = new Report({
@@ -1020,6 +1034,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         cashInNoVat: round(values.totalBills - values.vatVal),
         ingsValue: round(values.totalIngredients),
         rentValue: round(values.dayRent),
+        totalSpendings: round(values.totalSpendings),
+        totalGestIncome: round(values.totalIncome),
+        profit: round(values.totalIncome - (values.totalIngredients + values.workValueTotal + values.taxValue + values.totalSpendings + values.totalDep)),
         diverse: {
             total: round(values.diverse),
             entry: entryy

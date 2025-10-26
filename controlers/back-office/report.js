@@ -130,13 +130,14 @@ module.exports.getPeriodReports = async (req, res) => {
                 .sort({day: -1})
                 .limit(limit)
                 .populate({path: 'reports', select: 'cashIn ingsValue workValue day impairment'})
-                
+
        res.status(200).json(reports)
     } catch (e){
         console.log(e)
         res.status(500).json(e)
     }
 }
+
 
 
 module.exports.deleteReport = async(req, res, next) => {
@@ -263,6 +264,7 @@ async function createReport(reports){
                     if(d){
                         d.totalIn += dp.totalIn
                         d.totalOut += dp.totalOut
+                        d.totalRecipes += dp.totalRecipes
                         // existingDep.dep[index].procent = round(existingDep.dep[index].total * 100 / +dep.total)
                     } else{
                         existingDep.dep.push(dp)
@@ -273,6 +275,7 @@ async function createReport(reports){
                     let index = existingDep.products.findIndex(p => p.name === prod.name)
                     if(index !== -1 ){
                         existingDep.products[index].qty += prod.qty
+                        existingDep.products[index].price += prod.price
                     } else {
                         const product = prod
                         existingDep.products.push(product)

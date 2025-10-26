@@ -46,6 +46,9 @@ const reportSchema = new Schema({
     rent: {
         type: Number
     },
+    totalSpendings: Number,
+    totalGestIncome: Number,
+    profit: Number,
     spendingsDeps: [
         {
             total: Number,
@@ -313,6 +316,7 @@ const reportSchema = new Schema({
                         ref: 'Dep'
                     },
                     price: Number,
+                    totalRecipe: Number,
                 }
             ],
             entries: [
