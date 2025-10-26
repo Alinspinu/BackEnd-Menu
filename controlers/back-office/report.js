@@ -59,8 +59,12 @@ module.exports.getReports = async(req, res, next) => {
         const start = new Date(startDate).setUTCHours(0,0,0,0)
         const end = new Date(endDate).setUTCHours(0,0,0,0)
         const reports = await Report.find({period: {$exists: false}, status: 'new', day: {$gte: start, $lte: end}, locatie: loc, salePoint: point}).sort({day: 1})
-        const report = await createReport(reports)
-        res.status(200).json(report)
+        if(reports.length){
+            const report = await createReport(reports)
+            res.status(200).json(report)
+        }else {
+            res.status(404).json({message: 'No Reports'})
+        }
     } catch(err) {
         console.log(err)
         res.status(500).json({message: err.message})
