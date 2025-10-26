@@ -48,7 +48,7 @@ const reportSchema = new Schema({
     },
     totalSpendings: Number,
     totalGestIncome: Number,
-    totalProfit: Number,
+    profit: Number,
     spendingsDeps: [
         {
             total: Number,

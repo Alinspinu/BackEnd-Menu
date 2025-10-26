@@ -218,7 +218,7 @@ async function createReport(reports){
         rentValue: 0,
         totalGestIncome: 0,
         totalSpendings: 0,
-        totalProfit: 0,
+        profit: 0,
         // reports: reports.map(r => r._id),
         diverse: {
             total: 0,
@@ -250,7 +250,7 @@ async function createReport(reports){
         report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
         report.totalSpendings = round(report.totalSpendings +  rep.totalSpendings)
         report.totalGestIncome = round(report.totalGestIncome +  rep.totalGestIncome)
-        report.totalProfit = round(report.totalProfit +  rep.totalProfit)
+        report.profit = round(report.profit +  rep.profit)
         // console.log('spendings ', report.totalSpendings )
         // console.log('gestIncome ', report.totalGestIncome )
 
