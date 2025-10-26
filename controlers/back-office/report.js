@@ -58,7 +58,7 @@ module.exports.getReports = async(req, res, next) => {
         const {startDate, endDate, loc, point} = req.query
         const start = new Date(startDate).setUTCHours(0,0,0,0)
         const end = new Date(endDate).setUTCHours(0,0,0,0)
-        const reports = await Report.find({period: {$exists: false}, day: {$gte: start, $lte: end}, locatie: loc, salePoint: point}).sort({day: 1})
+        const reports = await Report.find({period: {$exists: false}, status: 'new', day: {$gte: start, $lte: end}, locatie: loc, salePoint: point}).sort({day: 1})
         const report = await createReport(reports)
         res.status(200).json(report)
     } catch(err) {
@@ -228,6 +228,9 @@ async function createReport(reports){
         report.impairment.total = round(report.impairment.total + rep.impairment.total)
         report.workValue.total = round(report.workValue.total + rep.workValue.total)
         report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
+        report.totalSpendings = round(report.totalSpendings +  rep.totalSpendings)
+        report.totalGestIncome = round(report.totalGestIncome +  rep.totalGestIncome)
+        report.totalProfit = round(report.totalProfit +  rep.totalProfit)
 
         for(let d of rep.spendingsDeps){
             const existingD = report.spendingsDeps.find(dd => dd.dep.toString() === d.dep.toString())
@@ -276,6 +279,7 @@ async function createReport(reports){
                     if(index !== -1 ){
                         existingDep.products[index].qty += prod.qty
                         existingDep.products[index].price += prod.price
+                        existingDep.products[index].totalRecipe += prod.totalRecipe
                     } else {
                         const product = prod
                         existingDep.products.push(product)

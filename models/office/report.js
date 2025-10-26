@@ -5,7 +5,7 @@ const Counter = require('../utils/counter')
 
 
 const reportSchema = new Schema({
-
+    status: String,
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'

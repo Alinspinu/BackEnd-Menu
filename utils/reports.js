@@ -1025,6 +1025,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
 
     const report = new Report({
+        status: 'new',
         locatie: loc,
         salePoint: point,
         day: startTime,
