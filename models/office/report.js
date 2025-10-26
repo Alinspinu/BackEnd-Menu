@@ -324,10 +324,10 @@ const reportSchema = new Schema({
                     suplier: String,
                     logId: String,
                     invoiceName: String,
-                    dep: {
-                        tyep: Schema.Types.ObjectId,
-                        ref: 'Dep'
-                    },
+                    // dep: {
+                    //     tyep: Schema.Types.ObjectId,
+                    //     ref: 'Dep'
+                    // },
                     gestiune:  {
                         type: Schema.Types.ObjectId,
                         ref: 'Gestiune'
