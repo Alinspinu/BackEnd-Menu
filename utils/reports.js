@@ -506,6 +506,15 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             }
         } 
     }
+
+
+    function calacProductRecipe(p){
+        let total = 0
+        for(let i of p.ings){
+            total += (i.ing.tvaPrice * i.qty)
+        }
+        return round(total * p.quantity)
+    }
  
 
     //CALC SALES
@@ -521,6 +530,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     g.totalOut += price
                     const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
                     if(existingDep){
+                        existingDep.totalRecipes += calacProductRecipe(prod)
                         existingDep.totalOut = existingDep.totalOut + round(price)
                     } else {
                         g.dep.push(
@@ -529,6 +539,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                 depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
                                 totalOut: price,
                                 totalIn: 0,
+                                totalInvIn: 0,
+                                totalInvOut: 0,
+                                totalRecipes: calacProductRecipe(prod),
                             }
                             )
                         }
@@ -536,6 +549,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                       const product = {
                             name: prod.name,
                             dep: prod.productId.departament.name,
+                            depId: prod.productId.departament._id,
                             qty: prod.quantity,
                             price: price
                         }
@@ -543,6 +557,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         g.products.push(product)
                         const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
                         if(existingDep) {
+                            existingDep.totalRecipes += calacProductRecipe(prod)
                             existingDep.totalOut += price
                         } else {
                             g.dep.push(
@@ -551,6 +566,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     totalOut: price,
                                     depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
                                     totalIn: 0,
+                                    totalInvIn: 0,
+                                    totalInvOut: 0,
+                                    totalRecipes: calacProductRecipe(prod),
                                 }
                             )
                         }
