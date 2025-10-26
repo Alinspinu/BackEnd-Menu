@@ -33,7 +33,7 @@ module.exports.getOrder = async (req, res, next) => {
             // .populate({path: 'products.ings.ing', select: 'invGestiune'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
-        await modyfyOrdersProducts(orders)
+        // await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -71,7 +71,7 @@ async function modyfyOrdersProducts(orders){
                 }
             }
         }
-        return o.save()
+        return Order.findByIdAndUpdate(o._id, o, {new: true})
     })
    const up =  await Promise.all(promises);
 
