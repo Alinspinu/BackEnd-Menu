@@ -295,10 +295,10 @@ const reportSchema = new Schema({
                     totalIn: Number,
                     totalOut: Number,
                     totalRecipes: Number,
-                    depId: {
-                        type: Schema.Types.ObjectId,
-                        ref: 'Dep'
-                    },
+                    // depId: {
+                    //     type: Schema.Types.ObjectId,
+                    //     ref: 'Dep'
+                    // },
                     // procentIn: Number,
                     // procentOut: Number
                 }
@@ -308,10 +308,10 @@ const reportSchema = new Schema({
                     name: String,
                     qty: Number,
                     dep: String,
-                    depId: {
-                        tyep: Schema.Types.ObjectId,
-                        ref: 'Dep'
-                    },
+                    // depId: {
+                    //     tyep: Schema.Types.ObjectId,
+                    //     ref: 'Dep'
+                    // },
                     price: Number,
                 }
             ],
