@@ -238,6 +238,7 @@ async function createReport(reports){
     }
     for(const rep of reports) {
         console.log('spendings ', rep.totalSpendings )
+        console.log('gestIncome ', rep.totalGestIncome )
         report.cashIn = round(report.cashIn + rep.cashIn)
         report.vatValue = round(report.vatValue + rep.vatValue)
         report.cashInNoVat = round(report.cashInNoVat + rep.cashInNoVat)
@@ -359,6 +360,8 @@ async function createReport(reports){
         }
 
     }
+    console.log('total gestIncome', report.totalGestIncome)
+    console.log('total spendings', report.totalSpendings)
     return report
 }
 
