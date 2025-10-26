@@ -247,8 +247,8 @@ async function createReport(reports){
         report.impairment.total = round(report.impairment.total + rep.impairment.total)
         report.workValue.total = round(report.workValue.total + rep.workValue.total)
         report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
-        report.totalSpendings = round(report.totalSpendings +  rep.totalSpendings)
-        report.totalGestIncome = round(report.totalGestIncome +  rep.totalGestIncome)
+        report.totalSpendings += rep.totalSpendings
+        report.totalGestIncome += rep.totalGestIncome
         report.totalProfit = round(report.totalProfit +  rep.totalProfit)
 
         for(let d of rep.spendingsDeps){
