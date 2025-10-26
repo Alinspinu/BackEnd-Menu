@@ -874,6 +874,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     existingUser.hours += employee.hours
                     existingUser.totalIncome =  round(existingUser.totalIncome + employee.totalIncome)
                     existingUser.bonus = round(existingUser.bonus + employee.bonus)
+                    existingUser.taxValue = round(existingUser.taxValue + employee.taxValue)
                 } else {
                     users.push(employee)
                 }
@@ -908,10 +909,12 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             const existingUser = users.find(u => u.name === dbEmpl.name)
             if(existingUser){
                 existingUser.totalIncome = round(existingUser.totalIncome + dbEmpl.totalIncome)
+                existingUser.taxValue = round(existingUser.taxValue + dbEmpl.taxValue)
             } else {
                 users.push(dbEmpl)
             }
             values.workValueTotal += dbEmpl.totalIncome
+            values.taxValue += dbEmpl.taxValue
         }
     }
 
