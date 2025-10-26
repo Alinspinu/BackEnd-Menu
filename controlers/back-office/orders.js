@@ -33,7 +33,7 @@ module.exports.getOrder = async (req, res, next) => {
             // .populate({path: 'products.ings.ing', select: 'invGestiune'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
-        // await updateDelProducts(orders)
+        await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -60,50 +60,29 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
-async function updateDelProducts(orders){
-
-    // for(let o of orders){
-    //     for(let p of o.products){
-    //         for(let i of p.ings){
-    //             if(!i.gestiune){
-    //                 console.log('produs gasit cu ingredient fara gestiune ', p.name)
-    //                 i.gestiune =  i.ing.invGestiune[0].gestiune
-    //                 console.log('i-am adaugat gestiune ', i.gestiune)
-    //             }
-    //         }
-    //         for(let t of p.toppings){
-    //             if(!t.gestiune){
-                 
-    //                 t.gestiune =  t.ing.invGestiune[0].gestiune
-    //                 console.log('i-am adaugat gestiune ', t.gestiune)
-    //             }
-    //         }
-    //     }
-    // }
-
-
-    const promises = orders.map(o => {
+async function modyfyOrdersProducts(orders){
+    const promises = orders.map(async o => {
         for(let p of o.products){
-            for(let i of p.ings){
-                if(!i.gestiune){
-                    console.log('produs gasit cu ing fara gestiune ', p.name)
-                    i.gestiune = i.ing.invGestiune[0].gestiune
-                    console.log('i-am adaugat gestiune ', i.gestiune)
+            if(!p.productId){
+                const n = p.name.split('-')[0]
+                const product = await Product.findOne({name: n}).select('name').lean()
+                if(product){
+                    p.productId = product._id
                 }
             }
-            // for(let t of p.toppings){
-            //     if(!t.gestiune){
-            //         t.gestiune = t.ing.invGestiune[0].gestiune
-            //     }
-            // }
-            
         }
         return o.save()
     })
+   const up =  await Promise.all(promises);
 
-     await Promise.all(promises);
-
+   for(let o of up){
+    for(let p of o.products){
+        console.log(p.name, 'product id ', p.productId)
+    }
+   }
 }
+
+
 
 
 module.exports.testRaport = async (req, res) => {
@@ -304,27 +283,6 @@ module.exports.getOrderByUser = async (req, res, nex) => {
     }
 }
 
-async function modyfyOrdersProducts(orders){
-    const promises = orders.map(async o => {
-        for(let p of o.products){
-            if(!p.productId){
-                const n = p.name.split('-')[0]
-                const product = await Product.findOne({name: n}).select('name').lean()
-                if(product){
-                    p.productId = product._id
-                }
-            }
-        }
-        return o.save()
-    })
-   const up =  await Promise.all(promises);
-
-   for(let o of up){
-    for(let p of o.products){
-        console.log(p.name, 'product id ', p.productId)
-    }
-   }
-}
 
 
 module.exports.getAllOrders = async (req, res, next) => {
@@ -334,7 +292,6 @@ module.exports.getAllOrders = async (req, res, next) => {
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} , salePoint: point}).populate({path: 'masaRest', select: 'index name' })
-        await modyfyOrdersProducts(orders)
             res.status(200).json(orders)         
     } catch(err){
         console.log(err)
