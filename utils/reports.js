@@ -712,15 +712,17 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     function usersShow(bills){
         let users = []
         for(let bill of bills) {
-            const existingUser = users.find(p => (p.name === bill.employee.fullName))
-            if(existingUser){
-              existingUser.total = round(existingUser.total + bill.total)
-            } else {
-              const user = {
-                name: bill.employee.fullName,
-                total: bill.total,
-              }
-              users.push(user)
+            if(bill.employee){
+                const existingUser = users.find(p => (p.name === bill.employee.fullName))
+                if(existingUser){
+                  existingUser.total = round(existingUser.total + bill.total)
+                } else {
+                  const user = {
+                    name: bill.employee.fullName,
+                    total: bill.total,
+                  }
+                  users.push(user)
+                }
             }
           }
         return users
