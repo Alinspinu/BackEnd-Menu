@@ -17,6 +17,7 @@ const {getIngredients, getBillProducts, createDayReport} = require('../../utils/
 const io = require('socket.io-client');
 const socket = io("https://socket.flowmanager.ro")
 const salePoint = require('../../models/utils/sale-point');
+const order = require('../../models/office/product/order');
 // const socket = io("http://localhost:8090")
 
 
@@ -296,11 +297,34 @@ module.exports.getOrderByUser = async (req, res, nex) => {
         const end = new Date(date).setHours(23, 59, 59, 999)
         const user = await User.findById(userId)
         const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end},  salePoint: point })
+        await modyfyOrdersProducts(orders)
         res.status(200).json(orders)
     } catch (err){
         console.log(err)
         res.status(500).json({message: err.message})
     }
+}
+
+async function modyfyOrdersProducts(orders){
+    const promises = orders.map(async o => {
+        for(let p of o.products){
+            if(!p.productId){
+                const n = p.name.split('-')[0]
+                const product = await Product.findOne({name: n}).select('name').lean()
+                if(product){
+                    p.productId = product._id
+                }
+            }
+        }
+        return o.save()
+    })
+   const up =  await Promise.all(promises);
+
+   for(let o of up){
+    for(let p of o.products){
+        console.log(p.name, 'product id ', p.productId)
+    }
+   }
 }
 
 
