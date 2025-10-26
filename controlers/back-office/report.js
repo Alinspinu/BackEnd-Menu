@@ -56,9 +56,10 @@ module.exports.getReportById = async(req, res) => {
     const {id} = req.query
     try{
     const rep = await Report.findById(id)
-    re.status(200).json(rep)
+    res.status(200).json(rep)
     } catch(e){
-        console.log(error)
+        console.log(e)
+        res.status(500).json(e)
     }
 }
 
