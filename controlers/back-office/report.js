@@ -237,6 +237,7 @@ async function createReport(reports){
         users: [],
     }
     for(const rep of reports) {
+        console.log('spendings ', rep.totalSpendings )
         report.cashIn = round(report.cashIn + rep.cashIn)
         report.vatValue = round(report.vatValue + rep.vatValue)
         report.cashInNoVat = round(report.cashInNoVat + rep.cashInNoVat)
