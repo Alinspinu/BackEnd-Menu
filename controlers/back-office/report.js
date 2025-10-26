@@ -55,7 +55,7 @@ module.exports.getSurvey = async (req, res) => {
 module.exports.getReportById = async(req, res) => {
     const {id} = req.query
     try{
-    const rep = await Report.findById(id)
+    const rep = await Report.findById(id).populate({path: 'reports', select: 'cashIn ingsValue workValue day impairment'})
     res.status(200).json(rep)
     } catch(e){
         console.log(e)
