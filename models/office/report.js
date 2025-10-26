@@ -285,6 +285,7 @@ const reportSchema = new Schema({
             totalOut: Number,
             // procentIn: Number,
             // procentOut: Number,
+            id: String,
             name: String,
             dep: [
                 {

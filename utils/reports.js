@@ -307,6 +307,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     qty: log.qty,
                                     suplier: log.operation.details,
                                     logId: log.logId,
+                                    dep: dep.dep.toString(),
                                     invoiceName: log.invoiceName || '(No Name)',
                                     gestiune: log.gestiune || ing.invGestiune[0].gestiune
                                 }
