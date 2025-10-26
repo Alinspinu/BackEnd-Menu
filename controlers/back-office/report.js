@@ -216,6 +216,9 @@ async function createReport(reports){
         cashInNoVat: 0,
         ingsValue: 0,
         rentValue: 0,
+        totalGestIncome: 0,
+        totalSpendings: 0,
+        profit: 0,
         // reports: reports.map(r => r._id),
         diverse: {
             total: 0,
@@ -248,8 +251,8 @@ async function createReport(reports){
         report.totalSpendings = round(report.totalSpendings +  rep.totalSpendings)
         report.totalGestIncome = round(report.totalGestIncome +  rep.totalGestIncome)
         report.totalProfit = round(report.totalProfit +  rep.totalProfit)
-        console.log('spendings ', report.totalSpendings )
-        console.log('gestIncome ', report.totalGestIncome )
+        // console.log('spendings ', report.totalSpendings )
+        // console.log('gestIncome ', report.totalGestIncome )
 
         for(let d of rep.spendingsDeps){
             const existingD = report.spendingsDeps.find(dd => dd.dep.toString() === d.dep.toString())
@@ -360,8 +363,8 @@ async function createReport(reports){
         }
 
     }
-    console.log('total gestIncome', report.totalGestIncome)
-    console.log('total spendings', report.totalSpendings)
+    // console.log('total gestIncome', report.totalGestIncome)
+    // console.log('total spendings', report.totalSpendings)
     return report
 }
 
