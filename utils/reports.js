@@ -287,7 +287,11 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         }
     })
 
-
+    const ing = allIngs.find(i => i.name === 'Cafea True Blend')
+    if(ing){
+        console.log('First', ing.uploadLog[0])
+        console.log('Second', ing.uploadLog[ing.uploadLog.length - 1])
+    }
 
     for(const ing of allIngs){
         if(ing.uploadLog){
