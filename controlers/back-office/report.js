@@ -179,7 +179,7 @@ module.exports.deleteReports = async(req, res) => {
         const {loc, start, end, point} = req.query;
         const startDate = new Date(start).getTime()
         const endDate = new Date(end).getTime()
-        Report.deleteMany({locatie: loc, salePoint: point, statsu: 'new', day: {$gte: startDate, $lte: endDate}})
+        Report.deleteMany({locatie: loc, salePoint: point, status: 'new', day: {$gte: startDate, $lte: endDate}})
             .then(result => {
                 console.log(result)
                 res.status(200).json({message: `${result.deletedCount} Rapoarte au fost sterse!`})
