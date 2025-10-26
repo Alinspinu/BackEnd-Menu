@@ -52,6 +52,16 @@ module.exports.getSurvey = async (req, res) => {
     }
 }
 
+module.exports.getReportById = async(req, res) => {
+    const {id} = req.query
+    try{
+    const rep = await Report.findById(id)
+    re.status(200).json(rep)
+    } catch(e){
+        console.log(error)
+    }
+}
+
 
 module.exports.getReports = async(req, res, next) => {
     try{
@@ -61,7 +71,9 @@ module.exports.getReports = async(req, res, next) => {
         const reports = await Report.find({period: {$exists: false}, status: 'new', day: {$gte: start, $lte: end}, locatie: loc, salePoint: point}).sort({day: 1})
         if(reports.length){
             const report = await createReport(reports)
-            res.status(200).json(report)
+            const rep = new Report(report)
+            const r = await rep.save()
+            res.status(200).json(r)
         }else {
             res.status(404).json({message: 'No Reports'})
         }
