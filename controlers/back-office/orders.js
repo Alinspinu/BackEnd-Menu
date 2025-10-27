@@ -18,7 +18,6 @@ const io = require('socket.io-client');
 const socket = io("https://socket.flowmanager.ro")
 const salePoint = require('../../models/utils/sale-point');
 const order = require('../../models/office/product/order');
-const { save } = require('pdfkit/js/mixins/vector');
 // const socket = io("http://localhost:8090")
 
 
@@ -345,17 +344,9 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             newBill.soketId = generateSoketId(16)
             const savedBill = await newBill.save();
            if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: savedBill, serverKey: mainServer.key, secondaryServer: secondaryServer, mainServer: mainServer}))   
-            savedBill.products.forEach(el => {
-                if(el.sentToPrint){
-                    el.sentToPrint = false
-                    console.log("new",el.sentToPrint)
-                }
-            })
             table.bills.push(savedBill);
             await table.save();
             savedBill.masaRest = table
-            savedBill.markModified('products');
-            await savedBill.save()
             socket.emit('billl', JSON.stringify({bill: savedBill, secondaryServer: secondaryServer}))
             res.status(200).json({bill: savedBill})
 
