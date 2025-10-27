@@ -43,9 +43,9 @@ doc.text(`Nr. Reg. Com.`, 25 + 10, 62, { width: 100, align: "left" });
 doc.text(`Capital social`, 25 + 10, 74, { width: 100, align: "left" });
 doc.text(`Adresa`, 25 + 10, 86, { width: 38, align: "left" })
 doc.font("public/font/Montserrat-Regular.ttf");
-doc.text(`Email`, 25 + 10, 110, { width: 50, align: "left" })
-doc.text(`Banca`, 25 + 10, 122, { width: 50, align: "left" })
-doc.text(`Cont`, 25 + 10, 134, { width: 50, align: "left" })
+doc.text(`Email`, 25 + 10, 120, { width: 50, align: "left" })
+doc.text(`Banca`, 25 + 10, 132, { width: 50, align: "left" })
+doc.text(`Cont`, 25 + 10, 144, { width: 50, align: "left" })
 
 //date firma
 
