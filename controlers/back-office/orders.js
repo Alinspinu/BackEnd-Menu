@@ -344,6 +344,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             newBill.soketId = generateSoketId(16)
             const savedBill = await newBill.save();
             const ord = await Order.findById(savedBill._id).populate({path: 'masaRest', select: 'index name'})
+            console.log(ord.masaRest)
             if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: ord, serverKey: mainServer.key, secondaryServer: secondaryServer, mainServer: mainServer}))   
                 
             savedBill.products.forEach(el => {
