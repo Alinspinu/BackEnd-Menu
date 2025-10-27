@@ -341,18 +341,22 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 newBill.clientInfo.userId = newBill.user
             }
             
-            newBill.products.forEach(el => {
+            newBill.soketId = generateSoketId(16)
+            const savedBill = await newBill.save();
+
+            if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: savedBill, serverKey: mainServer.key, secondaryServer: secondaryServer, mainServer: mainServer}))   
+
+            savedBill.products.forEach(el => {
                 if(el.sentToPrint){
                     el.sentToPrint = false
                     console.log("new",el.sentToPrint)
                 }
             })
-            newBill.soketId = generateSoketId(16)
-            const savedBill = await newBill.save();
-           if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: savedBill, serverKey: mainServer.key, secondaryServer: secondaryServer, mainServer: mainServer}))   
+
             table.bills.push(savedBill);
             await table.save();
             savedBill.masaRest = table
+            await savedBill.save()
             socket.emit('billl', JSON.stringify({bill: savedBill, secondaryServer: secondaryServer}))
             res.status(200).json({bill: savedBill})
 
