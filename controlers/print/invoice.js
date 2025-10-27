@@ -57,9 +57,9 @@ doc.text(`200 lei`, 130 + 10, 74);
 // doc.font("Courier");
 doc.text(`${invoice.supplier.address.city.toUpperCase()}, Strada ${invoice.supplier.address.street}`, 25 + 10, 86 + 12, { width: 220, align: "left" })
 
-doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 110)
-doc.text(`${invoice.supplier.bank}`, 60 + 10, 122)
-doc.text(`${invoice.supplier.iban}`, 55 + 10, 134)
+doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 120)
+doc.text(`${invoice.supplier.bank}`, 60 + 10, 132)
+doc.text(`${invoice.supplier.iban}`, 55 + 10, 144)
 
 //HEADER CLIENT
 //Nume client
