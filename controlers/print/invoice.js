@@ -61,6 +61,9 @@ doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 120)
 doc.text(`${invoice.supplier.bank}`, 60 + 10, 132)
 doc.text(`${invoice.supplier.iban}`, 55 + 10, 144)
 
+
+doc.image('public/icons/logo-tzero.jpeg', 290, 50, {width: 60})
+
 //HEADER CLIENT
 //Nume client
 doc.fontSize(10)
@@ -348,7 +351,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
  doc.rect(25, 669, 338, 105)
  doc.lineWidth(0.5);
  doc.stroke()
- doc.image('public/icons/logo-tzero.jpeg', 35, 689, {width: 200})
+
 
  doc.rect(363, 669, 197, 105)
  doc.lineWidth(0.5);
