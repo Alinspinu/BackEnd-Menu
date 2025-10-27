@@ -887,34 +887,38 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
     for(let dbUser of dbUsers){
         const dbEmployee = dbUser.employee
-        if(dbEmployee.salary.fix && dbEmployee.salary.inHeand){
-            const onPaper = dbEmployee.salary.onPaper.salary
-            const cass = (onPaper * 0.25) + (onPaper * 0.1)
-            const tax = (onPaper - cass) * 0.1
-            const employeerTax = onPaper * 0.0225
-            const baseTax = (cass + tax + employeerTax)
-            const dbEmpl = {
-                name: dbEmployee.fullName,
-                hours: 0,
-                position: dbEmployee.employeePosition.name,
-                monthHours: dbEmployee.salary.norm,
-                baseIncome: dbEmployee.salary.inHeand,
-                hourIncome: round(dbEmployee.salary.inHeand / dbEmployee.salary.norm),
-                totalIncome:  round(dbEmployee.salary.inHeand / daysNumber),
-                bonus: 0,
-                baseTax: baseTax,
-                taxValue: round(baseTax / daysNumber),
-                user: dbUser._id,
+        const emplStartDate = new Date(dbEmployee.startDate).setHours(0,0,0,0)
+        const repdate = new Date(dat).setHours(0,0,0,0)
+        if(repdate >= emplStartDate){
+            if(dbEmployee.salary.fix && dbEmployee.salary.inHeand){
+                const onPaper = dbEmployee.salary.onPaper.salary
+                const cass = (onPaper * 0.25) + (onPaper * 0.1)
+                const tax = (onPaper - cass) * 0.1
+                const employeerTax = onPaper * 0.0225
+                const baseTax = (cass + tax + employeerTax)
+                const dbEmpl = {
+                    name: dbEmployee.fullName,
+                    hours: 0,
+                    position: dbEmployee.employeePosition.name,
+                    monthHours: dbEmployee.salary.norm,
+                    baseIncome: dbEmployee.salary.inHeand,
+                    hourIncome: round(dbEmployee.salary.inHeand / dbEmployee.salary.norm),
+                    totalIncome:  round(dbEmployee.salary.inHeand / daysNumber),
+                    bonus: 0,
+                    baseTax: baseTax,
+                    taxValue: round(baseTax / daysNumber),
+                    user: dbUser._id,
+                }
+                const existingUser = users.find(u => u.name === dbEmpl.name)
+                if(existingUser){
+                    existingUser.totalIncome = round(existingUser.totalIncome + dbEmpl.totalIncome)
+                    existingUser.taxValue = round(existingUser.taxValue + dbEmpl.taxValue)
+                } else {
+                    users.push(dbEmpl)
+                }
+                values.workValueTotal += dbEmpl.totalIncome
+                values.taxValue += dbEmpl.taxValue
             }
-            const existingUser = users.find(u => u.name === dbEmpl.name)
-            if(existingUser){
-                existingUser.totalIncome = round(existingUser.totalIncome + dbEmpl.totalIncome)
-                existingUser.taxValue = round(existingUser.taxValue + dbEmpl.taxValue)
-            } else {
-                users.push(dbEmpl)
-            }
-            values.workValueTotal += dbEmpl.totalIncome
-            values.taxValue += dbEmpl.taxValue
         }
     }
 
