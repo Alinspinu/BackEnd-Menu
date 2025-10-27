@@ -523,63 +523,67 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
   
     for(let prod of billProducts){ 
         if(prod.productId){
-            const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
-            if(g){
-                const price = (prod.price*prod.quantity) - prod.discount
-                const totalRecipe = calacProductRecipe(prod)
-                const existingProduct = g.products.find(p => p.name === prod.name)
-                if(existingProduct){
-                    existingProduct.qty = existingProduct.qty + prod.quantity
-                    existingProduct.price = round(existingProduct.price + price)
-                    existingProduct.totalRecipe = round(existingProduct.totalRecipe + totalRecipe)
-                    g.totalOut += price
-                    const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
-                    if(existingDep){
-                        existingDep.totalRecipes += totalRecipe
-                        existingDep.totalOut = existingDep.totalOut + round(price)
-                    } else {
-                        g.dep.push(
-                            {
-                                name: prod.productId.departament.name,
-                                depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
-                                totalOut: price,
-                                totalIn: 0,
-                                totalInvIn: 0,
-                                totalInvOut: 0,
-                                totalRecipes: totalRecipe,
-                            }
-                            )
-                        }
-                    } else {
-                      const product = {
-                            name: prod.name,
-                            dep: prod.productId.departament.name,
-                            depId: prod.productId.departament._id,
-                            qty: prod.quantity,
-                            price: price,
-                            totalRecipe: totalRecipe
-                        }
+            if(prod.productId.gestiune){
+                const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
+                if(g){
+                    const price = (prod.price*prod.quantity) - prod.discount
+                    const totalRecipe = calacProductRecipe(prod)
+                    const existingProduct = g.products.find(p => p.name === prod.name)
+                    if(existingProduct){
+                        existingProduct.qty = existingProduct.qty + prod.quantity
+                        existingProduct.price = round(existingProduct.price + price)
+                        existingProduct.totalRecipe = round(existingProduct.totalRecipe + totalRecipe)
                         g.totalOut += price
-                        g.products.push(product)
-                        const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
-                        if(existingDep) {
+                        const existingDep= g.dep.find(d => (d.name === prod.productId.departament.name))
+                        if(existingDep){
                             existingDep.totalRecipes += totalRecipe
-                            existingDep.totalOut += price
+                            existingDep.totalOut = existingDep.totalOut + round(price)
                         } else {
                             g.dep.push(
                                 {
                                     name: prod.productId.departament.name,
-                                    totalOut: price,
                                     depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
+                                    totalOut: price,
                                     totalIn: 0,
                                     totalInvIn: 0,
                                     totalInvOut: 0,
                                     totalRecipes: totalRecipe,
                                 }
-                            )
+                                )
+                            }
+                        } else {
+                          const product = {
+                                name: prod.name,
+                                dep: prod.productId.departament.name,
+                                depId: prod.productId.departament._id,
+                                qty: prod.quantity,
+                                price: price,
+                                totalRecipe: totalRecipe
+                            }
+                            g.totalOut += price
+                            g.products.push(product)
+                            const existingDep = g.dep.find(p => (p.name === prod.productId.departament.name))
+                            if(existingDep) {
+                                existingDep.totalRecipes += totalRecipe
+                                existingDep.totalOut += price
+                            } else {
+                                g.dep.push(
+                                    {
+                                        name: prod.productId.departament.name,
+                                        totalOut: price,
+                                        depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
+                                        totalIn: 0,
+                                        totalInvIn: 0,
+                                        totalInvOut: 0,
+                                        totalRecipes: totalRecipe,
+                                    }
+                                )
+                            }
                         }
                     }
-                }
+            } else {
+                console.log('produs fara gestiune', prod.name)
+            }
         } else {
             console.log('produs fara prodictId', prod.name)
         }
