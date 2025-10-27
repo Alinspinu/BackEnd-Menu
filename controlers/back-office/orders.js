@@ -356,9 +356,9 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             table.bills.push(savedBill);
             await table.save();
             savedBill.masaRest = table
-            await savedBill.save()
-            socket.emit('billl', JSON.stringify({bill: savedBill, secondaryServer: secondaryServer}))
-            res.status(200).json({bill: savedBill})
+            const or = await Order.findByIdAndUpdate(savedBill._id, savedBill, {new: true})
+            socket.emit('billl', JSON.stringify({bill: or, secondaryServer: secondaryServer}))
+            res.status(200).json({bill: or})
 
         } else {
 
