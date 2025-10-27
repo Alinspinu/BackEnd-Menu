@@ -61,8 +61,9 @@ doc.text(`${invoice.supplier.contact.email}`, 60 + 10, 120)
 doc.text(`${invoice.supplier.bank}`, 60 + 10, 132)
 doc.text(`${invoice.supplier.iban}`, 55 + 10, 144)
 
-
-doc.image('public/icons/logo-tzero.jpeg', 240, 50, {width: 80})
+if(invoice.supplier.name === 'NEW COLARA S.R.L.'){
+  doc.image('public/icons/logo-tzero.jpeg', 250, 50, {width: 80})
+}
 
 //HEADER CLIENT
 //Nume client
