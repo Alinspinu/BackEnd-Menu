@@ -62,7 +62,7 @@ doc.text(`${invoice.supplier.bank}`, 60 + 10, 132)
 doc.text(`${invoice.supplier.iban}`, 55 + 10, 144)
 
 
-doc.image('public/icons/logo-tzero.jpeg', 290, 50, {width: 60})
+doc.image('public/icons/logo-tzero.jpeg', 240, 40, {width: 90})
 
 //HEADER CLIENT
 //Nume client
