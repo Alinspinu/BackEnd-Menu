@@ -20,7 +20,7 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
 
             const d = formatDateDMY(el.date)
 
-            const headVat =  worksheet.addRow(['',``,'', `TVA 11%`, '', 'TVA 21%',''])
+            const headVat =  worksheet.addRow(['',``,'', `TVA 11%`, '', 'TVA 21%','', 'TVA 0%',''])
             headVat.eachCell((cell) => {
                 cell.font = {
                 bold: true,
@@ -32,11 +32,12 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
             worksheet.mergeCells(rowNumber, 1, rowNumber, 3); // Columns A–D
             worksheet.mergeCells(rowNumber, 4, rowNumber, 5); // Columns E–F
             worksheet.mergeCells(rowNumber, 6, rowNumber, 7); 
+            worksheet.mergeCells(rowNumber, 8, rowNumber, 9); 
 
-            worksheet.addRow(['Nr',`Data`,'Descriere','Intrare', `Iesire`, 'Intrare', 'Iesire'])
+            worksheet.addRow(['Nr',`Data`,'Descriere','Intrare', `Iesire`, 'Intrare', 'Iesire', 'Intrare', 'Iesire'])
 
 
-          const head =  worksheet.addRow([`${i+1}`,`${d}`,`Sold initial`,`${el.in11}`,`${0}`,`${el.in21}`, `${0}` ])
+          const head =  worksheet.addRow([`${i+1}`,`${d}`,`Sold initial`,`${el.in11}`,`${0}`,`${el.in21}`, `${0}`, `${el.in0}`, `${0}` ])
             head.eachCell((cell) => {
                 cell.font = {
                 size: 13,
@@ -44,6 +45,8 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
                 };
             });
             el.entries.forEach((el, i) => {
+               let in0 = 0
+               let out0 = 0
                let in11 = 0
                let out11 = 0
                let in21 = 0
@@ -67,10 +70,19 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
                         text = ' (iesire 21%)'
                     }
                 }
-               const e = worksheet.addRow([`${i+1}`,`${d}`,`${el.description + text}`,`${in11}`,`${out11}`, `${in21}`, `${out21}`])
+                if(el.tva === 0){
+                    if(el.type === 'intrare'){
+                        in0 = el.value
+                        text = ' (intrare 0%)'
+                    } else {
+                        out0 = el.value
+                        text = ' (iesire 0%)'
+                    }
+                }
+               const e = worksheet.addRow([`${i+1}`,`${d}`,`${el.description + text}`,`${in11}`,`${out11}`, `${in21}`, `${out21}`, `${in0}`, `${out0}`])
             });
          
-           const foot =  worksheet.addRow(['',`${d}`,`Sold final`,`${0}`,`${el.out11}`, `${0}`, `${el.out21}`])
+           const foot =  worksheet.addRow(['',`${d}`,`Sold final`,`${0}`,`${el.out11}`, `${0}`, `${el.out21}`, `${0}`, `${el.out0}`])
 
             foot.eachCell((cell) => {
                 cell.font = {
