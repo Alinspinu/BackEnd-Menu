@@ -131,18 +131,18 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
           let tva = i.tva
           if(i.invGestiune.toString() === gest || i.name === 'Taxa SGR'){
             if(i.ing.toString() === ing._id.toString()){
-              if(tva === 0 && i.name !== 'Taxa SGR'){
-                console.log(i.name)
-                const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
-                if(prod && prod.tva){
-                  tva = prod.tva
-                } else {
-                  const sub = await SubProduct.findOne({'ings.ing': i.ing}).select('tva').lean()
-                  if(sub && sub.tva){
-                    tva = sub.tva
-                  }
-                }
-              }
+              // if(tva === 0 && i.name !== 'Taxa SGR'){
+              //   console.log(i.name)
+              //   const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
+              //   if(prod && prod.tva){
+              //     tva = prod.tva
+              //   } else {
+              //     const sub = await SubProduct.findOne({'ings.ing': i.ing}).select('tva').lean()
+              //     if(sub && sub.tva){
+              //       tva = sub.tva
+              //     }
+              //   }
+              // }
             
                 const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === tva)
                 if(existingEntry){
