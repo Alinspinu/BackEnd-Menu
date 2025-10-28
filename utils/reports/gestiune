@@ -130,7 +130,7 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
         for(let i of nir.ingredients){
           let tva = i.tva
           if(i.invGestiune.toString() === gest || i.name === 'Taxa SGR'){
-            if(i.ing.toString() === ing._id.toString() || i.name === 'Taxa SGR'){
+            if(i.ing.toString() === ing._id.toString()){
               if(tva === 0 && i.name !== 'Taxa SGR'){
                 console.log(i.name)
                 const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
