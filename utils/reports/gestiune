@@ -16,25 +16,67 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
     let inv21Value = 0
     let inv0Value = 0
     for(let o of orders){
+      const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
+      if(day){
+      if(o.tips && o.tips > 0){
+        const existingTipsEntry = day.entries.find(e => e.description === 'Vanzare Bacsis' )
+        if(existingTipsEntry){
+          existingTipsEntry += o.tips
+        } else {
+          const entry = {
+            date: o.createdAt,
+            description: 'Vanzare Bacsis',
+            nrDoc: o.dayCounter,
+            value: o.tips,
+            type: 'iesire',
+            docId: o._id.toString(), 
+            tva: 0
+          }
+          day.entries.push(entry)
+        }
+      }
       for(let p of o.products){
           if(p.dep === 'marfa'){
             if(p.ings[0]){
               if(p.ings[0].gestiune){
                 if(p.ings[0].gestiune.toString() === gest){
-                  const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
-                  if(day){
+                  // const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
+                    let sgrTax = 0
+                    if(p.sgrTax){
+                      sgrTax = 0.5 * p.quantity
+                      const existinSGREntry = day.entries.find(e => e.description === 'Vanzare SGR')
+                      if(existinSGREntry){
+                        existinSGREntry.value += sgrTax
+                      } else {
+                        const entry = {
+                          date: o.createdAt,
+                          description: 'Vanzare SGR',
+                          nrDoc: o.dayCounter,
+                          value: sgrTax,
+                          type: 'iesire',
+                          docId: o._id.toString(), 
+                          tva: 0
+                        }
+                        day.entries.push(entry)
+                      }
+
+
+                    }
+                    const price = round(((p.price * p.quantity) - p.discount)-sgrTax)
+
+
                     const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul' && e.tva === p.tva)
                     if(existingEntry){
-                      existingEntry.value += round((p.price * p.quantity) - p.discount)
+                      existingEntry.value += price
                     } else {
                       const entry = {
                         date: o.createdAt,
                         description: 'Vanzare cu amanuntul',
                         nrDoc: o.dayCounter,
-                        value: round((p.price * p.quantity) - p.discount),
+                        value: price,
                         type: 'iesire',
-                        docId: o._id.toString(),
-                        tva: p.tva
+                        docId: o._id.toString(), 
+                        tva: p.tva,
                       }
                       day.entries.push(entry)
                     }
@@ -83,11 +125,13 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
 
     for(let ing of ings){
       for(let nir of nirs){
+        const day = days.find(d => new Date(d.date).toDateString() === new Date(nir.documentDate).toDateString())
+        if(day){
         for(let i of nir.ingredients){
-          if(i.invGestiune.toString() === gest){
+          if(i.invGestiune.toString() === gest || i.name === 'Taxa SGR'){
             if(i.ing.toString() === ing._id.toString()){
               let tva = i.tva
-              if(tva === 0){
+              if(tva === 0 && i.name !== 'Taxa SGR'){
                 const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
                 if(prod && prod.tva){
                   tva = prod.tva
@@ -98,8 +142,7 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
                   }
                 }
               }
-              const day = days.find(d => new Date(d.date).toDateString() === new Date(nir.documentDate).toDateString())
-              if(day){
+            
                 const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === tva)
                 if(existingEntry){
                     existingEntry.value += (i.sellPrice * i.qty)
