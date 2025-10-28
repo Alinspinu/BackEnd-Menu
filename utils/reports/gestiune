@@ -86,7 +86,7 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
                 console.log('ingredient fara gestiune', p.name)
               }
             } else {
-              console.log('produs fara ingredient  **** ', p.name)
+              // console.log('produs fara ingredient  **** ', p.name)
             }
           }
       }
@@ -129,6 +129,8 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
         if(day){
         for(let i of nir.ingredients){
           let tva = i.tva
+
+          console.log(i.name, ' ', i.tva)
           if(i.invGestiune.toString() === gest){
             if(i.ing.toString() === ing._id.toString()){
               if(tva === 0 && i.name !== 'Taxa SGR'){
