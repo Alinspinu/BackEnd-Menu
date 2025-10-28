@@ -128,10 +128,11 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
         const day = days.find(d => new Date(d.date).toDateString() === new Date(nir.documentDate).toDateString())
         if(day){
         for(let i of nir.ingredients){
-          if(i.invGestiune.toString() === gest || i.name === 'Taxa SGR'){
+          let tva = i.tva
+          if(i.invGestiune.toString() === gest){
             if(i.ing.toString() === ing._id.toString()){
-              let tva = i.tva
               if(tva === 0 && i.name !== 'Taxa SGR'){
+                console.log(i.name)
                 const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
                 if(prod && prod.tva){
                   tva = prod.tva
