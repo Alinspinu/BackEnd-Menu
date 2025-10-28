@@ -21,7 +21,7 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
       if(o.tips && o.tips > 0){
         const existingTipsEntry = day.entries.find(e => e.description === 'Vanzare Bacsis' )
         if(existingTipsEntry){
-          existingTipsEntry += o.tips
+          existingTipsEntry.value += o.tips
         } else {
           const entry = {
             date: o.createdAt,
