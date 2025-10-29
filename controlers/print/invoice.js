@@ -356,8 +356,8 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
  doc.stroke()
  if(note){
    doc.fontSize(8)
-   doc.text('Informatii suplimentare:', 28, 672)
-   doc.text(note, 28, 682, {width: 300})
+   doc.text('Explicații:', 28, 672)
+   doc.text(note, 30, 688, {width: 300})
  }
 
  doc.rect(363, 669, 197, 105)
