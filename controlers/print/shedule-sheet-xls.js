@@ -8,7 +8,7 @@ const {formatedDateToShow, round} = require('../../utils/functions')
 
 async function createExcelBufferUsersSheet(shedules, start, end){
 
-
+console.log(shedules)
 const days = []
 const users = []
 shedules.forEach(s => {
