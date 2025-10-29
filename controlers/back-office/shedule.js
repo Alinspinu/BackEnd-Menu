@@ -111,6 +111,7 @@ module.exports.addShedule = async (req, res, next) => {
     const en = new Date(end).setUTCHours(0,0,0,0)
     try{
         const shedules = await Shedule.find({locatie: loc, salePoint: point, 'days.date': {$gte: st, $lte: en}})
+                    .populate({path: 'days.users.employee', select: 'employee.fullName'})
 
         res.status(200).json(shedules)
 
