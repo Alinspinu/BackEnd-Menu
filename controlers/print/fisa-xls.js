@@ -60,7 +60,7 @@ const loc = await Locatie.findById(data.locatie)
   worksheet.mergeCells(1, 3, 1, 9); // Columns E–F
   worksheet.mergeCells(fn, 1, fn, 5); 
 
-  worksheet.mergeCells('B1:C9');
+  worksheet.mergeCells('A2:I3');
 
   worksheet.getColumn(1).width = 4;
   worksheet.getColumn(2).width = 18; 
