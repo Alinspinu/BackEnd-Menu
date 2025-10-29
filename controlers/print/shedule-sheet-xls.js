@@ -73,7 +73,7 @@ const sheet = workbook.addWorksheet('Schedule');
   // ----- 3️⃣ ADD USER ROWS -----
   users.forEach((u) => {
     const rowData = [u.employee.employee.fullName];
-
+    let totalHours = 0;
     days.forEach((d) => {
       const dayUser = d.users.find(
         (du) => du.employee._id.toString() === u.employee._id.toString()
@@ -95,11 +95,12 @@ const sheet = workbook.addWorksheet('Schedule');
             minute: '2-digit',
           });
         rowData.push(st || '', en || '', wp.hours?.toString() || '');
+        totalHours += wp.hours || 0;
       } else {
         rowData.push('-', '-', '0');
       }
     });
-
+    rowData.push(totalHours, '');
     sheet.addRow(rowData);
   });
 
