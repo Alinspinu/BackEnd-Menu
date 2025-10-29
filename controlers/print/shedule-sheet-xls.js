@@ -45,7 +45,6 @@ sheet.columns = Array.from({ length: days.length }, (_, i) => ({
   }));
 
 
-sheet.columns = columns;
 
 // Add rows from your data array
 
