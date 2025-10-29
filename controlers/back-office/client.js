@@ -1,15 +1,14 @@
 const Client = require('../../models/office/client')
 const {round} = require('../../utils/functions')
+const Invoice = require('../../models/office/invoice')
 
 
 
 module.exports.addClient = async (req, res) => {
     const {client} = req.body
     try{
-        console.log(client)
         const newClient = new Client(client)
         const savedClient = await newClient.save()
-        console.log(savedClient)
         res.status(200).json({message: 'Clientul a fost salvat cu success!', client: savedClient})
     } catch(error) {
         console.log(error)
@@ -44,7 +43,8 @@ module.exports.getClient = async (req, res) => {
     const {id} = req.query
     try{
         const client = await Client.findById(id)
-        const c = updateSuplierRecords(client)
+        const upc = await updateClientTotalRecord(client)
+        const c = updateSuplierRecords(upc)
         const sc = await c.save()
         res.status(200).json(sc)
     } catch(error){
@@ -73,6 +73,22 @@ module.exports.getClient = async (req, res) => {
         suplier.record = sortedRecords
       return suplier
    }
+
+   async function updateClientTotalRecord(client) {
+    // Loop through all records and update their amounts
+    for (const r of client.records) {
+      const inv = await Invoice.findById(r.Invoice)
+      if (inv) {
+        r.document.amount = inv.taxInclusiveAmount
+      }
+    }
+  
+    // // Ensure Mongoose knows the records array changed
+    // client.markModified('records')
+  
+    // Save once after all updates
+    await client.save()
+  }
 
 
 module.exports.deleteClient = async (req, res) => {
