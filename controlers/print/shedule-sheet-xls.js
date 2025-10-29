@@ -71,8 +71,17 @@ const sheet = workbook.addWorksheet('Schedule');
 
       if (dayUser) {
         const wp = dayUser.workPeriod;
-        const st = new Date(wp.start).getUTCHours()
-        const en = new Date(wp.end).getUTCHours()
+        const st = startDate.toLocaleTimeString('ro-RO', {
+            timeZone: 'Europe/Bucharest',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+          
+          const en = endDate.toLocaleTimeString('ro-RO', {
+            timeZone: 'Europe/Bucharest',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
         rowData.push(st || '', en || '', wp.hours?.toString() || '');
       } else {
         rowData.push('-', '-', '0');
