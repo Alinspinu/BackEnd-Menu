@@ -4,7 +4,7 @@ const {formatedDateToShow} = require('../../utils/functions')
 
 
 async function createExcelBufferFisa(data){
-const loc = await Locatie.find(data.locatie)
+const loc = await Locatie.findById(data.locatie)
   const workbook = new ExcelJS.Workbook();
   let name = ''
   let suplier = false
