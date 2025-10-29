@@ -65,8 +65,8 @@ const sheet = workbook.addWorksheet('Condica de  prezenta');
   sheet.mergeCells(1, colIndex + 1, 2, colIndex + 1); // signature
 
   // Style headers
-  sheet.getRow(1).font = { bold: true, size: 10 };
-  sheet.getRow(2).font = { bold: true };
+  sheet.getRow(1).font = { bold: true, size: 12 };
+  sheet.getRow(2).font = { bold: true, size: 10 };
   sheet.getRow(1).alignment = { horizontal: 'center' };
   sheet.getRow(2).alignment = { horizontal: 'center' };
 
