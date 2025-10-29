@@ -13,5 +13,7 @@ router.route('/remove-suplier').delete(suplierRoutes.deleteSuplier)
 router.route('/update-suplier').put(suplierRoutes.editSuplier)
 router.route('/get-suplier').get(suplierRoutes.getSuplier)
 
+router.route('/print').post(suplierRoutes.printFisa)
+
 
 module.exports = router
