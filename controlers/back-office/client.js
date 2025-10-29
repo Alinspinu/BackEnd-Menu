@@ -87,7 +87,8 @@ module.exports.getClient = async (req, res) => {
     // client.markModified('records')
   
     // Save once after all updates
-    await client.save()
+   const c = await client.save()
+   return c
   }
 
 
