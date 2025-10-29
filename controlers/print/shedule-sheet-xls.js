@@ -44,7 +44,7 @@ const sheet = workbook.addWorksheet('Schedule');
     headerRow2.push('Intrare', 'Iesire', 'Ore');
   });
 
-  headerRow1.push('Total Hours', 'Signature');
+  headerRow1.push('Total', 'Semnatura');
   headerRow2.push('', '');
 
 
@@ -112,6 +112,7 @@ const sheet = workbook.addWorksheet('Schedule');
   // Make first column wider
   sheet.getColumn(1).width = 20;
   sheet.getColumn(1).alignment = {vertical: 'start'};
+  sheet.getColumn(days.length * 3 + 3).width = 15; // Signature (wider)
 
 
 
