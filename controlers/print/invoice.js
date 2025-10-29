@@ -170,7 +170,7 @@ if(ingChunks[ingChunks.length -1].length > firstChunk || (ingChunks[ingChunks.le
 }
 
 ingChunks.forEach((ch, i) => {
-    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, secondIndex)
+    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, secondIndex, invoice.note)
 })
 
 
@@ -180,7 +180,7 @@ return doc
 }
 
 
-function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, secondIndex){
+function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, rectStartH, heghtValue, pageLenght, taxExclusiveAmount, taxInclusiveAmount, vatAmount, pageCount, secondIndex, note){
   doc.fillColor('black') 
 
 
@@ -354,11 +354,10 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
  doc.rect(25, 669, 338, 105)
  doc.lineWidth(0.5);
  doc.stroke()
- console.log(invoice.note)
- if(invoice.note){
+ if(note){
    doc.fontSize(8)
    doc.text('Informatii suplimentare:', 28, 672)
-   doc.text(invoice.note, 28, 682, {width: 300})
+   doc.text(note, 28, 682, {width: 300})
  }
 
  doc.rect(363, 669, 197, 105)
