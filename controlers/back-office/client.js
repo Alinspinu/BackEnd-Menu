@@ -79,6 +79,7 @@ module.exports.getClient = async (req, res) => {
     for (const r of client.records) {
       const inv = await Invoice.findById(r.Invoice)
       if (inv) {
+        console.log(r.document)
         r.document.amount = inv.taxInclusiveAmount
       }
     }
