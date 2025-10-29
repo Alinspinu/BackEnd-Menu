@@ -35,8 +35,8 @@ const sheet = workbook.addWorksheet('Condica de  prezenta');
 
 
   // ----- 1️⃣ BUILD MULTI-ROW HEADERS -----
-  const headerRow1 = [`${days[days.length - 1].date.toISOString().split('T')[0]}`];
-  const headerRow2 = [`${days[0].date.toISOString().split('T')[0]}`];
+  const headerRow1 = [`${days[days.length - 1].date.toISOString().split('T')[0]} - ` + `${days[0].date.toISOString().split('T')[0]}`];
+  const headerRow2 = ['Nume angajat'];
 
   days.forEach((d) => {
     const formatted = d.date.toISOString().split('T')[0] + ' ' + d.day; 
