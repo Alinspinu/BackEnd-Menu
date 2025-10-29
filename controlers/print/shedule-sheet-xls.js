@@ -20,7 +20,7 @@ shedules.forEach(s => {
             if(u.employee && u.employee.employee){
                 const us = users.find(uu => uu.employee.employee.fullName === u.employee.employee.fullName)
                 if(!us){
-                    users.push(us)
+                    users.push(u)
                 }
             } else {
                 console.log(u)
