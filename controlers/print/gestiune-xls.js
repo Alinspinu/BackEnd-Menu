@@ -128,13 +128,13 @@ const period = `${formatedDateToShow(days[0].date).split('ora')[0]} - ${formated
             bold: true,
             };
         });
-        batch.eachCell((cell) => {
+        bc.eachCell((cell) => {
             cell.font = {
             size: 13,
             bold: true,
             };
         });
-        sc.eachCell((cell) => {
+        sg.eachCell((cell) => {
             cell.font = {
             size: 13,
             bold: true,
