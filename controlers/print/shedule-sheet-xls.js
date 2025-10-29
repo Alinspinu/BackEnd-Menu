@@ -95,12 +95,13 @@ const sheet = workbook.addWorksheet('Schedule');
 
   // ----- 4️⃣ FORMAT COLUMNS -----
   sheet.columns.forEach((col) => {
-    col.width = 9;
+    col.width = 7;
     col.alignment = { horizontal: 'center', vertical: 'middle' };
   });
 
   // Make first column wider
   sheet.getColumn(1).width = 20;
+  sheet.getColumn(1).alignment = {vertical: 'start'};
 
 
 
