@@ -15,6 +15,22 @@ const { sendEmployeeEmail } = require('../../utils/mail')
 const {hashPassword, encryptData} = require('../../utils/functions')
 
 
+
+module.exports.createUsersSheet = async (req, res) => {
+    const {start, end, loc, point} = req.body
+    try{
+        const users = await User.find({locatie: loc, client: false}, {selct: 'employee'})
+
+
+    } catch(e){
+        console.log(e)
+        res.status(500).json(e)
+    }
+}
+
+function filterLogs(user)
+
+
 module.exports.sendUsers = async (req, res, next) => {
     try{
         const {loc} = req.query

@@ -25,6 +25,7 @@ router.route('/position')
 
 router.route('/position-all').post(sheduleRoutes.updateAllPositions)
 router.route('/partial').post(sheduleRoutes.updatePartialShedule)
+router.route('/print-users-sheet').post(sheduleRoutes.createUsersSheet)
 
 
 

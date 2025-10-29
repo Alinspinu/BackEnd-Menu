@@ -102,6 +102,24 @@ module.exports.addShedule = async (req, res, next) => {
       res.status(500).json({ message: err.message });
     }
   };
+
+
+  module.exports.createUsersSheet = async (req, res) => {
+    const {start, end, loc, point} = req.body
+
+    const st = new Date(start).setUTCHours(0,0,0,0)
+    const en = new Date(end).setUTCHours(0,0,0,0)
+    try{
+        const shedules = await Shedule.find({locatie: loc, salePoint: point, 'days.date': {$gte: st, $lte: en}})
+
+        res.status(200).json(shedules)
+
+
+    } catch(e){
+        console.log(e)
+        res.status(500).json(e)
+    }
+}
   
 
 
