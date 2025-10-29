@@ -7,7 +7,6 @@ async function createExcelBufferFisa(data, suplier){
 const loc = await Locatie.findById(data.locatie)
   const workbook = new ExcelJS.Workbook();
   let name = data.name
-
   const worksheet = workbook.addWorksheet('Fisa partener');
   const docTitle =  [
       `${loc.bussinessName}`,'',`Fisa partener  ${suplier ? 'furnizor ' : 'client '}${name}`,'','']
