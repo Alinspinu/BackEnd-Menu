@@ -115,7 +115,7 @@ const period = `${formatedDateToShow(days[0].date).split('ora')[0]} - ${formated
         const sg  = worksheet.addRow(['', 'TAXA SGR', '', '', '', '', '', '', `${totals.totalOutSGR}`])
 
         const bnum = bc.number
-        const snum = sc.number
+        const snum = sg.number
         worksheet.mergeCells(bnum, 2, bnum, 3);
         worksheet.mergeCells(bnum, 4, bnum, 8);
         worksheet.mergeCells(snum, 2, snum, 3);
