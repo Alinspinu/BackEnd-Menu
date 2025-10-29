@@ -43,10 +43,10 @@ module.exports.getClient = async (req, res) => {
     const {id} = req.query
     try{
         const client = await Client.findById(id)
-        const upc = await updateClientTotalRecord(client)
-        const c = updateSuplierRecords(upc)
+        // const upc = await updateClientTotalRecord(client)
+        const c = updateSuplierRecords(client)
         const sc = await c.save()
-        res.status(200).json(upc)
+        res.status(200).json(sc)
     } catch(error){
         console.log(error)
         res.status(500).json(error)
