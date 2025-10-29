@@ -6,15 +6,15 @@ const {normalizeText, round} = require('../functions')
 
 
 
-async function createRG(start, end, nirs, ings, inventary, gest, orders){
+async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
 
     const startDate = new Date(start).setHours(0,0,0,0)
     const endDate = new Date(end).setHours(23,59,59, 9999)
     const days = getDaysBetween(start, end)
 
-    let inv11Value = 0
-    let inv21Value = 0
-    let inv0Value = 0
+    let inv11Value = in11
+    let inv21Value = in21
+    let inv0Value = in0
     for(let o of orders){
       const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
       if(day){
@@ -92,37 +92,6 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
       }
     }
 
-    if(inventary){
-      for(let ing of inventary.ingredients){
-        if(normalizeText(ing.dep) === 'marfa'){
-          let tva = ing.ing.tva
-          if(tva === 0){
-            console.log('hit ', ing.name)
-            const prod = await Product.findOne({'ings.ing': ing.ing}).select('tva').lean()
-            if(prod && prod.tva){
-              tva = prod.tva
-            } else {
-              const sub = await SubProduct.findOne({'ings.ing': ing.ing}).select('tva').lean()
-              if(sub && sub.tva){
-                tva = sub.tva
-              }
-            }
-          }
-  
-          if(tva === 0){
-            console.log('ing with 0 vat ', ing.ing.name, 'price ', ing.ing.priceNoVat, ' --- ', ing.ing.price)
-            inv0Value += ing.ing.sellPrice * ing.faptic
-          }
-          if(tva === 11){
-            inv11Value += ing.ing.sellPrice * ing.faptic
-          }
-          if(tva === 21){
-            inv21Value += ing.ing.sellPrice * ing.faptic
-          }
-        } 
-        }
-    }
-
     for(let ing of ings){
       for(let nir of nirs){
         const day = days.find(d => new Date(d.date).toDateString() === new Date(nir.documentDate).toDateString())
@@ -132,7 +101,6 @@ async function createRG(start, end, nirs, ings, inventary, gest, orders){
           if(i.invGestiune.toString() === gest || i.name === 'Taxa SGR'){
             if(i.ing.toString() === ing._id.toString()){
               if(tva === 0 && i.name !== 'Taxa SGR'){
-                console.log(i.name)
                 const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
                 if(prod && prod.tva){
                   tva = prod.tva

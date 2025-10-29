@@ -18,7 +18,7 @@ const {createExcelBuffer} = require('../print/gestiune-xls')
 
 module.exports.getGestReport = async(req, res) => {
 
-  const {start, end, dep, loc, point, gest, inv} = req.body
+  const {start, end, dep, loc, point, gest, in0, in11, in21} = req.body
 
   const startDate = new Date(start).setHours(0,0,0,0)
   const endDate = new Date(end).setHours(23,59,59, 9999)
@@ -30,7 +30,7 @@ module.exports.getGestReport = async(req, res) => {
     const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice name tva'}).populate({path: 'locatie', select: 'bussinessName'})
     const orders = await Order.find({locatie: loc, salePoint: point, updatedAt: {$gte: startDate, $lte: endDate}, 'products.dep': 'marfa'}).lean() 
  
-    const days = await createRG(start, end, nirs, ings, inventary, gest, orders)
+    const days = await createRG(start, end, nirs, ings, gest, orders, in0, in11, in21)
   
     const buffer = await createExcelBuffer(days, inventary.locatie.bussinessName);
 
