@@ -30,7 +30,7 @@ shedules.forEach(s => {
 })
 
 const workbook = new ExcelJS.Workbook();
-const sheet = workbook.addWorksheet('Schedule');
+const sheet = workbook.addWorksheet('Condica de  prezenta');
 
 
 
