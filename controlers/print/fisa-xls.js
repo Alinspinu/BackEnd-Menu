@@ -7,6 +7,7 @@ async function createExcelBufferFisa(data){
 const loc = await Locatie.findById(data.locatie)
   const workbook = new ExcelJS.Workbook();
   let name = ''
+  console.log(data)
   let suplier = false
     if(data.bussinessName){
         name = data.bussinessName
