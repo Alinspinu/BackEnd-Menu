@@ -36,26 +36,48 @@ const loc = await Locatie.findById(data.locatie)
         totalOut += out
     }
 
-    worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${int}`, `${out}`, `${e.sold}`, `${e.description || ''}`])
+    worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${int}`, `${out}`, `${ suplier ? e.sold : -e.sold}`, `${e.description || ''}`])
   })
 
-  const footer =  worksheet.addRow(['Totaluri',``,'','', ``, `${totalIn}`, `${totalOut}`, `${data.sold}`,''])
+  const footer =  worksheet.addRow(['Totaluri',``,'','', ``, `${totalIn}`, `${totalOut}`, `${suplier ? data.sold : -data.sold}`,''])
+
+  footer.eachCell((cell) => {
+        cell.font = {
+            bold: true,
+            size: 13
+        }
+  })
+
+  worksheet.getRow(4).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+})
+  worksheet.getRow(1).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 15
+    }
+})
 
   const fn = footer.number
+
+
 
   worksheet.mergeCells(1, 1, 1, 2); // Columns A–D
   worksheet.mergeCells(1, 3, 1, 6); // Columns E–F
   worksheet.mergeCells(fn, 1, fn, 5); 
 
   worksheet.getColumn(1).width = 4;
-  worksheet.getColumn(2).width = 16; 
+  worksheet.getColumn(2).width = 18; 
   worksheet.getColumn(3).width = 10; 
   worksheet.getColumn(4).width = 10; 
   worksheet.getColumn(5).width = 10; 
   worksheet.getColumn(6).width = 10; 
   worksheet.getColumn(7).width = 13; 
   worksheet.getColumn(8).width = 13; 
-  worksheet.getColumn(9).width = 20; 
+  worksheet.getColumn(9).width = 22; 
 
 
 
