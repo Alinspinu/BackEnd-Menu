@@ -29,20 +29,43 @@ shedules.forEach(s => {
     })
 })
 
-console.log('zile', days.length)
-console.log('utilizatori', users.length)
+const sheet = workbook.addWorksheet('Schedule');
 
-const workbook = new ExcelJS.Workbook();
+// 1️⃣ HEADER ROW
+const header = ['User'];
+days.forEach(d => {
+  const formatted = d.date.toISOString().split('T')[0]; // e.g. 2025-10-25
+  header.push(formatted);
+});
+sheet.addRow(header);
 
+// 2️⃣ ROWS FOR EACH USER
+users.forEach(u => {
+  const row = [u.name];
 
-const sheet = workbook.addWorksheet('People');
+  // loop through each day (column)
+  days.forEach(d => {
+    const dayUser = d.users.find(
+      du => du.employee._id.toString() === u._id.toString()
+    );
 
-// Get all unique keys from the objects
-sheet.columns = Array.from({ length: days.length }, (_, i) => ({
-    header: `Column ${i + 1}`,  // or you can leave it empty ''
-    key: `col${i + 1}`,
-    width: 15
-  }));
+    if (dayUser) {
+      // fill with hours, position, etc.
+      row.push(`${dayUser.workPeriod.hours} hrs`);
+    } else {
+      row.push('—'); // dash or blank if user not found that day
+    }
+  });
+
+  sheet.addRow(row);
+});
+
+// 3️⃣ STYLING (optional)
+sheet.getRow(1).font = { bold: true };
+sheet.columns.forEach(col => {
+  col.width = 15;
+  col.alignment = { horizontal: 'center', vertical: 'middle' };
+});
 
 
 
