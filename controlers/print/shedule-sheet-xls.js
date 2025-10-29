@@ -65,7 +65,7 @@ const sheet = workbook.addWorksheet('Condica de  prezenta');
   sheet.mergeCells(1, colIndex + 1, 2, colIndex + 1); // signature
 
   // Style headers
-  sheet.getRow(1).font = { bold: true, size: 12 };
+  sheet.getRow(1).font = { bold: true, size: 11 };
   sheet.getRow(2).font = { bold: true, size: 10 };
   sheet.getRow(1).alignment = { horizontal: 'center' };
   sheet.getRow(2).alignment = { horizontal: 'center' };
@@ -115,7 +115,16 @@ const sheet = workbook.addWorksheet('Condica de  prezenta');
   sheet.getColumn(1).alignment = {vertical: 'start'};
   sheet.getColumn(days.length * 3 + 3).width = 15; // Signature (wider)
 
-
+  days.forEach((_, i) => {
+    const rightColIndex = 1 + (i + 1) * 3; // every 3 columns after 'User'
+    sheet.eachRow({ includeEmpty: true }, (row) => {
+      const cell = row.getCell(rightColIndex);
+      cell.border = {
+        ...cell.border, // keep existing borders (if any)
+        right: { style: 'medium' }, // thicker line
+      };
+    });
+  });
 
 
 
