@@ -32,45 +32,62 @@ shedules.forEach(s => {
 const workbook = new ExcelJS.Workbook();
 const sheet = workbook.addWorksheet('Schedule');
 
-// 1️⃣ HEADER ROW
-const header = ['User'];
-days.forEach(d => {
-  const formatted = d.date.toISOString().split('T')[0]; // e.g. 2025-10-25
-  header.push(formatted);
-});
-sheet.addRow(header);
 
-// 2️⃣ ROWS FOR EACH USER
-users.forEach(u => {
-  const row = [u.employee.employee.fullName];
 
-  // loop through each day (column)
-  days.forEach(d => {
-    const dayUser = d.users.find(
-      du => du.employee._id.toString() === u.employee._id.toString()
-    );
+  // ----- 1️⃣ BUILD MULTI-ROW HEADERS -----
+  const headerRow1 = ['User'];
+  const headerRow2 = [''];
 
-    if (dayUser) {
-      // fill with hours, position, etc.
-      row.push(`${dayUser.workPeriod.hours} hrs`);
-    } else {
-      row.push('—'); // dash or blank if user not found that day
-    }
+  days.forEach((d) => {
+    const formatted = d.date.toISOString().split('T')[0]; // e.g. 2025-10-25
+    headerRow1.push(formatted, '', '');
+    headerRow2.push('Start', 'End', 'Hours');
   });
 
-  sheet.addRow(row);
-});
+  sheet.addRow(headerRow1);
+  sheet.addRow(headerRow2);
 
-// 3️⃣ STYLING (optional)
-sheet.getRow(1).font = { bold: true };
-sheet.columns.forEach(col => {
-  col.width = 15;
-  col.alignment = { horizontal: 'center', vertical: 'middle' };
-});
+  // ----- 2️⃣ MERGE DATE CELLS (Row 1) -----
+  let colIndex = 2; // Start from 2 (because 1 = User)
+  days.forEach(() => {
+    sheet.mergeCells(1, colIndex, 1, colIndex + 2); // merge 3 columns
+    colIndex += 3;
+  });
 
+  // Style headers
+  sheet.getRow(1).font = { bold: true, size: 12 };
+  sheet.getRow(2).font = { bold: true };
+  sheet.getRow(1).alignment = { horizontal: 'center' };
+  sheet.getRow(2).alignment = { horizontal: 'center' };
 
+  // ----- 3️⃣ ADD USER ROWS -----
+  users.forEach((u) => {
+    const rowData = [u.employee.employee.fullName];
 
-// Add rows from your data array
+    days.forEach((d) => {
+      const dayUser = d.users.find(
+        (du) => du.employee._id.toString() === u.employee._id.toString()
+      );
+
+      if (dayUser) {
+        const wp = dayUser.workPeriod;
+        rowData.push(wp.start || '', wp.end || '', wp.hours?.toString() || '');
+      } else {
+        rowData.push('', '', '');
+      }
+    });
+
+    sheet.addRow(rowData);
+  });
+
+  // ----- 4️⃣ FORMAT COLUMNS -----
+  sheet.columns.forEach((col) => {
+    col.width = 12;
+    col.alignment = { horizontal: 'center', vertical: 'middle' };
+  });
+
+  // Make first column wider
+  sheet.getColumn(1).width = 20;
 
 
 
