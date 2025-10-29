@@ -42,12 +42,12 @@ sheet.addRow(header);
 
 // 2️⃣ ROWS FOR EACH USER
 users.forEach(u => {
-  const row = [u.name];
+  const row = [u.employee.employee.fullName];
 
   // loop through each day (column)
   days.forEach(d => {
     const dayUser = d.users.find(
-      du => du.employee._id.toString() === u._id.toString()
+      du => du.employee._id.toString() === u.employee._id.toString()
     );
 
     if (dayUser) {
