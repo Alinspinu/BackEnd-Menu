@@ -29,6 +29,7 @@ shedules.forEach(s => {
     })
 })
 
+const workbook = new ExcelJS.Workbook();
 const sheet = workbook.addWorksheet('Schedule');
 
 // 1️⃣ HEADER ROW
