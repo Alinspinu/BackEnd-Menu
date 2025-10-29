@@ -71,9 +71,11 @@ const sheet = workbook.addWorksheet('Schedule');
 
       if (dayUser) {
         const wp = dayUser.workPeriod;
-        rowData.push(wp.start || '', wp.end || '', wp.hours?.toString() || '');
+        const st = new Date(wp.start).getHours()
+        const en = new Date(wp.end).getHours()
+        rowData.push(st || '', en || '', wp.hours?.toString() || '');
       } else {
-        rowData.push('', '', '');
+        rowData.push('-', '-', '0');
       }
     });
 
