@@ -354,6 +354,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
  doc.rect(25, 669, 338, 105)
  doc.lineWidth(0.5);
  doc.stroke()
+ console.log(invoice.note)
  if(invoice.note){
    doc.fontSize(8)
    doc.text('Informatii suplimentare:', 28, 672)
