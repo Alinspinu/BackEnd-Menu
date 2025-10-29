@@ -245,10 +245,10 @@ module.exports.addSuplier = async (req, res, next) => {
 
 
    module.exports.printFisa = async (req, res) => {
-    const {data} = req.body
+    const {data, suplier} = req.body
       try{
 
-        const buffer = await createExcelBufferFisa(data);
+        const buffer = await createExcelBufferFisa(data, suplier);
     
         // Set headers for file download
         res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

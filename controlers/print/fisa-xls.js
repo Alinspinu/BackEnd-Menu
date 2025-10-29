@@ -3,19 +3,10 @@ const Locatie = require('../../models/office/locatie')
 const {formatedDateToShow} = require('../../utils/functions')
 
 
-async function createExcelBufferFisa(data){
+async function createExcelBufferFisa(data, suplier){
 const loc = await Locatie.findById(data.locatie)
   const workbook = new ExcelJS.Workbook();
-  let name = ''
-  console.log(data)
-  let suplier = false
-    if(data.bussinessName){
-        name = data.bussinessName
-        suplier = true
-    } else {
-        name = data.name
-        suplier = false
-    }
+  let name = data.name
 
   const worksheet = workbook.addWorksheet('Fisa partener');
   const docTitle =  [
