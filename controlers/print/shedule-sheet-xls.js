@@ -39,9 +39,9 @@ const sheet = workbook.addWorksheet('Schedule');
   const headerRow2 = [''];
 
   days.forEach((d) => {
-    const formatted = d.date.toISOString().split('T')[0]; // e.g. 2025-10-25
+    const formatted = d.date.toISOString().split('T')[0] + ' ' + d.day; 
     headerRow1.push(formatted, '', '');
-    headerRow2.push('Start', 'End', 'Hours');
+    headerRow2.push('Intrare', 'Iesire', 'Ore');
   });
 
   sheet.addRow(headerRow1);
@@ -95,7 +95,7 @@ const sheet = workbook.addWorksheet('Schedule');
 
   // ----- 4️⃣ FORMAT COLUMNS -----
   sheet.columns.forEach((col) => {
-    col.width = 12;
+    col.width = 9;
     col.alignment = { horizontal: 'center', vertical: 'middle' };
   });
 
