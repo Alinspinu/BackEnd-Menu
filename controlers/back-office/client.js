@@ -44,8 +44,8 @@ module.exports.getClient = async (req, res) => {
     try{
         const client = await Client.findById(id)
         const upc = await updateClientTotalRecord(client)
-        // const c = updateSuplierRecords(upc)
-        // const sc = await c.save()
+        const c = updateSuplierRecords(upc)
+        const sc = await c.save()
         res.status(200).json(upc)
     } catch(error){
         console.log(error)
@@ -77,7 +77,7 @@ module.exports.getClient = async (req, res) => {
    async function updateClientTotalRecord(client) {
     // Loop through all records and update their amounts
     for (const r of client.records) {
-      const inv = await Invoice.findById(r.Invoice)
+      const inv = await Invoice.findById(r.invoice)
       if (inv) {
         console.log(r.document)
         r.document.amount = inv.taxInclusiveAmount
