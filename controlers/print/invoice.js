@@ -354,11 +354,11 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
  doc.rect(25, 669, 338, 105)
  doc.lineWidth(0.5);
  doc.stroke()
-//  if(invoice.note){
-//    doc.fontSize(8)
-//    doc.text('Informatii suplimentare:', 28, 672)
-//    doc.text(invoice.note, 28, 682, {width: 300})
-//  }
+ if(invoice.note){
+   doc.fontSize(8)
+   doc.text('Informatii suplimentare:', 28, 672)
+   doc.text(invoice.note, 28, 682, {width: 300})
+ }
 
  doc.rect(363, 669, 197, 105)
  doc.lineWidth(0.5);
