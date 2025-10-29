@@ -29,7 +29,7 @@ const loc = await Locatie.findById(data.locatie)
 
     worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${round(int)}`, `${ round(out)}`, `${ suplier ? e.sold : -e.sold}`, `${e.description || ''}`])
   })
-
+  const space =   worksheet.addRow([])
   const footer =  worksheet.addRow(['Totaluri',``,'','', ``, `${round(totalIn)}`, `${round(totalOut)}`, `${suplier ? data.sold : -data.sold}`,''])
 
   footer.eachCell((cell) => {
@@ -53,12 +53,14 @@ const loc = await Locatie.findById(data.locatie)
 })
 
   const fn = footer.number
+  const sn = space.number
 
 
 
   worksheet.mergeCells(1, 1, 1, 2); // Columns A–D
   worksheet.mergeCells(1, 3, 1, 9); // Columns E–F
   worksheet.mergeCells(fn, 1, fn, 5); 
+  worksheet.mergeCells(sn, 1, sn, 9); 
 
   worksheet.mergeCells('A2:I3');
 
