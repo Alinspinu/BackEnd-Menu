@@ -95,7 +95,7 @@ const sheet = workbook.addWorksheet('Schedule');
 
   // ----- 4️⃣ FORMAT COLUMNS -----
   sheet.columns.forEach((col) => {
-    col.width = 7;
+    col.width = 4;
     col.alignment = { horizontal: 'center', vertical: 'middle' };
   });
 
