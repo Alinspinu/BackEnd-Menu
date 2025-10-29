@@ -38,18 +38,16 @@ const workbook = new ExcelJS.Workbook();
 const sheet = workbook.addWorksheet('People');
 
 // Get all unique keys from the objects
-const columns = Object.keys(days[0]).map(key => ({
-  header: key.toUpperCase(),
-  key,
-  width: 15
-}));
+sheet.columns = Array.from({ length: days.length }, (_, i) => ({
+    header: `Column ${i + 1}`,  // or you can leave it empty ''
+    key: `col${i + 1}`,
+    width: 15
+  }));
 
-console.log(columns)
 
 sheet.columns = columns;
 
 // Add rows from your data array
-sheet.addRows(days);
 
 
 
