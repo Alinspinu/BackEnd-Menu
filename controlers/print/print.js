@@ -1202,6 +1202,7 @@ module.exports.factura = async (req, res, next) => {
   const {id, email, mode} = req.body
   try{
   const invoice = await Invoice.findById(id).populate({path: 'locatie'})
+  console.log(invoice.note)
   const doc = createInfoice(invoice)
 
   const buffers = [];
