@@ -13,7 +13,7 @@ const users = []
 shedules.forEach(s => {
     s.days.forEach(d => {
         const dt = new Date(d.date).setUTCHours(0,0,0,0)
-        if(dt >= end && dt <= start){
+        if(dt <= end && dt >=start){
             days.push(d)
         }
         d.users.forEach(u => {
