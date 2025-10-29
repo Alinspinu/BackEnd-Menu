@@ -115,7 +115,7 @@ const sheet = workbook.addWorksheet('Condica de  prezenta');
   sheet.getColumn(1).alignment = {vertical: 'start'};
   sheet.getColumn(days.length * 3 + 3).width = 15; // Signature (wider)
 
-  sheet.getColumn(1).eachRow({ includeEmpty: true }, (row) => {
+  sheet.eachRow({ includeEmpty: true }, (row) => {
     const cell = row.getCell(1);
     cell.border = {
       ...cell.border, // keep existing borders (if any)
