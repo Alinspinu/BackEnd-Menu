@@ -4,6 +4,8 @@ const Table = require('../../models/utils/table')
 const SalePoint = require('../../models/utils/sale-point')
 const { round } = require('../../utils/functions')
 
+const { createExcelBufferFisa } = require('../print/fisa-xls')
+
 
 module.exports.addSuplier = async (req, res, next) => {
     const {suplier, loc} = req.body;
@@ -239,4 +241,23 @@ module.exports.addSuplier = async (req, res, next) => {
         console.log(err)
         res.status(500).json(err)
     }
+   }
+
+
+   module.exports.printFisa = async (req, res) => {
+    const {data} = req.body
+      try{
+
+        const buffer = await createExcelBufferFisa(data);
+    
+        // Set headers for file download
+        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
+    
+        // Send the buffer directly
+        res.send(Buffer.from(buffer));
+      } catch (error) {
+        console.error("❌ Excel generation error:", error);
+        res.status(500).json({ error: "Failed to generate Excel file" });
+      }
    }
