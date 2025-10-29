@@ -21,8 +21,6 @@ module.exports.getClients = async (req, res) => {
     const {loc} = req.query
     try{
         const clients = await Client.find({locatie: loc})
-        console.log(clients)
-        console.log(loc)
         res.status(200).json(clients)
     } catch(error) {
         console.log(error)
@@ -47,8 +45,8 @@ module.exports.getClient = async (req, res) => {
     try{
         const client = await Client.findById(id)
         const c = updateSuplierRecords(client)
-
-        res.status(200).json(c)
+        const sc = await c.save()
+        res.status(200).json(sc)
     } catch(error){
         console.log(error)
         res.status(500).json(error)
