@@ -1,6 +1,6 @@
 const ExcelJS = require("exceljs");
 const Locatie = require('../../models/office/locatie')
-const {formatedDateToShow} = require('../../utils/functions')
+const {formatedDateToShow, round} = require('../../utils/functions')
 
 
 async function createExcelBufferFisa(data, suplier){
@@ -27,7 +27,7 @@ const loc = await Locatie.findById(data.locatie)
         totalOut += out
     }
 
-    worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${int}`, `${out}`, `${ suplier ? e.sold : -e.sold}`, `${e.description || ''}`])
+    worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${round(int)}`, `${ round(out)}`, `${ suplier ? e.sold : -e.sold}`, `${e.description || ''}`])
   })
 
   const footer =  worksheet.addRow(['Totaluri',``,'','', ``, `${totalIn}`, `${totalOut}`, `${suplier ? data.sold : -data.sold}`,''])
@@ -63,9 +63,9 @@ const loc = await Locatie.findById(data.locatie)
   worksheet.getColumn(1).width = 4;
   worksheet.getColumn(2).width = 18; 
   worksheet.getColumn(3).width = 10; 
-  worksheet.getColumn(4).width = 10; 
-  worksheet.getColumn(5).width = 10; 
-  worksheet.getColumn(6).width = 10; 
+  worksheet.getColumn(4).width = 12; 
+  worksheet.getColumn(5).width = 12; 
+  worksheet.getColumn(6).width = 13; 
   worksheet.getColumn(7).width = 13; 
   worksheet.getColumn(8).width = 13; 
   worksheet.getColumn(9).width = 22; 
