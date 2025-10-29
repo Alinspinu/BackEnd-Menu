@@ -22,7 +22,7 @@ const loc = await Locatie.findById(data.locatie)
   worksheet.addRow(docTitle)
   worksheet.addRow([])
   worksheet.addRow([])
-  worksheet.addRow(['Nr',`Data`,'Tip','Document', `Serie/Numar`, 'Descriere', 'Credit', 'Debit', 'Sold'])
+  worksheet.addRow(['Nr',`Data`,'Tip','Document', `Numar`, 'Credit', 'Debit', 'Sold', 'Descriere'])
     let totalIn = 0
     let totalOut = 0
   data.records.forEach((e, i) => {
@@ -32,11 +32,11 @@ const loc = await Locatie.findById(data.locatie)
         int = e.document.amount
         totalIn += int
     } else {
-        out = e.document.out
+        out = e.document.amount
         totalOut += out
     }
 
-    worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${e.description || ''}`, `${int}`, `${out}`, `${e.sold}`])
+    worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${int}`, `${out}`, `${e.sold}`, `${e.description || ''}`])
   })
 
   const footer =  worksheet.addRow(['Totaluri',``,'','', ``, '', `${totalIn}`, `${totalOut}`, `${data.sold}`])
@@ -46,6 +46,16 @@ const loc = await Locatie.findById(data.locatie)
   worksheet.mergeCells(1, 1, 1, 2); // Columns A–D
   worksheet.mergeCells(1, 3, 1, 6); // Columns E–F
   worksheet.mergeCells(fn, 1, fn, 6); 
+
+  worksheet.getColumn(1).width = 4;
+  worksheet.getColumn(2).width = 15; 
+  worksheet.getColumn(3).width = 10; 
+  worksheet.getColumn(4).width = 10; 
+  worksheet.getColumn(5).width = 10; 
+  worksheet.getColumn(6).width = 10; 
+  worksheet.getColumn(7).width = 10; 
+  worksheet.getColumn(8).width = 10; 
+  worksheet.getColumn(9).width = 20; 
 
 
 
