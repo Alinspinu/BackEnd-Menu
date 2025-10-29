@@ -2,7 +2,7 @@ const PDFDocument = require("pdfkit");
 
 const {round} = require('../../utils/functions');
 const invoice = require("../../models/office/invoice");
-const { width } = require("pdfkit/js/page");
+
 
 function createInfoice(invoice){
 
