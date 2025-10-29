@@ -29,6 +29,8 @@ shedules.forEach(s => {
     })
 })
 
+console.log('zile', days.length)
+console.log('utilizatori', users.length)
 
 const workbook = new ExcelJS.Workbook();
 
