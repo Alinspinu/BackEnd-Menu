@@ -71,6 +71,8 @@ const sheet = workbook.addWorksheet('Schedule');
 
       if (dayUser) {
         const wp = dayUser.workPeriod;
+        const startDate = new Date(wp.start);
+        const endDate = new Date(wp.end);
         const st = startDate.toLocaleTimeString('ro-RO', {
             timeZone: 'Europe/Bucharest',
             hour: '2-digit',
