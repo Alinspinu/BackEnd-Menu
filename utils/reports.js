@@ -891,6 +891,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
     for(let dbUser of dbUsers){
         const dbEmployee = dbUser.employee
+    if(dbEmployee.employeePosition) {
         const emplStartDate = new Date(dbEmployee.startDate).setHours(0,0,0,0)
         const repdate = new Date(dat).setHours(0,0,0,0)
         if(repdate >= emplStartDate){
@@ -924,6 +925,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 values.taxValue += dbEmpl.taxValue
             }
         }
+    } else {
+        console.log(dbEmployee.fullName)
+    }
     }
 
     //CALC IMPAIRMENTS
