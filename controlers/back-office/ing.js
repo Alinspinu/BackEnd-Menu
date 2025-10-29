@@ -25,14 +25,15 @@ module.exports.getGestReport = async(req, res) => {
 
   try{
 
-    const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice tva').lean()
-    const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }}).populate({path: 'suplier', select: 'name'}).lean()
-    const inventary = await Inventary.findById(inv).populate({path: 'ingredients.ing', select: 'sellPrice name tva'}).populate({path: 'locatie', select: 'bussinessName'})
+    const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice tva locatie').lean()
+    const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }})
+              .populate({path: 'suplier', select: 'name'})
+              .populate({path: 'locatie', select: 'bussinessName' }).lean()
     const orders = await Order.find({locatie: loc, salePoint: point, updatedAt: {$gte: startDate, $lte: endDate}, 'products.dep': 'marfa'}).lean() 
  
     const days = await createRG(start, end, nirs, ings, gest, orders, in0, in11, in21)
   
-    const buffer = await createExcelBuffer(days, inventary.locatie.bussinessName);
+    const buffer = await createExcelBuffer(days, nirs[0].locatie.bussinessName);
 
     // Set headers for file download
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
