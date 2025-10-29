@@ -8,13 +8,25 @@ const {normalizeText, round} = require('../functions')
 
 async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
 
-    const startDate = new Date(start).setHours(0,0,0,0)
-    const endDate = new Date(end).setHours(23,59,59, 9999)
+    // const startDate = new Date(start).setHours(0,0,0,0)
+    // const endDate = new Date(end).setHours(23,59,59, 9999)
     const days = getDaysBetween(start, end)
 
     let inv11Value = in11
     let inv21Value = in21
     let inv0Value = in0
+
+    totalIn0 = 0
+    totalIn11 = 0
+    totalIn21 = 0
+
+    totalOut0 = 0
+    totalOut11 = 0
+    totalOut21 = 0
+
+    totalOutBacsis = 0
+    totalOutSGR = 0
+
     for(let o of orders){
       const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
       if(day){
@@ -34,6 +46,8 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
           }
           day.entries.push(entry)
         }
+        totalOutBacsis += o.tips
+        totalOut0 += o.tips
       }
       for(let p of o.products){
           if(p.dep === 'marfa'){
@@ -59,11 +73,18 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
                         }
                         day.entries.push(entry)
                       }
-
+                      totalOutSGR += sgrTax
+                      totalOut0 += sgrTax
 
                     }
                     const price = round(((p.price * p.quantity) - p.discount)-sgrTax)
 
+                    if(p.tva === 11){
+                      totalOut11 += price
+                    }
+                    if(p.tva === 21){
+                      totalOut21 += price
+                    }
 
                     const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul' && e.tva === p.tva)
                     if(existingEntry){
@@ -98,7 +119,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
         if(day){
         for(let i of nir.ingredients){
           let tva = i.tva
-          if(i.invGestiune.toString() === gest || i.name === 'Taxa SGR'){
+          if(i.invGestiune.toString() === gest){
             if(i.ing.toString() === ing._id.toString()){
               if(tva === 0 && i.name !== 'Taxa SGR'){
                 const prod = await Product.findOne({'ings.ing': i.ing}).select('tva').lean()
@@ -110,6 +131,17 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
                     tva = sub.tva
                   }
                 }
+              }
+
+              if(tva === 0){
+                totalIn0 += (i.sellPrice * i.qty)
+              }
+              if(tva === 11){
+                totalIn11 += (i.sellPrice * i.qty)
+              }
+
+              if(tva === 21){
+                totalIn21 += (i.sellPrice * i.qty)
               }
             
                 const existingEntry = day.entries.find(e => e.docId === nir._id.toString() && e.tva === tva)
@@ -200,7 +232,18 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
       }
     }
 
-    return days
+    const totals = {
+      totalIn0: round(totalIn0),
+      totalIn11: round(totalIn11),
+      totalIn21: round(totalIn21),
+      totalOut0: round(totalOut0),
+      totalOut11: round(totalOut11),
+      totalOut21: round(totalOut21),
+      totalOutBacsis: round(totalOutBacsis),
+      totalOutSGR: round(totalOutSGR)
+    }
+
+    return {days, totals}
 }
 
 

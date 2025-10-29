@@ -4,7 +4,11 @@ const {formatedDateToShow, formatDateDMY}  = require('../../utils/functions')
 
 async function createExcelBuffer(data, locatie) {
 
-const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formatedDateToShow(data[data.length - 1].date).split('ora')[0]}`
+
+    const days = data.days
+    const totals = data.totals
+
+const period = `${formatedDateToShow(days[0].date).split('ora')[0]} - ${formatedDateToShow(days[days.length - 1].date).split('ora')[0]}`
 
   const workbook = new ExcelJS.Workbook();
 
@@ -16,7 +20,7 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
         worksheet.addRow([])
         worksheet.addRow([])
 
-        data.forEach((el, i) => {
+        days.forEach((el, i) => {
 
             const d = formatDateDMY(el.date)
 
@@ -95,6 +99,29 @@ const period = `${formatedDateToShow(data[0].date).split('ora')[0]} - ${formated
            worksheet.mergeCells(num, 1, num, 7);
         
         })
+
+
+        const to =  worksheet.addRow(['', 'Totaluri', '', `${totals.tottalIn11}`, `${totals.totalOut11}`, `${totals.totalIn21}`, `${totals.totalOut21}`, `${totals.totalIn0}`, `${totals.totalOut0}` ])
+
+        const tnum = to.number
+
+        worksheet.mergeCells(tnum, 2, tnum, 3)
+
+        const emptRow =  worksheet.addRow([])
+        const num = emptRow.number
+        worksheet.mergeCells(num, 1, num, 7);
+
+        const bc = worksheet.addRow(['', 'Bacsis', '', '', '', '', '', '', `${totals.totalOutBacsis}`])
+        const sg  = worksheet.addRow(['', 'TAXA SGR', '', '', '', '', '', '', `${totals.totalOutSGR}`])
+
+        const bnum = bc.number
+        const snum = sc.number
+        worksheet.mergeCells(bnum, 2, bnum, 3);
+        worksheet.mergeCells(bnum, 4, bnum, 8);
+        worksheet.mergeCells(snum, 2, snum, 3);
+        worksheet.mergeCells(snum, 4, snum, 8);
+
+
    
         worksheet.getRow(1).eachCell((cell)=>{
             cell.font = {
