@@ -30,7 +30,7 @@ const loc = await Locatie.findById(data.locatie)
     worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${round(int)}`, `${ round(out)}`, `${ suplier ? e.sold : -e.sold}`, `${e.description || ''}`])
   })
 
-  const footer =  worksheet.addRow(['Totaluri',``,'','', ``, `${totalIn}`, `${totalOut}`, `${suplier ? data.sold : -data.sold}`,''])
+  const footer =  worksheet.addRow(['Totaluri',``,'','', ``, `${round(totalIn)}`, `${round(totalOut)}`, `${suplier ? data.sold : -data.sold}`,''])
 
   footer.eachCell((cell) => {
         cell.font = {
@@ -65,7 +65,7 @@ const loc = await Locatie.findById(data.locatie)
   worksheet.getColumn(3).width = 10; 
   worksheet.getColumn(4).width = 12; 
   worksheet.getColumn(5).width = 12; 
-  worksheet.getColumn(6).width = 13; 
+  worksheet.getColumn(6).width = 18; 
   worksheet.getColumn(7).width = 13; 
   worksheet.getColumn(8).width = 13; 
   worksheet.getColumn(9).width = 22; 
