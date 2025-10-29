@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const {getNowShedule} = require('../../utils/functions');
 const salePoint = require('../../models/utils/sale-point');
 const EmployeePosition = require('../../models/users/position')
+const {createExcelBufferUsersSheet} = require('../../controlers/print/shedule-sheet-xls')
 
 
 
@@ -113,9 +114,13 @@ module.exports.addShedule = async (req, res, next) => {
         const shedules = await Shedule.find({locatie: loc, salePoint: point, 'days.date': {$gte: st, $lte: en}})
                     .populate({path: 'days.users.employee', select: 'employee.fullName'})
 
-        res.status(200).json(shedules)
+     const buffer = await createExcelBufferUsersSheet(shedules, st, en);
+ 
+     // Set headers for file download
+     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+     res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
 
-
+     res.send(Buffer.from(buffer));
     } catch(e){
         console.log(e)
         res.status(500).json(e)
