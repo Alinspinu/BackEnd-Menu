@@ -119,7 +119,7 @@ const sheet = workbook.addWorksheet('Condica de  prezenta');
     const cell = row.getCell(1);
     cell.border = {
       ...cell.border, // keep existing borders (if any)
-      right: { style: 'medium' }, // thicker line
+      right: { style: 'medium',color: { argb: 'FFCCCCCC' } }, // thicker line
     };
   });
 
@@ -129,7 +129,7 @@ const sheet = workbook.addWorksheet('Condica de  prezenta');
       const cell = row.getCell(rightColIndex);
       cell.border = {
         ...cell.border, // keep existing borders (if any)
-        right: { style: 'medium' }, // thicker line
+        right: { style: 'medium', color: { argb: 'FFCCCCCC' } }, // thicker line
       };
     });
   });
