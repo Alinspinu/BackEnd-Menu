@@ -44,8 +44,15 @@ const sheet = workbook.addWorksheet('Schedule');
     headerRow2.push('Intrare', 'Iesire', 'Ore');
   });
 
+  headerRow1.push('Total Hours', 'Signature');
+  headerRow2.push('', '');
+
+
   sheet.addRow(headerRow1);
   sheet.addRow(headerRow2);
+
+
+
 
   // ----- 2️⃣ MERGE DATE CELLS (Row 1) -----
   let colIndex = 2; // Start from 2 (because 1 = User)
@@ -54,8 +61,11 @@ const sheet = workbook.addWorksheet('Schedule');
     colIndex += 3;
   });
 
+  sheet.mergeCells(1, colIndex, 2, colIndex); // total hours
+  sheet.mergeCells(1, colIndex + 1, 2, colIndex + 1); // signature
+
   // Style headers
-  sheet.getRow(1).font = { bold: true, size: 12 };
+  sheet.getRow(1).font = { bold: true, size: 10 };
   sheet.getRow(2).font = { bold: true };
   sheet.getRow(1).alignment = { horizontal: 'center' };
   sheet.getRow(2).alignment = { horizontal: 'center' };
@@ -95,7 +105,7 @@ const sheet = workbook.addWorksheet('Schedule');
 
   // ----- 4️⃣ FORMAT COLUMNS -----
   sheet.columns.forEach((col) => {
-    col.width = 5;
+    col.width = 5.5;
     col.alignment = { horizontal: 'center', vertical: 'middle' };
   });
 
