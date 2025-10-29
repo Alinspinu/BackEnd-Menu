@@ -1,6 +1,7 @@
 // utils/exportExcel.js
 const ExcelJS = require("exceljs");
-const {formatedDateToShow, formatDateDMY}  = require('../../utils/functions')
+const {formatedDateToShow, formatDateDMY}  = require('../../utils/functions');
+const { batch } = require("googleapis/build/src/apis/batch");
 
 async function createExcelBuffer(data, locatie) {
 
@@ -101,7 +102,7 @@ const period = `${formatedDateToShow(days[0].date).split('ora')[0]} - ${formated
         })
 
 
-        const to =  worksheet.addRow(['', 'Totaluri', '', `${totals.tottalIn11}`, `${totals.totalOut11}`, `${totals.totalIn21}`, `${totals.totalOut21}`, `${totals.totalIn0}`, `${totals.totalOut0}` ])
+        const to =  worksheet.addRow(['', 'Totaluri', '', `${totals.totalIn11}`, `${totals.totalOut11}`, `${totals.totalIn21}`, `${totals.totalOut21}`, `${totals.totalIn0}`, `${totals.totalOut0}` ])
 
         const tnum = to.number
 
@@ -116,10 +117,29 @@ const period = `${formatedDateToShow(days[0].date).split('ora')[0]} - ${formated
 
         const bnum = bc.number
         const snum = sg.number
-        worksheet.mergeCells(bnum, 2, bnum, 3);
-        worksheet.mergeCells(bnum, 4, bnum, 8);
-        worksheet.mergeCells(snum, 2, snum, 3);
-        worksheet.mergeCells(snum, 4, snum, 8);
+        worksheet.mergeCells(bnum, 2, bnum, 8);
+        // worksheet.mergeCells(bnum, 4, bnum, 8);
+        worksheet.mergeCells(snum, 2, snum, 8);
+        // worksheet.mergeCells(snum, 4, snum, 8);
+
+        to.eachCell((cell) => {
+            cell.font = {
+            size: 14,
+            bold: true,
+            };
+        });
+        batch.eachCell((cell) => {
+            cell.font = {
+            size: 13,
+            bold: true,
+            };
+        });
+        sc.eachCell((cell) => {
+            cell.font = {
+            size: 13,
+            bold: true,
+            };
+        });
 
 
    
