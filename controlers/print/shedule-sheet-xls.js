@@ -17,10 +17,13 @@ shedules.forEach(s => {
             days.push(d)
         }
         d.users.forEach(u => {
-            console.log(u)
-            const us = users.find(uu => uu.employee.employee.fullName === u.employee.employee.fullName)
-            if(!us){
-                users.push(us)
+            if(u.employee && u.employee.employee){
+                const us = users.find(uu => uu.employee.employee.fullName === u.employee.employee.fullName)
+                if(!us){
+                    users.push(us)
+                }
+            } else {
+                console.log(u)
             }
         })
     })
