@@ -8,7 +8,6 @@ const {formatedDateToShow, round} = require('../../utils/functions')
 
 async function createExcelBufferUsersSheet(shedules, start, end){
 
-console.log(shedules)
 const days = []
 const users = []
 shedules.forEach(s => {
@@ -18,6 +17,7 @@ shedules.forEach(s => {
             days.push(d)
         }
         d.users.forEach(u => {
+            console.log(u)
             const us = users.find(uu => uu.employee.employee.fullName === u.employee.employee.fullName)
             if(!us){
                 users.push(us)
