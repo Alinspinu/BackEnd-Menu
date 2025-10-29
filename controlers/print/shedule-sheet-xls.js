@@ -39,6 +39,8 @@ const columns = Object.keys(days[0]).map(key => ({
   width: 15
 }));
 
+console.log(columns)
+
 sheet.columns = columns;
 
 // Add rows from your data array
