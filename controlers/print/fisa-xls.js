@@ -36,7 +36,7 @@ const loc = await Locatie.findById(data.locatie)
         totalOut += out
     }
 
-    worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${e.description}`, `${int}`, `${out}`, `${e.sold}`])
+    worksheet.addRow([`${i+1}`,`${formatedDateToShow(e.date).split('ora')[0]}`,`${e.typeOf}`,`${e.document.typeOf}`, `${e.document.docId}`, `${e.description || ''}`, `${int}`, `${out}`, `${e.sold}`])
   })
 
   const footer =  worksheet.addRow(['Totaluri',``,'','', ``, '', `${totalIn}`, `${totalOut}`, `${data.sold}`])
