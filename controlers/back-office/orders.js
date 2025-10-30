@@ -33,7 +33,7 @@ module.exports.getOrder = async (req, res, next) => {
             .populate({path: 'products.productId', select: 'gestiune'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
-        await modyfyOrdersProducts(orders)
+        // await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -43,7 +43,7 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: start, $lt: end}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}, salePoint: point})
-        console.log(delProds)
+        // console.log(delProds)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     if(!day && !end && !start) {
