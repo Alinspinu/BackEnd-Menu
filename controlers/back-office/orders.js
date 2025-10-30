@@ -39,7 +39,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -55,7 +55,7 @@ module.exports.getOrder = async (req, res, next) => {
                     .populate({path : 'products.gestiune', select: 'name'})
                     .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}, salePoint: point}).lean()
-        // console.log(delProds)
+        console.log(delProds)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     if(!day && !end && !start) {
@@ -82,7 +82,7 @@ async function modyfyOrdersProducts(orders){
     const promises = orders.map(async o => {
         for(let p of o.products){
             const name = p.name.split('-')[0]
-            const pp = await Product.findOne({name: name}).select('name').lean()
+            const pp = await Product.findOne({name: name}).select('name gestiune departament').lean()
             if(pp){
                 p.productId = pp._id
                 p.gestiune = pp.gestiune
