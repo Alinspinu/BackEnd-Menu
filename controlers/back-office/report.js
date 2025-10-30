@@ -374,6 +374,14 @@ async function createReport(reports){
         }
 
     report.profit = round(totalIncome - (report.ingsValue + report.workValue.tax + report.workValue.total + report.totalSpendings + report.impairment.total))
+
+    console.log('PROFITT', report.profit)
+    console.log('TOTAL INCOME', totalIncome)
+    console.log('INGS VALUE', report.ingsValue)
+    console.log('WORK TAX', report.workValue.tax)
+    console.log('WORK TOTAL', report.workValue.total)
+    console.log('TOTAL SPENDINGS', report.totalSpendings)
+    console.log('DEPRECIERI', report.impairment.total)
     // console.log('total gestIncome', report.totalGestIncome)
     // console.log('total spendings', report.totalSpendings)
     return report
