@@ -37,7 +37,7 @@ module.exports.sendEmployees = async (req, res) => {
     try{
         const user = await User.find({locatie: loc, client: false, 'employee.active': true}).select('-password').populate({path: 'employee.employeePosition'});
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
-        // await modifyUsers(sortedUsers)
+        await modifyUsers(sortedUsers)
         res.status(200).json(sortedUsers)
     } catch(err) {
         console.log(err)
@@ -47,11 +47,13 @@ module.exports.sendEmployees = async (req, res) => {
 
 async function modifyUsers(users){
     for(let u of users){
-        const tax = u.employee.salary.onPaper.salary * 0.41457
-        u.employee.salary.onPaper.tax = tax
+        const hourTax = u.employee.salary.onPaper.tax / u.employee.salary.norm
+        for(let l of u.workLog){
+            l.tax = (hours * hourTax)
+        }
 
         const us = await u.save()
-        console.log(us.employee.fullName, '/ onPaper ', us.employee.salary.onPaper.salary, '/ tax ', us.employee.salary.onPaper.tax)
+        console.log(us.name, ' A FOST ACTUALIZAT ')
     }
 }
 
