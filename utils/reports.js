@@ -218,7 +218,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const daysNumber = getDaysInMonthFromDate(new Date(dat))
     const startTime = new Date(date).setUTCHours(0,0,0,0)
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
-
     const departaments = await Dep.find({locatie: loc, salePoint: point})
     const gests = await Gestiune.find({locatie: loc, salePoint: point})
     const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lte: endTime}, tip: 'expense'}).lean()
