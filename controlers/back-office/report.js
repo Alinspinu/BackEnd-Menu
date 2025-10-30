@@ -241,27 +241,16 @@ async function createReport(reports){
         users: [],
     }
     for(const rep of reports) {
-        report.cashIn += rep.cashIn
-        report.vatValue += rep.vatValue
-        report.cashInNoVat += rep.cashInNoVat
-        report.ingsValue += rep.ingsValue
-        report.rentValue += rep.rentValue
-        report.impairment.total += rep.impairment.total
-        report.workValue.total += rep.workValue.total
-        report.workValue.tax += rep.workValue.tax
-        report.totalSpendings +=  rep.totalSpendings
-        report.totalGestIncome +=  rep.totalGestIncome
-        report.profit += rep.profit
-        // report.cashIn = round(report.cashIn + rep.cashIn)
-        // report.vatValue = round(report.vatValue + rep.vatValue)
-        // report.cashInNoVat = round(report.cashInNoVat + rep.cashInNoVat)
-        // report.ingsValue = round(report.ingsValue + rep.ingsValue)
-        // report.rentValue = round(report.rentValue + rep.rentValue)
-        // report.impairment.total = round(report.impairment.total + rep.impairment.total)
-        // report.workValue.total = round(report.workValue.total + rep.workValue.total)
-        // report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
-        // report.totalSpendings = round(report.totalSpendings +  rep.totalSpendings)
-        // report.totalGestIncome = round(report.totalGestIncome +  rep.totalGestIncome)
+        report.cashIn = round(report.cashIn + rep.cashIn)
+        report.vatValue = round(report.vatValue + rep.vatValue)
+        report.cashInNoVat = round(report.cashInNoVat + rep.cashInNoVat)
+        report.ingsValue = round(report.ingsValue + rep.ingsValue)
+        report.rentValue = round(report.rentValue + rep.rentValue)
+        report.impairment.total = round(report.impairment.total + rep.impairment.total)
+        report.workValue.total = round(report.workValue.total + rep.workValue.total)
+        report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
+        report.totalSpendings = round(report.totalSpendings +  rep.totalSpendings)
+        report.totalGestIncome = round(report.totalGestIncome +  rep.totalGestIncome)
         // report.profit = round(report.profit +  rep.profit)
         // console.log('spendings ', report.totalSpendings )
         // console.log('gestIncome ', report.totalGestIncome )
@@ -375,6 +364,8 @@ async function createReport(reports){
         }
 
     }
+
+    report.profit = round(report.totalIncome - (report.ingsValue + report.workValue.tax + report.workValue.total + report.totalSpendings + report.impairment.total))
     // console.log('total gestIncome', report.totalGestIncome)
     // console.log('total spendings', report.totalSpendings)
     return report
