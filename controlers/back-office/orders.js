@@ -30,10 +30,10 @@ module.exports.getOrder = async (req, res, next) => {
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
-            // .populate({path: 'products.ings.ing', select: 'invGestiune'})
+            .populate({path: 'products.productId', select: 'gestiune'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).populate({path: 'masaRest', select: 'name index'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -63,13 +63,7 @@ module.exports.getOrder = async (req, res, next) => {
 async function modyfyOrdersProducts(orders){
     const promises = orders.map(async o => {
         for(let p of o.products){
-            if(!p.productId){
-                const n = p.name.split('-')[0]
-                const product = await Product.findOne({name: n}).select('name').lean()
-                if(product){
-                    p.productId = product._id
-                }
-            }
+             p.gestiune = p.productId.gestiune
         }
         return Order.findByIdAndUpdate(o._id, o, {new: true})
     })
@@ -77,7 +71,7 @@ async function modyfyOrdersProducts(orders){
 
    for(let o of up){
     for(let p of o.products){
-        console.log(p.name, 'product id ', p.productId)
+        console.log(p.name, 'product gestiune ', p.gestiune)
     }
    }
 }
