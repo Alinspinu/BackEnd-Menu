@@ -365,7 +365,15 @@ async function createReport(reports){
 
     }
 
-    report.profit = round(report.totalIncome - (report.ingsValue + report.workValue.tax + report.workValue.total + report.totalSpendings + report.impairment.total))
+        let totalIncome = 0
+    
+        if(report.spendingsDeps.length){
+          report.departaments.forEach(d => {
+              totalIncome += d.totalOut
+          })
+        }
+
+    report.profit = round(totalIncome - (report.ingsValue + report.workValue.tax + report.workValue.total + report.totalSpendings + report.impairment.total))
     // console.log('total gestIncome', report.totalGestIncome)
     // console.log('total spendings', report.totalSpendings)
     return report
