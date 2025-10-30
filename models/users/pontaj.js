@@ -13,6 +13,7 @@ const PontajSchema = new Schema({
                 {
                     hours: Number,
                     value: Number,
+                    tax: Number,
                     position: String,
                     employeePosition: {
                         type: Schema.Types.ObjectId,

@@ -162,6 +162,7 @@ const UserTrueSchema = new Schema({
                 hours: Number,
                 earnd: Number,
                 position: String,
+                tax: Number,
                 employeePosition: {
                     type: Schema.Types.ObjectId,
                     ref: 'EmployeePosition'
