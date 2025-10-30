@@ -197,6 +197,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
                                             }
                                         ]
                                     })
+                                    .populate({path : 'products.gestiune', select: 'name'})
                                     .populate({
                                         path: 'products.toppings.ing', 
                                         select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
