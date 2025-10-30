@@ -256,9 +256,9 @@ async function updateUsersWorkLog(ponts){
         if(u.employee){
           const us = await User.findById(u.employee).select('employee.salary').lean()
           if(us?.employee){
-            u.tax = ((us.employee.salary.onPaper.tax / us.employee.salary.norm) * u.hours) 
-            d.taxValue += u.tax
-            d.workValue += u.value
+            u.tax = ((us.employee.salary.onPaper.tax / us.employee.salary.norm) * u.hours) || 0
+            d.taxValue += u.tax || 0
+            d.workValue += u.value || 0
           }
         }
       }
