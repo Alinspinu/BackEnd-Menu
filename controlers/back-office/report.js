@@ -251,7 +251,7 @@ async function createReport(reports){
         report.workValue.tax = round(report.workValue.tax + rep.workValue.tax)
         report.totalSpendings = round(report.totalSpendings +  rep.totalSpendings)
         report.totalGestIncome = round(report.totalGestIncome +  rep.totalGestIncome)
-        // report.profit = round(report.profit +  rep.profit)
+        report.profit = round(report.profit +  rep.profit)
         // console.log('spendings ', report.totalSpendings )
         // console.log('gestIncome ', report.totalGestIncome )
 
@@ -372,16 +372,6 @@ async function createReport(reports){
               totalIncome += d.totalOut
           })
         }
-
-    report.profit = round(totalIncome - (report.ingsValue + report.workValue.tax + report.workValue.total + report.totalSpendings + report.impairment.total))
-
-    console.log('PROFITT', report.profit)
-    console.log('TOTAL INCOME', totalIncome)
-    console.log('INGS VALUE', report.ingsValue)
-    console.log('WORK TAX', report.workValue.tax)
-    console.log('WORK TOTAL', report.workValue.total)
-    console.log('TOTAL SPENDINGS', report.totalSpendings)
-    console.log('DEPRECIERI', report.impairment.total)
     // console.log('total gestIncome', report.totalGestIncome)
     // console.log('total spendings', report.totalSpendings)
     return report

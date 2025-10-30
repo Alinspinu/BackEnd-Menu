@@ -222,7 +222,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const gests = await Gestiune.find({locatie: loc, salePoint: point})
 
     const entryEndTime = endTime - (3*60*60*1000)
-    
+
     const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lt: entryEndTime}, tip: 'expense'}).lean()
     const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee').lean()
     const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'}).lean()
@@ -1055,7 +1055,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         rentValue: round(values.dayRent),
         totalSpendings: round(values.totalSpendings),
         totalGestIncome: round(values.totalIncome),
-        profit: round(values.totalIncome - (values.totalIngredients + values.workValueTotal + values.taxValue + values.totalSpendings + values.totalDep)),
+        profit: round(values.totalIncome - (values.totalIngredients + values.workValueTotal + values.taxValue + values.totalSpendings + values.totalDep + values.diverse)),
         diverse: {
             total: round(values.diverse),
             entry: entryy
