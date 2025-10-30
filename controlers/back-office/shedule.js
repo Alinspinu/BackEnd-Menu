@@ -305,7 +305,7 @@ async function updateShedules(sh, loc) {
 }
 
 module.exports.updateShedule = async (req, res, next) => {
-    const {sheduleId, day, user, month, dayValue, loc, point} = req.body
+    const {sheduleId, day, user, month, dayValue, taxValue, loc, point} = req.body
     try{
         const pontaj = await Pontaj.findOne({month: month, locatie: loc, salePoint: point})
         const shedule = await Shedule.findById(sheduleId).populate({path: 'days.users.employee', select: 'employee.fullName'})
@@ -321,6 +321,7 @@ module.exports.updateShedule = async (req, res, next) => {
         if(dayPontUserIndex !== -1){
             pontaj.days[pontDayIndex].users[dayPontUserIndex].hours = user.workPeriod.hours
             pontaj.days[pontDayIndex].users[dayPontUserIndex].value = dayValue
+            pontaj.days[pontDayIndex].users[dayPontUserIndex].tax = taxValue
             pontaj.days[pontDayIndex].users[dayPontUserIndex].position =  user.workPeriod.position,
             pontaj.days[pontDayIndex].users[dayPontUserIndex].employeePosition = user.workPeriod.employeePosition,
             pontaj.days[pontDayIndex].users[dayPontUserIndex].concediu = user.workPeriod.concediu
@@ -330,6 +331,7 @@ module.exports.updateShedule = async (req, res, next) => {
             const userToPush = {
                 hours: user.workPeriod.hours,
                 value: dayValue,
+                tax: taxValue,
                 employee: user.employee,
                 position: user.workPeriod.position,
                 employeePosition: user.workPeriod.employeePosition,
