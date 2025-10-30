@@ -233,7 +233,7 @@ module.exports.getPontaj = async (req, res, next) => {
         }
         if(pont === 'all'){
             const ponts = await Pontaj.find({locatie: loc, salePoint: point}).populate({path: 'days.users.employeePosition'})
-            // await updateUsersWorkLog(ponts)
+            await updateUsersWorkLog(ponts)
             res.status(200).json(ponts)
         }
         if(month){
@@ -262,7 +262,7 @@ async function updateUsersWorkLog(ponts){
 
     const po = await p.save()
     for(let d of po.days){
-      console.log(d.date, + ' workTotal ', d.workValue, ' taxTotal ', d.taxValue)
+      console.log(d.date, ' workTotal ', d.workValue, ' taxTotal ', d.taxValue)
     }
   }
 
