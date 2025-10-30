@@ -78,7 +78,7 @@ async function modyfyOrdersProducts(orders){
     const promises = orders.map(async o => {
         for(let p of o.products){
              p.gestiune = p.productId.gestiune
-             p.detartament = p.productId.departament
+             p.departament = p.productId.departament
         }
         return Order.findByIdAndUpdate(o._id, o, {new: true})
     })
