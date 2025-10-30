@@ -83,7 +83,7 @@ async function modyfyOrdersProducts(orders){
         const p = o.products.find(pr => !pr.productId)
         if(p){
             console.log('produs gasit fara id ', p.name, ' ', o.createdAt)
-            const prd = await Product.findOne({name: p.name.split('-')[0]}).select('name').lean()
+            const prd = await Product.findOne({name: 'Bautura ovaz Roa'}).select('name').lean()
             if(prd){
                 p.productId = prd._id
                 console.log('produs la care i-a fost adaugat Id ', p.productId)
