@@ -79,26 +79,40 @@ module.exports.getOrder = async (req, res, next) => {
 }
 
 async function modyfyOrdersProducts(orders){
-    const promises = orders.map(async o => {
-        for(let p of o.products){
-            if(p){
-                if(p.productId){
-                    p.gestiune = p.productId.gestiune
-                    p.departament = p.productId.departament
-                } else {
-                    console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
-                }
+    for(let o of orders){
+        const p = o.products.find(pr => !pr.productId)
+        if(p){
+            console.log('produs gasit fara id ', p.name)
+            const prd = await Product.findOne({name: p.name.split('-')[0]}).select('name').lean()
+            if(prd){
+                p.productId = prd._id
+                console.log('produs la care i-a fost adaugat Id ', p.productId)
+                await o.save()
+            } else {
+                console.log('NU AM GASIT PRODUS PARINTE ', p.name )
             }
         }
-        return Order.findByIdAndUpdate(o._id, o, {new: true})
-    })
-   const up =  await Promise.all(promises);
-
-   for(let o of up){
-    for(let p of o.products){
-        console.log(p.name, 'product gestiune ', p.gestiune, ' departament ', p.departament)
     }
-   }
+//     const promises = orders.map(async o => {
+//         for(let p of o.products){
+//             if(p){
+//                 if(p.productId){
+//                     p.gestiune = p.productId.gestiune
+//                     p.departament = p.productId.departament
+//                 } else {
+//                     console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
+//                 }
+//             }
+//         }
+//         return Order.findByIdAndUpdate(o._id, o, {new: true})
+//     })
+//    const up =  await Promise.all(promises);
+
+//    for(let o of up){
+//     for(let p of o.products){
+//         console.log(p.name, 'product gestiune ', p.gestiune, ' departament ', p.departament)
+//     }
+//    }
 }
 
 
