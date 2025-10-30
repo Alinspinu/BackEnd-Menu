@@ -48,7 +48,7 @@ module.exports.sendEmployees = async (req, res) => {
 async function modifyUsers(users){
     for(let u of users){
         const hourTax = u.employee.salary.onPaper.tax / u.employee.salary.norm
-        for(let l of u.workLog){
+        for(let l of u.employee.workLog){
             l.tax = (hours * hourTax)
         }
 
