@@ -33,13 +33,13 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'})
-                        // .populate({path: 'products.productId', select: 'departament gestiune'})
+                        .populate({path: 'products.productId', select: 'departament gestiune'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'})
-        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point})
-        // await modyfyOrdersProducts(orders)
+                        .populate({path : 'products.departament', select: 'name'}).lean()
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
+        await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -49,12 +49,12 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: start, $lt: end}, status: 'done', salePoint: point})
                     .populate({path: 'masaRest', select: 'name index'})
                     .populate({path : 'products.gestiune', select: 'name'})
-                    .populate({path : 'products.departament', select: 'name'})
-        const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
+                    .populate({path : 'products.departament', select: 'name'}).lean()
+        const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point}).lean()
                     .populate({path: 'masaRest', select: 'name index'})
                     .populate({path : 'products.gestiune', select: 'name'})
-                    .populate({path : 'products.departament', select: 'name'})
-        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}, salePoint: point})
+                    .populate({path : 'products.departament', select: 'name'}).lean()
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}, salePoint: point}).lean()
         // console.log(delProds)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
@@ -63,13 +63,12 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'})
+                        .populate({path : 'products.departament', select: 'name'}).lean()
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'})
-        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point})
-        console.log(orders.length)
+                        .populate({path : 'products.departament', select: 'name'}).lean()
+        const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point}).lean()
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     try{
@@ -79,20 +78,7 @@ module.exports.getOrder = async (req, res, next) => {
 }
 
 async function modyfyOrdersProducts(orders){
-    // for(let o of orders){
-    //     const p = o.products.find(pr => !pr.productId)
-    //     if(p){
-    //         console.log('produs gasit fara id ', p.name, ' ', o.createdAt)
-    //         const prd = await Product.findOne({name: 'Bautura ovaz Roa'}).select('name').lean()
-    //         if(prd){
-    //             p.productId = prd._id
-    //             console.log('produs la care i-a fost adaugat Id ', p.productId)
-    //             await o.save()
-    //         } else {
-    //             console.log('NU AM GASIT PRODUS PARINTE ', p.name )
-    //         }
-    //     }
-    // }
+
     const promises = orders.map(async o => {
         for(let p of o.products){
             if(p){
