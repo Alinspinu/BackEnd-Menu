@@ -220,7 +220,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const endTime = new Date(date).setUTCHours(23, 59, 59, 9999)
     const departaments = await Dep.find({locatie: loc, salePoint: point})
     const gests = await Gestiune.find({locatie: loc, salePoint: point})
-    const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lt: endTime}, tip: 'expense'}).lean()
+
+    const entryEndTime = endTime - (3*60*60*1000)
+    
+    const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lt: entryEndTime}, tip: 'expense'}).lean()
     const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee').lean()
     const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'}).lean()
     const dbUsers = await User.find({locatie: loc, client: false, 'employee.salePoint': point, 'employee.salary.inHeand': {$gte: 0} }).select('employee').populate({path: 'employee.employeePosition'}).lean()
