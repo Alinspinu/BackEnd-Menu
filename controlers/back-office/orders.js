@@ -32,14 +32,14 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'}).lean()
+                        .populate({path : 'products.departament', select: 'name'})
                         // .populate({path: 'products.productId', select: 'departament gestiune'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -81,14 +81,22 @@ async function modyfyOrdersProducts(orders){
 
     const promises = orders.map(async o => {
         for(let p of o.products){
-            if(p){
-                if(p.productId){
-                    p.gestiune = p.productId.gestiune
-                    p.departament = p.productId.departament
-                } else {
-                    console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
-                }
+            const name = p.name.split('-')[0]
+            const pp = await Product.findOne({name: name}).select('name').lean()
+            if(pp){
+                p.productId = pp._id
+                p.gestiune = pp.gestiune
+                p.departament = pp.departament
+
             }
+            // if(p){
+            //     if(p.productId){
+            //         p.gestiune = p.productId.gestiune
+            //         p.departament = p.productId.departament
+            //     } else {
+            //         console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
+            //     }
+            // }
         }
         return Order.findByIdAndUpdate(o._id, o, {new: true})
     })
@@ -96,7 +104,7 @@ async function modyfyOrdersProducts(orders){
 
    for(let o of up){
     for(let p of o.products){
-        console.log(p.name, 'product gestiune ', p.gestiune, ' departament ', p.departament)
+        console.log(p.name, 'product gestiune ', p.gestiune, ' departament ', p.departament, ' product ID ', p.productId)
     }
    }
 }
