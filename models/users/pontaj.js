@@ -29,6 +29,7 @@ const PontajSchema = new Schema({
                 }
             ],
             workValue: Number,
+            taxValue: Number
 
         }
     ],
@@ -66,6 +67,7 @@ const PontajSchema = new Schema({
     },
     month: String,
     workValue: Number,
+    taxValue: Number,
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
