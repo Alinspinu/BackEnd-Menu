@@ -81,8 +81,14 @@ module.exports.getOrder = async (req, res, next) => {
 async function modyfyOrdersProducts(orders){
     const promises = orders.map(async o => {
         for(let p of o.products){
-             p.gestiune = p.productId.gestiune
-             p.departament = p.productId.departament
+            if(p){
+                if(p.productId){
+                    p.gestiune = p.productId.gestiune
+                    p.departament = p.productId.departament
+                } else {
+                    console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
+                }
+            }
         }
         return Order.findByIdAndUpdate(o._id, o, {new: true})
     })
