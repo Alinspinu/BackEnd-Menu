@@ -255,7 +255,7 @@ async function updateUsersWorkLog(ponts){
       for(let u of d.users){
         if(u.employee){
           const us = await User.findById(u.employee).select('employee.salary').lean()
-          if(us.employee){
+          if(us?.employee){
             u.tax = ((us.employee.salary.onPaper.tax / us.employee.salary.norm) * u.hours) 
             d.taxValue += u.tax
             d.workValue += u.value
