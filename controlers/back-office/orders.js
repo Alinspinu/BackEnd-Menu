@@ -82,7 +82,7 @@ async function modyfyOrdersProducts(orders){
     for(let o of orders){
         const p = o.products.find(pr => !pr.productId)
         if(p){
-            console.log('produs gasit fara id ', p.name)
+            console.log('produs gasit fara id ', p.name, ' ', o.createdAt)
             const prd = await Product.findOne({name: p.name.split('-')[0]}).select('name').lean()
             if(prd){
                 p.productId = prd._id
