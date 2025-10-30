@@ -132,7 +132,7 @@ module.exports.getReportsDates = async (req, res) => {
 module.exports.getAllReports = async(req, res, next) => {
     try{
         const {loc, point, limit = 30} = req.query
-        const reports = await Report.find({locatie: loc, salePoint: point, period: { $exists: false }}).sort({day: -1})
+        const reports = await Report.find({locatie: loc, salePoint: point, status: 'new', period: { $exists: false }}).sort({day: -1})
         res.status(200).json(reports)
     } catch(err) {
         console.log(err)
