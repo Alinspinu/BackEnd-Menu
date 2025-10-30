@@ -205,6 +205,7 @@ async function createReport(reports){
     reports.length === 1 ? period = start : period = `${start} -- ${end}`
     const lastReport = reports[reports.length -1]
     const report = {
+        status: 'new',
         period: period,
         reports: reports,
         salePoint: lastReport.salePoint,
