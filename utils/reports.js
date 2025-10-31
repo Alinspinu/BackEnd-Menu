@@ -838,6 +838,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         return docDate === dayDate
     })
     workDays.forEach(day => {
+        consoel.log(day)
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
         day.users.forEach(user => {
             if(user.employee.employee.fullName === 'Miron Elvis'){
