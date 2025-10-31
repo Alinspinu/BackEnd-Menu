@@ -304,36 +304,6 @@ module.exports.getShedules = async (req, res, next) => {
 
 
 
-
-// async function updateShedules(sh, loc) {
-//       try{
-//         const positions = await EmployeePosition.find({locatie: loc})
-//         // for(let sh of shedules){
-//           for(let d of sh.days){
-//             for( let u of d.users){
-//               if(u){
-//                 if(!u.employeePosition){
-//                   const p = positions.find(po => po.name === u.position)
-//                   if(p) {
-//                     u.employeePosition = p._id
-//                     console.log('POZITIE GASITA ' + u.employee.fullName + ' ' + u.employeePosition)
-//                   } else {
-//                     console.log('pozitie negasita ' +  u.employee.fullName + ' ' + u.position)
-//                   }
-//                 }
-//               }
-//             }
-//           }
-//           await sh.save()
-//           console.log('*************************************SHEDULE SAVED **************************************')
-//         // }
-    
-//       } catch(err){
-//         console.log(err)
-//       }
-
-// }
-
 module.exports.updateShedule = async (req, res, next) => {
     const {sheduleId, day, user, month, dayValue, taxValue, loc, point} = req.body
     try{
