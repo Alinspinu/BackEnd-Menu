@@ -843,46 +843,50 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         for(let user of day.users){
             
             if(user.employee){
-                const inHeand = user.employee.employee.salary.inHeand
-                const onPaper = user.employee.employee.salary.onPaper.salary
-                const cass = (onPaper * 0.25) + (onPaper * 0.1)
-                const tax = (onPaper - cass) * 0.1
-                const employeerTax = onPaper * 0.0225
-                const baseTax = (cass + tax + employeerTax)
-                const employee = {
-                    name: user.employee.employee.fullName,
-                    hours: user.hours,
-                    position: user.position,
-                    monthHours: user.employee.employee.salary.norm,
-                    baseIncome: round((user.value / user.hours) * user.employee.employee.norm),
-                    hourIncome: user.value / user.hours,
-                    totalIncome: user.employee.employee.salary.fix ? 0 : user.value,
-                    bonus: 0,
-                    baseTax: baseTax,
-                    taxValue: user.employee.employee.salary.fix ? 0 : user.tax,
-                    user: user.employee._id,
-                }
-                values.workValueTotal += employee.totalIncome
-                values.taxValue += employee.taxValue
-
-                const dbEmployee = dbUsers.find(u => u.employee.fullName === employee.name)
-                    if(dbEmployee){
-                        for(let pay of dbEmployee.employee.payments){
-                            const payDate = new Date(new Date(pay.date).setUTCHours(0,0,0,0))
-                            if(payDate.getTime() === docDate.getTime() && normalizeText(pay.tip).includes('bonus')){
-                                employee.bonus = round(employee.bonus + pay.amount)
-                                values.workValueTotal += employee.bonus
+                if(user.value && user.hours){
+                    const inHeand = user.employee.employee.salary.inHeand
+                    const onPaper = user.employee.employee.salary.onPaper.salary
+                    const cass = (onPaper * 0.25) + (onPaper * 0.1)
+                    const tax = (onPaper - cass) * 0.1
+                    const employeerTax = onPaper * 0.0225
+                    const baseTax = (cass + tax + employeerTax)
+                    const employee = {
+                        name: user.employee.employee.fullName,
+                        hours: user.hours,
+                        position: user.position,
+                        monthHours: user.employee.employee.salary.norm,
+                        baseIncome: round((user.value / user.hours) * user.employee.employee.norm),
+                        hourIncome: user.value / user.hours,
+                        totalIncome: user.employee.employee.salary.fix ? 0 : user.value,
+                        bonus: 0,
+                        baseTax: baseTax,
+                        taxValue: user.employee.employee.salary.fix ? 0 : user.tax,
+                        user: user.employee._id,
+                    }
+                    values.workValueTotal += employee.totalIncome
+                    values.taxValue += employee.taxValue
+    
+                    const dbEmployee = dbUsers.find(u => u.employee.fullName === employee.name)
+                        if(dbEmployee){
+                            for(let pay of dbEmployee.employee.payments){
+                                const payDate = new Date(new Date(pay.date).setUTCHours(0,0,0,0))
+                                if(payDate.getTime() === docDate.getTime() && normalizeText(pay.tip).includes('bonus')){
+                                    employee.bonus = round(employee.bonus + pay.amount)
+                                    values.workValueTotal += employee.bonus
+                                }
                             }
                         }
+                    const existingUser = users.find(u => u.name === employee.name)
+                    if(existingUser && existingUser.employee){
+                        existingUser.hours += employee.hours
+                        existingUser.totalIncome =  round(existingUser.totalIncome + employee.totalIncome)
+                        existingUser.bonus = round(existingUser.bonus + employee.bonus)
+                        existingUser.taxValue = round(existingUser.taxValue + employee.taxValue)
+                    } else {
+                        users.push(employee)
                     }
-                const existingUser = users.find(u => u.name === employee.name)
-                if(existingUser && existingUser.employee){
-                    existingUser.hours += employee.hours
-                    existingUser.totalIncome =  round(existingUser.totalIncome + employee.totalIncome)
-                    existingUser.bonus = round(existingUser.bonus + employee.bonus)
-                    existingUser.taxValue = round(existingUser.taxValue + employee.taxValue)
                 } else {
-                    users.push(employee)
+                    console.log('useri fara valori', user)
                 }
 
 
