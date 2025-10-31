@@ -25,7 +25,7 @@ module.exports.sendUsers = async (req, res, next) => {
         filterTo.locatie = loc
         const user = await User.find(filterTo).select('-password').populate({path: 'employee.employeePosition'});
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
-        await  editEmpl(sortedUsers)
+        // await  editEmpl(sortedUsers)
         res.status(200).json(sortedUsers);
       } catch(error) {
         console.log(error);
