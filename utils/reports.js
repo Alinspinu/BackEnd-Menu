@@ -831,14 +831,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     })
 
     //CALC WORK VALUE`
-
+    console.log('zile din pontaj', pontaj.workDays.length)
     workDays = pontaj.days.filter(day => {
         const dayDate = new Date(date.setUTCHours(0,0,0,0))
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
         return docDate === dayDate
     })
+    console.log(workDays)
     workDays.forEach(day => {
-        consoel.log(day)
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
         day.users.forEach(user => {
             if(user.employee.employee.fullName === 'Miron Elvis'){
