@@ -831,7 +831,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     })
 
     //CALC WORK VALUE`
-    console.log('zile din pontaj', pontaj.workDays.length)
+    console.log('zile din pontaj', pontaj.days.length)
     workDays = pontaj.days.filter(day => {
         const dayDate = new Date(date.setUTCHours(0,0,0,0))
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
