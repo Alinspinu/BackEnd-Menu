@@ -840,6 +840,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     workDays.forEach(day => {
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
         day.users.forEach(user => {
+            if(user.employee.employee.fullName === 'Miron Elvis'){
+                console.log(user)
+            }
             if(user.employee){
                 const inHeand = user.employee.employee.salary.inHeand
                 const onPaper = user.employee.employee.salary.onPaper.salary
