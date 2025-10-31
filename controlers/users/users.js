@@ -49,7 +49,7 @@ async function editEmpl(users){
 module.exports.sendEmployees = async (req, res) => {
     const {loc} = req.query
     try{
-        const user = await User.find({locatie: loc, client: false, 'employee.active': true}).select('-password').populate({path: 'employee.employeePosition'});
+        const user = await User.find({locatie: loc, client: false, 'employee.active': false}).select('-password').populate({path: 'employee.employeePosition'});
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
         await modifyUsers(sortedUsers)
         res.status(200).json(sortedUsers)
