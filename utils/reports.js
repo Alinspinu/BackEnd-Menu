@@ -841,6 +841,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
 
         for(let user of day.users){
+            
             if(user.employee){
                 const inHeand = user.employee.employee.salary.inHeand
                 const onPaper = user.employee.employee.salary.onPaper.salary
@@ -853,12 +854,12 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     hours: user.hours,
                     position: user.position,
                     monthHours: user.employee.employee.salary.norm,
-                    baseIncome: inHeand,
-                    hourIncome: inHeand / user.employee.employee.salary.norm,
-                    totalIncome: user.employee.employee.salary.fix ? 0 : round((inHeand / user.employee.employee.salary.norm) * user.hours),
+                    baseIncome: round((user.value / user.hours) * user.employee.employee.norm),
+                    hourIncome: user.value / user.hours,
+                    totalIncome: user.employee.employee.salary.fix ? 0 : user.value,
                     bonus: 0,
                     baseTax: baseTax,
-                    taxValue: user.employee.employee.salary.fix ? 0 : round(baseTax / user.employee.employee.salary.norm * user.hours),
+                    taxValue: user.employee.employee.salary.fix ? 0 : user.tax,
                     user: user.employee._id,
                 }
                 values.workValueTotal += employee.totalIncome
