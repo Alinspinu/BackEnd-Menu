@@ -382,7 +382,7 @@ module.exports.deletEntry = async (req, res, next) => {
         })
         const p = await Pontaj.findOne({month: month, locatie: loc, salePoint: point})
         const dayy = p.days[pontDayIndex]
-        const eIndex = day.users.findIndex(u => u.employee.toString() === userId) 
+        const eIndex = dayy.users.findIndex(u => u.employee.toString() === userId) 
         if(eIndex !== -1){
           const u = dayy.users[eIndex]
           console.log('FOUND ENTRY', 'tax ', u.tax, ' value ', u.value)
