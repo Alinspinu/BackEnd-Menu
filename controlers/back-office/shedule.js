@@ -380,10 +380,21 @@ module.exports.deletEntry = async (req, res, next) => {
             inputDay.setHours(0, 0, 0, 0);
             return objDay.getTime() === inputDay.getTime();
         })
-        const newPontaj = await Pontaj.findOneAndUpdate(
-            {month: month, locatie: loc, salePoint: point}, 
-            {$pull: {[`days.${pontDayIndex}.users`]: {employee: userId}}}, 
-            {new: true})
+        const p = await Pontaj.findOne({month: month, locatie: loc, salePoint: point})
+        const day = p.days[pontDayIndex]
+        const eIndex = day.users.findIndex(u => u.employee.toString() === userId) 
+        if(eIndex !== -1){
+          const u = day.users[eIndex]
+          console.log('FOUND ENTRY', 'tax ', u.tax, ' value ', u.value)
+          day.taxValue -= u.tax
+          day.workValue -= u.value
+          day.users.splice(eIndex, 1)
+          await p.save()
+        }
+        // const newPontaj = await Pontaj.findOneAndUpdate(
+        //     {month: month, locatie: loc, salePoint: point}, 
+        //     {$pull: {[`days.${pontDayIndex}.users`]: {employee: userId}}}, 
+        //     {new: true})
         const dayIndex = shedule.days.findIndex(obj => obj.day === day)
         const newShedule = await Shedule.findOneAndUpdate(
             {_id: sheduleId}, 
