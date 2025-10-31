@@ -835,9 +835,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     workDays = pontaj.days.filter(day => {
         const dayDate = new Date(date.setUTCHours(0,0,0,0))
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
-        return docDate === dayDate
+        return docDate.getTime() === dayDate.getTime()
     })
-    console.log(workDays)
+    // console.log(workDays)
     workDays.forEach(day => {
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
         day.users.forEach(user => {
