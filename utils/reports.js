@@ -839,7 +839,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     // console.log(workDays)
     workDays.forEach(day => {
         const docDate = new Date(new Date(day.date).setUTCHours(0,0,0,0))
-        day.users.forEach(user => {
+
+        for(let user of day.users){
             if(user.employee){
                 const inHeand = user.employee.employee.salary.inHeand
                 const onPaper = user.employee.employee.salary.onPaper.salary
@@ -862,19 +863,17 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 }
                 values.workValueTotal += employee.totalIncome
                 values.taxValue += employee.taxValue
-                
-                dbUsers.forEach(dbUser => {
-                    const dbEmployee = dbUser.employee
-                    if(dbEmployee.fullName === employee.name){
-                        dbEmployee.payments.forEach(pay => {
+
+                const dbEmployee = dbUsers.find(u => u.employee.fullName === employee.name)
+                    if(dbEmployee){
+                        for(let pay of dbEmployee.payments){
                             const payDate = new Date(new Date(pay.date).setUTCHours(0,0,0,0))
-                            if(payDate.getTime() === docDate.getTime() && (pay.tip === 'Bonus vanzari' || pay.tip === 'Bonus excelenta')){
+                            if(payDate.getTime() === docDate.getTime() && normalizeText(pay.tip).includes('bonus')){
                                 employee.bonus = round(employee.bonus + pay.amount)
                                 values.workValueTotal += employee.bonus
                             }
-                        })
+                        }
                     }
-                })
                 const existingUser = users.find(u => u.name === employee.name)
                 if(existingUser && existingUser.employee){
                     existingUser.hours += employee.hours
@@ -887,7 +886,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
 
             } 
-        })
+        }
 
     })
 
