@@ -25,11 +25,25 @@ module.exports.sendUsers = async (req, res, next) => {
         filterTo.locatie = loc
         const user = await User.find(filterTo).select('-password').populate({path: 'employee.employeePosition'});
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
+        await  editEmpl(sortedUsers)
         res.status(200).json(sortedUsers);
       } catch(error) {
         console.log(error);
         res.status(500).json({message: error});
       }
+}
+
+
+async function editEmpl(users){
+    const promises = users.map(u => {
+        if(u.employee && u.employee.fullName && u.employee.fullName.length){
+            u.client = false
+            console.log(u.name)
+        }
+        return u.save()
+    })
+
+    await Promise.all(promises)
 }
 
 module.exports.sendEmployees = async (req, res) => {
