@@ -146,8 +146,7 @@ module.exports.getPeriodReports = async (req, res) => {
     try{
        const reports = await Report.find({locatie: loc, salePoint: point, period: { $exists: true }})
                 .sort({day: -1})
-                .limit(limit)
-                .populate({path: 'reports', select: 'cashIn ingsValue workValue day impairment'})
+                .select('-hours -paymentMethods -spendingsDeps -workValue.users').lean()
 
        res.status(200).json(reports)
     } catch (e){
