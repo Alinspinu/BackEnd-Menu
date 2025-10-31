@@ -868,7 +868,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     if(dbEmployee.fullName === employee.name){
                         dbEmployee.payments.forEach(pay => {
                             const payDate = new Date(new Date(pay.date).setUTCHours(0,0,0,0))
-                            if(payDate === docDate && (pay.tip === 'Bonus vanzari' || pay.tip === 'Bonus excelenta')){
+                            if(payDate.getTime() === docDate.getTime() && (pay.tip === 'Bonus vanzari' || pay.tip === 'Bonus excelenta')){
                                 employee.bonus = round(employee.bonus + pay.amount)
                                 values.workValueTotal += employee.bonus
                             }
