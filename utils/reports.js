@@ -855,7 +855,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         hours: user.hours,
                         position: user.position,
                         monthHours: user.employee.employee.salary.norm,
-                        baseIncome: round((user.value / user.hours) * user.employee.employee.norm),
+                        baseIncome: round((user.value / user.hours) * user.employee.employee.salary.norm),
                         hourIncome: user.value / user.hours,
                         totalIncome: user.employee.employee.salary.fix ? 0 : user.value,
                         bonus: 0,
