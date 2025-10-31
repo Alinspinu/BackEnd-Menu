@@ -385,16 +385,11 @@ module.exports.deletEntry = async (req, res, next) => {
         const eIndex = dayy.users.findIndex(u => u.employee.toString() === userId) 
         if(eIndex !== -1){
           const u = dayy.users[eIndex]
-          console.log('FOUND ENTRY', 'tax ', u.tax, ' value ', u.value)
           dayy.taxValue -= u.tax
           dayy.workValue -= u.value
           dayy.users.splice(eIndex, 1)
           await p.save()
         }
-        // const newPontaj = await Pontaj.findOneAndUpdate(
-        //     {month: month, locatie: loc, salePoint: point}, 
-        //     {$pull: {[`days.${pontDayIndex}.users`]: {employee: userId}}}, 
-        //     {new: true})
         const dayIndex = shedule.days.findIndex(obj => obj.day === day)
         const newShedule = await Shedule.findOneAndUpdate(
             {_id: sheduleId}, 
