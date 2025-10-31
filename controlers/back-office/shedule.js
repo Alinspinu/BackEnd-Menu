@@ -381,14 +381,14 @@ module.exports.deletEntry = async (req, res, next) => {
             return objDay.getTime() === inputDay.getTime();
         })
         const p = await Pontaj.findOne({month: month, locatie: loc, salePoint: point})
-        const day = p.days[pontDayIndex]
+        const dayy = p.days[pontDayIndex]
         const eIndex = day.users.findIndex(u => u.employee.toString() === userId) 
         if(eIndex !== -1){
-          const u = day.users[eIndex]
+          const u = dayy.users[eIndex]
           console.log('FOUND ENTRY', 'tax ', u.tax, ' value ', u.value)
-          day.taxValue -= u.tax
-          day.workValue -= u.value
-          day.users.splice(eIndex, 1)
+          dayy.taxValue -= u.tax
+          dayy.workValue -= u.value
+          dayy.users.splice(eIndex, 1)
           await p.save()
         }
         // const newPontaj = await Pontaj.findOneAndUpdate(
