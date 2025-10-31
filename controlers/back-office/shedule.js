@@ -246,31 +246,31 @@ module.exports.getPontaj = async (req, res, next) => {
     }
 }
 
-async function updateUsersWorkLog(ponts){
+// async function updateUsersWorkLog(ponts){
 
-  for(let p of ponts){
-    for(let d of p.days){
-      d.taxValue = 0
-      d.workValue = 0
-      for(let u of d.users){
-        if(u.employee){
-          const us = await User.findById(u.employee).select('employee.salary').lean()
-          if(us?.employee){
-            u.tax = ((us.employee.salary.onPaper.tax / us.employee.salary.norm) * u.hours) || 0
-            d.taxValue += u.tax || 0
-            d.workValue += u.value || 0
-          }
-        }
-      }
-    }
+//   for(let p of ponts){
+//     for(let d of p.days){
+//       d.taxValue = 0
+//       d.workValue = 0
+//       for(let u of d.users){
+//         if(u.employee){
+//           const us = await User.findById(u.employee).select('employee.salary').lean()
+//           if(us?.employee){
+//             u.tax = ((us.employee.salary.onPaper.tax / us.employee.salary.norm) * u.hours) || 0
+//             d.taxValue += u.tax || 0
+//             d.workValue += u.value || 0
+//           }
+//         }
+//       }
+//     }
 
-    const po = await p.save()
-    for(let d of po.days){
-      console.log(d.date, ' workTotal ', d.workValue, ' taxTotal ', d.taxValue)
-    }
-  }
+//     const po = await p.save()
+//     for(let d of po.days){
+//       console.log(d.date, ' workTotal ', d.workValue, ' taxTotal ', d.taxValue)
+//     }
+//   }
 
-}
+// }
 
 
 
