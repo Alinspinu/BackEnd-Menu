@@ -162,7 +162,7 @@ function calcRecipeTotal(ings) {
     const tva = ing.ing.tva / 100
     const priceWithTva = price + price * tva
     priceWithVat = priceWithVat + (priceWithTva * ing.qty)
-    priceNoVat += price
+    priceNoVat += (price * ing.qty)
   })
   return {vatPrice: round(priceWithVat), price: round(priceNoVat)}
 }
