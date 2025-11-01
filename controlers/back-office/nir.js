@@ -256,6 +256,7 @@ module.exports.getNirs = async(req, res, next) => {
   try{
     const nirs = await Nir.find({locatie: loc, salePoint: point})
           .select('-ingredinets')
+          .limit(1000)
           .sort({ createdAt: -1 })
           .populate({path: 'suplier', select: '-records'}).lean()
           // .populate({path: 'ingredients.invGestiune', select: 'name'})
