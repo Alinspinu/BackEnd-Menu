@@ -410,7 +410,7 @@ module.exports.printInventary = async(req, res, next) => {
     'Nr',
     `Denumire Ingredient`,
     'UM',
-    'TVA',
+    'TVA la vanzare',
     'Departament',
     'Pret achizitie (fara tva)',
     'Pret vanzare (cu tva)',
@@ -430,7 +430,11 @@ module.exports.printInventary = async(req, res, next) => {
     if(!el.ing) {
       console.log(el)
     } else {
-      const name = el.dep + ' ' + el.ing.tva + '%'
+      let tva = el.ing.tva
+      if( el.dep === 'marfa' && tva === 0 && el.name !== 'Taxa SGR'){
+        tva = 21
+      }
+      const name = el.dep + ' ' + tva + '%'
       const inVal = round(el.faptic * el.ing.price)
       const outVal = round(el.faptic * el.ing.sellPrice || 0)
       totalIn += inVal
@@ -452,7 +456,7 @@ module.exports.printInventary = async(req, res, next) => {
           `${i+1}`,
           `${el.name}`,
           `${el.ing.um}`,
-          `${el.ing.tva} %`,
+          `${tva} %`,
           `${el.dep}`,
           `${el.ing.price}`,
           `${el.ing.sellPrice || 0}`,
@@ -539,7 +543,7 @@ worksheet.addRow(
   worksheet.getColumn(1).width = 5;
   worksheet.getColumn(2).width = 35; 
   worksheet.getColumn(3).width = 5; 
-  worksheet.getColumn(4).width = 5; 
+  worksheet.getColumn(4).width = 8; 
   worksheet.getColumn(5).width = 15; 
   worksheet.getColumn(6).width = 10; 
   worksheet.getColumn(7).width = 10; 
@@ -562,7 +566,7 @@ worksheet.addRow(
   worksheet.getColumn(10).eachCell((cell) => {
     cell.alignment = { vertical: "middle", horizontal: 'right'}
   })
-  
+
   worksheet.getRow(1).eachCell((cell)=>{
     cell.font = {
         bold: true,
