@@ -855,7 +855,7 @@ module.exports.compareScriptic = async (req, res) => {
 
 function allocateFromNewest(entries, globalQty) {
     if (!Array.isArray(entries) || globalQty <= 0) {
-      return 0;
+      return {totalCost: 0};
     }
     // Sort by date: newest first
     const sorted = [...entries].sort(
