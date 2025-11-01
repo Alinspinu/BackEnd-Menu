@@ -454,11 +454,11 @@ module.exports.printInventary = async(req, res, next) => {
           `${el.ing.um}`,
           `${el.ing.tva} %`,
           `${el.dep}`,
-          `${el.price}`,
-          `${el.sellPrice || 0}`,
+          `${el.ing.price}`,
+          `${el.ing.sellPrice || 0}`,
           `${round(el.faptic)}`,
-          `${round(el.faptic * el.price)}`,
-          `${round(el.faptic * el.sellPrice || 0)}`,
+          `${round(el.faptic * el.ing.price)}`,
+          `${round(el.faptic * el.ing.sellPrice || 0)}`,
         ]
         )
     }
