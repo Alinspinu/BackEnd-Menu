@@ -509,7 +509,7 @@ worksheet.getRow(1).eachCell((cell)=>{
 worksheet.getRow(2).eachCell((cell)=>{
   cell.font = {
       bold: true,
-      size: 13
+      size: 12
   }
   cell.alignment = { wrapText: true, horizontal: 'center' }
 })
@@ -517,11 +517,11 @@ worksheet.getRow(2).eachCell((cell)=>{
 
 
 
-totalDeps.forEach(d => {
+totalDeps.forEach((d, i) => {
   const row = worksheet.addRow(
       [
+        `${i+1}`, 
         `Total ${d.name}`, 
-        '', 
         '', 
         '',
         '', 
@@ -533,13 +533,19 @@ totalDeps.forEach(d => {
       ]
       )
     const num = row.number
-    worksheet.mergeCells(`A${num}:H${num}`)
+    worksheet.mergeCells(`B${num}:H${num}`)
+    worksheet.getRow(num).eachCell((cell)=>{
+      cell.font = {
+          bold: true,
+          size: 12
+      }
+    })
 })
 
 worksheet.addRow(
     [
-      'TOTALURI (lei)', 
       '', 
+      'TOTALURI (lei)', 
       '', 
       '',
       '', 
@@ -559,7 +565,6 @@ worksheet.addRow(
       bold: true,
       size: 14
   }
-  cell.alignment = {horizontal: 'center'}
   })
 
   worksheet.getColumn(1).width = 5;
