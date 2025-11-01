@@ -231,7 +231,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
         days[i + 1].in21 = day.out21;
       }
     }
-    console.log(inv0Value)
+    console.log(typeof inv0Value)
     const totals = {
       totalIn0: round(totalIn0 + +inv0Value),
       totalIn11: round(totalIn11 + +inv11Value),
