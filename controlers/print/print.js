@@ -412,8 +412,8 @@ module.exports.printInventary = async(req, res, next) => {
     'UM',
     'TVA',
     'Departament',
-    'Pret acizitie (F TVA)',
-    'Pret vanzare (cu TVA)',
+    'Pret achizitie (fara tva)',
+    'Pret vanzare (cu tva)',
     `Cantitate (um)`, 
     `Valoare achizitie`, 
     `Valoare vanzare`, 
@@ -463,21 +463,6 @@ module.exports.printInventary = async(req, res, next) => {
         )
     }
   })
-
-
-
-
-worksheet.getRow(1).eachCell((cell)=>{
-  cell.font = {
-      bold: true,
-      size: 14
-  }
-  cell.alignment = {horizontal: 'center'}
-})
-
-
-
-
 
 
 worksheet.getColumn(3).eachCell((cell) => {
@@ -556,9 +541,9 @@ worksheet.addRow(
   worksheet.getColumn(3).width = 5; 
   worksheet.getColumn(4).width = 5; 
   worksheet.getColumn(5).width = 15; 
-  worksheet.getColumn(6).width = 11; 
-  worksheet.getColumn(7).width = 11; 
-  worksheet.getColumn(8).width = 11; 
+  worksheet.getColumn(6).width = 10; 
+  worksheet.getColumn(7).width = 10; 
+  worksheet.getColumn(8).width = 10; 
   worksheet.getColumn(9).width = 11; 
   worksheet.getColumn(10).width = 11; 
   worksheet.mergeCells(`A1:J1`)
@@ -577,7 +562,15 @@ worksheet.addRow(
   worksheet.getColumn(10).eachCell((cell) => {
     cell.alignment = { vertical: "middle", horizontal: 'right'}
   })
-
+  
+  worksheet.getRow(1).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 14
+    }
+    cell.alignment = {horizontal: 'center'}
+  })
+  
 
   worksheet.getRow(2).eachCell((cell)=>{
     cell.font = {
