@@ -16,9 +16,9 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
     let inv21Value = in21
     let inv0Value = in0
 
-    totalIn0 = 0
-    totalIn11 = 0
-    totalIn21 = 0
+    totalIn0 = in0
+    totalIn11 = in11
+    totalIn21 = in21
 
     totalOut0 = 0
     totalOut11 = 0
