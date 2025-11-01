@@ -381,7 +381,10 @@ module.exports.printNir = async (req, res, next) => {
 
 module.exports.printInventary = async(req, res, next) => {
   const {id} = req.query
-  const inventary = await Inventary.findById(id).populate({path: 'ingredients.ing', select: 'price um sellPrice'}).populate({path: 'locatie', select: 'bussinessName'})
+  const inventary = await Inventary.findById(id)
+          .populate({path: 'ingredients.ing', select: 'price um sellPrice tva'})
+          .populate({path: 'locatie', select: 'bussinessName'})
+          .populate({path: 'gestiune', select: 'name'})
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
   const date = inventary.date
     .toLocaleDateString("en-GB", options)
@@ -393,7 +396,7 @@ module.exports.printInventary = async(req, res, next) => {
 
 
   const docTitle =  [
-    `Inventar ${date}`,
+    `Inventar gestiune ${inventary.gestiune.name} ${date}`,
      '',
      '',
      '',
@@ -407,44 +410,76 @@ module.exports.printInventary = async(req, res, next) => {
     'Nr',
     `Denumire Ingredient`,
     'UM',
-    'Pret (lei)',
-    'Gestiune',
+    'TVA',
     'Departament',
-    `Faptic (um)`, 
-    `Scriptic (um)`, 
-    `Diferenta (um)`, 
-    `Diferenta (lei)`, 
+    'Pret (F TVA)',
+    'Pret Vanzare (cu TVA)',
+    `Cantitate (um)`, 
+    `Valoare achizitie`, 
+    `Valoare vanzare`, 
   ]
   worksheet.addRow(docTitle)
   worksheet.addRow(header)
-  let totalPretAchizitie = 0
-  let scripticValue = 0
-  let fapticValue = 0
+
+
+  let totalDeps = []
+  let totalIn = 0
+  let totalOut = 0
 
    sortedIngs.forEach((el, i) => {
     if(!el.ing) {
       console.log(el)
     } else {
-      const faptic = round(el.faptic * el.ing.price)
-      const scriptic = round(el.scriptic * el.ing.price)
-      scripticValue += scriptic
-      fapticValue += faptic
+      const name = el.dep + ' ' + el.tva + '%'
+      const inVal = round(el.faptic * el.ing.price)
+      const outVal = round(el.faptic * el.ing.sellPrice || 0)
+      totalIn += inVal
+      totalOut += outVal
+      const dep = totalDeps.find(d => d.namae === name)
+      if(dep){
+        dep.totalIn += inVal
+        dep.totalOut += outVal
+      } else {
+        const d = {
+          name: name,
+          totalIn: inVal,
+          totalOut: outVal
+        }
+        totalDeps.push(d)
+      }
       worksheet.addRow(
         [
           `${i+1}`,
           `${el.name}`,
           `${el.ing.um}`,
-          `${el.ing.price}`,
-          `${el.gestiune}`,
+          `${el.ing.tva} %`,
           `${el.dep}`,
+          `${el.price}`,
+          `${el.sellPrice || 0}`,
           `${round(el.faptic)}`,
-          `${round(el.scriptic)}`,
-          `${round(el.faptic - el.scriptic)}`,
-          `${round((el.faptic - el.scriptic) * el.ing.price)} Lei`,
+          `${round(el.faptic * el.price)}`,
+          `${round(el.faptic * el.sellPrice || 0)}`,
         ]
         )
     }
   })
+
+  totalDeps.forEach(d => {
+    worksheet.addRow(
+        [
+          `Total ${d.name}`, 
+          '', 
+          '', 
+          '',
+          '', 
+          '', 
+          ``, 
+          `${round(d.totalIn)}`, 
+          `${round(d.totalOut)}`, ''
+        ]
+        )
+  })
+
   worksheet.addRow(
       [
         'TOTALURI (lei)', 
@@ -453,9 +488,9 @@ module.exports.printInventary = async(req, res, next) => {
         '',
         '', 
         '', 
-        `${round(fapticValue)}`, 
-        `${round(scripticValue)}`, 
-        `${round(fapticValue - scripticValue)}`, ''
+        ``, 
+        `${round(totalIn)}`, 
+        `${round(totalOut)}`, ''
       ]
       )
   worksheet.getColumn(1).eachCell((cell) => {
