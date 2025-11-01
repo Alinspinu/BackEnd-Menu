@@ -392,7 +392,7 @@ module.exports.printInventary = async(req, res, next) => {
 
   const workbook = new exceljs.Workbook();
   const worksheet = workbook.addWorksheet(`Inventar din ${date}`);
-  const sortedIngs = inventary.ingredients.sort((a, b) => a.name.localeCompare(b.name))
+  const sortedIngs = inventary.ingredients.sort((a, b) => a.dep.localeCompare(b.dep))
 
 
   const docTitle =  [
@@ -511,7 +511,7 @@ worksheet.getRow(2).eachCell((cell)=>{
       bold: true,
       size: 13
   }
-  cell.alignment = { wrapText: true }
+  cell.alignment = { wrapText: true, horizontal: 'center' }
 })
 
 
