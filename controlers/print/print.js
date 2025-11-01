@@ -465,37 +465,7 @@ module.exports.printInventary = async(req, res, next) => {
   })
 
 
-  worksheet.getColumn(1).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(2).eachCell((cell)=> {
-    cell.alignment = { vertical: "right", horizontal: 'left'}
-  })
 
-  worksheet.getColumn(3).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(4).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(5).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(6).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(7).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(8).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(9).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(10).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'right'}
-  })
 
 worksheet.getRow(1).eachCell((cell)=>{
   cell.font = {
@@ -545,7 +515,7 @@ totalDeps.forEach((d, i) => {
 worksheet.addRow(
     [
       '', 
-      'TOTALURI (lei)', 
+      'TOTALURI (achizitie / vanzare)', 
       '', 
       '',
       '', 
@@ -572,16 +542,44 @@ worksheet.addRow(
   worksheet.getColumn(3).width = 5; 
   worksheet.getColumn(4).width = 5; 
   worksheet.getColumn(5).width = 15; 
-  worksheet.getColumn(6).width = 13; 
-  worksheet.getColumn(7).width = 13; 
-  worksheet.getColumn(8).width = 13; 
-  worksheet.getColumn(9).width = 13; 
-  worksheet.getColumn(10).width = 13; 
+  worksheet.getColumn(6).width = 11; 
+  worksheet.getColumn(7).width = 11; 
+  worksheet.getColumn(8).width = 11; 
+  worksheet.getColumn(9).width = 11; 
+  worksheet.getColumn(10).width = 11; 
   worksheet.mergeCells(`A1:J1`)
   worksheet.mergeCells(`B${totalsRowNumber.number}:H${totalsRowNumber.number}`)
 
   worksheet.getColumn(1).eachCell((cell) => {
-    cell.alignment = {horizontal: 'center'}
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(2).eachCell((cell)=> {
+    cell.alignment = { vertical: "right", horizontal: 'left'}
+  })
+
+  worksheet.getColumn(3).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(4).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(5).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(6).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(7).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(8).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'center'}
+  })
+  worksheet.getColumn(9).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'right'}
+  })
+  worksheet.getColumn(10).eachCell((cell) => {
+    cell.alignment = { vertical: "middle", horizontal: 'right'}
   })
 
 
