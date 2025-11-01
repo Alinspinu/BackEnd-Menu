@@ -166,9 +166,9 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
           }
       }
     }
-    days[0].in0 = inv0Value;
-    days[0].in11 = inv11Value;
-    days[0].in21 = inv21Value;
+    days[0].in0 = +inv0Value;
+    days[0].in11 = +inv11Value;
+    days[0].in21 = +inv21Value;
 
     for (let i = 0; i < days.length; i++) {
       const day = days[i];
@@ -231,7 +231,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
         days[i + 1].in21 = day.out21;
       }
     }
-    console.log(typeof inv0Value)
+    console.log(typeof +inv0Value)
     const totals = {
       totalIn0: round(totalIn0 + +inv0Value),
       totalIn11: round(totalIn11 + +inv11Value),
