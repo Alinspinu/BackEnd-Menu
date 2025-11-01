@@ -435,7 +435,7 @@ module.exports.printInventary = async(req, res, next) => {
       const outVal = round(el.faptic * el.ing.sellPrice || 0)
       totalIn += inVal
       totalOut += outVal
-      const dep = totalDeps.find(d => d.namae === name)
+      const dep = totalDeps.find(d => d.name === name)
       if(dep){
         dep.totalIn += inVal
         dep.totalOut += outVal
@@ -514,15 +514,7 @@ worksheet.getRow(2).eachCell((cell)=>{
   cell.alignment = {horizontal: 'center'}
 })
 
-const totalsRowNumber = worksheet.lastRow
 
-totalsRowNumber.eachCell((cell)=>{
-cell.font = {
-    bold: true,
-    size: 14
-}
-cell.alignment = {horizontal: 'center'}
-})
 
 
 totalDeps.forEach(d => {
@@ -558,6 +550,17 @@ worksheet.addRow(
       `${round(totalOut)}`, 
     ]
     )
+
+
+  const totalsRowNumber = worksheet.lastRow
+
+  totalsRowNumber.eachCell((cell)=>{
+  cell.font = {
+      bold: true,
+      size: 14
+  }
+  cell.alignment = {horizontal: 'center'}
+  })
 
   worksheet.getColumn(1).width = 5;
   worksheet.getColumn(2).width = 25; 
