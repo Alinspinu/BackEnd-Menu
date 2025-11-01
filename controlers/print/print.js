@@ -534,7 +534,7 @@ totalDeps.forEach((d, i) => {
       )
     const num = row.number
     worksheet.mergeCells(`B${num}:H${num}`)
-    worksheet.getRow(num).eachCell((cell)=>{
+    row.eachCell((cell)=>{
       cell.font = {
           bold: true,
           size: 12
@@ -578,9 +578,11 @@ worksheet.addRow(
   worksheet.getColumn(9).width = 13; 
   worksheet.getColumn(10).width = 13; 
   worksheet.mergeCells(`A1:J1`)
-  worksheet.mergeCells(`A${totalsRowNumber.number}:H${totalsRowNumber.number}`)
+  worksheet.mergeCells(`B${totalsRowNumber.number}:H${totalsRowNumber.number}`)
 
-
+  worksheet.getColumn(1).eachCell((cell) => {
+    cell.alignment = {horizontal: 'center'}
+  })
 
 
 
