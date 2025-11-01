@@ -476,15 +476,28 @@ worksheet.getRow(1).eachCell((cell)=>{
 })
 
 
-worksheet.getRow(2).eachCell((cell)=>{
-  cell.font = {
-      bold: true,
-      size: 12
-  }
-  cell.alignment = { wrapText: true, horizontal: 'center' }
+
+
+
+
+worksheet.getColumn(3).eachCell((cell) => {
+  cell.alignment = { vertical: "middle", horizontal: 'center'}
 })
-
-
+worksheet.getColumn(4).eachCell((cell) => {
+  cell.alignment = { vertical: "middle", horizontal: 'center'}
+})
+worksheet.getColumn(5).eachCell((cell) => {
+  cell.alignment = { vertical: "middle", horizontal: 'center'}
+})
+worksheet.getColumn(6).eachCell((cell) => {
+  cell.alignment = { vertical: "middle", horizontal: 'center'}
+})
+worksheet.getColumn(7).eachCell((cell) => {
+  cell.alignment = { vertical: "middle", horizontal: 'center'}
+})
+worksheet.getColumn(8).eachCell((cell) => {
+  cell.alignment = { vertical: "middle", horizontal: 'center'}
+})
 
 
 totalDeps.forEach((d, i) => {
@@ -511,6 +524,7 @@ totalDeps.forEach((d, i) => {
       }
     })
 })
+
 
 worksheet.addRow(
     [
@@ -557,29 +571,20 @@ worksheet.addRow(
     cell.alignment = { vertical: "right", horizontal: 'left'}
   })
 
-  worksheet.getColumn(3).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(4).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(5).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(6).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(7).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
-  worksheet.getColumn(8).eachCell((cell) => {
-    cell.alignment = { vertical: "middle", horizontal: 'center'}
-  })
   worksheet.getColumn(9).eachCell((cell) => {
     cell.alignment = { vertical: "middle", horizontal: 'right'}
   })
   worksheet.getColumn(10).eachCell((cell) => {
     cell.alignment = { vertical: "middle", horizontal: 'right'}
+  })
+
+
+  worksheet.getRow(2).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 12
+    }
+    cell.alignment = { wrapText: true, horizontal: 'center' }
   })
 
 
