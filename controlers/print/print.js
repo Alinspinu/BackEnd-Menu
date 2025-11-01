@@ -511,7 +511,7 @@ worksheet.getRow(2).eachCell((cell)=>{
       bold: true,
       size: 13
   }
-  cell.alignment = {horizontal: 'center'}
+  cell.alignment = { wrapText: true }
 })
 
 
@@ -563,15 +563,15 @@ worksheet.addRow(
   })
 
   worksheet.getColumn(1).width = 5;
-  worksheet.getColumn(2).width = 25; 
-  worksheet.getColumn(3).width = 10; 
-  worksheet.getColumn(4).width = 11; 
-  worksheet.getColumn(5).width = 11; 
+  worksheet.getColumn(2).width = 35; 
+  worksheet.getColumn(3).width = 5; 
+  worksheet.getColumn(4).width = 5; 
+  worksheet.getColumn(5).width = 15; 
   worksheet.getColumn(6).width = 13; 
   worksheet.getColumn(7).width = 13; 
   worksheet.getColumn(8).width = 13; 
-  worksheet.getColumn(9).width = 15; 
-  worksheet.getColumn(10).width = 15; 
+  worksheet.getColumn(9).width = 13; 
+  worksheet.getColumn(10).width = 13; 
   worksheet.mergeCells(`A1:J1`)
   worksheet.mergeCells(`A${totalsRowNumber.number}:H${totalsRowNumber.number}`)
 
