@@ -143,9 +143,10 @@ module.exports.getNirsBySuplier = async (req, res, next) => {
     const {id, point} = req.query
     if(point && point.length) {
       const nirs = await Nir.find({suplier: id, salePoint: point})
+          .select('-ingredients')
           .sort({ createdAt: -1 })
-          .limit(50)
-          .populate({path: 'suplier'})
+          // .limit(50)
+          .populate({path: 'suplier',select: '-records'}).lean()
       res.status(200).json(nirs)
     } else {
       const nirs = await Nir.find({suplier: id})
@@ -254,10 +255,10 @@ module.exports.getNirs = async(req, res, next) => {
   const {loc, point} = req.body
   try{
     const nirs = await Nir.find({locatie: loc, salePoint: point})
+          .select('-ingredinets')
           .sort({ createdAt: -1 })
-          .limit(100)
-          .populate({path: 'suplier'})
-          .populate({path: 'ingredients.invGestiune', select: 'name'})
+          .populate({path: 'suplier', select: '-records'}).lean()
+          // .populate({path: 'ingredients.invGestiune', select: 'name'})
     res.status(200).json(nirs)
   } catch(err) {
     console.log(err)
