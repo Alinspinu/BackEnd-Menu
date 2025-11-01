@@ -430,7 +430,7 @@ module.exports.printInventary = async(req, res, next) => {
     if(!el.ing) {
       console.log(el)
     } else {
-      const name = el.dep + ' ' + el.tva + '%'
+      const name = el.dep + ' ' + el.ing.tva + '%'
       const inVal = round(el.faptic * el.ing.price)
       const outVal = round(el.faptic * el.ing.sellPrice || 0)
       totalIn += inVal
@@ -464,35 +464,7 @@ module.exports.printInventary = async(req, res, next) => {
     }
   })
 
-  totalDeps.forEach(d => {
-    worksheet.addRow(
-        [
-          `Total ${d.name}`, 
-          '', 
-          '', 
-          '',
-          '', 
-          '', 
-          ``, 
-          `${round(d.totalIn)}`, 
-          `${round(d.totalOut)}`, ''
-        ]
-        )
-  })
 
-  worksheet.addRow(
-      [
-        'TOTALURI (lei)', 
-        '', 
-        '', 
-        '',
-        '', 
-        '', 
-        ``, 
-        `${round(totalIn)}`, 
-        `${round(totalOut)}`, ''
-      ]
-      )
   worksheet.getColumn(1).eachCell((cell) => {
     cell.alignment = { vertical: "middle", horizontal: 'center'}
   })
@@ -552,6 +524,41 @@ cell.font = {
 cell.alignment = {horizontal: 'center'}
 })
 
+
+totalDeps.forEach(d => {
+  const row = worksheet.addRow(
+      [
+        `Total ${d.name}`, 
+        '', 
+        '', 
+        '',
+        '', 
+        '', 
+        ``, 
+        ``, 
+        `${round(d.totalIn)}`, 
+        `${round(d.totalOut)}`, 
+      ]
+      )
+    const num = row.number
+    worksheet.mergeCells(`A${num}:H${num}`)
+})
+
+worksheet.addRow(
+    [
+      'TOTALURI (lei)', 
+      '', 
+      '', 
+      '',
+      '', 
+      '', 
+      ``, 
+      ``, 
+      `${round(totalIn)}`, 
+      `${round(totalOut)}`, 
+    ]
+    )
+
   worksheet.getColumn(1).width = 5;
   worksheet.getColumn(2).width = 25; 
   worksheet.getColumn(3).width = 10; 
@@ -563,8 +570,8 @@ cell.alignment = {horizontal: 'center'}
   worksheet.getColumn(9).width = 15; 
   worksheet.getColumn(10).width = 15; 
   worksheet.mergeCells(`A1:J1`)
-  worksheet.mergeCells(`A${totalsRowNumber.number}:F${totalsRowNumber.number}`)
-  worksheet.mergeCells(`I${totalsRowNumber.number}:J${totalsRowNumber.number}`)
+  worksheet.mergeCells(`A${totalsRowNumber.number}:H${totalsRowNumber.number}`)
+
 
 
 
