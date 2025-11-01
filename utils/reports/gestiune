@@ -16,9 +16,9 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
     let inv21Value = in21
     let inv0Value = in0
 
-    totalIn0 = in0
-    totalIn11 = in11
-    totalIn21 = in21
+    totalIn0 = 0
+    totalIn11 = 0
+    totalIn21 = 0
 
     totalOut0 = 0
     totalOut11 = 0
@@ -233,9 +233,9 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
     }
 
     const totals = {
-      totalIn0: round(totalIn0),
-      totalIn11: round(totalIn11),
-      totalIn21: round(totalIn21),
+      totalIn0: round(totalIn0 + inv0Value),
+      totalIn11: round(totalIn11 + inv11Value),
+      totalIn21: round(totalIn21 + inv21Value),
       totalOut0: round(totalOut0),
       totalOut11: round(totalOut11),
       totalOut21: round(totalOut21),
