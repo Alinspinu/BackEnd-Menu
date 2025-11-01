@@ -28,7 +28,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
     totalOutSGR = 0
 
     for(let o of orders){
-      const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
+      const day = days.find(d => new Date(d.date).toDateString() === new Date(o.createdAt).toDateString())
       if(day){
       if(o.tips && o.tips > 0){
         const existingTipsEntry = day.entries.find(e => e.description === 'Vanzare Bacsis' )
