@@ -781,6 +781,7 @@ module.exports.printConsum = async (req, res) => {
     let totProd11 = 0
     let totMarf21 = 0
     let totMarf11 = 0
+    let totMarf0 = 0
     let marfaProducts = []
     let sgrP = []
     let sgrTot = 0
@@ -838,6 +839,7 @@ module.exports.printConsum = async (req, res) => {
                 } else {
                   marfaProducts.push({name: 'Taxa SGR', price: 0.5, tva: 0, quantity: product.quantity, tot: product.quantity * 0.5, discount: 0})
                 }
+                totMarf0 += (product.quantity * 0.5)
               }
               const existingProduct = marfaProducts.find(p => p.name === product.name)
               if(existingProduct){
@@ -898,9 +900,6 @@ module.exports.printConsum = async (req, res) => {
             if(product.toppings.length){
               product.toppings.forEach(topping=>{
                 topping.qty = topping.qty * product.quantity
-                if(topping.name === 'Taxa SGR'){
-                  sgrTot += (1 * product.quantity)
-                }
                 if(topping.ing.ings.length){
                   topping.ing.ings.forEach(ig => {
                     ig.qty = ig.qty * product.quantity
@@ -929,9 +928,6 @@ module.exports.printConsum = async (req, res) => {
                       qty: topping.qty,
                       ing: topping.ing
                     }
-                    if(ig.qty > 1){
-                      console.log('caltitata topping ', ig.ing.name, ' ', ig.qty)
-                    }
                     ings.push(ig);
                   }
                 }
@@ -940,7 +936,6 @@ module.exports.printConsum = async (req, res) => {
           })
         })
       } 
-      console.log('SGR FROM INGS ', sgrTot)
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       products.sort((a, b) => {
         if (a.tva !== b.tva) return a.tva - b.tva;
@@ -1085,6 +1080,16 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.addRow([
           '',
           '',
+          `TOTAL 0%`,
+          '',
+          '',
+          '',
+          `${round(totMarf0)}`,
+        ])
+
+        mpSheet.addRow([
+          '',
+          '',
           `TOTAL 11%`,
           '',
           '',
@@ -1107,7 +1112,7 @@ module.exports.printConsum = async (req, res) => {
           '',
           '',
           '',
-          `${round(totMarf11 + totMarf21)}`
+          `${round(totMarf11 + totMarf21 + totMarf0)}`
         ])
 
         mpSheet.getColumn(1).width = 5;
@@ -1121,7 +1126,7 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.mergeCells(`A1:G1`)
 
         const lastMRowNumber = mpSheet.lastRow.number;
-        for (let i = lastMRowNumber; i > lastMRowNumber - 3; i--) {
+        for (let i = lastMRowNumber; i > lastMRowNumber - 4; i--) {
           mpSheet.mergeCells(`A${i}:B${i}`)
           mpSheet.mergeCells(`C${i}:F${i}`)
           const row = mpSheet.getRow(i);
