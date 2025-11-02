@@ -199,6 +199,7 @@ invoiceSchema.pre('save', async function (next){
     );
     doc.index = counter.value;
 
+    console.log('UNLOAD', doc.unload)
 
  if(doc.unload){
     for(let p of doc.products){
@@ -269,6 +270,7 @@ invoiceSchema.pre('findOneAndDelete', async function(next){
   try{
     const doc = await this.model.findOne(this.getQuery());
     
+    console.log('UNLOAD', doc.unload)
     if(doc.unload){
         for(let p of doc.products){
             await uploadIngs(p.ings, p.quantity)

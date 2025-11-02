@@ -5,7 +5,7 @@ const {round, formatDateEFactura} = require('../../../utils/functions')
 function createOrderInvoice(order, customer, supplier, unload) {
   const invoice = {
     serie: 'T',
-    unload: false,
+    unload: unload,
     invoiceCode: unload ? '380' : '751',
     note: unload ? 'Factură fiscală' : 'Factură încasată cu bon fiscal la data de ' + formatDateEFactura(order.updatedAt),
     issueDate: formatDateEFactura(order.updatedAt),
