@@ -807,6 +807,7 @@ module.exports.printConsum = async (req, res) => {
         populate: {path: 'ings.ing'}
       }
     ])
+    console.log(departaments)
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
@@ -844,7 +845,7 @@ module.exports.printConsum = async (req, res) => {
                   productDep.total21 += total21
   
               } else {
-                const d = departaments.find(dep => dep.id.toString() === product.departament.toString())
+                const d = departaments.find(dep => dep._id.toString() === product.departament.toString())
                 if(d){
                   productDeps.push({
                     name: d.name,
