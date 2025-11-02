@@ -15,12 +15,11 @@ const {getIngredients, getBillProducts, createDayReport} = require('../../utils/
 
 
 const io = require('socket.io-client');
-// const socket = io("https://socket.flowmanager.ro")
 const socket = io('https://flowmanager.ro', {
       path: '/socket.io/',
       transports: ['websocket']
     })
-    
+// const socket = io("https://socket.flowmanager.ro")
 const salePoint = require('../../models/utils/sale-point');
 const order = require('../../models/office/product/order');
 // const socket = io("http://localhost:8090")
@@ -622,7 +621,7 @@ module.exports.liftStatusDone = async (req, res, next) => {
             }
         }
         const newOrder = await Order.findByIdAndUpdate(order._id, order, {new: true}).populate({path: 'masaRest', select: 'index name'})
-        socket.emit('billl', JSON.stringify({bill: newOrder,  : server}))
+        socket.emit('billl', JSON.stringify({bill: newOrder, secondaryServer: server}))
         res.status(200).json({message: 'Comanda a fost marcată ca și ridicată!', order: newOrder, server: server})
     } catch(err){
         console.log(err.message)
