@@ -104,8 +104,10 @@ module.exports.getInvoices = async (req, res) => {
   const {loc} = req.query
   try{
     const invoices = await Invoice.find({locatie: loc})
-    invoices[invoices.length -1].products.forEach(p => {
-      console.log(p.productId)
+    invoices.forEach(i => {
+      i.products.forEach(p => {
+        console.log(p.productId)
+      })
     })
     // for(let i of invoices){
     //   // await i.save()
