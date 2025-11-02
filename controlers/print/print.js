@@ -833,6 +833,7 @@ module.exports.printConsum = async (req, res) => {
             //     products: []
             //   })
             // }
+            console.log('departament', dept)
             if(product.departament){
               if(product.departament.toString() === dept){
                 const existingProduct = newProducts.find(p => p.name === product.name)
