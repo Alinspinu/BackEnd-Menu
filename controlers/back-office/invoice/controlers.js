@@ -15,12 +15,14 @@ const {uploadInvoice, checkInvoiceStatus, chageValues} = require('./upload')
     
 
 module.exports.createOrderInvoice = async (req, res) => {
-  const {orderId, locId, clientId} = req.body
+  const {orderId, locId, clientId, unload} = req.body
   try{
     const order = await Order.findById(orderId)
     const loc = await Locatie.findById(locId)
     const client = await Client.findById(clientId)
-    const invoice = createOrderInvoice(order, client, loc)
+
+    const invoice = createOrderInvoice(order, client, loc, unload)
+    
     const newInvoice = new Invoice(invoice)
     const savedInvoice = await newInvoice.save()
     res.status(200).json({message: 'Factura a fost salvată cu succes!!', invoice: savedInvoice})
@@ -104,17 +106,10 @@ module.exports.getInvoices = async (req, res) => {
   const {loc} = req.query
   try{
     const invoices = await Invoice.find({locatie: loc})
-    invoices.forEach(i => {
-      i.products.forEach(p => {
-        if(p.productId){
 
-          console.log(p.name ,p.productId)
-        }
-      })
-    })
-    for(let i of invoices){
-        await Invoice.findByIdAndUpdate(i._id, i)
-    }
+    // for(let i of invoices){
+    //     await Invoice.findByIdAndUpdate(i._id, i)
+    // }
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)

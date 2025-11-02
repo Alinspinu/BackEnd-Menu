@@ -2,12 +2,12 @@ const subProduct = require('../../../models/office/product/sub-product');
 const {round, formatDateEFactura} = require('../../../utils/functions')
 
 
-function createOrderInvoice(order, customer, supplier) {
+function createOrderInvoice(order, customer, supplier, unload) {
   const invoice = {
-    serie: 'CAMPUS',
+    serie: 'T',
     unload: false,
-    invoiceCode: '751',
-    note: 'Factură încasată cu bon fiscal la data de ' + formatDateEFactura(order.updatedAt),
+    invoiceCode: unload ? '380' : '751',
+    note: unload ? 'Factură fiscală' : 'Factură încasată cu bon fiscal la data de ' + formatDateEFactura(order.updatedAt),
     issueDate: formatDateEFactura(order.updatedAt),
     dueDate: formatDateEFactura(order.updatedAt),
     currencyId: 'RON',
