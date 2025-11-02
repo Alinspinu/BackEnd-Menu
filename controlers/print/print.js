@@ -791,7 +791,7 @@ module.exports.printConsum = async (req, res) => {
     let marfaProducts = []
     let productDeps = []
     const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
-    const dep =  await Dep.findById(dept)
+    const departaments =  await Dep.find({locatie: loc, point: point})
     const start = new Date(startDate).setHours(0,0,0,0)
     const end = new Date(endDate).setHours(23,59,59,0)
     const startDateToShow = formatedDateToShow(start)
@@ -823,17 +823,47 @@ module.exports.printConsum = async (req, res) => {
               }
               tot0 += (product.quantity * 0.5)
             }
-            // const prodDep = productDeps.find(d => d.id === p.departament.toString())
-            // if(prodDep){
+            
 
-            // }  else {
-            //   productDeps.push({
-            //     name: dep.name,
-            //     id: dep._id,
-            //     products: []
-            //   })
-            // }
-            // console.log('departament', dept)
+            if(product.departament){
+              let total0 = product.tva === 0 ? product.tot - product.discount : 0
+              let total11 = product.tva === 11 ? product.tot - product.discount : 0
+              let total21 = product.tva === 21 ? product.tot - product.discount : 0
+              const productDep = productDeps.find(d => d.id === product.departament.toString())
+              if(productDep){
+                  const prod = productDep.products.find(p => p.name === product.name)
+                  if(prod){
+                    prod.quantity += product.quantity
+                    prod.tot += product.tot
+                    prod.discount += product.discount
+                  } else {
+                    productDep.prducts.push(product)
+                  }
+                  productDep.total0 += total0
+                  productDep.total11 += total11
+                  productDep.total21 += total21
+  
+              } else {
+                const d = departaments.find(d._id.toString() === product.departament.toString())
+                if(d){
+                  productDeps.push({
+                    name: d.name,
+                    id: product.departament.toString(),
+                    total0: total0,
+                    total11: total11,
+                    total21: total21,
+                    products: [product],
+                    ings: []
+                  })
+                } else {
+                  console.log(' Nu am gasit departament pentru ', p.name, ' ', product.departament)
+                }
+              }
+            }else {
+              console.log('Produs fara departament ', product.name)
+            }
+
+
             if(product.departament){
               if(product.departament.toString() === dept._id.toString()){
                 const existingProduct = newProducts.find(p => p.name === product.name)
@@ -1023,106 +1053,112 @@ module.exports.printConsum = async (req, res) => {
 
       const workbook = new exceljs.Workbook();
 
-      const pSheet = workbook.addWorksheet(`Produse vandute`);
-      const pTitle =  [
-        `Perioada - ${startDateToShow} pana la ${endDateToShow}`,
-         '',
-         '',
-        ]
-      
-        const pHead = [
-          'Nr',
-          `Denumire Produs`,
-          `TVA`,
-          `Pret / um`,
-          'Cantitate',
-          'Discount',
-          'Total',
-        ]
-        pSheet.addRow(pTitle)
-        pSheet.addRow(pHead)
-
-        newProducts.forEach((p, i) => {
-          pSheet.addRow(
-            [
-              `${i+1}`,
-              `${p.name}`,
-              `${p.tva} %`,
-              `${p.price}`,
-              `${p.quantity}`,
-              `${round(p.discount)}`,
-              `${round(p.tot - p.discount)}`,
-            ]
-            )
+      productDeps.forEach(d => {
+        d.products.sort((a, b) => {
+          if (a.tva !== b.tva) return a.tva - b.tva;
+          return a.name.localeCompare(b.name);
+        });
+        const pSheet = workbook.addWorksheet(`Produse pe departamentul ${d.name}`);
+        const pTitle =  [
+          `Perioada - ${startDateToShow} pana la ${endDateToShow}`,
+           '',
+           '',
+          ]
+        
+          const pHead = [
+            'Nr',
+            `Denumire Produs`,
+            `TVA`,
+            `Pret / um`,
+            'Cantitate',
+            'Discount',
+            'Total',
+          ]
+          pSheet.addRow(pTitle)
+          pSheet.addRow(pHead)
+  
+          d.products.forEach((p, i) => {
+            pSheet.addRow(
+              [
+                `${i+1}`,
+                `${p.name}`,
+                `${p.tva} %`,
+                `${p.price}`,
+                `${p.quantity}`,
+                `${round(p.discount)}`,
+                `${round(p.tot - p.discount)}`,
+              ]
+              )
+          })
+          pSheet.addRow([
+            '',
+            '',
+            `TOTAL 0%`,
+            '',
+            '',
+            '',
+            `${round(d.total0)}`,
+          ])
+  
+          pSheet.addRow([
+            '',
+            '',
+            `TOTAL 11%`,
+            '',
+            '',
+            '',
+            `${round(d.total11)}`,
+          ])
+          pSheet.addRow([
+            '',
+            '',
+            `TOTAL 21%`,
+            '',
+            '',
+            '',
+            `${round(d.total21)}`,
+          ])
+          pSheet.addRow([
+            '',
+            '',
+            `TOTAL GENERAL`,
+            '',
+            '',
+            '',
+            `${round(d.total11 + d.total21 + d.total0)}`
+          ])
+  
+          pSheet.getColumn(1).width = 5;
+          pSheet.getColumn(2).width = 40; 
+          pSheet.getColumn(3).width = 5; 
+          pSheet.getColumn(4).width = 10; 
+          pSheet.getColumn(5).width = 10; 
+          pSheet.getColumn(6).width = 10; 
+          pSheet.getColumn(7).width = 15; 
+  
+          const lastRowNumber = pSheet.lastRow.number;
+          for (let i = lastRowNumber; i > lastRowNumber - 4; i--) {
+            const row = pSheet.getRow(i);
+            pSheet.mergeCells(`A${i}:B${i}`)
+            pSheet.mergeCells(`C${i}:F${i}`)
+            row.eachCell((cell) => {
+              cell.font = { bold: true, size: 15 };
+            });
+          }
+  
+          pSheet.mergeCells(`A1:G1`)
+  
+          pSheet.getRow(1).eachCell((cell)=>{
+            cell.font = {
+                size: 14
+            }
         })
-        pSheet.addRow([
-          '',
-          '',
-          `TOTAL 0%`,
-          '',
-          '',
-          '',
-          `${round(tot0)}`,
-        ])
-
-        pSheet.addRow([
-          '',
-          '',
-          `TOTAL 11%`,
-          '',
-          '',
-          '',
-          `${round(tot11)}`,
-        ])
-        pSheet.addRow([
-          '',
-          '',
-          `TOTAL 21%`,
-          '',
-          '',
-          '',
-          `${round(tot21)}`,
-        ])
-        pSheet.addRow([
-          '',
-          '',
-          `TOTAL GENERAL`,
-          '',
-          '',
-          '',
-          `${round(tot11 + tot21 + tot0)}`
-        ])
-
-        pSheet.getColumn(1).width = 5;
-        pSheet.getColumn(2).width = 40; 
-        pSheet.getColumn(3).width = 5; 
-        pSheet.getColumn(4).width = 10; 
-        pSheet.getColumn(5).width = 10; 
-        pSheet.getColumn(6).width = 10; 
-        pSheet.getColumn(7).width = 15; 
-
-        const lastRowNumber = pSheet.lastRow.number;
-        for (let i = lastRowNumber; i > lastRowNumber - 4; i--) {
-          const row = pSheet.getRow(i);
-          pSheet.mergeCells(`A${i}:B${i}`)
-          pSheet.mergeCells(`C${i}:F${i}`)
-          row.eachCell((cell) => {
-            cell.font = { bold: true, size: 15 };
-          });
-        }
-
-        pSheet.mergeCells(`A1:G1`)
-
-        pSheet.getRow(1).eachCell((cell)=>{
-          cell.font = {
-              size: 14
-          }
-      })
-        pSheet.getRow(2).eachCell((cell)=>{
-          cell.font = {
-              bold: true,
-              size: 13
-          }
+          pSheet.getRow(2).eachCell((cell)=>{
+            cell.font = {
+                bold: true,
+                size: 13
+            }
+        })
       })
 
       // const pSheet = workbook.addWorksheet(`Produse vandute din productie`);
