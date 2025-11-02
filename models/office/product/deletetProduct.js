@@ -10,11 +10,9 @@ const deletetProductSchema = new Schema ({
         employee:{
           name:  {
             type: String,
-            reguired: true,   
             },
             position: {
                 type: String,
-                required: true
             }
         },
         inv: {

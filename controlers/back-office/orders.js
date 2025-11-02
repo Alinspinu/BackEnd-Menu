@@ -56,7 +56,6 @@ module.exports.getOrder = async (req, res, next) => {
                     .populate({path : 'products.gestiune', select: 'name'})
                     .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}, salePoint: point}).lean()
-        console.log(delProds)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
     if(!day && !end && !start) {
@@ -311,7 +310,7 @@ module.exports.getAllOrders = async (req, res, next) => {
         const date = new Date()
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
-        const orders = await Order.find({locatie: loc, updatedAt: {$gte: start, $lt: end} , salePoint: point}).populate({path: 'masaRest', select: 'index name' })
+        const orders = await Order.find({locatie: loc, createdAt: {$gte: start, $lt: end} , salePoint: point}).populate({path: 'masaRest', select: 'index name' })
             res.status(200).json(orders)         
     } catch(err){
         console.log(err)
