@@ -929,6 +929,9 @@ module.exports.printConsum = async (req, res) => {
                       qty: topping.qty,
                       ing: topping.ing
                     }
+                    if(ig.qty > 1){
+                      console.log('caltitata topping ', ig.ing.name, ' ', ig.qty)
+                    }
                     ings.push(ig);
                   }
                 }
