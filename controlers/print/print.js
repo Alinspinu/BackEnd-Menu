@@ -959,6 +959,7 @@ module.exports.printConsum = async (req, res) => {
                productDeps.forEach(d => {
 
                 d.products.forEach(product => {
+                  console.log(product.ings.length)
 
                 product.ings.forEach(ing => {
              
