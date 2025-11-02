@@ -32,14 +32,15 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'})
-                        .populate({path: 'products.productId', select: 'departament'})
+                        .populate({path : 'products.departament', select: 'name'}).lean()
+                        // .populate({path: 'products.productId', select: 'departament'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'}).lean()
+                        .populate({path : 'products.departament', select: 'name'})
+                        .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(openOrders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -85,7 +86,7 @@ async function modyfyOrdersProducts(orders){
                 if(p.productId){
                     if(!p.departament){
                         p.departament = p.productId.departament
-                        console.log('produs fara dep are acum dep ', p.departament )
+                        console.log('produs fara dep are acum dep ', p.departament)
                     }
                 } else {
                     console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
