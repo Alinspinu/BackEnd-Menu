@@ -1119,100 +1119,100 @@ module.exports.printConsum = async (req, res) => {
               //  })
 
 
-            if(product.departament){
-              if(product.departament.toString() === dept._id.toString()){
+            // if(product.departament){
+            //   if(product.departament.toString() === dept._id.toString()){
 
-                product.ings.forEach(ing => {
+            //     product.ings.forEach(ing => {
              
-                  if(ing.ings && ing.ings.length){
-                    ing.ings.forEach(ig => {
-                      ig.qty = ig.qty * product.quantity
-                      const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + ig.qty,
-                          ing: existingIngredient.ing
-                        }
-                        ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                      } else {
-                        ings.push(ig);
-                      }
-                    })
-                  } else {
-                    if(ing && ing.ing){
-                      ing.qty = ing.qty * product.quantity
-                      const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + ing.qty,
-                          ing: existingIngredient.ing
-                        }
-                        ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-                      } else {
-                        ings.push(ing);
-                      }
-                    }
-                    else {
-                    }
-                  }
-                })
+            //       if(ing.ings && ing.ings.length){
+            //         ing.ings.forEach(ig => {
+            //           ig.qty = ig.qty * product.quantity
+            //           const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
+            //           if (existingIngredient) {
+            //             const updatedIng = {
+            //               qty: existingIngredient.qty + ig.qty,
+            //               ing: existingIngredient.ing
+            //             }
+            //             ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+            //           } else {
+            //             ings.push(ig);
+            //           }
+            //         })
+            //       } else {
+            //         if(ing && ing.ing){
+            //           ing.qty = ing.qty * product.quantity
+            //           const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
+            //           if (existingIngredient) {
+            //             const updatedIng = {
+            //               qty: existingIngredient.qty + ing.qty,
+            //               ing: existingIngredient.ing
+            //             }
+            //             ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+            //           } else {
+            //             ings.push(ing);
+            //           }
+            //         }
+            //         else {
+            //         }
+            //       }
+            //     })
 
-                if(product.toppings.length){
-                  product.toppings.forEach(topping=>{
-                    topping.qty = topping.qty * product.quantity
-                    if(topping.ing.ings.length){
-                      topping.ing.ings.forEach(ig => {
-                        ig.qty = ig.qty * product.quantity
-                        const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
-                        if (existingIngredient) {
-                          const updatedIng = {
-                            qty: existingIngredient.qty + ig.qty,
-                            ing: existingIngredient.ing
-                          }
-                            ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                        } else {
-                          ings.push(ig);
-                        }
-                      })
-                    }
-                    else{
-                      const existingIngredient = ings.find(p =>p.ing.name === topping.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + topping.qty,
-                          ing: existingIngredient.ing
-                        }
-                        ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
-                      } else {
-                        const ig = {
-                          qty: topping.qty,
-                          ing: topping.ing
-                        }
-                        ings.push(ig);
-                      }
-                    }
-                  })
-                }
+            //     if(product.toppings.length){
+            //       product.toppings.forEach(topping=>{
+            //         topping.qty = topping.qty * product.quantity
+            //         if(topping.ing.ings.length){
+            //           topping.ing.ings.forEach(ig => {
+            //             ig.qty = ig.qty * product.quantity
+            //             const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
+            //             if (existingIngredient) {
+            //               const updatedIng = {
+            //                 qty: existingIngredient.qty + ig.qty,
+            //                 ing: existingIngredient.ing
+            //               }
+            //                 ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+            //             } else {
+            //               ings.push(ig);
+            //             }
+            //           })
+            //         }
+            //         else{
+            //           const existingIngredient = ings.find(p =>p.ing.name === topping.ing.name);
+            //           if (existingIngredient) {
+            //             const updatedIng = {
+            //               qty: existingIngredient.qty + topping.qty,
+            //               ing: existingIngredient.ing
+            //             }
+            //             ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+            //           } else {
+            //             const ig = {
+            //               qty: topping.qty,
+            //               ing: topping.ing
+            //             }
+            //             ings.push(ig);
+            //           }
+            //         }
+            //       })
+            //     }
 
-              }
-            }
+            //   }
+            // }
           })
         })
       }
-      ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
-      products.sort((a, b) => {
-        if (a.tva !== b.tva) return a.tva - b.tva;
-        return a.name.localeCompare(b.name);
-      });
-      newProducts.sort((a, b) => {
-        if (a.tva !== b.tva) return a.tva - b.tva;
-        return a.name.localeCompare(b.name);
-      });
+      // ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
+      // products.sort((a, b) => {
+      //   if (a.tva !== b.tva) return a.tva - b.tva;
+      //   return a.name.localeCompare(b.name);
+      // });
+      // newProducts.sort((a, b) => {
+      //   if (a.tva !== b.tva) return a.tva - b.tva;
+      //   return a.name.localeCompare(b.name);
+      // });
       
-      marfaProducts.sort((a, b) => {
-        if (a.tva !== b.tva) return a.tva - b.tva;
-        return a.name.localeCompare(b.name);
-      });
+      // marfaProducts.sort((a, b) => {
+      //   if (a.tva !== b.tva) return a.tva - b.tva;
+      //   return a.name.localeCompare(b.name);
+      // });
       // const filterIngredients = ings.filter(i => i.ing.dept.toString() === dep._id.toString())
 
 
@@ -1360,7 +1360,7 @@ module.exports.printConsum = async (req, res) => {
         sellPrice: 0
       }
 
-
+      console.log('departament ings lenght', d.ings.length)
       d.ings.forEach((ing, i) =>{
         ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
         const price = ing.ing.invGestiune[0].entries[0]?.priceNoVat || ing.ing.price
