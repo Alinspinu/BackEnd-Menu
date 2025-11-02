@@ -785,7 +785,13 @@ module.exports.printConsum = async (req, res) => {
     const endDateToShow = formatedDateToShow(end)
     const locatie = await Locatie.findById(loc)
     const invoices = await Invoice.find({locatie: loc, salePoint: point, createdAt: {$gte: start, $lte: end}})
-                    .populate({path:'products.productId', select: 'name departament sgrTax'}).lean()
+                    .populate({path:'products.productId', select: 'name departament sgrTax'})
+                    .populate([
+                      {
+                        path: 'products.ings.ing', 
+                        populate: {path: 'ings.ing'}
+                      }
+                    ]).lean()
     const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: start, $lte: end}, status: 'done'}).populate([
       {
         path: 'products.ings.ing', 
