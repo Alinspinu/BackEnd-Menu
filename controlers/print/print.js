@@ -807,7 +807,6 @@ module.exports.printConsum = async (req, res) => {
         populate: {path: 'ings.ing'}
       }
     ])
-    console.log(departaments)
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
@@ -1034,7 +1033,8 @@ module.exports.printConsum = async (req, res) => {
             }
           })
         })
-      } 
+      }
+      console.log(departaments)
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       products.sort((a, b) => {
         if (a.tva !== b.tva) return a.tva - b.tva;
