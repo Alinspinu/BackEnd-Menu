@@ -53,7 +53,10 @@ const orderTrueSchema = new Schema({
         type: Number,
         default: 0
     },
-
+    invoice: {
+        type: Boolean,
+        default: false
+    },
     voucher:{
         type: Number,
         default: 0
