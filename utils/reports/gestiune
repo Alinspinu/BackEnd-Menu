@@ -106,8 +106,6 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
               } else {
                 console.log('ingredient fara gestiune', p.name)
               }
-            } else {
-              console.log('produs fara ingredient  **** ', p.name)
             }
           }
       }
