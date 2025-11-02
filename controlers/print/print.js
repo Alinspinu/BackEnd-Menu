@@ -897,11 +897,11 @@ module.exports.printConsum = async (req, res) => {
   
             if(product.toppings.length){
               product.toppings.forEach(topping=>{
+                topping.qty = topping.qty * product.quantity
                 if(topping.name === 'Taxa SGR'){
                   sgrTot += (1 * product.quantity)
                 }
                 if(topping.ing.ings.length){
-                  topping.qty = topping.qty * product.quantity
                   topping.ing.ings.forEach(ig => {
                     ig.qty = ig.qty * product.quantity
                     const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
