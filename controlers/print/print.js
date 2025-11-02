@@ -838,7 +838,7 @@ module.exports.printConsum = async (req, res) => {
                     prod.tot += product.tot
                     prod.discount += product.discount
                   } else {
-                    productDep.prducts.push(product)
+                    productDep.products.push(product)
                   }
                   productDep.total0 += total0
                   productDep.total11 += total11
