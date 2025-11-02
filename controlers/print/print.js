@@ -1018,7 +1018,7 @@ module.exports.printConsum = async (req, res) => {
         if (a.tva !== b.tva) return a.tva - b.tva;
         return a.name.localeCompare(b.name);
       });
-      const filterIngredients = ings.filter(i => i.ing.dept.toString() === dep._id.toString())
+      // const filterIngredients = ings.filter(i => i.ing.dept.toString() === dep._id.toString())
 
 
       const workbook = new exceljs.Workbook();
@@ -1355,7 +1355,7 @@ module.exports.printConsum = async (req, res) => {
       }
 
 
-      filterIngredients.forEach((ing, i) =>{
+      ings.forEach((ing, i) =>{
         ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
         const price = ing.ing.invGestiune[0].entries[0]?.priceNoVat || ing.ing.price
 
