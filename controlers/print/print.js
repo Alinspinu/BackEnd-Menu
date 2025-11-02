@@ -833,9 +833,9 @@ module.exports.printConsum = async (req, res) => {
             //     products: []
             //   })
             // }
-            console.log('departament', dept)
+            // console.log('departament', dept)
             if(product.departament){
-              if(product.departament.toString() === dept){
+              if(product.departament.toString() === dept._id.toString()){
                 const existingProduct = newProducts.find(p => p.name === product.name)
                 if(existingProduct){
                   existingProduct.quantity += product.quantity
