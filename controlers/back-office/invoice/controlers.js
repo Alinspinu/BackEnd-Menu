@@ -107,9 +107,9 @@ module.exports.getInvoices = async (req, res) => {
     invoices[invoices.length -1].products.forEach(p => {
       console.log(p.productId)
     })
-    for(let i of invoices){
-      await i.save()
-    }
+    // for(let i of invoices){
+    //   // await i.save()
+    // }
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)
