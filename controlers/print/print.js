@@ -782,6 +782,7 @@ module.exports.printConsum = async (req, res) => {
     let totMarf21 = 0
     let totMarf11 = 0
     let marfaProducts = []
+    let sgrP = []
     const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
     const dep =  await Dep.findById(dept)
     const start = new Date(startDate).setHours(0,0,0,0)
@@ -826,6 +827,16 @@ module.exports.printConsum = async (req, res) => {
               }
             } 
             if(product.dep === 'marfa') {
+              if(product.sgrTax){
+                product.tot = round( product.tot - (0.5 * product.quantity))
+                const tax = marfaProducts.find(t => t.name === 'Taxa SGR')
+                if(tax){
+                  tax.quantity += product.quantity
+                  tax.tot += product.tot
+                } else {
+                  marfaProducts.push({name: 'Taxa SGR', price: 0.5, tva: 0, quantity: product.quantity, tot: product.quantity * 0.5, discount: 0})
+                }
+              }
               const existingProduct = marfaProducts.find(p => p.name === product.name)
               if(existingProduct){
                 existingProduct.quantity += product.quantity
@@ -1044,6 +1055,7 @@ module.exports.printConsum = async (req, res) => {
         mpSheet.addRow(mpHead)
 
         marfaProducts.forEach((p, i) => {
+          
           mpSheet.addRow(
             [
               `${i+1}`,
