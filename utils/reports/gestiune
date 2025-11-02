@@ -181,10 +181,10 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
       day.out11 = day.in11 || 0;
       day.out21 = day.in21 || 0;
     
-      console.log(`📅 Day ${i + 1} (${day.date || 'no date'})`);
-      console.log(`   Starting IN 0%: ${day.in0}`);
-      console.log(`   Starting IN 11%: ${day.in11}`);
-      console.log(`   Starting IN 21%: ${day.in21}`);
+      // console.log(`📅 Day ${i + 1} (${day.date || 'no date'})`);
+      // console.log(`   Starting IN 0%: ${day.in0}`);
+      // console.log(`   Starting IN 11%: ${day.in11}`);
+      // console.log(`   Starting IN 21%: ${day.in21}`);
     
       for (let e of day.entries || []) {
         if (e.type === 'intrare') {

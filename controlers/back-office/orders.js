@@ -32,8 +32,8 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'}).lean()
-                        // .populate({path: 'products.productId', select: 'departament gestiune'})
+                        .populate({path : 'products.departament', select: 'name'})
+                        .populate({path: 'products.productId', select: 'ings subProducts', populate: {path: 'subProducts', select: 'name ings'}})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
@@ -81,13 +81,19 @@ async function modyfyOrdersProducts(orders){
 
     const promises = orders.map(async o => {
         for(let p of o.products){
-            const name = p.name.split('-')[0]
-            const pp = await Product.findOne({name: name}).select('name gestiune departament').lean()
-            if(pp){
-                p.productId = pp._id
-                p.gestiune = pp.gestiune
-                p.departament = pp.departament
+            if(!p.ings.length){
+                let ings = p.productId.ings
+                if(p.productId.subProducts.length){
+                    const sub = p.productId.subProducts.find(s => s.name.includes(p.name.split('-')[1]) )
+                    if(sub){
+                        ings = sub.ings
+                    } else {
+                        console.log('Produs gasit cu subproduse ', p.name, 'su nu a fost gasit  SUB Produsl ', p.productId.subProducts.map(s => s.name + '/').toString())
+                    }
+                } 
+                p.ings = ings
 
+                console.log('Podus gasit fara ingrediente i-au fost adaugate ingrediente ', p.name, ' ', p.ings.length , ' ings')
             }
             // if(p){
             //     if(p.productId){
