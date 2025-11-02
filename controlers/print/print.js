@@ -777,7 +777,7 @@ module.exports.printConsum = async (req, res) => {
   try{
 
     let productDeps = []
-    const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
+    const {loc, startDate, endDate, point, mail = undefined} = req.body
 
     const departaments =  await Dep.find({locatie: loc, salePoint: point})
     const start = new Date(startDate).setHours(0,0,0,0)
@@ -794,7 +794,7 @@ module.exports.printConsum = async (req, res) => {
         path: 'products.toppings.ing', 
         populate: {path: 'ings.ing'}
       }
-    ])
+    ]).lean()
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
@@ -1088,7 +1088,7 @@ module.exports.printConsum = async (req, res) => {
           [
             `${i+1}`,
             `${ing.ing.name}`,
-            `${dept.name}`,
+            `${d.name}`,
             `${ing.ing.um}`,
             `${ing.ing.tva} %`,
             `${price}`,
