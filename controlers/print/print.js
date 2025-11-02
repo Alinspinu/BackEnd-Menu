@@ -956,89 +956,6 @@ module.exports.printConsum = async (req, res) => {
             //   }
             // }
 
-
-               productDeps.forEach(d => {
-
-                d.products.forEach(product => {
-    
-                product.ings.forEach(ing => {
-             
-                  if(ing.ings && ing.ings.length){
-                    ing.ings.forEach(ig => {
-                      ig.qty = ig.qty * product.quantity
-                      const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + ig.qty,
-                          ing: existingIngredient.ing
-                        }
-                        d.ings = d.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                      } else {
-                        d.ings.push(ig);
-                      }
-                    })
-                  } else {
-                    if(ing && ing.ing){
-                      ing.qty = ing.qty * product.quantity
-                      const existingIngredient = d.ings.find(p =>p.ing.name === ing.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + ing.qty,
-                          ing: existingIngredient.ing
-                        }
-                        d.ings = d.ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-                      } else {
-                        d.ings.push(ing);
-                      }
-                    }
-                    else {
-                    }
-                  }
-                })
-
-
-                if(product.toppings.length){
-                  product.toppings.forEach(topping=>{
-                    topping.qty = topping.qty * product.quantity
-                    if(topping.ing.ings.length){
-                      topping.ing.ings.forEach(ig => {
-                        ig.qty = ig.qty * product.quantity
-                        const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
-                        if (existingIngredient) {
-                          const updatedIng = {
-                            qty: existingIngredient.qty + ig.qty,
-                            ing: existingIngredient.ing
-                          }
-                            d.ings = d.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                        } else {
-                          d.ings.push(ig);
-                        }
-                      })
-                    }
-                    else{
-                      const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + topping.qty,
-                          ing: existingIngredient.ing
-                        }
-                        d.ings = d.ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
-                      } else {
-                        const ig = {
-                          qty: topping.qty,
-                          ing: topping.ing
-                        }
-                        d.ings.push(ig);
-                      }
-                    }
-                  })
-                }
-
-
-                })
-               })
-
-
             // if(product.departament){
             //   if(product.departament.toString() === dept._id.toString()){
 
@@ -1119,6 +1036,89 @@ module.exports.printConsum = async (req, res) => {
           })
         })
       }
+
+      productDeps.forEach(d => {
+
+        d.products.forEach(product => {
+
+        product.ings.forEach(ing => {
+     
+          if(ing.ings && ing.ings.length){
+            ing.ings.forEach(ig => {
+              ig.qty = ig.qty * product.quantity
+              const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
+              if (existingIngredient) {
+                const updatedIng = {
+                  qty: existingIngredient.qty + ig.qty,
+                  ing: existingIngredient.ing
+                }
+                d.ings = d.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+              } else {
+                d.ings.push(ig);
+              }
+            })
+          } else {
+            if(ing && ing.ing){
+              ing.qty = ing.qty * product.quantity
+              const existingIngredient = d.ings.find(p =>p.ing.name === ing.ing.name);
+              if (existingIngredient) {
+                const updatedIng = {
+                  qty: existingIngredient.qty + ing.qty,
+                  ing: existingIngredient.ing
+                }
+                d.ings = d.ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+              } else {
+                d.ings.push(ing);
+              }
+            }
+            else {
+            }
+          }
+        })
+
+
+        if(product.toppings.length){
+          product.toppings.forEach(topping=>{
+            topping.qty = topping.qty * product.quantity
+            if(topping.ing.ings.length){
+              topping.ing.ings.forEach(ig => {
+                ig.qty = ig.qty * product.quantity
+                const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
+                if (existingIngredient) {
+                  const updatedIng = {
+                    qty: existingIngredient.qty + ig.qty,
+                    ing: existingIngredient.ing
+                  }
+                    d.ings = d.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                } else {
+                  d.ings.push(ig);
+                }
+              })
+            }
+            else{
+              const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
+              if (existingIngredient) {
+                const updatedIng = {
+                  qty: existingIngredient.qty + topping.qty,
+                  ing: existingIngredient.ing
+                }
+                d.ings = d.ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+              } else {
+                const ig = {
+                  qty: topping.qty,
+                  ing: topping.ing
+                }
+                d.ings.push(ig);
+              }
+            }
+          })
+        }
+
+
+        })
+       })
+
+
       // ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       // products.sort((a, b) => {
       //   if (a.tva !== b.tva) return a.tva - b.tva;
