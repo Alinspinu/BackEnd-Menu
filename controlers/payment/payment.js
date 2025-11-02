@@ -20,7 +20,11 @@ const {createBillForPrinter} = require('../../utils/print/thermalPrinter')
 
 
 const io = require('socket.io-client')
-const socket = io("https://socket.flowmanager.ro")
+const socket = io('https://flowmanager.ro', {
+      path: '/socket.io/',
+      transports: ['websocket']
+    })
+// const socket = io("https://socket.flowmanager.ro")
 
 module.exports.getToken = async (req, res, next) => {
     const {code} = req.query

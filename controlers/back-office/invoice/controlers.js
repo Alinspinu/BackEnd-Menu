@@ -6,6 +6,12 @@ const Order = require('../../../models/office/product/order')
 const Client = require('../../../models/office/client')
 const Locatie = require('../../../models/office/locatie')
 
+const io = require('socket.io-client')
+const socket = io('https://flowmanager.ro', {
+      path: '/socket.io/',
+      transports: ['websocket']
+    })
+
 
 const {buildEFacturaHeaderXML} = require('./buildXml')
 const {createOrderInvoice} = require('./create-order-invoice')
@@ -27,7 +33,10 @@ module.exports.createOrderInvoice = async (req, res) => {
     const savedInvoice = await newInvoice.save()
     if(unload){
       order.status = 'done'
+      order.invoice = true
 
+      const so = Order.findByIdAndUpdate(order._id, order, {new: true})
+      socket.emit('billl', JSON.stringify({bill: so}))
     }
 
     res.status(200).json({message: 'Factura a fost salvată cu succes!!', invoice: savedInvoice})

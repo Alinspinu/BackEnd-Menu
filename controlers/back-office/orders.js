@@ -36,8 +36,8 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'})
-                        .populate({path: 'products.productId', select: 'departament'})
+                        .populate({path : 'products.departament', select: 'name'}).lean()
+                        // .populate({path: 'products.productId', select: 'departament'})
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
@@ -84,20 +84,21 @@ module.exports.getOrder = async (req, res, next) => {
 async function modyfyOrdersProducts(orders){
 
     const promises = orders.map(async o => {
-        for(let p of o.products){
-            if(p){
-                if(p.productId){
-                    if(!p.departament){
-                        if(!p.departament){
-                            p.departament = p.productId.departament
-                            console.log('produs fara dep are acum dep ', p.departament)
-                        }
-                    }
-                } else {
-                    console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
-                }
-            }
-        }
+        o.invoice = false
+        // for(let p of o.products){
+        //     if(p){
+        //         if(p.productId){
+        //             if(!p.departament){
+        //                 if(!p.departament){
+        //                     p.departament = p.productId.departament
+        //                     console.log('produs fara dep are acum dep ', p.departament)
+        //                 }
+        //             }
+        //         } else {
+        //             console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
+        //         }
+        //     }
+        // }
         return Order.findByIdAndUpdate(o._id, o, {new: true})
     })
    const up =  await Promise.all(promises);
