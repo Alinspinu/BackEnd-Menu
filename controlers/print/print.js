@@ -832,7 +832,7 @@ module.exports.printConsum = async (req, res) => {
                 const tax = marfaProducts.find(t => t.name === 'Taxa SGR')
                 if(tax){
                   tax.quantity += product.quantity
-                  tax.tot += product.tot
+                  tax.tot += (product.quantity * 0.5)
                 } else {
                   marfaProducts.push({name: 'Taxa SGR', price: 0.5, tva: 0, quantity: product.quantity, tot: product.quantity * 0.5, discount: 0})
                 }
