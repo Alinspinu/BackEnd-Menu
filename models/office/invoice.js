@@ -105,7 +105,18 @@ const invoiceSchema = new Schema({
             totalNoVat: Number,
             vatPrecent: Number,
             total: Number,
-            productId: String,
+            productId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Product'
+            },
+            departament: {
+                type: Schema.Types.ObjectId,
+                ref: 'Dep'
+            },
+            gestiune: {
+                type: Schema.Types.ObjectId,
+                ref: 'Gestiune'
+            },
             subProductId: String,
             ings: [
                 {
