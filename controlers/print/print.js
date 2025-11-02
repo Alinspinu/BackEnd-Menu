@@ -863,7 +863,7 @@ module.exports.printConsum = async (req, res) => {
                 }
               }
             } else {
-              console.log('Produs fara departament ', p.name)
+              console.log('Produs fara departament ', product.name)
             }
 
             // if(product.dep === 'productie'){
