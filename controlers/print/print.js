@@ -791,7 +791,8 @@ module.exports.printConsum = async (req, res) => {
     let marfaProducts = []
     let productDeps = []
     const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
-    const departaments =  await Dep.find({locatie: loc, point: point})
+
+    const departaments =  await Dep.find({locatie: loc, salePoint: point})
     const start = new Date(startDate).setHours(0,0,0,0)
     const end = new Date(endDate).setHours(23,59,59,0)
     const startDateToShow = formatedDateToShow(start)
