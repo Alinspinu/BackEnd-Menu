@@ -34,6 +34,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
 
         for(let p of i.products){
           p.tva = p.vatPrecent
+          p.discount = p.discount?.value || 0
           if(p.productId){
             const dbProduct = p.productId
             if(!dbProduct.departament) console.log('produst fara departament ' , p.name)
