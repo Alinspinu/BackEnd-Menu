@@ -925,7 +925,7 @@ module.exports.printConsum = async (req, res) => {
             // }
 
             if(product.departament){
-              if(product.departament.toString() === dept){
+              if(product.departament.toString() === dept._id.toString()){
 
                 product.ings.forEach(ing => {
              
