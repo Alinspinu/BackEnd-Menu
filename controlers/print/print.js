@@ -13,7 +13,6 @@ const Invoice = require('../../models/office/invoice')
 // const {createRaortXml} = require('../../utils/print/printOrders');
 
 const {sendBillToCustomer} = require('../../utils/mail');
-const invoice = require('../../models/office/invoice');
 const { formatedDateToShow } = require('../../utils/functions');
 
 const {createRecipt} = require('./recipt')
