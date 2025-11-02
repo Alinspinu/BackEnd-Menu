@@ -106,12 +106,12 @@ module.exports.getInvoices = async (req, res) => {
     const invoices = await Invoice.find({locatie: loc})
     invoices.forEach(i => {
       i.products.forEach(p => {
-        console.log(p)
+        console.log(p.productId)
       })
     })
-    // for(let i of invoices){
-    //   // await i.save()
-    // }
+    for(let i of invoices){
+        await Invoice.findByIdAndUpdate(i_id, i)
+    }
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)
