@@ -921,11 +921,13 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     user: dbUser._id,
                 }
                 const docDate = new Date(date.setUTCHours(0,0,0,0))
-                for(let pay of dbEmployee.employee.payments){
-                    const payDate = new Date(new Date(pay.date).setUTCHours(0,0,0,0))
-                    if(payDate.getTime() === docDate.getTime() && normalizeText(pay.tip).includes('bonus')){
-                        dbEmpl.bonus += pay.amount
-                        values.workValueTotal += dbEmpl.bonus
+                if( dbEmployee.employee){
+                    for(let pay of dbEmployee.employee.payments){
+                        const payDate = new Date(new Date(pay.date).setUTCHours(0,0,0,0))
+                        if(payDate.getTime() === docDate.getTime() && normalizeText(pay.tip).includes('bonus')){
+                            dbEmpl.bonus += pay.amount
+                            values.workValueTotal += dbEmpl.bonus
+                        }
                     }
                 }
                 const existingUser = users.find(u => u.name === dbEmpl.name)
