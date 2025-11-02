@@ -190,39 +190,39 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
         if (e.type === 'intrare') {
           if(e.tva === 0){
             day.out0 += e.value;
-            console.log(`   ➕ Intrare: +${e.value} → OUT 0%: ${day.out0}`);
+            // console.log(`   ➕ Intrare: +${e.value} → OUT 0%: ${day.out0}`);
           } else if(e.tva === 11){
             day.out11 += e.value;
-            console.log(`   ➕ Intrare: +${e.value} → OUT 11%: ${day.out11}`);
+            // console.log(`   ➕ Intrare: +${e.value} → OUT 11%: ${day.out11}`);
           } else if(e.tva === 21){
             day.out21 += e.value;
-            console.log(`   ➕ Intrare: +${e.value} → OUT 21%: ${day.out21}`);
+            // console.log(`   ➕ Intrare: +${e.value} → OUT 21%: ${day.out21}`);
           } else {
-            console.log(`   ⚠️ Unknown entry TVA:`, e.tva);
+            // console.log(`   ⚠️ Unknown entry TVA:`, e.tva);
           }
 
         } else if (e.type === 'iesire') {
           if(e.tva === 0){
             day.out0 -= e.value;
-            console.log(`   ➖ Iesire: -${e.value} → OUT 0%: ${day.out0}`);
+            // console.log(`   ➖ Iesire: -${e.value} → OUT 0%: ${day.out0}`);
           } else if(e.tva === 11){
             day.out11 -= e.value;
-            console.log(`   ➖ Iesire: -${e.value} → OUT 11%: ${day.out11}`);
+            // console.log(`   ➖ Iesire: -${e.value} → OUT 11%: ${day.out11}`);
           } else if( e.tva === 21){
             day.out21 -= e.value;
-            console.log(`   ➖ Iesire: -${e.value} → OUT 21%: ${day.out21}`);
+            // console.log(`   ➖ Iesire: -${e.value} → OUT 21%: ${day.out21}`);
           } else{
-            console.log(`   ⚠️ Unknown entry TVA:`, e.tva);
+            // console.log(`   ⚠️ Unknown entry TVA:`, e.tva);
           }
         } else {
-          console.log(`   ⚠️ Unknown entry type:`, e);
+          // console.log(`   ⚠️ Unknown entry type:`, e);
         }
       }
     
-      console.log(`   🔄 Resulting OUT 0%: ${day.out0}`);
-      console.log(`   🔄 Resulting OUT 11%: ${day.out11}`);
-      console.log(`   🔄 Resulting OUT 21%: ${day.out21}`);
-      console.log('----------------------------------------');
+      // console.log(`   🔄 Resulting OUT 0%: ${day.out0}`);
+      // console.log(`   🔄 Resulting OUT 11%: ${day.out11}`);
+      // console.log(`   🔄 Resulting OUT 21%: ${day.out21}`);
+      // console.log('----------------------------------------');
     
       if (days[i + 1]) {
         days[i + 1].in0 = day.out0;
