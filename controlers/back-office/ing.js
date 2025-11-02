@@ -29,9 +29,9 @@ module.exports.getGestReport = async(req, res) => {
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }})
               .populate({path: 'suplier', select: 'name'})
               .populate({path: 'locatie', select: 'bussinessName' }).lean()
-    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}, 'products.dep': 'marfa'}).lean() 
+    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}, 'products.departament': dep}).lean() 
  
-    const days = await createRG(start, end, nirs, ings, gest, orders, in0, in11, in21)
+    const days = await createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, dep)
   
     const buffer = await createExcelBuffer(days, nirs[0].locatie.bussinessName);
 
