@@ -85,8 +85,10 @@ async function modyfyOrdersProducts(orders){
             if(p){
                 if(p.productId){
                     if(!p.departament){
-                        p.departament = p.productId.departament
-                        console.log('produs fara dep are acum dep ', p.departament)
+                        if(!p.departament){
+                            p.departament = p.productId.departament
+                            console.log('produs fara dep are acum dep ', p.departament)
+                        }
                     }
                 } else {
                     console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
