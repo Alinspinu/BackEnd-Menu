@@ -802,7 +802,7 @@ module.exports.printConsum = async (req, res) => {
           i.products.forEach(product => {
             product.tot = product.total
             product.tva = product.vatPrecent
-            product.discount = product.discount.value
+            product.discount = product.discount?.value || 0
             const dbProd = product.productId
             if(dbProd.sgrTax){
               product.tot = round( product.tot - (0.5 * product.quantity))
