@@ -6,7 +6,7 @@ const {normalizeText, round} = require('../functions')
 
 
 
-async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, dep){
+async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, dep, invoices){
 
     // const startDate = new Date(start).setHours(0,0,0,0)
     // const endDate = new Date(end).setHours(23,59,59, 9999)
@@ -26,6 +26,86 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
 
     totalOutBacsis = 0
     totalOutSGR = 0
+
+
+    for(let i of invoices){
+      const day = days.find(d => new Date(d.date).toDateString() === new Date(i.createdAt).toDateString())
+      if(day){
+
+        for(let p of i.products){
+          p.tva = p.vatPrecent
+          if(p.productId){
+            const dbProduct = p.productId
+            if(!dbProduct.departament) console.log('produst fara departament ' , p.name)
+              if(dbProduct.departament?.toString() === dep){
+                let sgrTax = 0
+                if(dbProduct.sgrTax){
+                  sgrTax = 0.5 * p.quantity
+                  const existinSGREntry = day.entries.find(e => e.description === 'Vanzare SGR')
+                  if(existinSGREntry){
+                    existinSGREntry.value += sgrTax
+                  } else {
+                    const entry = {
+                      date: i.createdAt,
+                      description: 'Vanzare SGR',
+                      nrDoc: i.invoiceNumber,
+                      value: sgrTax,
+                      type: 'iesire',
+                      docId: i._id.toString(), 
+                      tva: 0
+                    }
+                    day.entries.push(entry)
+                  }
+                  totalOutSGR += sgrTax
+                  totalOut0 += sgrTax
+    
+                }
+                if(p.ings[0]){
+                  if(p.ings[0].gestiune){
+                    if(p.ings[0].gestiune.toString() === gest){
+                        const price = round(((p.price * p.quantity) - p.discount)-sgrTax)
+    
+                        if(p.tva === 11){
+                          totalOut11 += price
+                        }
+                        if(p.tva === 21){
+                          totalOut21 += price
+                        }
+    
+                        const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul' && e.tva === p.tva)
+                        if(existingEntry){
+                          existingEntry.value += price
+                        } else {
+                          const entry = {
+                            date: i.createdAt,
+                            description: 'Vanzare cu amanuntul',
+                            nrDoc: i.invoiceNumber,
+                            value: price,
+                            type: 'iesire',
+                            docId: i._id.toString(), 
+                            tva: p.tva,
+                          }
+                          day.entries.push(entry)
+                        }
+                      } else {
+                        console.log('ingredient gasit ca marfa cu alta gestiune decat bar ', p.name, ' ',  p.ings[0].gestiune)
+                      }
+                    } else {
+                      console.log('ingredient fara gestiune', p.name)
+                    }
+                  } else {
+                    console.log('ingredient fara ingredient', p.name)
+                  }
+                }
+              }
+          }
+        }
+
+      }
+    
+
+
+
     for(let o of orders){
       const day = days.find(d => new Date(d.date).toDateString() === new Date(o.createdAt).toDateString())
       if(day){

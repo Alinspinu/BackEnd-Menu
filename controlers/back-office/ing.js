@@ -9,6 +9,7 @@ const SubProduct = require('../../models/office/product/sub-product')
 const CigarsInv = require('../../models/cigars-inv')
 const salePoint = require('../../models/utils/sale-point')
 const ComparedInventary = require('../../models/office/comp-inv')
+const Invoice = require('../../models/office/invoice')
 const Nir = require('../../models/office/nir')
 const  {createRG} = require('../../utils/reports/gestiune')
 const {createExcelBuffer} = require('../print/gestiune-xls')
@@ -30,8 +31,12 @@ module.exports.getGestReport = async(req, res) => {
               .populate({path: 'suplier', select: 'name'})
               .populate({path: 'locatie', select: 'bussinessName' }).lean()
     const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}, 'products.departament': dep, status: 'done'}).lean() 
- 
-    const days = await createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, dep)
+    const invoices = await Invoice.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}})
+              .populate({path:'products.productId', select: 'name departament sgrTax'})
+              .lean()
+                      
+
+    const days = await createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, dep, invoices)
   
     const buffer = await createExcelBuffer(days, nirs[0].locatie.bussinessName);
 
