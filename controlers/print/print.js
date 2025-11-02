@@ -891,8 +891,12 @@ module.exports.printConsum = async (req, res) => {
                 }
               }
             })
+            let sgrTot = 0
             if(product.toppings.length){
               product.toppings.forEach(topping=>{
+                if(topping.name === 'Taxa SGR'){
+                  sgrTot += 1
+                }
                 console.log(topping.name)
                 if(topping.ing.ings.length){
                   topping.ing.ings.forEach(ig => {
@@ -929,6 +933,7 @@ module.exports.printConsum = async (req, res) => {
           })
         })
       } 
+      console.log('SGR FROM INGS ', sgrTot)
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       products.sort((a, b) => {
         if (a.tva !== b.tva) return a.tva - b.tva;
