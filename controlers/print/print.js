@@ -856,7 +856,7 @@ module.exports.printConsum = async (req, res) => {
                     ings: []
                   })
                 } else {
-                  console.log(' Nu am gasit departament pentru ', p.name, ' ', product.departament)
+                  console.log(' Nu am gasit departament pentru ', product.name, ' ', product.departament)
                 }
               }
             }else {
