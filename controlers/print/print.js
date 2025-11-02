@@ -952,7 +952,7 @@ module.exports.printConsum = async (req, res) => {
         })
 
 
-        if(product.toppings.length){
+        if(product.toppings?.length){
           product.toppings.forEach(topping=>{
             topping.qty = topping.qty * product.quantity
             if(topping.ing.ings.length){
