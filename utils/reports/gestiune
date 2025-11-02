@@ -26,7 +26,6 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
 
     totalOutBacsis = 0
     totalOutSGR = 0
-  console.log('orders lenght', orders.length)
     for(let o of orders){
       const day = days.find(d => new Date(d.date).toDateString() === new Date(o.createdAt).toDateString())
       if(day){
@@ -100,6 +99,8 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
                       }
                       day.entries.push(entry)
                     }
+                  } else {
+                    console.log('ingredient gasit ca marfa cu alta gestiune decat bar ', p.ings[0].gestiune)
                   }
                 } else {
                   console.log('ingredient fara gestiune', p.name)
