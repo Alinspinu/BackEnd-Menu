@@ -22,9 +22,14 @@ module.exports.createOrderInvoice = async (req, res) => {
     const client = await Client.findById(clientId)
 
     const invoice = createOrderInvoice(order, client, loc, unload)
-    
+
     const newInvoice = new Invoice(invoice)
     const savedInvoice = await newInvoice.save()
+    if(unload){
+      order.status = 'done'
+
+    }
+
     res.status(200).json({message: 'Factura a fost salvată cu succes!!', invoice: savedInvoice})
   } catch(error) {
     console.log(error)
@@ -212,8 +217,8 @@ module.exports.getMessages = async (req, res) => {
               'Content-Type': 'application/json',  
             }
           }
-          // const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/listaMesajeFactura'
-          const baseUrl = process.env.ANAF_DAYS_BASE_API_URL
+          const baseUrl = 'https://api.anaf.ro/test/FCTEL/rest/listaMesajeFactura'
+          // const baseUrl = process.env.ANAF_DAYS_BASE_API_URL
         const response = await axios.get(`${baseUrl}?zile=${days}&cif=${cif}&filtru=${filter}`, config)
         if(response){
             res.status(200).json(response.data)
