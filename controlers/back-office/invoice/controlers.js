@@ -112,9 +112,9 @@ module.exports.getInvoices = async (req, res) => {
         }
       })
     })
-    // for(let i of invoices){
-    //     await Invoice.findByIdAndUpdate(i._id, i)
-    // }
+    for(let i of invoices){
+        await Invoice.findByIdAndUpdate(i._id, i)
+    }
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)

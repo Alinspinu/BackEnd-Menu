@@ -9,6 +9,7 @@ const Dep = require('../../models/office/product/dep')
 const Inventary = require('../../models/office/inventary')
 const Product = require('../../models/office/product/product')
 const ComparedInventary = require('../../models/office/comp-inv')
+const Invoice = require('../../models/office/invoice')
 // const {createRaortXml} = require('../../utils/print/printOrders');
 
 const {sendBillToCustomer} = require('../../utils/mail');
@@ -785,6 +786,8 @@ module.exports.printConsum = async (req, res) => {
     const startDateToShow = formatedDateToShow(start)
     const endDateToShow = formatedDateToShow(end)
     const locatie = await Locatie.findById(loc)
+    const invoices = await Invoice.find({locatie: loc, salePoint: point, createdAt: {$gte: start, $lte: end}})
+                    .populate({path:'products.productId', select: 'name departament sgrTax'}).lean()
     const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: start, $lte: end}, status: 'done'}).populate([
       {
         path: 'products.ings.ing', 
@@ -795,6 +798,60 @@ module.exports.printConsum = async (req, res) => {
         populate: {path: 'ings.ing'}
       }
     ]).lean()
+
+      if(invoices){
+        invoices.forEach(i => {
+          i.products.forEach(product => {
+            product.tot = product.total
+            product.tva = product.vatPrecent
+            product.discount = product.discount.value
+            const dbProd = product.productId
+            if(dbProd.sgrTax){
+              product.tot = round( product.tot - (0.5 * product.quantity))
+              product.price = product.price - 0.5
+              product.sgrTax = true
+            }
+            let total0 = product.tva === 0 ? product.tot - product.discount : 0
+            let total11 = product.tva === 11 ? product.tot - product.discount : 0
+            let total21 = product.tva === 21 ? product.tot - product.discount : 0
+            const productDep = productDeps.find(d => d.id === dbProd.departament.toString())
+            if(productDep){
+                const prod = productDep.products.find(p => p.name === product.name)
+                if(prod){
+                  prod.quantity += product.quantity
+                  prod.tot += product.tot
+                  prod.discount += product.discount
+                } else {
+                  productDep.products.push(product)
+                }
+
+                productDep.total0 += total0
+                productDep.total11 += total11
+                productDep.total21 += total21
+
+            } else {
+              const d = departaments.find(dep => dep._id.toString() === dbProd.departament.toString())
+              if(d){
+                const dep = {
+                  name: d.name,
+                  id: dbProd.departament.toString(),
+                  total0: total0,
+                  total11: total11,
+                  total21: total21,
+                  products: [product],
+                  ings: []
+                }
+                productDeps.push(dep)
+              } else {
+                console.log(' Nu am gasit departament pentru ', product.name, ' ', product.departament)
+              }
+            }
+          })
+        })
+      }
+
+
+
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
