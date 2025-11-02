@@ -76,7 +76,6 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
             if(p.ings[0]){
               if(p.ings[0].gestiune){
                 if(p.ings[0].gestiune.toString() === gest){
-                  // const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
                     const price = round(((p.price * p.quantity) - p.discount)-sgrTax)
 
                     if(p.tva === 11){
@@ -102,9 +101,11 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
                       day.entries.push(entry)
                     }
                   }
+                } else {
+                  console.log('ingredient fara gestiune', p.name)
                 }
               } else {
-                console.log('ingredient fara gestiune', p.name)
+                console.log('ingredient fara ingredient', p.name)
               }
             }
           }
