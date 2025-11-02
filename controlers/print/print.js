@@ -783,12 +783,6 @@ module.exports.printConsum = async (req, res) => {
     let tot11 = 0
     let tot21 = 0
 
-    let totProd21 = 0
-    let totProd11 = 0
-    let totMarf21 = 0
-    let totMarf11 = 0
-    let totMarf0 = 0
-    let marfaProducts = []
     let productDeps = []
     const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
 
@@ -812,20 +806,11 @@ module.exports.printConsum = async (req, res) => {
         orders.forEach(order=> {
           order.products.forEach(product => {
             product.tot = parseFloat(product.total)
-            if(product.sgrTax){
-              product.tot = round( product.tot - (0.5 * product.quantity))
-              product.price = product.price - 0.5
-              const tax = newProducts.find(t => t.name === 'Taxa SGR')
-              if(tax){
-                tax.quantity += product.quantity
-                tax.tot += (product.quantity * 0.5)
-              } else {
-                newProducts.push({name: 'Taxa SGR', price: 0.5, tva: 0, quantity: product.quantity, tot: product.quantity * 0.5, discount: 0})
-              }
-              tot0 += (product.quantity * 0.5)
-            }
-            
             if(product.departament){
+              if(product.sgrTax){
+                product.tot = round( product.tot - (0.5 * product.quantity))
+                product.price = product.price - 0.5
+              }
               let total0 = product.tva === 0 ? product.tot - product.discount : 0
               let total11 = product.tva === 11 ? product.tot - product.discount : 0
               let total21 = product.tva === 21 ? product.tot - product.discount : 0
@@ -866,38 +851,38 @@ module.exports.printConsum = async (req, res) => {
             }
 
 
-            if(product.departament){
-              if(product.departament.toString() === dept._id.toString()){
-                const existingProduct = newProducts.find(p => p.name === product.name)
-                if(existingProduct){
-                  existingProduct.quantity += product.quantity
-                  existingProduct.tot += product.tot
-                  existingProduct.discount += product.discount
-                  if(product.tva === 11){
-                    tot11 += product.tot - product.discount
-                  }
-                  if(product.tva === 0){
-                    tot0 += product.tot - product.discount
-                  }
-                  if(product.tva === 21){
-                    tot21 += product.tot - product.discount
-                  }
-                } else {
-                  if(product.tva === 11){
-                    tot11 += product.tot - product.discount
-                  }
-                  if(product.tva === 21){
-                    tot21 += product.tot - product.discount
-                  }
-                  if(product.tva === 0){
-                    tot0 += product.tot - product.discount
-                  }
-                  newProducts.push(product)
-                }
-              }
-            } else {
-              console.log('Produs fara departament ', product.name)
-            }
+            // if(product.departament){
+            //   if(product.departament.toString() === dept._id.toString()){
+            //     const existingProduct = newProducts.find(p => p.name === product.name)
+            //     if(existingProduct){
+            //       existingProduct.quantity += product.quantity
+            //       existingProduct.tot += product.tot
+            //       existingProduct.discount += product.discount
+            //       if(product.tva === 11){
+            //         tot11 += product.tot - product.discount
+            //       }
+            //       if(product.tva === 0){
+            //         tot0 += product.tot - product.discount
+            //       }
+            //       if(product.tva === 21){
+            //         tot21 += product.tot - product.discount
+            //       }
+            //     } else {
+            //       if(product.tva === 11){
+            //         tot11 += product.tot - product.discount
+            //       }
+            //       if(product.tva === 21){
+            //         tot21 += product.tot - product.discount
+            //       }
+            //       if(product.tva === 0){
+            //         tot0 += product.tot - product.discount
+            //       }
+            //       newProducts.push(product)
+            //     }
+            //   }
+            // } else {
+            //   console.log('Produs fara departament ', product.name)
+            // }
 
             // if(product.dep === 'productie'){
             //   const existingProduct = products.find(p => p.name === product.name)
@@ -1041,6 +1026,17 @@ module.exports.printConsum = async (req, res) => {
 
         d.products.forEach(product => {
 
+          if(product.sgrTax){
+            const tax = d.products.find(t => t.name === 'Taxa SGR')
+            if(tax){
+              tax.quantity += product.quantity
+              tax.tot += (product.quantity * 0.5)
+            } else {
+              d.products.push({name: 'Taxa SGR', price: 0.5, tva: 0, quantity: product.quantity, tot: product.quantity * 0.5, discount: 0})
+            }
+            d.total0 += (product.quantity * 0.5)
+          }
+
         product.ings.forEach(ing => {
      
           if(ing.ings && ing.ings.length){
@@ -1113,7 +1109,6 @@ module.exports.printConsum = async (req, res) => {
             }
           })
         }
-
 
         })
        })
