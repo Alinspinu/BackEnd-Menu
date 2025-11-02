@@ -804,45 +804,49 @@ module.exports.printConsum = async (req, res) => {
             product.tva = product.vatPrecent
             product.discount = product.discount?.value || 0
             const dbProd = product.productId
-            if(dbProd.sgrTax){
-              product.tot = round( product.tot - (0.5 * product.quantity))
-              product.price = product.price - 0.5
-              product.sgrTax = true
-            }
-            let total0 = product.tva === 0 ? product.tot - product.discount : 0
-            let total11 = product.tva === 11 ? product.tot - product.discount : 0
-            let total21 = product.tva === 21 ? product.tot - product.discount : 0
-            const productDep = productDeps.find(d => d.id === dbProd.departament.toString())
-            if(productDep){
-                const prod = productDep.products.find(p => p.name === product.name)
-                if(prod){
-                  prod.quantity += product.quantity
-                  prod.tot += product.tot
-                  prod.discount += product.discount
-                } else {
-                  productDep.products.push(product)
-                }
-
-                productDep.total0 += total0
-                productDep.total11 += total11
-                productDep.total21 += total21
-
-            } else {
-              const d = departaments.find(dep => dep._id.toString() === dbProd.departament.toString())
-              if(d){
-                const dep = {
-                  name: d.name,
-                  id: dbProd.departament.toString(),
-                  total0: total0,
-                  total11: total11,
-                  total21: total21,
-                  products: [product],
-                  ings: []
-                }
-                productDeps.push(dep)
-              } else {
-                console.log(' Nu am gasit departament pentru ', product.name, ' ', product.departament)
+            if(dbProd){
+              if(dbProd.sgrTax){
+                product.tot = round( product.tot - (0.5 * product.quantity))
+                product.price = product.price - 0.5
+                product.sgrTax = true
               }
+              let total0 = product.tva === 0 ? product.tot - product.discount : 0
+              let total11 = product.tva === 11 ? product.tot - product.discount : 0
+              let total21 = product.tva === 21 ? product.tot - product.discount : 0
+              const productDep = productDeps.find(d => d.id === dbProd.departament.toString())
+              if(productDep){
+                  const prod = productDep.products.find(p => p.name === product.name)
+                  if(prod){
+                    prod.quantity += product.quantity
+                    prod.tot += product.tot
+                    prod.discount += product.discount
+                  } else {
+                    productDep.products.push(product)
+                  }
+  
+                  productDep.total0 += total0
+                  productDep.total11 += total11
+                  productDep.total21 += total21
+  
+              } else {
+                const d = departaments.find(dep => dep._id.toString() === dbProd.departament.toString())
+                if(d){
+                  const dep = {
+                    name: d.name,
+                    id: dbProd.departament.toString(),
+                    total0: total0,
+                    total11: total11,
+                    total21: total21,
+                    products: [product],
+                    ings: []
+                  }
+                  productDeps.push(dep)
+                } else {
+                  console.log(' Nu am gasit departament pentru ', product.name, ' ', product.departament)
+                }
+              }
+            } else {
+              console.log('produs fara product id ', product.name )
             }
           })
         })
