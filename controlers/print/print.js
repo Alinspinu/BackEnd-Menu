@@ -955,6 +955,89 @@ module.exports.printConsum = async (req, res) => {
             //   }
             // }
 
+
+               productDeps.forEach(d => {
+
+                d.products.forEach(product => {
+
+                product.ings.forEach(ing => {
+             
+                  if(ing.ings && ing.ings.length){
+                    ing.ings.forEach(ig => {
+                      ig.qty = ig.qty * product.quantity
+                      const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
+                      if (existingIngredient) {
+                        const updatedIng = {
+                          qty: existingIngredient.qty + ig.qty,
+                          ing: existingIngredient.ing
+                        }
+                        d.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                      } else {
+                        d.ings.push(ig);
+                      }
+                    })
+                  } else {
+                    if(ing && ing.ing){
+                      ing.qty = ing.qty * product.quantity
+                      const existingIngredient = d.ings.find(p =>p.ing.name === ing.ing.name);
+                      if (existingIngredient) {
+                        const updatedIng = {
+                          qty: existingIngredient.qty + ing.qty,
+                          ing: existingIngredient.ing
+                        }
+                        d.ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                      } else {
+                        d.ings.push(ing);
+                      }
+                    }
+                    else {
+                    }
+                  }
+                })
+
+
+                if(product.toppings.length){
+                  product.toppings.forEach(topping=>{
+                    topping.qty = topping.qty * product.quantity
+                    if(topping.ing.ings.length){
+                      topping.ing.ings.forEach(ig => {
+                        ig.qty = ig.qty * product.quantity
+                        const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
+                        if (existingIngredient) {
+                          const updatedIng = {
+                            qty: existingIngredient.qty + ig.qty,
+                            ing: existingIngredient.ing
+                          }
+                            d.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                        } else {
+                          d.ings.push(ig);
+                        }
+                      })
+                    }
+                    else{
+                      const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
+                      if (existingIngredient) {
+                        const updatedIng = {
+                          qty: existingIngredient.qty + topping.qty,
+                          ing: existingIngredient.ing
+                        }
+                        d.ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+                      } else {
+                        const ig = {
+                          qty: topping.qty,
+                          ing: topping.ing
+                        }
+                        d.ings.push(ig);
+                      }
+                    }
+                  })
+                }
+
+
+                })
+               })
+
+
             if(product.departament){
               if(product.departament.toString() === dept._id.toString()){
 
@@ -1035,7 +1118,6 @@ module.exports.printConsum = async (req, res) => {
           })
         })
       }
-      console.log(departaments)
       ings.sort((a, b) => a.ing.name.localeCompare(b.ing.name))
       products.sort((a, b) => {
         if (a.tva !== b.tva) return a.tva - b.tva;
@@ -1161,6 +1243,119 @@ module.exports.printConsum = async (req, res) => {
                 size: 13
             }
         })
+
+
+
+      const worksheet = workbook.addWorksheet(`Consum Ingrediente ${d.name}`);
+
+
+      const docTitle =  [
+        `Consum ${startDateToShow} pana la ${endDateToShow}`,
+         '',
+         '',
+         '',
+         '',
+         '',
+         '',
+         ''
+        ]
+      const header = [
+        'Nr',
+        `Denumire Ingredient`,
+        'Departament',
+        'UM',
+        'Cota Tva',
+        `Pret/UM/F TVA`, 
+        'Valoare F TVA',
+        `Consum`, 
+      ]
+      worksheet.addRow(docTitle)
+      worksheet.addRow(header)
+
+      let totals = {
+        priceNoVat: 0,
+        priceVat: 0,
+        priceWithVat: 0,
+        sellPrice: 0
+      }
+
+
+      d.ings.forEach((ing, i) =>{
+        ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        const price = ing.ing.invGestiune[0].entries[0]?.priceNoVat || ing.ing.price
+
+        const priceNoVat = price * ing.qty
+        const priceVat = priceNoVat * (ing.ing.tva / 100)
+        const priceWithVat = priceNoVat + priceVat
+        worksheet.addRow(
+          [
+            `${i+1}`,
+            `${ing.ing.name}`,
+            `${dept.name}`,
+            `${ing.ing.um}`,
+            `${ing.ing.tva} %`,
+            `${price}`,
+            `${round(priceNoVat)}`,
+            `${round(ing.qty)}`,
+          ]
+          )
+         totals.priceNoVat += priceNoVat 
+         totals.priceVat += priceVat
+         totals.priceWithVat += priceWithVat
+         totals.sellPrice += (ing.ing.sellPrice * ing.qty)
+      })
+
+      const totalsRow = [
+        'TOTALURI',
+        '',
+        '',
+        '',
+        '',
+        '',
+        `${round(totals.priceNoVat)}`,
+      ]
+      worksheet.addRow(totalsRow)
+
+      const totalsRowNumber = worksheet.lastRow.number
+      worksheet.getRow(totalsRowNumber).eachCell((cell)=>{
+          cell.font = {
+              bold: true,
+              size: 14
+          }
+      })
+      worksheet.getRow(1).eachCell((cell)=>{
+          cell.font = {
+              size: 14
+          }
+      })
+      worksheet.getRow(2).eachCell((cell)=>{
+          cell.font = {
+              bold: true,
+              size: 13
+          }
+      })
+
+      worksheet.getColumn(1).width = 5;
+      worksheet.getColumn(2).width = 30; 
+      worksheet.getColumn(3).width = 15; 
+      worksheet.getColumn(4).width = 6; 
+      worksheet.getColumn(5).width = 9; 
+      worksheet.getColumn(6).width = 13; 
+      worksheet.getColumn(7).width = 13; 
+      worksheet.getColumn(8).eachCell((cell) => {
+        cell.font = {
+          bold: true,
+          size: 14
+      },
+        width = 15,
+        cell.alignment = { vertical: "middle", horizontal: 'right'}
+      }) 
+      worksheet.mergeCells(`A${totalsRowNumber}:F${totalsRowNumber}`)
+      worksheet.mergeCells(`A1:H1`)
+
+
+
+
       })
 
       // const pSheet = workbook.addWorksheet(`Produse vandute din productie`);
