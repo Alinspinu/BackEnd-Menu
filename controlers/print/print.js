@@ -783,6 +783,7 @@ module.exports.printConsum = async (req, res) => {
     let totMarf11 = 0
     let marfaProducts = []
     let sgrP = []
+    let sgrTot = 0
     const {dept, loc, startDate, endDate, point, mail = undefined} = req.body
     const dep =  await Dep.findById(dept)
     const start = new Date(startDate).setHours(0,0,0,0)
@@ -891,7 +892,7 @@ module.exports.printConsum = async (req, res) => {
                 }
               }
             })
-            let sgrTot = 0
+  
             if(product.toppings.length){
               product.toppings.forEach(topping=>{
                 if(topping.name === 'Taxa SGR'){
