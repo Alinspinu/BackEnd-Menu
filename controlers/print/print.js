@@ -864,6 +864,7 @@ module.exports.printConsum = async (req, res) => {
              
               if(ing.ings && ing.ings.length){
                 ing.ings.forEach(ig => {
+                  ig.qty = ig.qty * product.quantity
                   const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
                   if (existingIngredient) {
                     const updatedIng = {
@@ -877,6 +878,7 @@ module.exports.printConsum = async (req, res) => {
                 })
               } else {
                 if(ing && ing.ing){
+                  ing.qty = ing.qty * product.quantity
                   const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
                   if (existingIngredient) {
                     const updatedIng = {
@@ -896,11 +898,12 @@ module.exports.printConsum = async (req, res) => {
             if(product.toppings.length){
               product.toppings.forEach(topping=>{
                 if(topping.name === 'Taxa SGR'){
-                  sgrTot += 1
+                  sgrTot += (1 * product.quantity)
                 }
-                console.log(topping.name)
                 if(topping.ing.ings.length){
+                  topping.qty = topping.qty * product.quantity
                   topping.ing.ings.forEach(ig => {
+                    ig.qty = ig.qty * product.quantity
                     const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
                     if (existingIngredient) {
                       const updatedIng = {
