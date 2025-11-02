@@ -825,7 +825,6 @@ module.exports.printConsum = async (req, res) => {
               tot0 += (product.quantity * 0.5)
             }
             
-
             if(product.departament){
               let total0 = product.tva === 0 ? product.tot - product.discount : 0
               let total11 = product.tva === 11 ? product.tot - product.discount : 0
@@ -845,46 +844,6 @@ module.exports.printConsum = async (req, res) => {
                   productDep.total11 += total11
                   productDep.total21 += total21
 
-
-                  product.ings.forEach(ing => {
-             
-                    if(ing.ings && ing.ings.length){
-                      ing.ings.forEach(ig => {
-                        ig.qty = ig.qty * product.quantity
-                        const existingIngredient = productDep.ings.find(p =>p.ing.name === ig.ing.name);
-                        if (existingIngredient) {
-                          const updatedIng = {
-                            qty: existingIngredient.qty + ig.qty,
-                            ing: existingIngredient.ing
-                          }
-                          productDep.ings = productDep.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                        } else {
-                          productDep.ings.push(ig);
-                        }
-                      })
-                    } else {
-                      if(ing && ing.ing){
-                        ing.qty = ing.qty * product.quantity
-                        const existingIngredient = productDep.ings.find(p =>p.ing.name === ing.ing.name);
-                        if (existingIngredient) {
-                          const updatedIng = {
-                            qty: existingIngredient.qty + ing.qty,
-                            ing: existingIngredient.ing
-                          }
-                          productDep.ings = productDep.ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-                        } else {
-                          productDep.ings.push(ing);
-                        }
-                      }
-                      else {
-                      }
-                    }
-                  })
-
-
-
-
-  
               } else {
                 const d = departaments.find(dep => dep._id.toString() === product.departament.toString())
                 if(d){
@@ -897,45 +856,6 @@ module.exports.printConsum = async (req, res) => {
                     products: [product],
                     ings: []
                   }
-
-
-                  product.ings.forEach(ing => {
-             
-                    if(ing.ings && ing.ings.length){
-                      ing.ings.forEach(ig => {
-                        ig.qty = ig.qty * product.quantity
-                        const existingIngredient = dep.ings.find(p =>p.ing.name === ig.ing.name);
-                        if (existingIngredient) {
-                          const updatedIng = {
-                            qty: existingIngredient.qty + ig.qty,
-                            ing: existingIngredient.ing
-                          }
-                          dep.ings = dep.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                        } else {
-                          dep.ings.push(ig);
-                        }
-                      })
-                    } else {
-                      if(ing && ing.ing){
-                        ing.qty = ing.qty * product.quantity
-                        const existingIngredient = dep.ings.find(p =>p.ing.name === ing.ing.name);
-                        if (existingIngredient) {
-                          const updatedIng = {
-                            qty: existingIngredient.qty + ing.qty,
-                            ing: existingIngredient.ing
-                          }
-                          dep.ings = dep.ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-                        } else {
-                          dep.ings.push(ing);
-                        }
-                      }
-                      else {
-                      }
-                    }
-                  })
-
-
-
                   productDeps.push(dep)
                 } else {
                   console.log(' Nu am gasit departament pentru ', product.name, ' ', product.departament)
@@ -1037,119 +957,38 @@ module.exports.printConsum = async (req, res) => {
             // }
 
 
-              //  productDeps.forEach(d => {
+               productDeps.forEach(d => {
 
-              //   d.products.forEach(product => {
+                d.products.forEach(product => {
     
-              //   product.ings.forEach(ing => {
-             
-              //     if(ing.ings && ing.ings.length){
-              //       ing.ings.forEach(ig => {
-              //         ig.qty = ig.qty * product.quantity
-              //         const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
-              //         if (existingIngredient) {
-              //           const updatedIng = {
-              //             qty: existingIngredient.qty + ig.qty,
-              //             ing: existingIngredient.ing
-              //           }
-              //           d.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-              //         } else {
-              //           d.ings.push(ig);
-              //         }
-              //       })
-              //     } else {
-              //       if(ing && ing.ing){
-              //         ing.qty = ing.qty * product.quantity
-              //         const existingIngredient = d.ings.find(p =>p.ing.name === ing.ing.name);
-              //         if (existingIngredient) {
-              //           const updatedIng = {
-              //             qty: existingIngredient.qty + ing.qty,
-              //             ing: existingIngredient.ing
-              //           }
-              //           d.ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-              //         } else {
-              //           d.ings.push(ing);
-              //         }
-              //       }
-              //       else {
-              //       }
-              //     }
-              //   })
-
-
-              //   if(product.toppings.length){
-              //     product.toppings.forEach(topping=>{
-              //       topping.qty = topping.qty * product.quantity
-              //       if(topping.ing.ings.length){
-              //         topping.ing.ings.forEach(ig => {
-              //           ig.qty = ig.qty * product.quantity
-              //           const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
-              //           if (existingIngredient) {
-              //             const updatedIng = {
-              //               qty: existingIngredient.qty + ig.qty,
-              //               ing: existingIngredient.ing
-              //             }
-              //               d.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-              //           } else {
-              //             d.ings.push(ig);
-              //           }
-              //         })
-              //       }
-              //       else{
-              //         const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
-              //         if (existingIngredient) {
-              //           const updatedIng = {
-              //             qty: existingIngredient.qty + topping.qty,
-              //             ing: existingIngredient.ing
-              //           }
-              //           d.ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
-              //         } else {
-              //           const ig = {
-              //             qty: topping.qty,
-              //             ing: topping.ing
-              //           }
-              //           d.ings.push(ig);
-              //         }
-              //       }
-              //     })
-              //   }
-
-
-              //   })
-              //  })
-
-
-            if(product.departament){
-              if(product.departament.toString() === dept._id.toString()){
-
                 product.ings.forEach(ing => {
              
                   if(ing.ings && ing.ings.length){
                     ing.ings.forEach(ig => {
                       ig.qty = ig.qty * product.quantity
-                      const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
+                      const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
                       if (existingIngredient) {
                         const updatedIng = {
                           qty: existingIngredient.qty + ig.qty,
                           ing: existingIngredient.ing
                         }
-                        ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                        d.ings = d.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                       } else {
-                        ings.push(ig);
+                        d.ings.push(ig);
                       }
                     })
                   } else {
                     if(ing && ing.ing){
                       ing.qty = ing.qty * product.quantity
-                      const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
+                      const existingIngredient = d.ings.find(p =>p.ing.name === ing.ing.name);
                       if (existingIngredient) {
                         const updatedIng = {
                           qty: existingIngredient.qty + ing.qty,
                           ing: existingIngredient.ing
                         }
-                        ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                        d.ings = d.ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
                       } else {
-                        ings.push(ing);
+                        d.ings.push(ing);
                       }
                     }
                     else {
@@ -1157,45 +996,126 @@ module.exports.printConsum = async (req, res) => {
                   }
                 })
 
+
                 if(product.toppings.length){
                   product.toppings.forEach(topping=>{
                     topping.qty = topping.qty * product.quantity
                     if(topping.ing.ings.length){
                       topping.ing.ings.forEach(ig => {
                         ig.qty = ig.qty * product.quantity
-                        const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
+                        const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
                         if (existingIngredient) {
                           const updatedIng = {
                             qty: existingIngredient.qty + ig.qty,
                             ing: existingIngredient.ing
                           }
-                            ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                            d.ings = d.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
                         } else {
-                          ings.push(ig);
+                          d.ings.push(ig);
                         }
                       })
                     }
                     else{
-                      const existingIngredient = ings.find(p =>p.ing.name === topping.ing.name);
+                      const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
                       if (existingIngredient) {
                         const updatedIng = {
                           qty: existingIngredient.qty + topping.qty,
                           ing: existingIngredient.ing
                         }
-                        ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+                        d.ings = d.ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
                       } else {
                         const ig = {
                           qty: topping.qty,
                           ing: topping.ing
                         }
-                        ings.push(ig);
+                        d.ings.push(ig);
                       }
                     }
                   })
                 }
 
-              }
-            }
+
+                })
+               })
+
+
+            // if(product.departament){
+            //   if(product.departament.toString() === dept._id.toString()){
+
+            //     product.ings.forEach(ing => {
+             
+            //       if(ing.ings && ing.ings.length){
+            //         ing.ings.forEach(ig => {
+            //           ig.qty = ig.qty * product.quantity
+            //           const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
+            //           if (existingIngredient) {
+            //             const updatedIng = {
+            //               qty: existingIngredient.qty + ig.qty,
+            //               ing: existingIngredient.ing
+            //             }
+            //             ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+            //           } else {
+            //             ings.push(ig);
+            //           }
+            //         })
+            //       } else {
+            //         if(ing && ing.ing){
+            //           ing.qty = ing.qty * product.quantity
+            //           const existingIngredient = ings.find(p =>p.ing.name === ing.ing.name);
+            //           if (existingIngredient) {
+            //             const updatedIng = {
+            //               qty: existingIngredient.qty + ing.qty,
+            //               ing: existingIngredient.ing
+            //             }
+            //             ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+            //           } else {
+            //             ings.push(ing);
+            //           }
+            //         }
+            //         else {
+            //         }
+            //       }
+            //     })
+
+            //     if(product.toppings.length){
+            //       product.toppings.forEach(topping=>{
+            //         topping.qty = topping.qty * product.quantity
+            //         if(topping.ing.ings.length){
+            //           topping.ing.ings.forEach(ig => {
+            //             ig.qty = ig.qty * product.quantity
+            //             const existingIngredient = ings.find(p =>p.ing.name === ig.ing.name);
+            //             if (existingIngredient) {
+            //               const updatedIng = {
+            //                 qty: existingIngredient.qty + ig.qty,
+            //                 ing: existingIngredient.ing
+            //               }
+            //                 ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+            //             } else {
+            //               ings.push(ig);
+            //             }
+            //           })
+            //         }
+            //         else{
+            //           const existingIngredient = ings.find(p =>p.ing.name === topping.ing.name);
+            //           if (existingIngredient) {
+            //             const updatedIng = {
+            //               qty: existingIngredient.qty + topping.qty,
+            //               ing: existingIngredient.ing
+            //             }
+            //             ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+            //           } else {
+            //             const ig = {
+            //               qty: topping.qty,
+            //               ing: topping.ing
+            //             }
+            //             ings.push(ig);
+            //           }
+            //         }
+            //       })
+            //     }
+
+            //   }
+            // }
           })
         })
       }
@@ -1223,7 +1143,7 @@ module.exports.printConsum = async (req, res) => {
           if (a.tva !== b.tva) return a.tva - b.tva;
           return a.name.localeCompare(b.name);
         });
-        const pSheet = workbook.addWorksheet(`Produse pe departamentul ${d.name}`);
+        const pSheet = workbook.addWorksheet(`Produse vandute ${d.name}`);
         const pTitle =  [
           `Perioada - ${startDateToShow} pana la ${endDateToShow}`,
            '',
@@ -1360,7 +1280,6 @@ module.exports.printConsum = async (req, res) => {
         sellPrice: 0
       }
 
-      console.log('departament ings lenght', d.ings.length)
       d.ings.forEach((ing, i) =>{
         ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
         const price = ing.ing.invGestiune[0].entries[0]?.priceNoVat || ing.ing.price
@@ -1531,216 +1450,216 @@ module.exports.printConsum = async (req, res) => {
       //     }
       // })
 
-      const mpSheet = workbook.addWorksheet(`Produse vandute ca marfa`);
-      const mpTitle =  [
-        `Perioada - ${startDateToShow} pana la ${endDateToShow}`,
-         '',
-         '',
-        ]
+      // const mpSheet = workbook.addWorksheet(`Produse vandute ca marfa`);
+      // const mpTitle =  [
+      //   `Perioada - ${startDateToShow} pana la ${endDateToShow}`,
+      //    '',
+      //    '',
+      //   ]
       
-        const mpHead = [
-          'Nr',
-          `Denumire Produs`,
-          `TVA`,
-          `Pret / um`,
-          'Cantitate',
-          'Discount',
-          'Total',
-        ]
-        mpSheet.addRow(mpTitle)
-        mpSheet.addRow(mpHead)
+      //   const mpHead = [
+      //     'Nr',
+      //     `Denumire Produs`,
+      //     `TVA`,
+      //     `Pret / um`,
+      //     'Cantitate',
+      //     'Discount',
+      //     'Total',
+      //   ]
+      //   mpSheet.addRow(mpTitle)
+      //   mpSheet.addRow(mpHead)
 
-        marfaProducts.forEach((p, i) => {
+      //   marfaProducts.forEach((p, i) => {
           
-          mpSheet.addRow(
-            [
-              `${i+1}`,
-              `${p.name}`,
-              `${p.tva} %`,
-              `${p.price}`,
-              `${p.quantity}`,
-              `${round(p.discount)}`,
-              `${round(p.tot - p.discount)}`,
-            ]
-            )
-        })
+      //     mpSheet.addRow(
+      //       [
+      //         `${i+1}`,
+      //         `${p.name}`,
+      //         `${p.tva} %`,
+      //         `${p.price}`,
+      //         `${p.quantity}`,
+      //         `${round(p.discount)}`,
+      //         `${round(p.tot - p.discount)}`,
+      //       ]
+      //       )
+      //   })
 
-        mpSheet.addRow([
-          '',
-          '',
-          `TOTAL 0%`,
-          '',
-          '',
-          '',
-          `${round(totMarf0)}`,
-        ])
+      //   mpSheet.addRow([
+      //     '',
+      //     '',
+      //     `TOTAL 0%`,
+      //     '',
+      //     '',
+      //     '',
+      //     `${round(totMarf0)}`,
+      //   ])
 
-        mpSheet.addRow([
-          '',
-          '',
-          `TOTAL 11%`,
-          '',
-          '',
-          '',
-          `${round(totMarf11)}`,
-        ])
-        mpSheet.addRow([
-          '',
-          '',
-          `TOTAL 21%`,
-          '',
-          '',
-          '',
-          `${round(totMarf21)}`,
-        ])
-        mpSheet.addRow([
-          '',
-          '',
-          `TOTAL GENERAL`,
-          '',
-          '',
-          '',
-          `${round(totMarf11 + totMarf21 + totMarf0)}`
-        ])
+      //   mpSheet.addRow([
+      //     '',
+      //     '',
+      //     `TOTAL 11%`,
+      //     '',
+      //     '',
+      //     '',
+      //     `${round(totMarf11)}`,
+      //   ])
+      //   mpSheet.addRow([
+      //     '',
+      //     '',
+      //     `TOTAL 21%`,
+      //     '',
+      //     '',
+      //     '',
+      //     `${round(totMarf21)}`,
+      //   ])
+      //   mpSheet.addRow([
+      //     '',
+      //     '',
+      //     `TOTAL GENERAL`,
+      //     '',
+      //     '',
+      //     '',
+      //     `${round(totMarf11 + totMarf21 + totMarf0)}`
+      //   ])
 
-        mpSheet.getColumn(1).width = 5;
-        mpSheet.getColumn(2).width = 40; 
-        mpSheet.getColumn(3).width = 5; 
-        mpSheet.getColumn(4).width = 10; 
-        mpSheet.getColumn(5).width = 10; 
-        mpSheet.getColumn(6).width = 10; 
-        mpSheet.getColumn(7).width = 15; 
+      //   mpSheet.getColumn(1).width = 5;
+      //   mpSheet.getColumn(2).width = 40; 
+      //   mpSheet.getColumn(3).width = 5; 
+      //   mpSheet.getColumn(4).width = 10; 
+      //   mpSheet.getColumn(5).width = 10; 
+      //   mpSheet.getColumn(6).width = 10; 
+      //   mpSheet.getColumn(7).width = 15; 
 
-        mpSheet.mergeCells(`A1:G1`)
+      //   mpSheet.mergeCells(`A1:G1`)
 
-        const lastMRowNumber = mpSheet.lastRow.number;
-        for (let i = lastMRowNumber; i > lastMRowNumber - 4; i--) {
-          mpSheet.mergeCells(`A${i}:B${i}`)
-          mpSheet.mergeCells(`C${i}:F${i}`)
-          const row = mpSheet.getRow(i);
-          row.eachCell((cell) => {
-            cell.font = { bold: true, size: 15 };
-          });
-        }
+      //   const lastMRowNumber = mpSheet.lastRow.number;
+      //   for (let i = lastMRowNumber; i > lastMRowNumber - 4; i--) {
+      //     mpSheet.mergeCells(`A${i}:B${i}`)
+      //     mpSheet.mergeCells(`C${i}:F${i}`)
+      //     const row = mpSheet.getRow(i);
+      //     row.eachCell((cell) => {
+      //       cell.font = { bold: true, size: 15 };
+      //     });
+      //   }
 
-        mpSheet.getRow(1).eachCell((cell)=>{
-          cell.font = {
-              size: 14
-          }
-      })
-        mpSheet.getRow(2).eachCell((cell)=>{
-          cell.font = {
-              bold: true,
-              size: 13
-          }
-      })
+      //   mpSheet.getRow(1).eachCell((cell)=>{
+      //     cell.font = {
+      //         size: 14
+      //     }
+      // })
+      //   mpSheet.getRow(2).eachCell((cell)=>{
+      //     cell.font = {
+      //         bold: true,
+      //         size: 13
+      //     }
+      // })
 
-      const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
-
-
-      const docTitle =  [
-        `Consum ${startDateToShow} pana la ${endDateToShow}`,
-         '',
-         '',
-         '',
-         '',
-         '',
-         '',
-         ''
-        ]
-      const header = [
-        'Nr',
-        `Denumire Ingredient`,
-        'Departament',
-        'UM',
-        'Cota Tva',
-        `Pret/UM/F TVA`, 
-        'Valoare F TVA',
-        `Consum`, 
-      ]
-      worksheet.addRow(docTitle)
-      worksheet.addRow(header)
-
-      let totals = {
-        priceNoVat: 0,
-        priceVat: 0,
-        priceWithVat: 0,
-        sellPrice: 0
-      }
+      // const worksheet = workbook.addWorksheet(`Consum Materii Prime`);
 
 
-      ings.forEach((ing, i) =>{
-        ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
-        const price = ing.ing.invGestiune[0].entries[0]?.priceNoVat || ing.ing.price
+      // const docTitle =  [
+      //   `Consum ${startDateToShow} pana la ${endDateToShow}`,
+      //    '',
+      //    '',
+      //    '',
+      //    '',
+      //    '',
+      //    '',
+      //    ''
+      //   ]
+      // const header = [
+      //   'Nr',
+      //   `Denumire Ingredient`,
+      //   'Departament',
+      //   'UM',
+      //   'Cota Tva',
+      //   `Pret/UM/F TVA`, 
+      //   'Valoare F TVA',
+      //   `Consum`, 
+      // ]
+      // worksheet.addRow(docTitle)
+      // worksheet.addRow(header)
 
-        const priceNoVat = price * ing.qty
-        const priceVat = priceNoVat * (ing.ing.tva / 100)
-        const priceWithVat = priceNoVat + priceVat
-        worksheet.addRow(
-          [
-            `${i+1}`,
-            `${ing.ing.name}`,
-            `${dept.name}`,
-            `${ing.ing.um}`,
-            `${ing.ing.tva} %`,
-            `${price}`,
-            `${round(priceNoVat)}`,
-            `${round(ing.qty)}`,
-          ]
-          )
-         totals.priceNoVat += priceNoVat 
-         totals.priceVat += priceVat
-         totals.priceWithVat += priceWithVat
-         totals.sellPrice += (ing.ing.sellPrice * ing.qty)
-      })
+      // let totals = {
+      //   priceNoVat: 0,
+      //   priceVat: 0,
+      //   priceWithVat: 0,
+      //   sellPrice: 0
+      // }
 
-      const totalsRow = [
-        'TOTALURI',
-        '',
-        '',
-        '',
-        '',
-        '',
-        `${round(totals.priceNoVat)}`,
-      ]
-      worksheet.addRow(totalsRow)
 
-      const totalsRowNumber = worksheet.lastRow.number
-      worksheet.getRow(totalsRowNumber).eachCell((cell)=>{
-          cell.font = {
-              bold: true,
-              size: 14
-          }
-      })
-      worksheet.getRow(1).eachCell((cell)=>{
-          cell.font = {
-              size: 14
-          }
-      })
-      worksheet.getRow(2).eachCell((cell)=>{
-          cell.font = {
-              bold: true,
-              size: 13
-          }
-      })
+      // ings.forEach((ing, i) =>{
+      //   ing.ing.invGestiune[0].entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+      //   const price = ing.ing.invGestiune[0].entries[0]?.priceNoVat || ing.ing.price
 
-      worksheet.getColumn(1).width = 5;
-      worksheet.getColumn(2).width = 30; 
-      worksheet.getColumn(3).width = 15; 
-      worksheet.getColumn(4).width = 6; 
-      worksheet.getColumn(5).width = 9; 
-      worksheet.getColumn(6).width = 13; 
-      worksheet.getColumn(7).width = 13; 
-      worksheet.getColumn(8).eachCell((cell) => {
-        cell.font = {
-          bold: true,
-          size: 14
-      },
-        width = 15,
-        cell.alignment = { vertical: "middle", horizontal: 'right'}
-      }) 
-      worksheet.mergeCells(`A${totalsRowNumber}:F${totalsRowNumber}`)
-      worksheet.mergeCells(`A1:H1`)
+      //   const priceNoVat = price * ing.qty
+      //   const priceVat = priceNoVat * (ing.ing.tva / 100)
+      //   const priceWithVat = priceNoVat + priceVat
+      //   worksheet.addRow(
+      //     [
+      //       `${i+1}`,
+      //       `${ing.ing.name}`,
+      //       `${dept.name}`,
+      //       `${ing.ing.um}`,
+      //       `${ing.ing.tva} %`,
+      //       `${price}`,
+      //       `${round(priceNoVat)}`,
+      //       `${round(ing.qty)}`,
+      //     ]
+      //     )
+      //    totals.priceNoVat += priceNoVat 
+      //    totals.priceVat += priceVat
+      //    totals.priceWithVat += priceWithVat
+      //    totals.sellPrice += (ing.ing.sellPrice * ing.qty)
+      // })
+
+      // const totalsRow = [
+      //   'TOTALURI',
+      //   '',
+      //   '',
+      //   '',
+      //   '',
+      //   '',
+      //   `${round(totals.priceNoVat)}`,
+      // ]
+      // worksheet.addRow(totalsRow)
+
+      // const totalsRowNumber = worksheet.lastRow.number
+      // worksheet.getRow(totalsRowNumber).eachCell((cell)=>{
+      //     cell.font = {
+      //         bold: true,
+      //         size: 14
+      //     }
+      // })
+      // worksheet.getRow(1).eachCell((cell)=>{
+      //     cell.font = {
+      //         size: 14
+      //     }
+      // })
+      // worksheet.getRow(2).eachCell((cell)=>{
+      //     cell.font = {
+      //         bold: true,
+      //         size: 13
+      //     }
+      // })
+
+      // worksheet.getColumn(1).width = 5;
+      // worksheet.getColumn(2).width = 30; 
+      // worksheet.getColumn(3).width = 15; 
+      // worksheet.getColumn(4).width = 6; 
+      // worksheet.getColumn(5).width = 9; 
+      // worksheet.getColumn(6).width = 13; 
+      // worksheet.getColumn(7).width = 13; 
+      // worksheet.getColumn(8).eachCell((cell) => {
+      //   cell.font = {
+      //     bold: true,
+      //     size: 14
+      // },
+      //   width = 15,
+      //   cell.alignment = { vertical: "middle", horizontal: 'right'}
+      // }) 
+      // worksheet.mergeCells(`A${totalsRowNumber}:F${totalsRowNumber}`)
+      // worksheet.mergeCells(`A1:H1`)
 
       if(mail) {
         const buffer = await workbook.xlsx.writeBuffer();
