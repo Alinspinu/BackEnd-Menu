@@ -33,7 +33,7 @@ module.exports.getOrder = async (req, res, next) => {
     if(start && end){
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
-        const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point})
+        const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point, invoice: false})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
@@ -51,7 +51,7 @@ module.exports.getOrder = async (req, res, next) => {
     if(day && !end && !start) {
         const start = new Date(day).setUTCHours(0,0,0,0)
         const end = new Date(day).setUTCHours(23,59,59,9999)
-        const orders = await Order.find({ locatie: loc , createdAt: {$gte: start, $lt: end}, status: 'done', salePoint: point})
+        const orders = await Order.find({ locatie: loc , createdAt: {$gte: start, $lt: end}, status: 'done', salePoint: point, invoice: false})
                     .populate({path: 'masaRest', select: 'name index'})
                     .populate({path : 'products.gestiune', select: 'name'})
                     .populate({path : 'products.departament', select: 'name'}).lean()
@@ -64,7 +64,7 @@ module.exports.getOrder = async (req, res, next) => {
     }
     if(!day && !end && !start) {
         const today = new Date().setUTCHours(0,0,0,0)
-        const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done', salePoint: point})
+        const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done', salePoint: point, invoice: false})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
@@ -203,7 +203,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
         if(start && end){
             const startTime = new Date(start).setUTCHours(0,0,0,0)
             const endTime = new Date(end).setUTCHours(23,59,59,9999)
-            const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
+            const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, status: "done", invoice: false})
                                     .populate({
                                         path: 'products.ings.ing',
                                         select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog dept', 
