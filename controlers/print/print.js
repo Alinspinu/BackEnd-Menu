@@ -840,14 +840,55 @@ module.exports.printConsum = async (req, res) => {
                   } else {
                     productDep.products.push(product)
                   }
+
                   productDep.total0 += total0
                   productDep.total11 += total11
                   productDep.total21 += total21
+
+
+                  product.ings.forEach(ing => {
+             
+                    if(ing.ings && ing.ings.length){
+                      ing.ings.forEach(ig => {
+                        ig.qty = ig.qty * product.quantity
+                        const existingIngredient = productDep.ings.find(p =>p.ing.name === ig.ing.name);
+                        if (existingIngredient) {
+                          const updatedIng = {
+                            qty: existingIngredient.qty + ig.qty,
+                            ing: existingIngredient.ing
+                          }
+                          productDep.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                        } else {
+                          productDep.ings.push(ig);
+                        }
+                      })
+                    } else {
+                      if(ing && ing.ing){
+                        ing.qty = ing.qty * product.quantity
+                        const existingIngredient = productDep.ings.find(p =>p.ing.name === ing.ing.name);
+                        if (existingIngredient) {
+                          const updatedIng = {
+                            qty: existingIngredient.qty + ing.qty,
+                            ing: existingIngredient.ing
+                          }
+                          productDep.ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                        } else {
+                          productDep.ings.push(ing);
+                        }
+                      }
+                      else {
+                      }
+                    }
+                  })
+
+
+
+
   
               } else {
                 const d = departaments.find(dep => dep._id.toString() === product.departament.toString())
                 if(d){
-                  productDeps.push({
+                  const dep = {
                     name: d.name,
                     id: product.departament.toString(),
                     total0: total0,
@@ -855,7 +896,47 @@ module.exports.printConsum = async (req, res) => {
                     total21: total21,
                     products: [product],
                     ings: []
+                  }
+
+
+                  product.ings.forEach(ing => {
+             
+                    if(ing.ings && ing.ings.length){
+                      ing.ings.forEach(ig => {
+                        ig.qty = ig.qty * product.quantity
+                        const existingIngredient = dep.ings.find(p =>p.ing.name === ig.ing.name);
+                        if (existingIngredient) {
+                          const updatedIng = {
+                            qty: existingIngredient.qty + ig.qty,
+                            ing: existingIngredient.ing
+                          }
+                          dep.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+                        } else {
+                          dep.ings.push(ig);
+                        }
+                      })
+                    } else {
+                      if(ing && ing.ing){
+                        ing.qty = ing.qty * product.quantity
+                        const existingIngredient = dep.ings.find(p =>p.ing.name === ing.ing.name);
+                        if (existingIngredient) {
+                          const updatedIng = {
+                            qty: existingIngredient.qty + ing.qty,
+                            ing: existingIngredient.ing
+                          }
+                          dep.ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+                        } else {
+                          dep.ings.push(ing);
+                        }
+                      }
+                      else {
+                      }
+                    }
                   })
+
+
+
+                  productDeps.push(dep)
                 } else {
                   console.log(' Nu am gasit departament pentru ', product.name, ' ', product.departament)
                 }
@@ -956,87 +1037,86 @@ module.exports.printConsum = async (req, res) => {
             // }
 
 
-               productDeps.forEach(d => {
+              //  productDeps.forEach(d => {
 
-                d.products.forEach(product => {
-                  console.log(product.ings.length)
-
-                product.ings.forEach(ing => {
+              //   d.products.forEach(product => {
+    
+              //   product.ings.forEach(ing => {
              
-                  if(ing.ings && ing.ings.length){
-                    ing.ings.forEach(ig => {
-                      ig.qty = ig.qty * product.quantity
-                      const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + ig.qty,
-                          ing: existingIngredient.ing
-                        }
-                        d.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                      } else {
-                        d.ings.push(ig);
-                      }
-                    })
-                  } else {
-                    if(ing && ing.ing){
-                      ing.qty = ing.qty * product.quantity
-                      const existingIngredient = d.ings.find(p =>p.ing.name === ing.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + ing.qty,
-                          ing: existingIngredient.ing
-                        }
-                        d.ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
-                      } else {
-                        d.ings.push(ing);
-                      }
-                    }
-                    else {
-                    }
-                  }
-                })
+              //     if(ing.ings && ing.ings.length){
+              //       ing.ings.forEach(ig => {
+              //         ig.qty = ig.qty * product.quantity
+              //         const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
+              //         if (existingIngredient) {
+              //           const updatedIng = {
+              //             qty: existingIngredient.qty + ig.qty,
+              //             ing: existingIngredient.ing
+              //           }
+              //           d.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+              //         } else {
+              //           d.ings.push(ig);
+              //         }
+              //       })
+              //     } else {
+              //       if(ing && ing.ing){
+              //         ing.qty = ing.qty * product.quantity
+              //         const existingIngredient = d.ings.find(p =>p.ing.name === ing.ing.name);
+              //         if (existingIngredient) {
+              //           const updatedIng = {
+              //             qty: existingIngredient.qty + ing.qty,
+              //             ing: existingIngredient.ing
+              //           }
+              //           d.ings = ings.map(p => (p.ing.name === ing.ing.name ? updatedIng : p));
+              //         } else {
+              //           d.ings.push(ing);
+              //         }
+              //       }
+              //       else {
+              //       }
+              //     }
+              //   })
 
 
-                if(product.toppings.length){
-                  product.toppings.forEach(topping=>{
-                    topping.qty = topping.qty * product.quantity
-                    if(topping.ing.ings.length){
-                      topping.ing.ings.forEach(ig => {
-                        ig.qty = ig.qty * product.quantity
-                        const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
-                        if (existingIngredient) {
-                          const updatedIng = {
-                            qty: existingIngredient.qty + ig.qty,
-                            ing: existingIngredient.ing
-                          }
-                            d.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-                        } else {
-                          d.ings.push(ig);
-                        }
-                      })
-                    }
-                    else{
-                      const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
-                      if (existingIngredient) {
-                        const updatedIng = {
-                          qty: existingIngredient.qty + topping.qty,
-                          ing: existingIngredient.ing
-                        }
-                        d.ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
-                      } else {
-                        const ig = {
-                          qty: topping.qty,
-                          ing: topping.ing
-                        }
-                        d.ings.push(ig);
-                      }
-                    }
-                  })
-                }
+              //   if(product.toppings.length){
+              //     product.toppings.forEach(topping=>{
+              //       topping.qty = topping.qty * product.quantity
+              //       if(topping.ing.ings.length){
+              //         topping.ing.ings.forEach(ig => {
+              //           ig.qty = ig.qty * product.quantity
+              //           const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
+              //           if (existingIngredient) {
+              //             const updatedIng = {
+              //               qty: existingIngredient.qty + ig.qty,
+              //               ing: existingIngredient.ing
+              //             }
+              //               d.ings = ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+              //           } else {
+              //             d.ings.push(ig);
+              //           }
+              //         })
+              //       }
+              //       else{
+              //         const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
+              //         if (existingIngredient) {
+              //           const updatedIng = {
+              //             qty: existingIngredient.qty + topping.qty,
+              //             ing: existingIngredient.ing
+              //           }
+              //           d.ings = ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+              //         } else {
+              //           const ig = {
+              //             qty: topping.qty,
+              //             ing: topping.ing
+              //           }
+              //           d.ings.push(ig);
+              //         }
+              //       }
+              //     })
+              //   }
 
 
-                })
-               })
+              //   })
+              //  })
 
 
             if(product.departament){
