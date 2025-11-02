@@ -106,7 +106,10 @@ module.exports.getInvoices = async (req, res) => {
     const invoices = await Invoice.find({locatie: loc})
     invoices.forEach(i => {
       i.products.forEach(p => {
-        console.log(p.productId)
+        if(p.productId){
+
+          console.log(p.name ,p.productId)
+        }
       })
     })
     // for(let i of invoices){
