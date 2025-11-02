@@ -29,7 +29,7 @@ module.exports.getGestReport = async(req, res) => {
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }})
               .populate({path: 'suplier', select: 'name'})
               .populate({path: 'locatie', select: 'bussinessName' }).lean()
-    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}, 'products.departament': dep}).lean() 
+    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}, 'products.departament': dep, status: 'done'}).lean() 
  
     const days = await createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, dep)
   
