@@ -829,6 +829,7 @@ module.exports.printConsum = async (req, res) => {
             if(product.dep === 'marfa') {
               if(product.sgrTax){
                 product.tot = round( product.tot - (0.5 * product.quantity))
+                product.price = product.price - 0.5
                 const tax = marfaProducts.find(t => t.name === 'Taxa SGR')
                 if(tax){
                   tax.quantity += product.quantity
