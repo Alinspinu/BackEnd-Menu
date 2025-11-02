@@ -51,32 +51,32 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
       }
       for(let p of o.products){
           if(p.dep === 'marfa'){
+            let sgrTax = 0
+            if(p.sgrTax){
+              sgrTax = 0.5 * p.quantity
+              const existinSGREntry = day.entries.find(e => e.description === 'Vanzare SGR')
+              if(existinSGREntry){
+                existinSGREntry.value += sgrTax
+              } else {
+                const entry = {
+                  date: o.createdAt,
+                  description: 'Vanzare SGR',
+                  nrDoc: o.dayCounter,
+                  value: sgrTax,
+                  type: 'iesire',
+                  docId: o._id.toString(), 
+                  tva: 0
+                }
+                day.entries.push(entry)
+              }
+              totalOutSGR += sgrTax
+              totalOut0 += sgrTax
+
+            }
             if(p.ings[0]){
               if(p.ings[0].gestiune){
                 if(p.ings[0].gestiune.toString() === gest){
                   // const day = days.find(d => new Date(d.date).toDateString() === new Date(o.updatedAt).toDateString())
-                    let sgrTax = 0
-                    if(p.sgrTax){
-                      sgrTax = 0.5 * p.quantity
-                      const existinSGREntry = day.entries.find(e => e.description === 'Vanzare SGR')
-                      if(existinSGREntry){
-                        existinSGREntry.value += sgrTax
-                      } else {
-                        const entry = {
-                          date: o.createdAt,
-                          description: 'Vanzare SGR',
-                          nrDoc: o.dayCounter,
-                          value: sgrTax,
-                          type: 'iesire',
-                          docId: o._id.toString(), 
-                          tva: 0
-                        }
-                        day.entries.push(entry)
-                      }
-                      totalOutSGR += sgrTax
-                      totalOut0 += sgrTax
-
-                    }
                     const price = round(((p.price * p.quantity) - p.discount)-sgrTax)
 
                     if(p.tva === 11){
@@ -107,7 +107,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21){
                 console.log('ingredient fara gestiune', p.name)
               }
             } else {
-              // console.log('produs fara ingredient  **** ', p.name)
+              console.log('produs fara ingredient  **** ', p.name)
             }
           }
       }
