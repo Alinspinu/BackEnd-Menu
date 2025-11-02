@@ -920,6 +920,14 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     taxValue: round(baseTax / daysNumber),
                     user: dbUser._id,
                 }
+                const docDate = new Date(date.setUTCHours(0,0,0,0))
+                for(let pay of dbEmployee.employee.payments){
+                    const payDate = new Date(new Date(pay.date).setUTCHours(0,0,0,0))
+                    if(payDate.getTime() === docDate.getTime() && normalizeText(pay.tip).includes('bonus')){
+                        dbEmpl.bonus += pay.amount
+                        values.workValueTotal += dbEmpl.bonus
+                    }
+                }
                 const existingUser = users.find(u => u.name === dbEmpl.name)
                 if(existingUser){
                     existingUser.totalIncome = round(existingUser.totalIncome + dbEmpl.totalIncome)
@@ -927,6 +935,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 } else {
                     users.push(dbEmpl)
                 }
+      
+                // const dbEmployee = dbUsers.find(u => u.employee.fullName === employee.name)
+                // if(dbEmployee){
+                // }
                 values.workValueTotal += dbEmpl.totalIncome
                 values.taxValue += dbEmpl.taxValue
             }

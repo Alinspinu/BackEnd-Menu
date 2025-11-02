@@ -113,8 +113,8 @@ module.exports.getLastReport = async (req, res) => {
 module.exports.getReportsDates = async (req, res) => {
     try{
         const {loc, point} = req.query
-        const firstRep = await Report.find({locatie: loc, salePoint: point}).sort({day: 1}).limit(1)
-        const lastRep = await Report.find({locatie: loc, salePoint: point}).sort({day: -1}).limit(1)
+        const firstRep = await Report.find({locatie: loc, salePoint: point, status: 'new'}).sort({day: 1}).limit(1)
+        const lastRep = await Report.find({locatie: loc, salePoint: point, status: 'new'}).sort({day: -1}).limit(1)
         if(firstRep.length){
             const firstRepDate = firstRep[0].day
             const lastReportDate = lastRep[0].day
@@ -144,7 +144,7 @@ module.exports.getAllReports = async(req, res, next) => {
 module.exports.getPeriodReports = async (req, res) => {
     const {loc, point, limit = 30} = req.query
     try{
-       const reports = await Report.find({locatie: loc, salePoint: point, period: { $exists: true }})
+       const reports = await Report.find({locatie: loc, salePoint: point, period: { $exists: true }, status: 'new'})
                 .sort({day: -1})
                 .select('-hours -paymentMethods -spendingsDeps -workValue.users').lean()
 
