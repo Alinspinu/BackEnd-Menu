@@ -147,9 +147,9 @@ function createSalaryReport(pontaj, mode, us){
         let height = (users.length  * lineHeigth) + y;
         doc.fontSize(14)
         doc.font("public/font/RobotoSlab-Bold.ttf");
-        doc.text('TOTAL', 50, height + 40)
-        doc.text(`${round(totalIncome)}`, 360, height)
-        doc.text(`${round(totalTax)}`, 460, height)
+        doc.text('TOTAL', 50, height + 10)
+        doc.text(`${round(totalIncome)}`, 360, height + 10)
+        doc.text(`${round(totalTax)}`, 460, height + 10)
 
   
  
