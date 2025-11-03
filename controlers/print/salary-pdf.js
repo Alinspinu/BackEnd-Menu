@@ -121,20 +121,27 @@ function createSalaryReport(pontaj, mode, us){
         doc.moveDown();
 
         doc.fontSize(13)
-        doc.text('Nume angajat', 50, 120, {width: 130, underline: true})
-        doc.text('Functie', 180, 120, {width: 200, underline: true} )
-        doc.text('Ore lucrate', 380, 120, {width: 130, underline: true})
-        doc.text('Venit NET', 410, 120, {width: 90, underline: true})
-        doc.text('Taxe', 500, 120,{underline: true})
-    
+        doc.text('Nume angajat', 50, 120 )
+        doc.text('Functie', 180, 120 )
+        doc.text('Ore', 320, 120,)
+        doc.text('Venit NET', 360, 120)
+        doc.text('Taxe', 460, 120)
+        doc
+        .moveTo(25, 135)
+        .lineTo(500, 135)
+        .stroke();
         users.forEach((u, i) => {
             doc.fontSize(11)
-            doc.text(`${i+1}`, 40, y + i * lineHeigth + lineHeigth, {width: 10, underline: true})    
-            doc.text(`${u.name}`, 50, y + i * lineHeigth + lineHeigth, {width: 130, underline: true});
-            doc.text(`${u.position}`, 180, y + i * lineHeigth + lineHeigth, {width: 200, underline: true});
-            doc.text(`${u.hours}`, 380, y + i * lineHeigth + lineHeigth, {width: 130, underline: true});
-            doc.text(`${ round(u.income)}`, 410, y + i * lineHeigth + lineHeigth, {width: 90, underline: true});
-            doc.text(`${ round(u.tax)}`, 500, y + i * lineHeigth + lineHeigth, {underline: true});
+            doc.text(`${i+1}.`, 25, y + i * lineHeigth + lineHeigth)    
+            doc.text(`${u.name}`, 50, y + i * lineHeigth + lineHeigth);
+            doc.text(`${u.position}`, 180, y + i * lineHeigth + lineHeigth);
+            doc.text(`${u.hours}`, 320, y + i * lineHeigth + lineHeigth);
+            doc.text(`${ round(u.income)}`, 360, y + i * lineHeigth + lineHeigth);
+            doc.text(`${ round(u.tax)}`, 460, y + i * lineHeigth + lineHeigth);
+            doc
+            .moveTo(25, y + i * lineHeigth + lineHeigth)
+            .lineTo(500, y + i * lineHeigth + lineHeigth)
+            .stroke();
         })
 
   
