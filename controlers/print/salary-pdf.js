@@ -153,7 +153,7 @@ function createSalaryReport(pontaj, mode, us){
             doc.lineWidth(0.1);
             doc
             .moveTo(startLine, y + i * lineHeigth + lineHeigth + lineHeigth + 1)
-            .lineTo(startLine + 470, y + i * lineHeigth + lineHeigth + lineHeigth + 1)
+            .lineTo(startLine + 480, y + i * lineHeigth + lineHeigth + lineHeigth + 1)
             .stroke();
         })
         let height = (users.length  * lineHeigth) + y;
