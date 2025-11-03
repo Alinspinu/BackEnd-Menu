@@ -57,10 +57,12 @@ function createSalaryReport(pontaj, mode, us){
                     if(existingUser){
                         existingUser.tax += tax
                         existingUser.income += income
+                        existingUser.hours += u.hours
                     } else {
                         const us = {
                             name: u.employee.employee.fullName,
                             position: u.employeePosition.name,
+                            hours: u.hours,
                             tax: tax,
                             income: income
                         }
@@ -86,6 +88,7 @@ function createSalaryReport(pontaj, mode, us){
                 name: u.employee.fullName,
                 position: u.employee.employeePosition.name,
                 tax: tax,
+                hours: full ? u.employee.salary.norm : u.employee.salary.norm / 2,
                 income: income
             }
             users.push(us)
@@ -103,30 +106,35 @@ function createSalaryReport(pontaj, mode, us){
 
       const pageWidth = doc.page.width;
 
-      let lineHeigth = 12
-      let y = 100
+      let lineHeigth = 14
+      let y = 150
 
       doc.font("public/font/RobotoSlab-Regular.ttf")
       doc
-        .fontSize(12)
+        .fontSize(13)
         .text(
           ` Raport salarii ${formatedDateToShow(startDate).split('ora')[0]} - ${formatedDateToShow(endDate).split('ora')[0]} `,
           (pageWidth / 2) - 150,
           50,
-          {
-            // width: 150,
-            underline: true
-          }
+          {underline: true}
         );
         doc.moveDown();
+
+        doc.fontSize(13)
+        doc.text('Nume angajat', 50, 120, {width: 130, underline: true})
+        doc.text('Functie', 180, 120, {width: 200, underline: true} )
+        doc.text('Ore lucrate', 380, 120, {width: 130, underline: true})
+        doc.text('Venit NET', 410, 120, {width: 90, underline: true})
+        doc.text('Taxe', 500, 120,{underline: true})
     
         users.forEach((u, i) => {
-            doc
-            .fontSize(10)
-            .text(`${u.name}`, 50, y + i * lineHeigth + lineHeigth);
-            doc.text(`${u.position}`, 180, y + i * lineHeigth + lineHeigth);
-            doc.text(`${ round(u.tax)}`, 280, y + i * lineHeigth + lineHeigth);
-            doc.text(`${ round(u.income)}`, 360, y + i * lineHeigth + lineHeigth);
+            doc.fontSize(11)
+            doc.text(`${i+1}`, 40, y + i * lineHeigth + lineHeigth, {width: 10, underline: true})    
+            doc.text(`${u.name}`, 50, y + i * lineHeigth + lineHeigth, {width: 130, underline: true});
+            doc.text(`${u.position}`, 180, y + i * lineHeigth + lineHeigth, {width: 200, underline: true});
+            doc.text(`${u.hours}`, 380, y + i * lineHeigth + lineHeigth, {width: 130, underline: true});
+            doc.text(`${ round(u.income)}`, 410, y + i * lineHeigth + lineHeigth, {width: 90, underline: true});
+            doc.text(`${ round(u.tax)}`, 500, y + i * lineHeigth + lineHeigth, {underline: true});
         })
 
   
