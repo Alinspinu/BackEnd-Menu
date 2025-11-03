@@ -783,6 +783,8 @@ module.exports.compareScriptic = async (req, res, next) => {
       locatie: loc,
       salePoint: point
     }
+
+    console.log('hit')
     const newCompare = new ComparedInventary(compareInv)
     const savedCompare = await newCompare.save()
     console.log(savedCompare)
