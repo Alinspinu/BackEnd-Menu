@@ -51,7 +51,7 @@ function createSalaryReport(pontaj, mode){
                 let tax = u.tax
                 let income = u.value
                 if(u.employee.employee.salary.fix){
-                    consoel.log(u.employee.employee.fullName, ' ', u.employee.employee.salary.inHeand / pontaj.days.length, ' ', u.employee.employee.salary.inHeand )
+                    console.log(u.employee.employee.fullName, ' ', u.employee.employee.salary.inHeand / pontaj.days.length, ' ', u.employee.employee.salary.inHeand )
                     income = round(u.employee.employee.salary.inHeand / pontaj.days.length)
                     tax = round(u.employee.employee.salary.onPaper.tax / pontaj.days.length)
                 }
