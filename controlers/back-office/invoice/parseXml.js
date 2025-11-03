@@ -3,180 +3,292 @@ const { parseStringPromise } = require('xml2js');
 
 
 
-  function parseInvoiceData (invoiceData, id) {
-    const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
+function parseInvoiceData(invoiceData, id) {
+  const inv = invoiceData.Invoice || {};
 
-    const iban = suplierIban?.['cbc:ID'] ? suplierIban?.['cbc:ID'][0] : 'NO IBAN'
-    const bank = suplierIban?.['cbc:Name'] ? suplierIban?.['cbc:Name'][0] : 'NO NAME'
+  // --- Supplier financial info ---
+  const supplierAccount = inv.PaymentMeans?.PayeeFinancialAccount || {};
+  const iban = supplierAccount.ID || 'NO IBAN';
+  const bank = supplierAccount.Name || 'NO NAME';
 
-   const invoiceNumber = Array.isArray(invoiceData.Invoice["cbc:ID"]) 
-    ? (invoiceData.Invoice["cbc:ID"][0]["_"] || invoiceData.Invoice["cbc:ID"][0]) 
-    : invoiceData.Invoice["cbc:ID"] || 'Unknown';
+  // --- Basic invoice info ---
+  const invoiceNumber = inv.ID || 'Unknown';
+  const issueDate = inv.IssueDate || 'Unknown';
+  const dueDate = inv.DueDate || issueDate || 'Unknown';
+  const currencyId = inv.DocumentCurrencyCode || 'RON';
 
-   const issueDate = Array.isArray(invoiceData.Invoice["cbc:IssueDate"]) 
-    ? (invoiceData.Invoice["cbc:IssueDate"][0]["_"] || invoiceData.Invoice["cbc:IssueDate"][0]) 
-    : invoiceData.Invoice["cbc:IssueDate"] || 'Unknown';
+  // --- Supplier ---
+  const supplierParty = inv.AccountingSupplierParty?.Party || {};
+  const supplier = {
+    name: supplierParty.PartyLegalEntity?.RegistrationName || 'Unknown Supplier',
+    vatNumber: supplierParty.PartyTaxScheme?.CompanyID || 'Unknown VAT Number',
+    iban,
+    bank
+  };
 
-   const dueDate = Array.isArray(invoiceData.Invoice["cbc:DueDate"]) 
-    ? (invoiceData.Invoice["cbc:DueDate"][0]["_"] || invoiceData.Invoice["cbc:DueDate"][0]) 
-    : (Array.isArray(invoiceData.Invoice["cbc:IssueDate"]) 
-        ? (invoiceData.Invoice["cbc:IssueDate"][0]["_"] || invoiceData.Invoice["cbc:IssueDate"][0]) 
-        : invoiceData.Invoice["cbc:IssueDate"]) || 'Unknown';
+  // --- Customer ---
+  const customerParty = inv.AccountingCustomerParty?.Party || {};
+  const customer = {
+    name: customerParty.PartyLegalEntity?.RegistrationName || 'Unknown Customer',
+    vatNumber: customerParty.PartyTaxScheme?.CompanyID || 'Unknown VAT Number'
+  };
 
-   const supplier = {
-    name: Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"]) && 
-            Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"]) && 
-            Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"]) 
-        ? (invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]["_"] || 
-        invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]) 
-        : 'Unknown Supplier',
-    vatNumber: Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"]) && 
-                Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"]) && 
-                Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"]) 
-        ? (invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]["_"] || 
-        invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]) 
-        : 'Unknown VAT Number',
-      iban: iban,
-      bank: bank
+  // --- Totals ---
+  const taxTotal = inv.TaxTotal || {};
+  const legalTotals = inv.LegalMonetaryTotal || {};
+
+  const vatAmount = parseFloat(taxTotal.TaxAmount?._ ?? taxTotal.TaxAmount) || 0;
+  const taxExclusiveAmount =
+    parseFloat(legalTotals.TaxExclusiveAmount?._ ?? legalTotals.TaxExclusiveAmount) || 0;
+  const taxInclusiveAmount =
+    parseFloat(legalTotals.TaxInclusiveAmount?._ ?? legalTotals.TaxInclusiveAmount) || 0;
+  const prePaydAmount =
+    parseFloat(legalTotals.PrePaidAmount?._ ?? legalTotals.PrePaidAmount) || 0;
+  const payableAmont =
+    parseFloat(legalTotals.PayableAmount?._ ?? legalTotals.PayableAmount) || 0;
+
+  // --- Product lines ---
+  const lines = Array.isArray(inv.InvoiceLine) ? inv.InvoiceLine : [inv.InvoiceLine].filter(Boolean);
+  const products = lines.map(item => {
+    const itemData = item?.Item || {};
+    const priceData = item?.Price || {};
+    const invoicedQuantity = item?.InvoicedQuantity || {};
+    const lineAmount = item?.LineExtensionAmount || {};
+
+    const quantity = parseFloat(invoicedQuantity._ ?? invoicedQuantity) || 0;
+    const unitCode = invoicedQuantity?.$?.unitCode || 'N/A';
+    const price = parseFloat(priceData?.PriceAmount?._ ?? priceData?.PriceAmount) || 0;
+    const totalNoVat = parseFloat(lineAmount._ ?? lineAmount) || 0;
+
+    const vatPercent = parseFloat(
+      itemData.ClassifiedTaxCategory?.Percent?._ ?? itemData.ClassifiedTaxCategory?.Percent
+    ) || 0;
+
+    const allowanceCharges = Array.isArray(item.AllowanceCharge)
+      ? item.AllowanceCharge
+      : item.AllowanceCharge
+        ? [item.AllowanceCharge]
+        : [];
+
+    let discountTotal = 0;
+    for (const ac of allowanceCharges) {
+      const isCharge = String(ac.ChargeIndicator ?? '').toLowerCase() === 'true';
+      if (!isCharge) discountTotal += parseFloat(ac.Amount?._ ?? ac.Amount) || 0;
+    }
+
+    const discountPerUnit = quantity > 0 ? +(discountTotal / quantity).toFixed(2) : 0;
+    const discountPercent =
+      price > 0 ? +((discountPerUnit / price) * 100).toFixed(2) : 0;
+
+    return {
+      name: itemData.Name || 'Unknown item',
+      quantity,
+      unitCode,
+      price: price - discountPerUnit,
+      totalNoVat,
+      vatPercent,
+      discountPerUnit,
+      discountTotal,
+      discountPercent
     };
+  });
 
-    const customerParty = invoiceData.Invoice["cac:AccountingCustomerParty"]?.[0]?.["cac:Party"]?.[0];
+  // --- Return in your desired structure ---
+  const invoiceSummary = {
+    invoiceNumber,
+    issueDate,
+    dueDate,
+    supplier,
+    customer,
+    products,
+    vatAmount,
+    taxExclusiveAmount,
+    taxInclusiveAmount,
+    prePaydAmount,
+    payableAmont,
+    currencyId,
+    id
+  };
 
-    const customer = {
-      name: customerParty?.["cac:PartyLegalEntity"]?.[0]?.["cbc:RegistrationName"]?.[0]
-        ? getText(customerParty["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0])
-        : 'Unknown Customer',
-    
-      vatNumber: customerParty?.["cac:PartyTaxScheme"]?.[0]?.["cbc:CompanyID"]?.[0]
-        ? getText(customerParty["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0])
-        : 'Unknown VAT Number'
-    };
-
-
-    const products = invoiceData.Invoice["cac:InvoiceLine"].map(item => {
-      // ------- helpers -------
-      const getNum = v =>
-        v == null ? 0 :
-        (typeof v === 'object' && '_' in v) ? +v._ :
-        +v;
-    
-      const getBool = v => {
-        // handles true/false, "true"/"false", objects with "_" etc.
-        const raw = (typeof v === 'object' && '_' in v) ? v._ : v;
-        return String(raw).toLowerCase() === 'true';
-      };
-    
-      // ------- core fields -------
-      const itemName = Array.isArray(item["cac:Item"]?.[0]?.["cbc:Name"])
-        ? (item["cac:Item"][0]["cbc:Name"][0]["_"] || item["cac:Item"][0]["cbc:Name"][0])
-        : item["cac:Item"]?.[0]?.["cbc:Name"] || 'Unknown item';
-    
-      const vatPercent = Array.isArray(item["cac:Item"]?.[0]?.["cac:ClassifiedTaxCategory"]?.[0]?.["cbc:Percent"])
-        ? +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]["_"] ||
-          +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]
-        : 0;
-    
-      // const price = item["cac:Price"]?.[0]?.["cbc:PriceAmount"]
-      //   ? +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"] ||
-      //     +item["cac:Price"][0]["cbc:PriceAmount"][0]
-      //   : 0;
-
-        const price = item["cac:Price"] && item["cac:Price"][0]["cbc:PriceAmount"]
-          ? +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"] || +item["cac:Price"][0]["cbc:PriceAmount"][0]
-          : 0;
-    
-      const invoicedQuantity = item["cbc:InvoicedQuantity"]?.[0];
-      const quantity = invoicedQuantity ? parseFloat(invoicedQuantity["_"] ?? invoicedQuantity) : 0;
-      const unitCode = invoicedQuantity?.["$"]?.unitCode || 'N/A';
-    
-      const totalNoVat = item["cbc:LineExtensionAmount"]
-        ? +item["cbc:LineExtensionAmount"][0]["_"] || +item["cbc:LineExtensionAmount"][0]
-        : 0;
-    
-      // ------- discounts (AllowanceCharge) -------
-      // A) Price-level discount: per-unit
-      const priceAllowances = item["cac:Price"]?.[0]?.["cac:AllowanceCharge"] || [];
-      let perUnitDiscount = 0;
-      let perUnitBase = 0;
-    
-      for (const ac of priceAllowances) {
-        const isCharge = getBool(ac["cbc:ChargeIndicator"]?.[0]);
-        if (!isCharge) {
-          // it's a discount
-          perUnitDiscount += getNum(ac["cbc:Amount"]?.[0]);
-          // base amount is per-unit base price before discount (if present)
-          perUnitBase += getNum(ac["cbc:BaseAmount"]?.[0]);
-        }
-      }
-    
-      // B) Line-level discount: total for the line
-      const lineAllowances = item["cac:AllowanceCharge"] || [];
-      let lineDiscountTotal = 0;
-      for (const ac of lineAllowances) {
-        const isCharge = getBool(ac["cbc:ChargeIndicator"]?.[0]);
-        if (!isCharge) {
-          lineDiscountTotal += getNum(ac["cbc:Amount"]?.[0]);
-        }
-      }
-    
-      // Totals
-      let discountPerUnit = perUnitDiscount; // RON per unit (e.g., per kg/piece)
-      const discountFromPriceLevel = quantity ? +(discountPerUnit * quantity).toFixed(2) : 0; // total for the line
-      const discountTotal = +(discountFromPriceLevel + lineDiscountTotal).toFixed(2);
-      if(discountPerUnit === 0 && discountTotal > 0) discountPerUnit = +(discountTotal / quantity).toFixed(2)
-    
-      // Percent (best-effort): prefer per-unit base; else infer from totals if possible
-      let discountPercent = 0;
-      const effectiveBasePerUnit = perUnitBase || price; // fall back to priceAmount if base missing
-      if (effectiveBasePerUnit > 0 && discountPerUnit > 0) {
-        discountPercent = +( (discountPerUnit / effectiveBasePerUnit) * 100 ).toFixed(2);
-      } else if (totalNoVat > 0 && discountTotal > 0) {
-        // rough fallback: discount vs. (discount + net) as approximation
-        discountPercent = +( (discountTotal / (discountTotal + totalNoVat)) * 100 ).toFixed(2);
-      }
-    
-      return {
-        name: itemName,
-        quantity,
-        unitCode,
-        price: price - discountPerUnit,               // net unit price after price-level discount (as per your sample)
-        totalNoVat,
-        vatPrecent: vatPercent,
-    
-        // NEW fields
-        discountPerUnit,     // RON/unit from price-level AllowanceCharge (0 if none)
-        discountTotal,       // total RON discount for this line (price-level * qty + line-level)
-        discountPercent      // % (best-effort)
-      };
-    });
-    
+  return invoiceSummary;
+}
 
 
 
-      const vatAmount = +invoiceData.Invoice["cac:TaxTotal"][0]["cbc:TaxAmount"][0]["_"];
-      const  taxExclusiveAmount = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxExclusiveAmount"][0]["_"];
-      const  taxInclusiveAmount = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxInclusiveAmount"][0]["_"];
-      const  prePaydAmount = invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"] ? +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"][0]["_"] : 0;
-      const  payableAmont = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["_"]; 
-      const  currencyId = invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["$"].currencyID;
+//   function parseInvoiceData (invoiceData, id) {
+//     const suplierIban = invoiceData.Invoice["cac:PaymentMeans"]?.[0]?.['cac:PayeeFinancialAccount']?.[0]
 
-    const invoiceSummary = {
-        invoiceNumber, 
-        issueDate, 
-        dueDate, 
-        supplier,
-        customer,
-        products,
-        vatAmount, 
-        taxExclusiveAmount,
-        taxInclusiveAmount,
-        prePaydAmount,
-        payableAmont, 
-        currencyId,
-        id
-      };
-      return invoiceSummary
-};
+//     const iban = suplierIban?.['cbc:ID'] ? suplierIban?.['cbc:ID'][0] : 'NO IBAN'
+//     const bank = suplierIban?.['cbc:Name'] ? suplierIban?.['cbc:Name'][0] : 'NO NAME'
+
+//    const invoiceNumber = Array.isArray(invoiceData.Invoice["cbc:ID"]) 
+//     ? (invoiceData.Invoice["cbc:ID"][0]["_"] || invoiceData.Invoice["cbc:ID"][0]) 
+//     : invoiceData.Invoice["cbc:ID"] || 'Unknown';
+
+//    const issueDate = Array.isArray(invoiceData.Invoice["cbc:IssueDate"]) 
+//     ? (invoiceData.Invoice["cbc:IssueDate"][0]["_"] || invoiceData.Invoice["cbc:IssueDate"][0]) 
+//     : invoiceData.Invoice["cbc:IssueDate"] || 'Unknown';
+
+//    const dueDate = Array.isArray(invoiceData.Invoice["cbc:DueDate"]) 
+//     ? (invoiceData.Invoice["cbc:DueDate"][0]["_"] || invoiceData.Invoice["cbc:DueDate"][0]) 
+//     : (Array.isArray(invoiceData.Invoice["cbc:IssueDate"]) 
+//         ? (invoiceData.Invoice["cbc:IssueDate"][0]["_"] || invoiceData.Invoice["cbc:IssueDate"][0]) 
+//         : invoiceData.Invoice["cbc:IssueDate"]) || 'Unknown';
+
+//    const supplier = {
+//     name: Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"]) && 
+//             Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"]) && 
+//             Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"]) 
+//         ? (invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]["_"] || 
+//         invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0]) 
+//         : 'Unknown Supplier',
+//     vatNumber: Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"]) && 
+//                 Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"]) && 
+//                 Array.isArray(invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"]) 
+//         ? (invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]["_"] || 
+//         invoiceData.Invoice["cac:AccountingSupplierParty"][0]["cac:Party"][0]["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0]) 
+//         : 'Unknown VAT Number',
+//       iban: iban,
+//       bank: bank
+//     };
+
+//     const customerParty = invoiceData.Invoice["cac:AccountingCustomerParty"]?.[0]?.["cac:Party"]?.[0];
+
+//     const customer = {
+//       name: customerParty?.["cac:PartyLegalEntity"]?.[0]?.["cbc:RegistrationName"]?.[0]
+//         ? getText(customerParty["cac:PartyLegalEntity"][0]["cbc:RegistrationName"][0])
+//         : 'Unknown Customer',
+    
+//       vatNumber: customerParty?.["cac:PartyTaxScheme"]?.[0]?.["cbc:CompanyID"]?.[0]
+//         ? getText(customerParty["cac:PartyTaxScheme"][0]["cbc:CompanyID"][0])
+//         : 'Unknown VAT Number'
+//     };
+
+
+//     const products = invoiceData.Invoice["cac:InvoiceLine"].map(item => {
+//       // ------- helpers -------
+//       const getNum = v =>
+//         v == null ? 0 :
+//         (typeof v === 'object' && '_' in v) ? +v._ :
+//         +v;
+    
+//       const getBool = v => {
+//         // handles true/false, "true"/"false", objects with "_" etc.
+//         const raw = (typeof v === 'object' && '_' in v) ? v._ : v;
+//         return String(raw).toLowerCase() === 'true';
+//       };
+    
+//       // ------- core fields -------
+//       const itemName = Array.isArray(item["cac:Item"]?.[0]?.["cbc:Name"])
+//         ? (item["cac:Item"][0]["cbc:Name"][0]["_"] || item["cac:Item"][0]["cbc:Name"][0])
+//         : item["cac:Item"]?.[0]?.["cbc:Name"] || 'Unknown item';
+    
+//       const vatPercent = Array.isArray(item["cac:Item"]?.[0]?.["cac:ClassifiedTaxCategory"]?.[0]?.["cbc:Percent"])
+//         ? +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]["_"] ||
+//           +item["cac:Item"][0]["cac:ClassifiedTaxCategory"][0]["cbc:Percent"][0]
+//         : 0;
+    
+//       // const price = item["cac:Price"]?.[0]?.["cbc:PriceAmount"]
+//       //   ? +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"] ||
+//       //     +item["cac:Price"][0]["cbc:PriceAmount"][0]
+//       //   : 0;
+
+//         const price = item["cac:Price"] && item["cac:Price"][0]["cbc:PriceAmount"]
+//           ? +item["cac:Price"][0]["cbc:PriceAmount"][0]["_"] || +item["cac:Price"][0]["cbc:PriceAmount"][0]
+//           : 0;
+    
+//       const invoicedQuantity = item["cbc:InvoicedQuantity"]?.[0];
+//       const quantity = invoicedQuantity ? parseFloat(invoicedQuantity["_"] ?? invoicedQuantity) : 0;
+//       const unitCode = invoicedQuantity?.["$"]?.unitCode || 'N/A';
+    
+//       const totalNoVat = item["cbc:LineExtensionAmount"]
+//         ? +item["cbc:LineExtensionAmount"][0]["_"] || +item["cbc:LineExtensionAmount"][0]
+//         : 0;
+    
+//       // ------- discounts (AllowanceCharge) -------
+//       // A) Price-level discount: per-unit
+//       const priceAllowances = item["cac:Price"]?.[0]?.["cac:AllowanceCharge"] || [];
+//       let perUnitDiscount = 0;
+//       let perUnitBase = 0;
+    
+//       for (const ac of priceAllowances) {
+//         const isCharge = getBool(ac["cbc:ChargeIndicator"]?.[0]);
+//         if (!isCharge) {
+//           // it's a discount
+//           perUnitDiscount += getNum(ac["cbc:Amount"]?.[0]);
+//           // base amount is per-unit base price before discount (if present)
+//           perUnitBase += getNum(ac["cbc:BaseAmount"]?.[0]);
+//         }
+//       }
+    
+//       // B) Line-level discount: total for the line
+//       const lineAllowances = item["cac:AllowanceCharge"] || [];
+//       let lineDiscountTotal = 0;
+//       for (const ac of lineAllowances) {
+//         const isCharge = getBool(ac["cbc:ChargeIndicator"]?.[0]);
+//         if (!isCharge) {
+//           lineDiscountTotal += getNum(ac["cbc:Amount"]?.[0]);
+//         }
+//       }
+    
+//       // Totals
+//       let discountPerUnit = perUnitDiscount; // RON per unit (e.g., per kg/piece)
+//       const discountFromPriceLevel = quantity ? +(discountPerUnit * quantity).toFixed(2) : 0; // total for the line
+//       const discountTotal = +(discountFromPriceLevel + lineDiscountTotal).toFixed(2);
+//       if(discountPerUnit === 0 && discountTotal > 0) discountPerUnit = +(discountTotal / quantity).toFixed(2)
+    
+//       // Percent (best-effort): prefer per-unit base; else infer from totals if possible
+//       let discountPercent = 0;
+//       const effectiveBasePerUnit = perUnitBase || price; // fall back to priceAmount if base missing
+//       if (effectiveBasePerUnit > 0 && discountPerUnit > 0) {
+//         discountPercent = +( (discountPerUnit / effectiveBasePerUnit) * 100 ).toFixed(2);
+//       } else if (totalNoVat > 0 && discountTotal > 0) {
+//         // rough fallback: discount vs. (discount + net) as approximation
+//         discountPercent = +( (discountTotal / (discountTotal + totalNoVat)) * 100 ).toFixed(2);
+//       }
+    
+//       return {
+//         name: itemName,
+//         quantity,
+//         unitCode,
+//         price: price - discountPerUnit,               // net unit price after price-level discount (as per your sample)
+//         totalNoVat,
+//         vatPrecent: vatPercent,
+    
+//         // NEW fields
+//         discountPerUnit,     // RON/unit from price-level AllowanceCharge (0 if none)
+//         discountTotal,       // total RON discount for this line (price-level * qty + line-level)
+//         discountPercent      // % (best-effort)
+//       };
+//     });
+    
+
+
+
+//       const vatAmount = +invoiceData.Invoice["cac:TaxTotal"][0]["cbc:TaxAmount"][0]["_"];
+//       const  taxExclusiveAmount = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxExclusiveAmount"][0]["_"];
+//       const  taxInclusiveAmount = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:TaxInclusiveAmount"][0]["_"];
+//       const  prePaydAmount = invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"] ? +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PrepaidAmount"][0]["_"] : 0;
+//       const  payableAmont = +invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["_"]; 
+//       const  currencyId = invoiceData.Invoice["cac:LegalMonetaryTotal"][0]["cbc:PayableAmount"][0]["$"].currencyID;
+
+//     const invoiceSummary = {
+//         invoiceNumber, 
+//         issueDate, 
+//         dueDate, 
+//         supplier,
+//         customer,
+//         products,
+//         vatAmount, 
+//         taxExclusiveAmount,
+//         taxInclusiveAmount,
+//         prePaydAmount,
+//         payableAmont, 
+//         currencyId,
+//         id
+//       };
+//       return invoiceSummary
+// };
 
 
 
