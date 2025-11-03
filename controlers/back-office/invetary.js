@@ -608,13 +608,13 @@ module.exports.compareScriptic = async (req, res) => {
     const endTime   = new Date(lastInventary.date);
 
     // already compared?
-    const existing = await ComparedInventary.findOne({
-      firstInv: firstInventary._id,
-      secondInv: lastInventary._id,
-      locatie: loc,
-      salePoint: point,
-    });
-    if (existing) return res.status(200).json(existing);
+    // const existing = await ComparedInventary.findOne({
+    //   firstInv: firstInventary._id,
+    //   secondInv: lastInventary._id,
+    //   locatie: loc,
+    //   salePoint: point,
+    // });
+    // if (existing) return res.status(200).json(existing);
 
     // 2) Load the rest in parallel
     const [ings, delProds, impSheets, orders] = await Promise.all([
@@ -843,6 +843,7 @@ module.exports.compareScriptic = async (req, res) => {
       gestiune: firstInventary.gestiune,
     }).save();
 
+    console.log(savedCompare)
     await savedCompare.populate({ path: 'gestiune', select: 'name' });
     res.status(200).json({ message: 'Inventarul comparat a fost generat cu succes!', inv: savedCompare });
   } catch (err) {
