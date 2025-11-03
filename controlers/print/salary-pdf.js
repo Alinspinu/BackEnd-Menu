@@ -120,7 +120,7 @@ function createSalaryReport(pontaj, mode, us){
         );
         doc.moveDown();
 
-        const startLine = pageWidth / 2 - 475
+        const startLine = pageWidth / 2 - 175
 
         doc.fontSize(13)
         doc.text('Nume angajat', startLine + 25, 90 )
