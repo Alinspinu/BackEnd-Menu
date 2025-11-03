@@ -124,7 +124,7 @@ function createSalaryReport(pontaj, mode, us){
         .text(
           ` Raport salarii ${formatedDateToShow(startDate).split('ora')[0]} - ${formatedDateToShow(endDate).split('ora')[0]} `,
           (pageWidth / 2) - 150,
-          50,
+          80,
           {underline: true}
         );
         doc.moveDown();
