@@ -271,7 +271,7 @@ const getText = (val) => {
 
   function parseXml(xmlData) {
     return new Promise((resolve, reject) => {
-      xml2js.parseString(xmlData, (err, result) => {
+      xml2js.parseString(xmlData,{ tagNameProcessors: [name => name.replace(/^.*:/, '')] }, (err, result) => {
         if (err) {
           return reject(err);
         }
