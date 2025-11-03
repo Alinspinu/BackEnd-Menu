@@ -36,15 +36,15 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, status: 'done', salePoint: point, invoice: false})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'}).lean()
-                        // .populate({path: 'products.productId', select: 'departament'})
+                        .populate({path : 'products.departament', select: 'name'})
+                        .populate({path: 'products.productId', select: 'name ings subProducts', populate: {path: 'subProducts', select: 'name ings'}}).lean()
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -84,25 +84,26 @@ module.exports.getOrder = async (req, res, next) => {
 async function modyfyOrdersProducts(orders){
 
     const promises = orders.map(async o => {
-        o.invoice = false
-        console.log(o._id)
-        // for(let p of o.products){
-        //     if(p){
-        //         if(p.productId){
-        //             if(!p.departament){
-        //                 if(!p.departament){
-        //                     p.departament = p.productId.departament
-        //                     console.log('produs fara dep are acum dep ', p.departament)
-        //                 }
-        //             }
-        //         } else {
-        //             console.log('PRODUS FARA PRODUCT ID  !!! ', p.name)
-        //         }
-        //     }
-        // }
+        for(let p of o.products){
+            const dbProd = p.productId
+            if(dbProd){
+                console.log('Am gasit produs in baza de date ', dbProd.name)
+                if(p.subProductId.length){
+                    console.log('Am gasit produs cu subprodus ', p.name)
+                    const sub = dbProd.subProducts.find(s => s._id.toString() === p.subProductId)
+                    if(sub){
+                        p.ings = sub.ings
+                        console.log('Am gasit sub produsul in baza de date su am acualizat ingredientele', sub.name, 'cantitati noi ', p.ings.map(i => i.qty + ' / '))
+                    }
+                } else{
+                    p.ings = dbProd.ings
+                    console.log('Am modificat ingredientele la produs dupa produsl din baza de date ', p.name, ' ', p.ings.map(i => i.qty + ' / '))
+                }
+            }
+        }
         return Order.findByIdAndUpdate(o._id, o, {new: true})
     })
-   const up =  await Promise.all(promises);
+     await Promise.all(promises);
 
 }
 
