@@ -465,11 +465,11 @@ module.exports.compareScriptic = async (req, res, next) => {
     const firstInventary = await Inventary.findOne({date: startTime, locatie: loc, salePoint: point}).populate({path: 'ingredients.ing', select: 'price'})
     const lastInventary = await Inventary.findOne({date: endTime, locatie: loc, salePoint: point}).populate({path: 'ingredients.ing', select: 'price'})
 
-    const compInv = await ComparedInventary.findOne({firstInv: firstInventary._id, secondInv: lastInventary._id, locatie: loc, salePoint: point})
+    // const compInv = await ComparedInventary.findOne({firstInv: firstInventary._id, secondInv: lastInventary._id, locatie: loc, salePoint: point})
 
-    if(compInv){
-      return res.status(200).json(compInv)
-    }
+    // if(compInv){
+    //   return res.status(200).json(compInv)
+    // }
 
     const ings = await Ingredient.find({locatie: loc,  productIngredient: false, salePoint: point}).select('name uploadLog um')
     const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep', salePoint: point})
