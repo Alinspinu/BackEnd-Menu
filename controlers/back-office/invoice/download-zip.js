@@ -36,7 +36,6 @@ const mode = 'prod'
           const modifyXml = xmlData.replace(/n2:/g, 'cac:').replace(/n3:/g, 'cbc:').replace(/n1:/g, 'ext:');
           try {
               const result = await parseXml(modifyXml); 
-              console.log(result)
               if(result.Invoice){
                 invoice = parseInvoiceData(result, id);
               } 
