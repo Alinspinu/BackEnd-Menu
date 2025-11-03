@@ -103,7 +103,7 @@ function createSalaryReport(pontaj, mode, us){
 
     let doc = new PDFDocument({
         size: "A4",
-        layout: "landscape",
+        layout: "portrait",
       });
 
       const pageWidth = doc.page.width;
