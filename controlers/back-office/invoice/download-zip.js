@@ -15,7 +15,7 @@ const mode = 'prod'
           'Accept': 'application/zip',
         },
       });
-      console.log(response)
+      // console.log(response)
       const asText = response.data.toString('utf-8');
 
 
@@ -34,9 +34,9 @@ const mode = 'prod'
           if (!entry.entryName.includes('semnatura')) {
           const xmlData = entry.getData().toString('utf8'); 
           const modifyXml = xmlData.replace(/n2:/g, 'cac:').replace(/n3:/g, 'cbc:').replace(/n1:/g, 'ext:');
-          console.log(modifyXml)
           try {
               const result = await parseXml(modifyXml); 
+              console.log(result)
               if(result.Invoice){
                 invoice = parseInvoiceData(result, id);
               } 
