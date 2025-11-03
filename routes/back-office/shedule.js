@@ -11,6 +11,8 @@ router.route('/')
 
 router.route('/d').delete(sheduleRoutes.deleteShedule)
 
+router.route('/print-salary').post(sheduleRoutes.printSalary)
+
 router.route('/pontaj')
     .get(sheduleRoutes.getPontaj)
     .post(sheduleRoutes.addPontaj)

@@ -7,9 +7,43 @@ const {getNowShedule} = require('../../utils/functions');
 const salePoint = require('../../models/utils/sale-point');
 const EmployeePosition = require('../../models/users/position')
 const {createExcelBufferUsersSheet} = require('../../controlers/print/shedule-sheet-xls')
+const {createSalaryReport} = require('../../controlers/print/salary-pdf')
 
 
 
+
+
+
+module.exports.printSalary = async (req, res) => {
+  const {pontId, mode} = req.body
+  try{
+
+    const pontaj = await Pontaj.findById(pontId)
+              .populate({path: 'days.users.employee', select: 'employee'})
+              .populate({path: 'days.users.employeePosition'})
+              .lean()
+
+        const doc = createSalaryReport(pontaj, mode)
+        doc.end();
+        res.type("application/pdf");
+        doc.pipe(res);
+        res.once("finish", () => {
+          const chunks = [];
+          doc.on("data", (chunk) => {
+            chunks.push(chunk);
+          });
+          doc.on("end", () => {
+            const buffer = Buffer.concat(chunks);
+            const base64String = buffer.toString("base64");
+            res.status(200).send(base64String)
+          });
+        });
+
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
 
 module.exports.addShedule = async (req, res, next) => {
     const { loc, salePoint } = req.body;
