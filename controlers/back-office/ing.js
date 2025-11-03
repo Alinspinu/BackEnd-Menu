@@ -490,6 +490,10 @@ module.exports.compareScriptic = async (req, res, next) => {
     ])
 
 
+    console.log('firts inventary', firstInventary.date)
+    console.log('second inventary', lastInventary.date)
+
+
 
     for(const sheet of impSheets){
       for(let ing of sheet.ings){
