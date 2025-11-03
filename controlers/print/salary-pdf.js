@@ -115,9 +115,9 @@ function createSalaryReport(pontaj, mode, us){
 
       doc.font("public/font/RobotoSlab-Regular.ttf")
 
-      doc.fontSize(10)
+      doc.fontSize(11)
       doc.text(`${pontaj.locatie.bussinessName}`, 30, 20, {underline: true})
-      doc.text(`${pontaj.salePoint.name}`, 300, 20, {underline: true})
+      doc.text(`${pontaj.salePoint.name}`, 400, 20, {underline: true})
 
       doc
         .fontSize(13)
@@ -136,7 +136,7 @@ function createSalaryReport(pontaj, mode, us){
         doc.text('Functie', startLine + 130 + 25, y-10 )
         doc.text('Ore', startLine + 110 + 155, y-10,)
         doc.text('Venit NET', startLine + 40 + 295, y-10)
-        doc.text('Taxe', startLine+ 435, 90)
+        doc.text('Taxe', startLine+ 435, y-10)
         doc
         .moveTo(startLine, y+6)
         .lineTo(startLine + 470, y+6)
