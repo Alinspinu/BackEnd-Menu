@@ -58,7 +58,7 @@ function parseInvoiceData(invoiceData, id) {
     console.log(item)
     const quantity = parseFloat(invoicedQuantity._ ?? invoicedQuantity) || 0;
     console.log(invoicedQuantity)
-    const unitCode = invoicedQuantity?._?.unitCode || 'N/A';
+    const unitCode = invoicedQuantity?.unitCode || 'N/A';
     const price = parseFloat(priceData?.PriceAmount?._ ?? priceData?.PriceAmount) || 0;
     const totalNoVat = parseFloat(lineAmount._ ?? lineAmount) || 0;
 
