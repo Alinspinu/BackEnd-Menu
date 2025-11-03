@@ -91,7 +91,7 @@ function createSalaryReport(pontaj, mode, us){
     }
 
     users.sort((a,b) => a.position.localeCompare(b.position))
-    users.filter(u => u.position !== '-')
+   users = users.filter(u => u.position !== '-' || u.position !== 'Administrator')
 
 
     let doc = new PDFDocument({
