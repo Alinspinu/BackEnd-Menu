@@ -69,6 +69,8 @@ function createSalaryReport(pontaj, mode, us){
                 }
             }
         for(let u of us){
+            const income = round(u.employee.salary.inHeand / pontaj.days.length)
+            const tax = round(u.employee.salary.onPaper.tax / pontaj.days.length)
             const existingUser = users.find(us => us.name === u.employee.fullName)
             if(existingUser){
                 existingUser.tax += tax
