@@ -49,12 +49,13 @@ function parseInvoiceData(invoiceData, id) {
 
   // --- Product lines ---
   const lines = Array.isArray(inv.InvoiceLine) ? inv.InvoiceLine : [inv.InvoiceLine].filter(Boolean);
+
   const products = lines.map(item => {
     const itemData = item?.Item || {};
     const priceData = item?.Price || {};
     const invoicedQuantity = item?.InvoicedQuantity || {};
     const lineAmount = item?.LineExtensionAmount || {};
-
+    console.log(item)
     const quantity = parseFloat(invoicedQuantity._ ?? invoicedQuantity) || 0;
     console.log(invoicedQuantity)
     const unitCode = invoicedQuantity?.$?.unitCode || 'N/A';
