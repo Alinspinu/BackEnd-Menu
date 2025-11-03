@@ -5,7 +5,7 @@ const {round, formatedDateToShow} = require('../../utils/functions')
 
 
 
-function createSalaryReport(pontaj, mode){
+function createSalaryReport(pontaj, mode, us){
 
     const firstDay = new Date(pontaj.days[0].date);
     const lastDay = new Date(pontaj.days[pontaj.days.length - 1].date);
@@ -50,27 +50,39 @@ function createSalaryReport(pontaj, mode){
             for(let u of d.users){
                 let tax = u.tax
                 let income = u.value
-                if(u.employee.employee.salary.fix){
-                    console.log(u.employee.employee.fullName, ' ', u.employee.employee.salary.inHeand / pontaj.days.length, ' ', u.employee.employee.salary.inHeand )
-                    income = round(u.employee.employee.salary.inHeand / pontaj.days.length)
-                    tax = round(u.employee.employee.salary.onPaper.tax / pontaj.days.length)
-                }
-                totalIncome += income
-                totalTax += tax
-                const existingUser = users.find(us => us.name === u.employee.employee.fullName)
-                if(existingUser){
-                    existingUser.tax += tax
-                    existingUser.income += income
-                } else {
-                    const us = {
-                        name: u.employee.employee.fullName,
-                        position: u.employeePosition.name,
-                        tax: tax,
-                        income: income
+                if(!u.employee.employee.salary.fix){  
+                    totalIncome += income
+                    totalTax += tax
+                    const existingUser = users.find(us => us.name === u.employee.employee.fullName)
+                    if(existingUser){
+                        existingUser.tax += tax
+                        existingUser.income += income
+                    } else {
+                        const us = {
+                            name: u.employee.employee.fullName,
+                            position: u.employeePosition.name,
+                            tax: tax,
+                            income: income
+                        }
+                        users.push(us)
                     }
-                    users.push(us)
                 }
             }
+        for(let u of us){
+            const existingUser = users.find(us => us.name === u.employee.fullName)
+            if(existingUser){
+                existingUser.tax += tax
+                existingUser.income += income
+            } else {
+                const us = {
+                    name: u.employee.fullName,
+                    position: u.employee.employeePosition.name,
+                    tax: round(u.employee.salary.onPaper.tax / pontaj.days.length),
+                    income: round(u.employee.salary.inHeand / pontaj.days.length)
+                }
+                users.push(us)
+            }
+        }
 
         }
     
