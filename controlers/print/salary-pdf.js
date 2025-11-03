@@ -107,7 +107,7 @@ function createSalaryReport(pontaj, mode, us){
       const pageWidth = doc.page.width;
 
       let lineHeigth = 12
-      let y = 130
+      let y = 120
 
       doc.font("public/font/RobotoSlab-Regular.ttf")
       doc
@@ -121,11 +121,11 @@ function createSalaryReport(pontaj, mode, us){
         doc.moveDown();
 
         doc.fontSize(13)
-        doc.text('Nume angajat', 50, 120 )
-        doc.text('Functie', 180, 120 )
-        doc.text('Ore', 320, 120,)
-        doc.text('Venit NET', 360, 120)
-        doc.text('Taxe', 460, 120)
+        doc.text('Nume angajat', 50, 110 )
+        doc.text('Functie', 180, 110 )
+        doc.text('Ore', 320, 110,)
+        doc.text('Venit NET', 360, 110)
+        doc.text('Taxe', 460, 110)
         // doc
         // .moveTo(25, 135)
         // .lineTo(500, 135)
