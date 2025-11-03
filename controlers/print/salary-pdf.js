@@ -138,12 +138,13 @@ function createSalaryReport(pontaj, mode, us){
             doc.text(`${u.hours}`, 320, y + i * lineHeigth + lineHeigth);
             doc.text(`${ round(u.income)}`, 360, y + i * lineHeigth + lineHeigth);
             doc.text(`${ round(u.tax)}`, 460, y + i * lineHeigth + lineHeigth);
+            doc.lineWidth(0.1);
             doc
             .moveTo(25, y + i * lineHeigth + lineHeigth + lineHeigth)
             .lineTo(500, y + i * lineHeigth + lineHeigth + lineHeigth)
             .stroke();
         })
-        let height = users.length * lineHeigth;
+        let height = (users.length  * lineHeigth) + y;
         doc.fontSize(14)
         doc.font("public/font/RobotoSlab-Bold.ttf");
         doc.text('TOTAL', 50, height + 40)
