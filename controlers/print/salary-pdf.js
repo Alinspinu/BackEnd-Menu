@@ -105,8 +105,8 @@ function createSalaryReport(pontaj, mode){
             .fontSize(10)
             .text(`${u.name}`, 50, y + i * lineHeigth + lineHeigth);
             doc.text(`${u.position}`, 180, y + i * lineHeigth + lineHeigth);
-            doc.text(`${ round(u.tax)}`, 240, y + i * lineHeigth + lineHeigth);
-            doc.text(`${ round(u.income)}`, 260, y + i * lineHeigth + lineHeigth);
+            doc.text(`${ round(u.tax)}`, 280, y + i * lineHeigth + lineHeigth);
+            doc.text(`${ round(u.income)}`, 360, y + i * lineHeigth + lineHeigth);
         })
 
   
