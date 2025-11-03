@@ -139,7 +139,7 @@ function createSalaryReport(pontaj, mode, us){
         doc.text('Taxe', startLine+ 435, y-10)
         doc
         .moveTo(startLine, y+6)
-        .lineTo(startLine + 470, y+6)
+        .lineTo(startLine + 480, y+6)
         .stroke();
 
         users.forEach((u, i) => {
