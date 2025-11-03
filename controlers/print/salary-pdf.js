@@ -107,7 +107,7 @@ function createSalaryReport(pontaj, mode, us){
       const pageWidth = doc.page.width;
 
       let lineHeigth = 12
-      let y = 120
+      let y = 100
 
       doc.font("public/font/RobotoSlab-Regular.ttf")
       doc
@@ -115,17 +115,17 @@ function createSalaryReport(pontaj, mode, us){
         .text(
           ` Raport salarii ${formatedDateToShow(startDate).split('ora')[0]} - ${formatedDateToShow(endDate).split('ora')[0]} `,
           (pageWidth / 2) - 150,
-          50,
+          20,
           {underline: true}
         );
         doc.moveDown();
 
         doc.fontSize(13)
-        doc.text('Nume angajat', 50, 110 )
-        doc.text('Functie', 180, 110 )
-        doc.text('Ore', 320, 110,)
-        doc.text('Venit NET', 360, 110)
-        doc.text('Taxe', 460, 110)
+        doc.text('Nume angajat', 50, 90 )
+        doc.text('Functie', 180, 90 )
+        doc.text('Ore', 320, 90,)
+        doc.text('Venit NET', 360, 90)
+        doc.text('Taxe', 460, 90)
         // doc
         // .moveTo(25, 135)
         // .lineTo(500, 135)
