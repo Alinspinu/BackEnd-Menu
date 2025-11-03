@@ -61,7 +61,7 @@ function parseInvoiceData(invoiceData, id) {
     const price = parseFloat(priceData?.PriceAmount?._ ?? priceData?.PriceAmount) || 0;
     const totalNoVat = parseFloat(lineAmount._ ?? lineAmount) || 0;
 
-    const vatPercent = parseFloat(
+    const vatPrecent = parseFloat(
       itemData.ClassifiedTaxCategory?.Percent?._ ?? itemData.ClassifiedTaxCategory?.Percent
     ) || 0;
 
@@ -87,7 +87,7 @@ function parseInvoiceData(invoiceData, id) {
       unitCode,
       price: price - discountPerUnit,
       totalNoVat,
-      vatPercent,
+      vatPrecent,
       discountPerUnit,
       discountTotal,
       discountPercent
@@ -417,7 +417,7 @@ function parseCreditNoteData(creditData, id) {
     const unitCode = (line.CreditedQuantity?.$?.unitCode  ?? line.CreditedQuantity?.unitCode) || 'N/A';
     const priceAmount = parseFloat(price.PriceAmount?._ ?? price.PriceAmount) || 0;
     const totalNoVat = parseFloat(line.LineExtensionAmount?._ ?? line.LineExtensionAmount) || 0;
-    const vatPercent = parseFloat(
+    const vatPrecent = parseFloat(
       item.ClassifiedTaxCategory?.Percent?._ ?? item.ClassifiedTaxCategory?.Percent
     ) || 0;
 
@@ -427,7 +427,7 @@ function parseCreditNoteData(creditData, id) {
       unitCode,
       price: priceAmount,
       totalNoVat,
-      vatPercent
+      vatPrecent
     };
   });
 
