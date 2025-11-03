@@ -123,7 +123,7 @@ function createSalaryReport(pontaj, mode, us){
         doc.moveDown();
 
         const startLine = pageWidth / 2 - 255
-        doc.lineWidth(0.4);
+        doc.lineWidth(0.8);
         doc.fontSize(13)
         doc.text('Nume angajat', startLine + 25, 90 )
         doc.text('Functie', startLine + 130 + 25, 90 )
@@ -131,8 +131,8 @@ function createSalaryReport(pontaj, mode, us){
         doc.text('Venit NET', startLine + 40 + 295, 90)
         doc.text('Taxe', startLine+ 435, 90)
         doc
-        .moveTo(startLine, 108)
-        .lineTo(startLine + 470, 108)
+        .moveTo(startLine, 106)
+        .lineTo(startLine + 470, 106)
         .stroke();
 
         users.forEach((u, i) => {
