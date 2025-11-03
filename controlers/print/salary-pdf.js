@@ -68,26 +68,28 @@ function createSalaryReport(pontaj, mode, us){
                     }
                 }
             }
-        for(let u of us){
-            const income = round(u.employee.salary.inHeand / pontaj.days.length)
-            const tax = round(u.employee.salary.onPaper.tax / pontaj.days.length)
-            const existingUser = users.find(us => us.name === u.employee.fullName)
-            if(existingUser){
-                existingUser.tax += tax
-                existingUser.income += income
-            } else {
-                const us = {
-                    name: u.employee.fullName,
-                    position: u.employee.employeePosition.name,
-                    tax: round(u.employee.salary.onPaper.tax / pontaj.days.length),
-                    income: round(u.employee.salary.inHeand / pontaj.days.length)
-                }
-                users.push(us)
-            }
-        }
 
         }
     
+    }
+
+    let full = mode === '01-30/31' ? true : false 
+    for(let u of us){
+        const income = full ? u.employee.salary.inHeand : round(u.employee.salary.inHeand / 2)
+        const tax = full ? u.employee.salary.onPaper.tax : round(u.employee.salary.onPaper.tax / 2)
+        const existingUser = users.find(us => us.name === u.employee.fullName)
+        if(existingUser){
+            existingUser.tax += tax
+            existingUser.income += income
+        } else {
+            const us = {
+                name: u.employee.fullName,
+                position: u.employee.employeePosition.name,
+                tax: tax,
+                income: income
+            }
+            users.push(us)
+        }
     }
 
     users.sort((a,b) => a.position.localeCompare(b.position))
