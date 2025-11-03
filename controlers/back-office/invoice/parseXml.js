@@ -55,10 +55,9 @@ function parseInvoiceData(invoiceData, id) {
     const priceData = item?.Price || {};
     const invoicedQuantity = item?.InvoicedQuantity || {};
     const lineAmount = item?.LineExtensionAmount || {};
-    console.log(item)
     const quantity = parseFloat(invoicedQuantity._ ?? invoicedQuantity) || 0;
-    console.log(invoicedQuantity)
-    const unitCode = invoicedQuantity?.unitCode || 'N/A';
+
+    const unitCode = (invoicedQuantity?.$?.unitCode ?? invoicedQuantity?.unitCode) || 'N/A';
     const price = parseFloat(priceData?.PriceAmount?._ ?? priceData?.PriceAmount) || 0;
     const totalNoVat = parseFloat(lineAmount._ ?? lineAmount) || 0;
 
@@ -294,72 +293,160 @@ function parseInvoiceData(invoiceData, id) {
 
 
 
+
+
+
+
+
+// function parseCreditNoteData(creditData, id) {
+//   const cn = creditData.CreditNote;
+
+//   // Credit note number
+//   const creditNumber = Array.isArray(cn['cbc:ID'])
+//     ? (cn['cbc:ID'][0]['_'] || cn['cbc:ID'][0])
+//     : cn['cbc:ID'] || 'Unknown';
+
+//   // Date
+//   const issueDate = Array.isArray(cn['cbc:IssueDate'])
+//     ? (cn['cbc:IssueDate'][0]['_'] || cn['cbc:IssueDate'][0])
+//     : cn['cbc:IssueDate'] || 'Unknown';
+
+//   // Supplier
+//   const supplierParty = cn['cac:AccountingSupplierParty']?.[0]?.['cac:Party']?.[0];
+//   const supplier = {
+//     name: supplierParty?.['cac:PartyLegalEntity']?.[0]?.['cbc:RegistrationName']?.[0]
+//       ? getText(supplierParty['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0])
+//       : 'Unknown Supplier',
+//     vatNumber: supplierParty?.['cac:PartyTaxScheme']?.[0]?.['cbc:CompanyID']?.[0]
+//       ? getText(supplierParty['cac:PartyTaxScheme'][0]['cbc:CompanyID'][0])
+//       : 'Unknown VAT Number'
+//   };
+
+//   // Customer
+//   const customerParty = cn['cac:AccountingCustomerParty']?.[0]?.['cac:Party']?.[0];
+//   const customer = {
+//     name: customerParty?.['cac:PartyLegalEntity']?.[0]?.['cbc:RegistrationName']?.[0]
+//       ? getText(customerParty['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0])
+//       : 'Unknown Customer',
+//     vatNumber: customerParty?.['cac:PartyTaxScheme']?.[0]?.['cbc:CompanyID']?.[0]
+//       ? getText(customerParty['cac:PartyTaxScheme'][0]['cbc:CompanyID'][0])
+//       : 'Unknown VAT Number'
+//   };
+
+//   // Products lines
+//   const products = cn['cac:CreditNoteLine']?.map(line => {
+//     const item = line['cac:Item']?.[0] || {};
+//     const price = line['cac:Price']?.[0] || {};
+
+//     const name = item['cbc:Name']?.[0]?._ || item['cbc:Name']?.[0] || 'Unknown';
+//     const quantity = +line['cbc:CreditedQuantity']?.[0]?._ || +line['cbc:CreditedQuantity']?.[0] || 0;
+//     const unitCode = line['cbc:CreditedQuantity']?.[0]?.$?.unitCode || 'N/A';
+//     const priceAmount = +price['cbc:PriceAmount']?.[0]?._ || +price['cbc:PriceAmount']?.[0] || 0;
+//     const totalNoVat = +line['cbc:LineExtensionAmount']?.[0]?._ || +line['cbc:LineExtensionAmount']?.[0] || 0;
+//     const vatPercent = +item['cac:ClassifiedTaxCategory']?.[0]?.['cbc:Percent']?.[0]?._ || +item['cac:ClassifiedTaxCategory']?.[0]?.['cbc:Percent']?.[0] || 0;
+
+//     return {
+//       name,
+//       quantity: - quantity,
+//       unitCode,
+//       price: priceAmount,
+//       totalNoVat: totalNoVat,
+//       vatPrecent: vatPercent
+//     };
+//   }) || [];
+
+//   // Totals
+//   const vatAmount = +cn['cac:TaxTotal']?.[0]?.['cbc:TaxAmount']?.[0]?._ || 0;
+//   const taxExclusiveAmount = +cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:TaxExclusiveAmount']?.[0]?._ || 0;
+//   const taxInclusiveAmount = +cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:TaxInclusiveAmount']?.[0]?._ || 0;
+//   const prepayAmount = +cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:PrepaidAmount']?.[0]?._ || 0;
+//   const payableAmount = +cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:PayableAmount']?.[0]?._ || 0;
+//   const currencyId = cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:PayableAmount']?.[0]?.$?.currencyID || 'N/A';
+
+//   return {
+//     creditNumber,
+//     issueDate,
+//     supplier,
+//     customer,
+//     products,
+//     vatAmount: -vatAmount,
+//     taxExclusiveAmount: -taxExclusiveAmount,
+//     taxInclusiveAmount: -taxInclusiveAmount,
+//     prepayAmount: -prepayAmount,
+//     payableAmount:  -payableAmount,
+//     currencyId,
+//     id
+//   };
+// }
+
+
+
 function parseCreditNoteData(creditData, id) {
-  const cn = creditData.CreditNote;
+  const cn = creditData.CreditNote || {};
 
-  // Credit note number
-  const creditNumber = Array.isArray(cn['cbc:ID'])
-    ? (cn['cbc:ID'][0]['_'] || cn['cbc:ID'][0])
-    : cn['cbc:ID'] || 'Unknown';
+  // --- Basic info ---
+  const creditNumber = cn.ID || 'Unknown';
+  const issueDate = cn.IssueDate || 'Unknown';
+  const currencyId = cn.DocumentCurrencyCode || 'RON';
 
-  // Date
-  const issueDate = Array.isArray(cn['cbc:IssueDate'])
-    ? (cn['cbc:IssueDate'][0]['_'] || cn['cbc:IssueDate'][0])
-    : cn['cbc:IssueDate'] || 'Unknown';
-
-  // Supplier
-  const supplierParty = cn['cac:AccountingSupplierParty']?.[0]?.['cac:Party']?.[0];
+  // --- Supplier ---
+  const supplierParty = cn.AccountingSupplierParty?.Party || {};
   const supplier = {
-    name: supplierParty?.['cac:PartyLegalEntity']?.[0]?.['cbc:RegistrationName']?.[0]
-      ? getText(supplierParty['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0])
-      : 'Unknown Supplier',
-    vatNumber: supplierParty?.['cac:PartyTaxScheme']?.[0]?.['cbc:CompanyID']?.[0]
-      ? getText(supplierParty['cac:PartyTaxScheme'][0]['cbc:CompanyID'][0])
-      : 'Unknown VAT Number'
+    name: supplierParty.PartyLegalEntity?.RegistrationName || 'Unknown Supplier',
+    vatNumber: supplierParty.PartyTaxScheme?.CompanyID || 'Unknown VAT Number'
   };
 
-  // Customer
-  const customerParty = cn['cac:AccountingCustomerParty']?.[0]?.['cac:Party']?.[0];
+  // --- Customer ---
+  const customerParty = cn.AccountingCustomerParty?.Party || {};
   const customer = {
-    name: customerParty?.['cac:PartyLegalEntity']?.[0]?.['cbc:RegistrationName']?.[0]
-      ? getText(customerParty['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0])
-      : 'Unknown Customer',
-    vatNumber: customerParty?.['cac:PartyTaxScheme']?.[0]?.['cbc:CompanyID']?.[0]
-      ? getText(customerParty['cac:PartyTaxScheme'][0]['cbc:CompanyID'][0])
-      : 'Unknown VAT Number'
+    name: customerParty.PartyLegalEntity?.RegistrationName || 'Unknown Customer',
+    vatNumber: customerParty.PartyTaxScheme?.CompanyID || 'Unknown VAT Number'
   };
 
-  // Products lines
-  const products = cn['cac:CreditNoteLine']?.map(line => {
-    const item = line['cac:Item']?.[0] || {};
-    const price = line['cac:Price']?.[0] || {};
+  // --- Credit Note Lines ---
+  const lines = Array.isArray(cn.CreditNoteLine)
+    ? cn.CreditNoteLine
+    : [cn.CreditNoteLine].filter(Boolean);
 
-    const name = item['cbc:Name']?.[0]?._ || item['cbc:Name']?.[0] || 'Unknown';
-    const quantity = +line['cbc:CreditedQuantity']?.[0]?._ || +line['cbc:CreditedQuantity']?.[0] || 0;
-    const unitCode = line['cbc:CreditedQuantity']?.[0]?.$?.unitCode || 'N/A';
-    const priceAmount = +price['cbc:PriceAmount']?.[0]?._ || +price['cbc:PriceAmount']?.[0] || 0;
-    const totalNoVat = +line['cbc:LineExtensionAmount']?.[0]?._ || +line['cbc:LineExtensionAmount']?.[0] || 0;
-    const vatPercent = +item['cac:ClassifiedTaxCategory']?.[0]?.['cbc:Percent']?.[0]?._ || +item['cac:ClassifiedTaxCategory']?.[0]?.['cbc:Percent']?.[0] || 0;
+  const products = lines.map(line => {
+    const item = line?.Item || {};
+    const price = line?.Price || {};
+
+    const name = item.Name || 'Unknown';
+    const quantity = parseFloat(line.CreditedQuantity?._ ?? line.CreditedQuantity) || 0;
+    const unitCode = (line.CreditedQuantity?.$?.unitCode  ?? line.CreditedQuantity?.unitCode) || 'N/A';
+    const priceAmount = parseFloat(price.PriceAmount?._ ?? price.PriceAmount) || 0;
+    const totalNoVat = parseFloat(line.LineExtensionAmount?._ ?? line.LineExtensionAmount) || 0;
+    const vatPercent = parseFloat(
+      item.ClassifiedTaxCategory?.Percent?._ ?? item.ClassifiedTaxCategory?.Percent
+    ) || 0;
 
     return {
       name,
-      quantity: - quantity,
+      quantity: -quantity, // negative values for credit
       unitCode,
       price: priceAmount,
-      totalNoVat: totalNoVat,
-      vatPrecent: vatPercent
+      totalNoVat,
+      vatPercent
     };
-  }) || [];
+  });
 
-  // Totals
-  const vatAmount = +cn['cac:TaxTotal']?.[0]?.['cbc:TaxAmount']?.[0]?._ || 0;
-  const taxExclusiveAmount = +cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:TaxExclusiveAmount']?.[0]?._ || 0;
-  const taxInclusiveAmount = +cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:TaxInclusiveAmount']?.[0]?._ || 0;
-  const prepayAmount = +cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:PrepaidAmount']?.[0]?._ || 0;
-  const payableAmount = +cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:PayableAmount']?.[0]?._ || 0;
-  const currencyId = cn['cac:LegalMonetaryTotal']?.[0]?.['cbc:PayableAmount']?.[0]?.$?.currencyID || 'N/A';
+  // --- Totals ---
+  const taxTotal = cn.TaxTotal || {};
+  const legalTotals = cn.LegalMonetaryTotal || {};
 
-  return {
+  const vatAmount = parseFloat(taxTotal.TaxAmount?._ ?? taxTotal.TaxAmount) || 0;
+  const taxExclusiveAmount =
+    parseFloat(legalTotals.TaxExclusiveAmount?._ ?? legalTotals.TaxExclusiveAmount) || 0;
+  const taxInclusiveAmount =
+    parseFloat(legalTotals.TaxInclusiveAmount?._ ?? legalTotals.TaxInclusiveAmount) || 0;
+  const prepayAmount =
+    parseFloat(legalTotals.PrePaidAmount?._ ?? legalTotals.PrePaidAmount) || 0;
+  const payableAmount =
+    parseFloat(legalTotals.PayableAmount?._ ?? legalTotals.PayableAmount) || 0;
+
+  // --- Final return ---
+  const creditSummary = {
     creditNumber,
     issueDate,
     supplier,
@@ -369,11 +456,14 @@ function parseCreditNoteData(creditData, id) {
     taxExclusiveAmount: -taxExclusiveAmount,
     taxInclusiveAmount: -taxInclusiveAmount,
     prepayAmount: -prepayAmount,
-    payableAmount:  -payableAmount,
+    payableAmount: -payableAmount,
     currencyId,
     id
   };
+
+  return creditSummary;
 }
+
 
 
 const getText = (val) => {
