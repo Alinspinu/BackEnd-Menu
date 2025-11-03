@@ -91,10 +91,10 @@ function createSalaryReport(pontaj, mode){
         .fontSize(12)
         .text(
           ` Raport salarii ${formatedDateToShow(startDate).split('ora')[0]} - ${formatedDateToShow(endDate).split('ora')[0]} `,
-          (pageWidth / 2) - 100,
+          (pageWidth / 2) - 150,
           50,
           {
-            width: 150,
+            // width: 150,
             underline: true
           }
         );
@@ -104,9 +104,9 @@ function createSalaryReport(pontaj, mode){
             doc
             .fontSize(10)
             .text(`${u.name}`, 50, y + i * lineHeigth + lineHeigth);
-            doc.text(`${u.position}`, 100, y + i * lineHeigth + lineHeigth);
-            doc.text(`${u.tax}`, 140, y + i * lineHeigth + lineHeigth);
-            doc.text(`${u.income}`, 160, y + i * lineHeigth + lineHeigth);
+            doc.text(`${u.position}`, 180, y + i * lineHeigth + lineHeigth);
+            doc.text(`${ round(u.tax)}`, 240, y + i * lineHeigth + lineHeigth);
+            doc.text(`${ round(u.income)}`, 260, y + i * lineHeigth + lineHeigth);
         })
 
   
