@@ -132,7 +132,7 @@ function createSalaryReport(pontaj, mode, us){
         doc.text('Taxe', startLine+ 435, 90)
         doc
         .moveTo(startLine, 110)
-        .lineTo(startLine + 420, 110)
+        .lineTo(startLine + 440, 110)
         .stroke();
 
         users.forEach((u, i) => {
@@ -146,7 +146,7 @@ function createSalaryReport(pontaj, mode, us){
 
             doc
             .moveTo(startLine, y + i * lineHeigth + lineHeigth + lineHeigth)
-            .lineTo(startLine + 420, y + i * lineHeigth + lineHeigth + lineHeigth)
+            .lineTo(startLine + 440, y + i * lineHeigth + lineHeigth + lineHeigth)
             .stroke();
         })
         let height = (users.length  * lineHeigth) + y;
