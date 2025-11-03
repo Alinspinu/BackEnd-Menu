@@ -120,24 +120,27 @@ function createSalaryReport(pontaj, mode, us){
         );
         doc.moveDown();
 
+        const startLine = pageWidth / 2 - 475
+
         doc.fontSize(13)
-        doc.text('Nume angajat', 50, 90 )
-        doc.text('Functie', 180, 90 )
-        doc.text('Ore', 320, 90,)
-        doc.text('Venit NET', 360, 90)
-        doc.text('Taxe', 460, 90)
+        doc.text('Nume angajat', startLine + 25, 90 )
+        doc.text('Functie', startLine + 130 + 25, 90 )
+        doc.text('Ore', startLine + 140 + 155, 90,)
+        doc.text('Venit NET', startLine + 40 + 295, 90)
+        doc.text('Taxe', startLine+ 435, 90)
         // doc
         // .moveTo(25, 135)
         // .lineTo(500, 135)
         // .stroke();
+
         users.forEach((u, i) => {
             doc.fontSize(10)
-            doc.text(`${i+1}.`, 25, y + i * lineHeigth + lineHeigth)    
-            doc.text(`${u.name}`, 50, y + i * lineHeigth + lineHeigth);
-            doc.text(`${u.position}`, 180, y + i * lineHeigth + lineHeigth);
-            doc.text(`${u.hours}`, 320, y + i * lineHeigth + lineHeigth);
-            doc.text(`${ round(u.income)}`, 360, y + i * lineHeigth + lineHeigth);
-            doc.text(`${ round(u.tax)}`, 460, y + i * lineHeigth + lineHeigth);
+            doc.text(`${i+1}.`, startLine, y + i * lineHeigth + lineHeigth)    
+            doc.text(`${u.name}`, startLine + 25, y + i * lineHeigth + lineHeigth);
+            doc.text(`${u.position}`, startLine + 130 + 25, y + i * lineHeigth + lineHeigth);
+            doc.text(`${u.hours}`,startLine + 140 + 155, y + i * lineHeigth + lineHeigth);
+            doc.text(`${ round(u.income)}`,startLine + 40 + 295, y + i * lineHeigth + lineHeigth);
+            doc.text(`${ round(u.tax)}`, startLine+ 435, y + i * lineHeigth + lineHeigth);
             doc.lineWidth(0.1);
             doc
             .moveTo(25, y + i * lineHeigth + lineHeigth + lineHeigth)
@@ -147,9 +150,9 @@ function createSalaryReport(pontaj, mode, us){
         let height = (users.length  * lineHeigth) + y;
         doc.fontSize(14)
         doc.font("public/font/RobotoSlab-Bold.ttf");
-        doc.text('TOTAL', 50, height + 10)
-        doc.text(`${round(totalIncome)}`, 360, height + 10)
-        doc.text(`${round(totalTax)}`, 460, height + 10)
+        doc.text('TOTAL', startLine + 25, height + 10)
+        doc.text(`${round(totalIncome)}`, startLine + 40 + 295, height + 15)
+        doc.text(`${round(totalTax)}`, startLine+ 435,  height + 15)
 
   
  
