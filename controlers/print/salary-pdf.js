@@ -152,8 +152,8 @@ function createSalaryReport(pontaj, mode, us){
             doc.text(`${ round(u.tax)}`, startLine+ 435, y + i * lineHeigth + lineHeigth);
             doc.lineWidth(0.1);
             doc
-            .moveTo(startLine, y + i * lineHeigth + lineHeigth + lineHeigth + 2)
-            .lineTo(startLine + 470, y + i * lineHeigth + lineHeigth + lineHeigth + 2)
+            .moveTo(startLine, y + i * lineHeigth + lineHeigth + lineHeigth + 1)
+            .lineTo(startLine + 470, y + i * lineHeigth + lineHeigth + lineHeigth + 1)
             .stroke();
         })
         let height = (users.length  * lineHeigth) + y;
