@@ -106,33 +106,40 @@ function createSalaryReport(pontaj, mode, us){
         layout: "portrait",
       });
 
+
+
       const pageWidth = doc.page.width;
 
       let lineHeigth = 12
-      let y = 100
+      let y = 140
 
       doc.font("public/font/RobotoSlab-Regular.ttf")
+
+      doc.fontSize(11)
+      doc.text(`${pontaj.locatie.bussinessName}`, 30, 20, {underline: true})
+      doc.text(`${pontaj.salePoint.name}`, 500, 20, {underline: true})
+
       doc
         .fontSize(13)
         .text(
           ` Raport salarii ${formatedDateToShow(startDate).split('ora')[0]} - ${formatedDateToShow(endDate).split('ora')[0]} `,
           (pageWidth / 2) - 150,
-          20,
+          50,
           {underline: true}
         );
         doc.moveDown();
 
         const startLine = pageWidth / 2 - 255
-        doc.lineWidth(0.8);
+        doc.lineWidth(0.6);
         doc.fontSize(13)
-        doc.text('Nume angajat', startLine + 25, 90 )
-        doc.text('Functie', startLine + 130 + 25, 90 )
-        doc.text('Ore', startLine + 110 + 155, 90,)
-        doc.text('Venit NET', startLine + 40 + 295, 90)
+        doc.text('Nume angajat', startLine + 25, y-10 )
+        doc.text('Functie', startLine + 130 + 25, y-10 )
+        doc.text('Ore', startLine + 110 + 155, y-10,)
+        doc.text('Venit NET', startLine + 40 + 295, y-10)
         doc.text('Taxe', startLine+ 435, 90)
         doc
-        .moveTo(startLine, 106)
-        .lineTo(startLine + 470, 106)
+        .moveTo(startLine, y+6)
+        .lineTo(startLine + 470, y+6)
         .stroke();
 
         users.forEach((u, i) => {
