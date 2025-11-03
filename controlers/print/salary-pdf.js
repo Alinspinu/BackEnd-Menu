@@ -126,10 +126,10 @@ function createSalaryReport(pontaj, mode, us){
         doc.text('Ore', 320, 120,)
         doc.text('Venit NET', 360, 120)
         doc.text('Taxe', 460, 120)
-        doc
-        .moveTo(25, 135)
-        .lineTo(500, 135)
-        .stroke();
+        // doc
+        // .moveTo(25, 135)
+        // .lineTo(500, 135)
+        // .stroke();
         users.forEach((u, i) => {
             doc.fontSize(10)
             doc.text(`${i+1}.`, 25, y + i * lineHeigth + lineHeigth)    
@@ -143,6 +143,12 @@ function createSalaryReport(pontaj, mode, us){
             .lineTo(500, y + i * lineHeigth + lineHeigth + lineHeigth)
             .stroke();
         })
+        let height = users.length * lineHeigth;
+        doc.fontSize(14)
+        doc.font("public/font/RobotoSlab-Bold.ttf");
+        doc.text('TOTAL', 50, height + 40)
+        doc.text(`${round(totalIncome)}`, 360, height + 40)
+        doc.text(`${round(totalTax)}`, 460, height + 40)
 
   
  
