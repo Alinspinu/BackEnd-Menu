@@ -139,8 +139,8 @@ function createSalaryReport(pontaj, mode, us){
             doc.text(`${ round(u.income)}`, 360, y + i * lineHeigth + lineHeigth);
             doc.text(`${ round(u.tax)}`, 460, y + i * lineHeigth + lineHeigth);
             doc
-            .moveTo(25, y + i * lineHeigth + lineHeigth)
-            .lineTo(500, y + i * lineHeigth + lineHeigth)
+            .moveTo(25, y + i * lineHeigth + lineHeigth + lineHeigth)
+            .lineTo(500, y + i * lineHeigth + lineHeigth + lineHeigth)
             .stroke();
         })
 
