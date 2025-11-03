@@ -79,6 +79,8 @@ function createSalaryReport(pontaj, mode, us){
     for(let u of us){
         const income = full ? u.employee.salary.inHeand : round(u.employee.salary.inHeand / 2)
         const tax = full ? u.employee.salary.onPaper.tax : round(u.employee.salary.onPaper.tax / 2)
+        totalIncome += income
+        totalTax += tax
         const existingUser = users.find(us => us.name === u.employee.fullName)
         if(existingUser){
             existingUser.tax += tax
@@ -150,7 +152,7 @@ function createSalaryReport(pontaj, mode, us){
         let height = (users.length  * lineHeigth) + y;
         doc.fontSize(14)
         doc.font("public/font/RobotoSlab-Bold.ttf");
-        doc.text('TOTAL', startLine + 25, height + 10)
+        doc.text('TOTAL', startLine + 25, height + 15)
         doc.text(`${round(totalIncome)}`, startLine + 40 + 295, height + 15)
         doc.text(`${round(totalTax)}`, startLine+ 435,  height + 15)
 
