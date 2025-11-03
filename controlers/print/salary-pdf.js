@@ -106,8 +106,8 @@ function createSalaryReport(pontaj, mode, us){
 
       const pageWidth = doc.page.width;
 
-      let lineHeigth = 14
-      let y = 150
+      let lineHeigth = 12
+      let y = 130
 
       doc.font("public/font/RobotoSlab-Regular.ttf")
       doc
@@ -131,7 +131,7 @@ function createSalaryReport(pontaj, mode, us){
         .lineTo(500, 135)
         .stroke();
         users.forEach((u, i) => {
-            doc.fontSize(11)
+            doc.fontSize(10)
             doc.text(`${i+1}.`, 25, y + i * lineHeigth + lineHeigth)    
             doc.text(`${u.name}`, 50, y + i * lineHeigth + lineHeigth);
             doc.text(`${u.position}`, 180, y + i * lineHeigth + lineHeigth);
