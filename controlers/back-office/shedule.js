@@ -27,6 +27,7 @@ module.exports.printSalary = async (req, res) => {
               .select('employee')
               .populate({path: 'employee.employeePosition', select: 'name'})
               .lean()
+              console.log(users)
         const doc = createSalaryReport(pontaj, mode, users)
         doc.end();
         res.type("application/pdf");
