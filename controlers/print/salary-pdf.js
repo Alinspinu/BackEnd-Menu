@@ -123,7 +123,7 @@ function createSalaryReport(pontaj, mode, us){
         doc.moveDown();
 
         const startLine = pageWidth / 2 - 255
-        doc.lineWidth(0.1);
+        doc.lineWidth(0.2);
         doc.fontSize(13)
         doc.text('Nume angajat', startLine + 25, 90 )
         doc.text('Functie', startLine + 130 + 25, 90 )
@@ -143,7 +143,7 @@ function createSalaryReport(pontaj, mode, us){
             doc.text(`${u.hours}`,startLine + 110 + 155, y + i * lineHeigth + lineHeigth);
             doc.text(`${ round(u.income)}`,startLine + 40 + 295, y + i * lineHeigth + lineHeigth);
             doc.text(`${ round(u.tax)}`, startLine+ 435, y + i * lineHeigth + lineHeigth);
-
+            doc.lineWidth(0.1);
             doc
             .moveTo(startLine, y + i * lineHeigth + lineHeigth + lineHeigth)
             .lineTo(startLine + 470, y + i * lineHeigth + lineHeigth + lineHeigth)
