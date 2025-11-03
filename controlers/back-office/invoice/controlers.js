@@ -295,12 +295,14 @@ module.exports.getMessagesByDate = async (req, res) => {
 module.exports.getInvoice = async (req, res) => {
     const {id, loc} = req.query;
     try{
+      console.log(id, loc)
       const locatie = await Locatie.findById(loc).populate({path: 'anafToken', select: 'token'})
       const token = locatie.anafToken.token
       if(!token){
         return res.status(404).json({message: 'Missing token'})
       }
         const data = await downloadZipFile(id, token)
+        console.log(data)
         if (data.error) {
           return res.status(500).json({ message: data.error });
         } 
