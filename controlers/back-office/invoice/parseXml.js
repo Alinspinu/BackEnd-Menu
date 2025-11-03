@@ -271,7 +271,18 @@ const getText = (val) => {
 
   function parseXml(xmlData) {
     return new Promise((resolve, reject) => {
-      xml2js.parseString(xmlData,{ tagNameProcessors: [name => name.replace(/^.*:/, '')] }, (err, result) => {
+      xml2js.parseString(xmlData,      {
+        tagNameProcessors: [
+          // remove namespace prefixes like "ns39:"
+          xml2js.processors.stripPrefix
+        ],
+        attrNameProcessors: [
+          xml2js.processors.stripPrefix
+        ],
+        explicitArray: false,  // turn single-item arrays into plain objects
+        ignoreAttrs: false,    // keep attributes like xmlns if needed
+        mergeAttrs: true       // flatten attributes into the object
+      }, (err, result) => {
         if (err) {
           return reject(err);
         }
