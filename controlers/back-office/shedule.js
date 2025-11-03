@@ -22,8 +22,12 @@ module.exports.printSalary = async (req, res) => {
               .populate({path: 'days.users.employee', select: 'employee'})
               .populate({path: 'days.users.employeePosition'})
               .lean()
-
-        const doc = createSalaryReport(pontaj, mode)
+        const date = new Date(pontaj.days[0].date)
+        const users = User.find({locatie: pontaj.locatie, salePoint: pontaj.salePoint, 'employee.salary.fix': true})
+              .select('employee')
+              .populate({path: 'employee.employeePosition', select: 'name'})
+              .lean()
+        const doc = createSalaryReport(pontaj, mode, users)
         doc.end();
         res.type("application/pdf");
         doc.pipe(res);
