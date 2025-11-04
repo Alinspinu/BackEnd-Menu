@@ -251,7 +251,7 @@ module.exports.getMessagesByDate = async (req, res) => {
     if(locatie){
       if(locatie.anafToken && locatie.anafToken.token){
         const cif = locatie.vatNumber.replace(/\D/g, '')
-        let page = 2
+        let page = 1
         const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=${page}&filtru${filter}`
         const config = {
           headers: {
@@ -261,10 +261,9 @@ module.exports.getMessagesByDate = async (req, res) => {
         }
       
         const response = await axios.get(apiUrl1, config)
-        console.log(response.data)
         if(response){
             const allPages = response.data.numar_total_pagini
-            console.log('Numar total de pagini', allPages)
+            page = response.data.index_pagina_curenta
             let messages = response.data.mesaje
             if(allPages === page){
               res.status(200).json(response.data)
@@ -272,9 +271,8 @@ module.exports.getMessagesByDate = async (req, res) => {
             if(allPages > page){
               const diference = allPages - page
               for(let i=1; i <= diference; i++){
-                  page = i+1
-                  console.log('page', page)
                   const resp = await axios.get(apiUrl1, config)
+                  page = resp.data.index_pagina_curenta
                   messages = [...messages, ...resp.data.mesaje]
               }
             response.data.mesaje = messages
