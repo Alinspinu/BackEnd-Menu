@@ -524,6 +524,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     //CALC SALES
   
     for(let prod of billProducts){ 
+        values.totalIngredients += calacProductRecipe(prod)
         if(prod.productId){
             if(prod.productId.gestiune){
                 const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
@@ -822,13 +823,13 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
 
     //CALC INGREDIENTS VALUE
-    ingredients.forEach(ing => {
-      if(ing.ing && ing.ing.tvaPrice && ing.qty){
-        const ingValue = round(ing.ing.tvaPrice *ing.qty)
-        values.totalIngredients += ingValue
-      } else {
-      }
-    })
+    // ingredients.forEach(ing => {
+    //   if(ing.ing && ing.ing.tvaPrice && ing.qty){
+    //     const ingValue = round(ing.ing.tvaPrice *ing.qty)
+    //     values.totalIngredients += ingValue
+    //   } else {
+    //   }
+    // })
 
     //CALC WORK VALUE`
     workDays = pontaj.days.filter(day => {
