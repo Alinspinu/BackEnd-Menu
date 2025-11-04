@@ -545,7 +545,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                             g.dep.push(
                                 {
                                     name: prod.productId.departament.name,
-                                    depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
+                                    depId: prod.ings.length  && prod.ings[0].ing.dept ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
                                     totalOut: price,
                                     totalIn: 0,
                                     totalInvIn: 0,
@@ -574,7 +574,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                                     {
                                         name: prod.productId.departament.name,
                                         totalOut: price,
-                                        depId: prod.ings.length ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
+                                        depId: prod.ings.length && prod.ings[0].ing.dept ? prod.ings[0].ing.dept.toString() : prod.productId.departament._id.toString(),
                                         totalIn: 0,
                                         totalInvIn: 0,
                                         totalInvOut: 0,
