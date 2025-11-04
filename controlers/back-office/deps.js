@@ -60,7 +60,9 @@ module.exports.deleteDep = async (req, res) => {
 module.exports.getGest = async (req, res) => {
     const  {salePoint, loc} = req.query;
     try{
+        console.log(salePoint, loc)
         const gests = await Gest.find({salePoint: salePoint, locatie: loc})
+        console.log(gests)
         res.status(200).json(gests)
     } catch(error){
         console.log(error)
