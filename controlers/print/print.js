@@ -1544,7 +1544,7 @@ module.exports.printConsumption = async (req, res, next) => {
 
 module.exports.printProductRecipes = async (req, res, next) => {
 
-  const {filter, ing = false, im = true, d = true } = req.body
+  const {filter, ing = true, im = true, d = true } = req.body
   try{
     const products = await Product.find(filter)
         .select('name description ings image toppings category mainCat subProducts qty price')
@@ -1664,54 +1664,6 @@ module.exports.printProductRecipes = async (req, res, next) => {
              worksheet.addRow()
            }
           }
-          worksheet.addRow(
-            [
-              '',
-              `Categorie Principală`,
-              `${product.mainCat}`,
-            ]
-          )
-          worksheet.addRow(
-            [
-              '',
-              `Categorie`,
-              `${product.category ? product.category.name : ''}`,
-            ]
-          )
-          if(im){
-            worksheet.addRow(
-             [
-              '',
-               'Image URL',
-               `${product.image.path}`,
-               ``,
-               '',
-               '',
-               ``,
-               '',
-               '',
-             ]
-           )
-           const row = worksheet.rowCount
-           worksheet.mergeCells(`C${row}:I${row}`)
-          } 
-          if(d) {
-            worksheet.addRow(
-              [
-                '',
-                'Descriere',
-                `${product.description}`,
-                ``,
-                '',
-                '',
-                ``,
-                '',
-                '',
-              ]
-            )
-            const ro = worksheet.rowCount
-            worksheet.mergeCells(`C${ro}:I${ro}`)
-        }
         if(ing) ings.forEach((ing, i) => {
           const tot = round(ing.qty * ing.ing.tvaPrice)
           worksheet.addRow(
