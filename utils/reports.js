@@ -1097,7 +1097,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
     })
-    console.log(report.departaments)
+    console.log(report.departaments[0].dep)
 
     // const newRep = await report.save()
     // console.log(values)
