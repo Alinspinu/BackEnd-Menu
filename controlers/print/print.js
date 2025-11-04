@@ -1143,7 +1143,7 @@ module.exports.printConsum = async (req, res) => {
       }
 
       d.ings.forEach((ing, i) =>{
-        if(!ing.ing.invGestiune){
+        if(!ing.ing.invGestiune[0]){
           console.log(ing.ing.name)
         }
 
