@@ -1147,8 +1147,11 @@ module.exports.printConsum = async (req, res) => {
           console.log(ing.ing.name)
         }
 
-        ing.ing.invGestiune[0].entries?.sort((a, b) => new Date(a.date) - new Date(b.date));
-        const price = ing.ing?.invGestiune[0]?.entries[0]?.priceNoVat || ing.ing.price
+        ing.ing.invGestiune[0]?.entries?.sort((a, b) => new Date(a.date) - new Date(b.date));
+        let price = ing.ing.price
+        if(ing.ing.invGestiune.length){
+          price =  ing.ing.invGestiune[0]?.entries[0]?.priceNoVat || ing.ing.price
+        }
 
 
         const priceNoVat = price * ing.qty
