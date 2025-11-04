@@ -66,7 +66,7 @@ async function getBillProducts(orders, filter) {
         }
     }
     for(const product of products){   
-           product.ings = await getIngredients([product])
+           product.ingr = await getIngredients([product])
            modifiedProducts.push(product)
     }
     for(const product of modifiedProducts){

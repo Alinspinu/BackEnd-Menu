@@ -262,7 +262,6 @@ module.exports.getMessagesByDate = async (req, res) => {
       
         const response = await axios.get(apiUrl1, config)
         if(response){
-          console.log(response.data)
             const allPages = response.data.numar_total_pagini
             page = response.data.index_pagina_curenta
             let messages = response.data.mesaje
