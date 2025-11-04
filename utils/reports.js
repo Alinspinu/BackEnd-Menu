@@ -515,7 +515,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     function calacProductRecipe(p){
         let total = 0
         for(let i of p.ings){
-            console.log(i.ing.tvaPrice, i.qty)
             total += (+i.ing.tvaPrice * +i.qty)
         }
         return round(total)
@@ -532,6 +531,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 if(g){
                     const price = (prod.price*prod.quantity) - prod.discount
                     const totalRecipe = calacProductRecipe(prod)
+                    console.log(totalRecipe)
                     const existingProduct = g.products.find(p => p.name === prod.name)
                     if(existingProduct){
                         existingProduct.qty = existingProduct.qty + prod.quantity
