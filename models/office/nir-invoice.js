@@ -30,7 +30,6 @@ const nirInvoiceSchema = new Schema({
             discountPerUnit: Number,     
             discountTotal: Number,       
             discountPercent: Number,
-            logId: String, 
         }
     ],
     payableAmont: Number,
