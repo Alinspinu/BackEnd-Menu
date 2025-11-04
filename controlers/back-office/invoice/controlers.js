@@ -35,7 +35,7 @@ module.exports.createOrderInvoice = async (req, res) => {
       order.status = 'done'
       order.invoice = true
 
-      const so = Order.findByIdAndUpdate(order._id, order, {new: true})
+      const so = await Order.findByIdAndUpdate(order._id, order, {new: true})
       socket.emit('billl', JSON.stringify({bill: so}))
     }
 
