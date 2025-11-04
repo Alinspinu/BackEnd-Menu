@@ -1629,7 +1629,13 @@ module.exports.printProductRecipes = async (req, res, next) => {
                   '',
                 ]
                 )
-              
+                
+                const row = worksheet.rowCount
+                worksheet.getRow(row).eachCell((cell)=>{
+                cell.font = {
+                    bold: true,
+                }
+                
                 ings.forEach((ing, i) => {
                   const tot = round(ing.qty * ing.ing.tvaPrice)
                   worksheet.addRow(
