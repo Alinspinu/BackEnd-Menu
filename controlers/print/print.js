@@ -1143,12 +1143,13 @@ module.exports.printConsum = async (req, res) => {
       }
 
       d.ings.forEach((ing, i) =>{
-        ing.ing.invGestiune[0].entries?.sort((a, b) => new Date(a.date) - new Date(b.date));
-        const price = ing.ing?.invGestiune[0]?.entries[0]?.priceNoVat || ing.ing.price
-
         if(!ing.ing.invGestiune){
           console.log(ing.ing.name)
         }
+
+        ing.ing.invGestiune[0].entries?.sort((a, b) => new Date(a.date) - new Date(b.date));
+        const price = ing.ing?.invGestiune[0]?.entries[0]?.priceNoVat || ing.ing.price
+
 
         const priceNoVat = price * ing.qty
         const priceVat = priceNoVat * (ing.ing.tva / 100)
