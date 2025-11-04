@@ -516,7 +516,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         let total = 0
         for(let i of p.ings){
             console.log(i.ing.tvaPrice, i.qty)
-            total += (i.ing.tvaPrice * +i.qty)
+            total += (+i.ing.tvaPrice * +i.qty)
         }
         return round(total)
     }
