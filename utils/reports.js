@@ -1098,6 +1098,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         paymentMethods: createPaymentMethods(values),
     })
   for(let d of report.departaments){
+    console.log(d.name)
     console.log(d.dep)
   }
 
