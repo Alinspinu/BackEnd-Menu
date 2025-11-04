@@ -1143,13 +1143,13 @@ module.exports.printConsum = async (req, res) => {
       }
 
       d.ings.forEach((ing, i) =>{
-        if(!ing.ing.invGestiune[0]){
+        if(!ing.ing.invGestiune[0].entries){
           console.log(ing.ing.name)
         }
 
         ing.ing.invGestiune[0]?.entries?.sort((a, b) => new Date(a.date) - new Date(b.date));
         let price = ing.ing.price
-        if(ing.ing.invGestiune.length){
+        if(ing.ing.invGestiune[0].entries){
           price =  ing.ing.invGestiune[0]?.entries[0]?.priceNoVat || ing.ing.price
         }
 
