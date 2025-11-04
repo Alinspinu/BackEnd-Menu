@@ -1062,6 +1062,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
 
 
+
+
+
     const report = new Report({
         status: 'new',
         locatie: loc,
@@ -1094,10 +1097,12 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
     })
-    const newRep = await report.save()
+    console.log(report)
+
+    // const newRep = await report.save()
     // console.log(values)
     // console.log(newRep.departaments)
-    // console.log(newRep.departaments)
+    // console.log(newRep.departaments) 
     // console.log(values)
     return newRep
 }
