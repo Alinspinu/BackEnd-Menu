@@ -531,13 +531,6 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 if(g){
                     const price = (prod.price*prod.quantity) - prod.discount
                     const totalRecipe = calacProductRecipe(prod)
-                    if(!totalRecipe){
-                        console.log('reta NAN ', prod.name)
-                    }
-                    if(totalRecipe > 50){
-                        console.log('reteta cu peste 50 de lei ', totalRecipe, ' ', prod.name)
-                    }
-                    console.log(totalRecipe)
                     const existingProduct = g.products.find(p => p.name === prod.name)
                     if(existingProduct){
                         existingProduct.qty = existingProduct.qty + prod.quantity
@@ -1104,10 +1097,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
     })
-//   for(let d of report.departaments){
-//     console.log(d.name)
-//     console.log(d.dep)
-//   }
+
 
     const newRep = await report.save()
     // console.log(values)
