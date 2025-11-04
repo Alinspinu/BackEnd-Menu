@@ -1629,6 +1629,23 @@ module.exports.printProductRecipes = async (req, res, next) => {
                   '',
                 ]
                 )
+              
+                ings.forEach((ing, i) => {
+                  const tot = round(ing.qty * ing.ing.tvaPrice)
+                  worksheet.addRow(
+                    [
+                      'Ing',
+                      `${ing.ing.name}`,
+                      `${round(ing.qty)} ${ing.ing.um}`,
+                      '',
+                      '',
+                      `${tot} Lei`,
+                      '',
+                      '',
+                    ]
+                    )
+                })
+                worksheet.addRow()
                
             })
             worksheet.addRow()
