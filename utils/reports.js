@@ -66,7 +66,7 @@ async function getBillProducts(orders, filter) {
         }
     }
     for(const product of products){   
-           product.ings = await getIngredients([product])
+           product.ingr = await getIngredients([product])
            modifiedProducts.push(product)
     }
     for(const product of modifiedProducts){
@@ -517,7 +517,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         for(let i of p.ings){
             total += (+i.ing.tvaPrice * +i.qty)
         }
-        return round(total)
+        return round(total * p.quantity)
     }
  
 
@@ -1104,17 +1104,16 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
     })
-  for(let d of report.departaments){
-    console.log(d.name)
-    console.log(d.dep)
-  }
+//   for(let d of report.departaments){
+//     console.log(d.name)
+//     console.log(d.dep)
+//   }
 
-    // const newRep = await report.save()
+    const newRep = await report.save()
     // console.log(values)
     // console.log(newRep.departaments)
     // console.log(newRep.departaments) 
-    // console.log(values)
-    return report
+    return newRep
 }
 
 
