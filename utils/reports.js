@@ -515,7 +515,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     function calacProductRecipe(p){
         let total = 0
         for(let i of p.ings){
-            total += (i.ing.tvaPrice * i.qty)
+            total += (i.ing.tvaPrice * +i.qty)
         }
         return round(total)
     }
@@ -1097,7 +1097,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         users: usersShow(bills),
         paymentMethods: createPaymentMethods(values),
     })
-    console.log(report.departaments[0].dep)
+  for(let d of report.departaments){
+    console.log(d.dep)
+  }
 
     // const newRep = await report.save()
     // console.log(values)
