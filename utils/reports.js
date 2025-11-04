@@ -66,7 +66,7 @@ async function getBillProducts(orders, filter) {
         }
     }
     for(const product of products){   
-           product.ingr = await getIngredients([product])
+           product.ings = await getIngredients([product])
            modifiedProducts.push(product)
     }
     for(const product of modifiedProducts){
@@ -517,7 +517,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         for(let i of p.ings){
             total += (i.ing.tvaPrice * i.qty)
         }
-        return round(total * p.quantity)
+        return round(total)
     }
  
 
