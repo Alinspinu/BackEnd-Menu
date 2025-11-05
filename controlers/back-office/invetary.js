@@ -5,6 +5,7 @@ const ComparedInventary = require('../../models/office/comp-inv');
 const DelProd = require('../../models/office/product/deletetProduct')
 const Order = require('../../models/office/product/order')
 const ImpSheet = require('../../models/office/imp-sheet')
+const Invoice = require('../../models/office/invoice')
 
 
 const io = require('socket.io-client');
@@ -617,7 +618,7 @@ module.exports.compareScriptic = async (req, res) => {
     // if (existing) return res.status(200).json(existing);
 
     // 2) Load the rest in parallel
-    const [ings, delProds, impSheets, orders] = await Promise.all([
+    const [ings, delProds, impSheets, orders, invoices] = await Promise.all([
       Ingredient.find({ locatie: loc, productIngredient: false, salePoint: point }).select('name uploadLog um').lean(),
       DelProd.find({
         locatie: loc,
@@ -634,8 +635,22 @@ module.exports.compareScriptic = async (req, res) => {
           { path: 'products.ings.ing',     populate: { path: 'ings.ing' } },
           { path: 'products.toppings.ing', populate: { path: 'ings.ing' } },
         ]).lean(),
+      Invoice.find({locatie: loc, salePoint: point})
+            .populate({ path: 'products.ings.ing', populate: { path: 'ings.ing' } })
+            .lean(),
     ]);
 
+    let filtredInvoicese = []
+
+    for(let i of invoices){
+      const date = new Date(i.issueDate)
+      const start = startTime.getTime()
+      const end = endTime.getTime()
+      const invoiceTime = date.getTime()
+      if(invoiceTime >= start && invoiceTime <= end){
+        filtredInvoicese.push(i)
+      }
+    }
     // === helpers ============================================================
     const r = (n) => round(n); // or roundd
     const idStr = (x) => (x?._id ? x._id.toString() : String(x));
@@ -704,7 +719,7 @@ module.exports.compareScriptic = async (req, res) => {
     // === 5) orders -> consMap
     for (const order of orders || []) {
       for (const prod of order.products || []) {
-        const mult = r(prod.quantity || 0);
+        const mult = r(prod.quantity || 1);
 
         for (const w of prod.ings || []) {
           if(!w.ing){
@@ -718,7 +733,7 @@ module.exports.compareScriptic = async (req, res) => {
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
               if (!sub?.ing?._id || !gestMatch(sub)) continue;
-              const qty = r((sub.qty || 0) * (scaled.qty || 0));
+              const qty = r((sub.qty || 0) * (scaled.qty || 1));
               if (qty) addTo(consMap, sub.ing, qty);
             }
           } else processLeaf(consMap, scaled, 1);
@@ -726,6 +741,31 @@ module.exports.compareScriptic = async (req, res) => {
 
         for (const t of prod.toppings || []) {
           const scaled = { ...t, qty: r((t.qty || 0) * mult) };
+          if (scaled?.ing?.ings?.length) {
+            for (const sub of scaled.ing.ings) {
+              if (!sub?.ing?._id || !gestMatch(sub)) continue;
+              const qty = r((sub.qty || 0) * (scaled.qty || 0));
+              if (qty) addTo(consMap, sub.ing, qty);
+            }
+          } else processLeaf(consMap, scaled, 1);
+        }
+      }
+    }
+
+    console.log('facturi filtrate', filtredInvoicese.length)
+    for (const invoice of filtredInvoicese || []) {
+      for (const prod of invoice.products || []) {
+        const mult = r(prod.quantity || 1);
+
+        for (const w of prod.ings || []) {
+          if(!w.ing){
+            console.log('Lipsa ingredient',w)
+          }
+          const scaled = { ...w, qty: r((w.qty || 0) * mult) };
+          if(scaled.ing?.name === 'Oua'){
+            console.log(scaled.gestiune)
+          }
+          // console.log(w)
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
               if (!sub?.ing?._id || !gestMatch(sub)) continue;
