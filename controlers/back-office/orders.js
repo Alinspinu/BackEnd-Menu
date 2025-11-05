@@ -64,7 +64,7 @@ module.exports.getOrder = async (req, res, next) => {
     }
     if(!day && !end && !start) {
         const today = new Date().setUTCHours(0,0,0,0)
-        const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done', salePoint: point, invoice: false})
+        const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
