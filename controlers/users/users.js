@@ -340,7 +340,7 @@ module.exports.editLocatieData = async (req, res) => {
     const {loc} = req.body
     try{
         const dbLoc = await Locatie.findById(loc._id)
-        if(dbLoc.gmail?.app){
+        if(dbLoc.gmail && dbLoc.gmail.app){
             loc.gmail.app = dbLoc.gmail.app
         }
         const locToEdit = await Locatie.findByIdAndUpdate(loc._id, loc, {new: true})
