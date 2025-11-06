@@ -341,7 +341,9 @@ module.exports.editLocatieData = async (req, res) => {
     try{
         const dbLoc = await Locatie.findById(loc._id)
         if(dbLoc.gmail && dbLoc.gmail.app){
-            loc.gmail.app = dbLoc.gmail.app
+            if(loc.gmail){
+                loc.gmail.app = dbLoc.gmail.app
+            }
         }
         const locToEdit = await Locatie.findByIdAndUpdate(loc._id, loc, {new: true})
         res.status(200).json({message: 'Datele au fost actualizate', locatie: locToEdit})
