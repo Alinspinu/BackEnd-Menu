@@ -355,7 +355,9 @@ module.exports.editLocatieData = async (req, res) => {
 
 module.exports.editLocatie = async (req, res, next) => {
     try{
+        console.log(req.body)
         const {email, appKey, locId} = req.body;
+        console.log(req.body)
         if(email.length && appKey.length){
             const { iv, secret, encryptedData } = encryptData(appKey)
             const gmail = {email: email, app: {iv: iv, key: encryptedData, secret: secret} }
