@@ -24,13 +24,14 @@ module.exports.getGestReport = async(req, res) => {
   const startDate = new Date(start).setUTCHours(0,0,0,0)
   const endDate = new Date(end).setUTCHours(23,59,59, 9999)
 
+
   try{
 
     const ings = await Ingredient.find({dept: dep, locatie: loc, salePoint: point}).select('name sellPrice tva locatie').lean()
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }})
               .populate({path: 'suplier', select: 'name'})
               .populate({path: 'locatie', select: 'bussinessName' }).lean()
-    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}, 'products.departament': dep, status: 'done'}).lean() 
+    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}, status: 'done'}).lean() 
     const invoices = await Invoice.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}})
               .populate({path:'products.productId', select: 'name departament sgrTax'})
               .lean()
