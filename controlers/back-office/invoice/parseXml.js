@@ -12,10 +12,10 @@ function parseInvoiceData(invoiceData, id) {
   const bank = supplierAccount.Name || 'NO NAME';
 
   // --- Basic invoice info ---
-  const invoiceNumber = inv.ID || 'Unknown';
-  const issueDate = inv.IssueDate || 'Unknown';
-  const dueDate = inv.DueDate || issueDate || 'Unknown';
-  const currencyId = inv.DocumentCurrencyCode || 'RON';
+  const invoiceNumber = (inv.ID?._ ?? inv.ID) || 'Unknown';
+  const issueDate = (inv.IssueDate._ ?? inv.IssueDate) || 'Unknown';
+  const dueDate = (inv.DueDate?._ ??  inv.DueDate )|| issueDate || 'Unknown';
+  const currencyId = (inv.DocumentCurrencyCode?._ ?? inv.DocumentCurrencyCode) || 'RON';
 
   // --- Supplier ---
   const supplierParty = inv.AccountingSupplierParty?.Party || {};
