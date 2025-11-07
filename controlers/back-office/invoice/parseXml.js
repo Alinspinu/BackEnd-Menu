@@ -82,7 +82,7 @@ function parseInvoiceData(invoiceData, id) {
       price > 0 ? +((discountPerUnit / price) * 100).toFixed(2) : 0;
 
     return {
-      name: itemData.Name || 'Unknown item',
+      name: (itemData.Name?._ ?? itemData.Name) || 'Unknown item',
       quantity,
       unitCode,
       price: price - discountPerUnit,
