@@ -40,6 +40,13 @@ module.exports.getGestReport = async(req, res) => {
   
     const buffer = await createExcelBuffer(days, nirs[0].locatie.bussinessName);
 
+    let tips = 0 
+
+    for(let o of orders){
+       tips += o.tips
+    }
+    console.log('Tips ', tips )
+
     // Set headers for file download
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
