@@ -21,8 +21,8 @@ module.exports.getGestReport = async(req, res) => {
 
   const {start, end, dep, loc, point, gest, in0, in11, in21} = req.body
 
-  const startDate = new Date(start).setHours(0,0,0,0)
-  const endDate = new Date(end).setHours(23,59,59, 9999)
+  const startDate = new Date(start).setUTCHours(0,0,0,0)
+  const endDate = new Date(end).setUTCHours(23,59,59, 9999)
 
   try{
 
