@@ -84,7 +84,7 @@ function parseInvoiceData(invoiceData, id) {
       console.log(itemData)
 
     return {
-      name: (itemData.Name?._ ?? itemData.Name) || 'Unknown item' + (itemData.Description?._ ?? itemData.Description) || '',
+      name:`${itemData.Name?._ ?? itemData.Name ?? 'Unknown item'} ${itemData.Description?._ ?? itemData.Description ?? ''}`,
       quantity,
       unitCode,
       price: price - discountPerUnit,
