@@ -45,7 +45,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
     }
 
@@ -84,27 +84,35 @@ module.exports.getOrder = async (req, res, next) => {
 
 async function modyfyOrdersProducts(orders){
 
-    const promises = orders.map(async o => {
-        for(let p of o.products){
-            const dbProd = p.productId
-            if(dbProd){
-                console.log('Am gasit produs in baza de date ', dbProd.name)
-                if(p.subProductId.length){
-                    console.log('Am gasit produs cu subprodus ', p.name)
-                    const sub = dbProd.subProducts.find(s => s._id.toString() === p.subProductId)
-                    if(sub){
-                        p.ings = sub.ings
-                        console.log('Am gasit sub produsul in baza de date su am acualizat ingredientele', sub.name, 'cantitati noi ', p.ings.map(i => i.qty + ' / '))
-                    }
-                } else{
-                    p.ings = dbProd.ings
-                    console.log('Am modificat ingredientele la produs dupa produsl din baza de date ', p.name, ' ', p.ings.map(i => i.qty + ' / '))
-                }
-            }
-        }
-        return Order.findByIdAndUpdate(o._id, o, {new: true})
-    })
-     await Promise.all(promises);
+    let tips = 0
+
+    for(let o of orders){
+        tips += o.tips
+    }
+
+    console.log('tips ', tips)
+
+    // const promises = orders.map(async o => {
+    //     for(let p of o.products){
+    //         const dbProd = p.productId
+    //         if(dbProd){
+    //             console.log('Am gasit produs in baza de date ', dbProd.name)
+    //             if(p.subProductId.length){
+    //                 console.log('Am gasit produs cu subprodus ', p.name)
+    //                 const sub = dbProd.subProducts.find(s => s._id.toString() === p.subProductId)
+    //                 if(sub){
+    //                     p.ings = sub.ings
+    //                     console.log('Am gasit sub produsul in baza de date su am acualizat ingredientele', sub.name, 'cantitati noi ', p.ings.map(i => i.qty + ' / '))
+    //                 }
+    //             } else{
+    //                 p.ings = dbProd.ings
+    //                 console.log('Am modificat ingredientele la produs dupa produsl din baza de date ', p.name, ' ', p.ings.map(i => i.qty + ' / '))
+    //             }
+    //         }
+    //     }
+    //     return Order.findByIdAndUpdate(o._id, o, {new: true})
+    // })
+    //  await Promise.all(promises);
 
 }
 
