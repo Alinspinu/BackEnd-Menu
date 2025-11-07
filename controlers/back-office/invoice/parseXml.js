@@ -8,8 +8,8 @@ function parseInvoiceData(invoiceData, id) {
 
   // --- Supplier financial info ---
   const supplierAccount = inv.PaymentMeans?.PayeeFinancialAccount || {};
-  const iban = supplierAccount.ID || 'NO IBAN';
-  const bank = supplierAccount.Name || 'NO NAME';
+  const iban = (supplierAccount.ID?._ ?? supplierAccount.ID) || 'NO IBAN';
+  const bank = (supplierAccount.Name?._ ?? supplierAccount.Name) || 'NO NAME';
 
   // --- Basic invoice info ---
   const invoiceNumber = (inv.ID?._ ?? inv.ID) || 'Unknown';
@@ -20,8 +20,8 @@ function parseInvoiceData(invoiceData, id) {
   // --- Supplier ---
   const supplierParty = inv.AccountingSupplierParty?.Party || {};
   const supplier = {
-    name: supplierParty.PartyLegalEntity?.RegistrationName || 'Unknown Supplier',
-    vatNumber: supplierParty.PartyTaxScheme?.CompanyID || 'Unknown VAT Number',
+    name: (supplierParty.PartyLegalEntity?.RegistrationName?._ ?? supplierParty.PartyLegalEntity?.RegistrationName )|| 'Unknown Supplier',
+    vatNumber: (supplierParty.PartyTaxScheme?.CompanyID?._ ?? supplierParty.PartyTaxScheme?.CompanyID) || 'Unknown VAT Number',
     iban,
     bank
   };
@@ -29,8 +29,8 @@ function parseInvoiceData(invoiceData, id) {
   // --- Customer ---
   const customerParty = inv.AccountingCustomerParty?.Party || {};
   const customer = {
-    name: customerParty.PartyLegalEntity?.RegistrationName || 'Unknown Customer',
-    vatNumber: customerParty.PartyTaxScheme?.CompanyID || 'Unknown VAT Number'
+    name: (customerParty.PartyLegalEntity?.RegistrationName?._ ?? customerParty.PartyLegalEntity?.RegistrationName) || 'Unknown Customer',
+    vatNumber: (customerParty.PartyTaxScheme?.CompanyID?._ ?? customerParty.PartyTaxScheme?.CompanyID) || 'Unknown VAT Number'
   };
 
   // --- Totals ---
@@ -385,22 +385,22 @@ function parseCreditNoteData(creditData, id) {
   const cn = creditData.CreditNote || {};
 
   // --- Basic info ---
-  const creditNumber = cn.ID || 'Unknown';
-  const issueDate = cn.IssueDate || 'Unknown';
-  const currencyId = cn.DocumentCurrencyCode || 'RON';
+  const creditNumber = (cn.ID?._ ?? cn.ID) || 'Unknown';
+  const issueDate = (cn.IssueDate?._ ?? cn.IssueDate) || 'Unknown';
+  const currencyId = (cn.DocumentCurrencyCode?._ ?? cn.DocumentCurrencyCode) || 'RON';
 
   // --- Supplier ---
   const supplierParty = cn.AccountingSupplierParty?.Party || {};
   const supplier = {
-    name: supplierParty.PartyLegalEntity?.RegistrationName || 'Unknown Supplier',
-    vatNumber: supplierParty.PartyTaxScheme?.CompanyID || 'Unknown VAT Number'
+    name: (supplierParty.PartyLegalEntity?.RegistrationName?._ ?? supplierParty.PartyLegalEntity?.RegistrationName) || 'Unknown Supplier',
+    vatNumber:( supplierParty.PartyTaxScheme?.CompanyID?._ ?? supplierParty.PartyTaxScheme?.CompanyID) || 'Unknown VAT Number'
   };
 
   // --- Customer ---
   const customerParty = cn.AccountingCustomerParty?.Party || {};
   const customer = {
-    name: customerParty.PartyLegalEntity?.RegistrationName || 'Unknown Customer',
-    vatNumber: customerParty.PartyTaxScheme?.CompanyID || 'Unknown VAT Number'
+    name: (customerParty.PartyLegalEntity?.RegistrationName?._ ?? customerParty.PartyLegalEntity?.RegistrationName) || 'Unknown Customer',
+    vatNumber: (customerParty.PartyTaxScheme?.CompanyID?._ ?? customerParty.PartyTaxScheme?.CompanyID) || 'Unknown VAT Number'
   };
 
   // --- Credit Note Lines ---
@@ -412,7 +412,7 @@ function parseCreditNoteData(creditData, id) {
     const item = line?.Item || {};
     const price = line?.Price || {};
 
-    const name = item.Name || 'Unknown';
+    const name = (item.Name?._ ?? item.Name) || 'Unknown';
     const quantity = parseFloat(line.CreditedQuantity?._ ?? line.CreditedQuantity) || 0;
     const unitCode = (line.CreditedQuantity?.$?.unitCode  ?? line.CreditedQuantity?.unitCode) || 'N/A';
     const priceAmount = parseFloat(price.PriceAmount?._ ?? price.PriceAmount) || 0;
