@@ -182,7 +182,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
                       day.entries.push(entry)
                     }
                   } else {
-                    console.log('ingredient gasit ca marfa cu alta gestiune decat bar ',  formatedDateToShow(o.createdAt), ' ',  p.name, ' ',  p.ings[0].gestiune)
+                    console.log('ingredient gasit ca marfa cu alta gestiune decat bar ',  formatedDateToShow(o.createdAt), ' ', p.quantity, ' ',   p.name, ' ',  p.ings[0].gestiune)
                   }
                 } else {
                   console.log('ingredient fara gestiune', p.name)
