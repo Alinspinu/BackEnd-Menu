@@ -54,7 +54,7 @@ module.exports.getOrder = async (req, res, next) => {
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
         // await modyfyOrdersProducts(orders)
-        res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
+        res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds, message: 'ok'})
     }
 
     if(day && !end && !start) {
@@ -69,7 +69,7 @@ module.exports.getOrder = async (req, res, next) => {
                     .populate({path : 'products.gestiune', select: 'name'})
                     .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}, salePoint: point}).lean()
-        res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
+        res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds,  message: 'ok'})
     }
     if(!day && !end && !start) {
         const today = new Date().setUTCHours(0,0,0,0)
@@ -82,7 +82,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point}).lean()
-        res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds})
+        res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds,  message: 'ok'})
     }
     try{
     } catch (err){
