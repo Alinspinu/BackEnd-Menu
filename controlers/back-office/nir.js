@@ -290,19 +290,20 @@ module.exports.printNirsAndInvoices = async (req, res) => {
     const endTime = new Date(end).setUTCHours(23,59,59,0)
 
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startTime, $lt: endTime}})
+                .sort({ documentDate: 1 })
                 .populate({
                   path: "suplier",
                     select: "name vatNumber",
                   })
                   .populate({
                     path: 'locatie',
-                    select: 'bussinessName'
+                    select: 'bussinessName vatNumber register'
                   })
                   .populate({
                     path: 'salePoint',
                     select: 'name'
                   })
-                  .populate({path: 'nirInvoice'})
+                  .populate({path: 'nirInvoice', populate: {path: 'locatie', select: 'bussinessName bank account vatNumber'}})
                   .populate({
                     path: 'ingredients.ing',
                     select: 'dept'

@@ -12,6 +12,7 @@ doc.fontSize(10)
 doc.font('public/font/Montserrat-Regular.ttf')
 doc.text('Furnizor', 25 + 10, 10)
 doc.fontSize(18);
+if(invoice.supplier.name.length > 45) doc.fontSize(15)
 doc.font('public/font/Montserrat-Bold.ttf')
 doc.text(`${invoice.supplier.name}`, 25 + 10, 25);
 doc.lineWidth(1.3);
@@ -22,6 +23,7 @@ doc.fontSize(10);
 
 doc.font("public/font/Montserrat-Regular.ttf");
 doc.text(`C.I.F.`, 25 + 10, 50, { width: 30, align: "left" });
+doc.text(`Nr Reg.`, 25+10, 62, { width: 40, align: "left" });
 doc.text(`Banca`, 25 + 10, 72, { width: 50, align: "left" })
 doc.text(`Cont:`, 25 + 10, 90, { width: 50, align: "left" })
 
@@ -34,6 +36,7 @@ doc.fontSize(10);
 doc.text(`${invoice.supplier.bank}`, 60 + 10, 72)
 doc.font('public/font/Montserrat-Bold.ttf')
 doc.text(`${invoice.supplier.vatNumber}`, 68, 50);
+doc.text(`${invoice.supplier.registration}`, 68 + 5, 62);
 doc.text(`${invoice.supplier.iban}`, 55 + 10, 90)
 
 //HEADER CLIENT
@@ -50,6 +53,8 @@ doc.fontSize(10);
 // doc.font('Courier-Bold')
 doc.text('Client', 395 - 40, 50, { width: 35, align: "left" })
 doc.text(`C.I.F.`, 395 - 40, 62 +rh, { width: 30, align: "left" });
+doc.text(`Banca`, 395 - 40, 72 + rh, { width: 50, align: "left" })
+doc.text(`Cont:`, 395 - 40, 90 + rh, { width: 50, align: "left" })
 
 
 
@@ -60,36 +65,40 @@ doc.fontSize(10);
 doc.text(`${invoice.locatie.bussinessName}`, 485 - 60, 50, { width: 150, align: "left" });
 doc.font("public/font/Montserrat-Regular.ttf");
 doc.text(`${invoice.locatie.vatNumber}`, 485  - 40, 62+rh , { width: 145, align: "left" });
+doc.text(`${invoice.locatie.bank}`, 485  - 40, 72+rh , { width: 165, align: "left" });
+doc.text(`${invoice.locatie.account}`, 485  - 40, 90+rh , { width: 165, align: "left" });
 
 
 //Titlu factura
+// '+20'
+let yy = 130
 
-doc.roundedRect(185, 140, 200, 54, 1)
+doc.roundedRect(185, 140, yy + 90, 54, 1)
 doc.lineWidth(0.8);
 doc.stroke()
 // doc.font('Courier')
 doc.fontSize(24)
 doc.font('public/font/Montserrat-Bold.ttf')
-doc.text('FACTURĂ', 218, 110)
+doc.text('FACTURĂ', 218, yy)
 doc.fontSize(8)
 doc.font("public/font/Montserrat-Regular.ttf");
-doc.text('Serie/Nr.', 215, 112 + 35, { width: 40, align: "left" })
-doc.text('Emisă', 215, 127 + 35, { width: 40, align: "left" })
-doc.text('Scadentă', 215, 142 + 35, { width: 40, align: "left" })
+doc.text('Serie/Nr.', 215, yy + 37, { width: 40, align: "left" })
+doc.text('Emisă', 215, yy + 52, { width: 40, align: "left" })
+doc.text('Scadentă', 215, yy + 67, { width: 40, align: "left" })
 
 // Titlu Factura Date
 doc.font('public/font/Montserrat-Bold.ttf')
 doc.fontSize(9)
-doc.text(`${invoice.invoiceNumber}`, 260, 110 + 35)
-doc.text(`${invoice.issueDate}`, 260, 125 + 35)
-doc.text(`${invoice.dueDate}`, 260, 140 + 35)
+doc.text(`${invoice.invoiceNumber}`, 260, yy + 35)
+doc.text(`${invoice.issueDate}`, 260, yy + 50)
+doc.text(`${invoice.dueDate}`, 260, yy + 65)
 
 
 let rectStartH = 247
 let rectHeigth = 650
 let headerHeight = 200
 // radare produse
-y = 237
+y = 257
 let heghtValue = 12
 
 // doc.font("Courier");
