@@ -22,10 +22,10 @@ doc.moveTo(25 + 10, 45).lineTo(560, 45).stroke();
 doc.fontSize(10);
 
 doc.font("public/font/Montserrat-Bold.ttf");
-doc.text(`C.I.F.`, 25 + 10, 50, { width: 30, align: "left" });
-doc.text(`Nr Reg.`, 25+10, 62, { width: 30, align: "left" });
-doc.text(`Banca`, 25 + 10, 72 + 7, { width: 35, align: "left" })
-doc.text(`Cont:`, 25 + 10, 90 + 7, { width: 30, align: "left" })
+doc.text(`C.I.F.`, 25 + 10, 50, { width: 50, align: "left" });
+doc.text(`Nr Reg.`, 25+ 10, 62, { width: 50, align: "left" });
+doc.text(`Banca`, 25 + 10, 72 + 7, { width: 50, align: "left" })
+doc.text(`Cont:`, 25 + 10, 90 + 7, { width: 50, align: "left" })
 
 //date firma
 
@@ -34,10 +34,10 @@ doc.fontSize(10);
 
 
 doc.font('public/font/Montserrat-Regular.ttf')
-doc.text(`${invoice.supplier.vatNumber}`, 68, 50);
-doc.text(`${invoice.supplier.registration}`, 68 + 5, 62);
-doc.text(`${invoice.supplier.bank}`, 60 + 15, 72 +7)
-doc.text(`${invoice.supplier.iban}`, 60 + 15, 90 +7)
+doc.text(`${invoice.supplier.vatNumber}`, 85, 50);
+doc.text(`${invoice.supplier.registration}`, 85, 62);
+doc.text(`${invoice.supplier.bank}`, 85, 72 +7)
+doc.text(`${invoice.supplier.iban}`, 85, 90 +7)
 
 //HEADER CLIENT
 //Nume client
