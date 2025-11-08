@@ -312,9 +312,6 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
     // doc.fontSize(8)
     ch.forEach((el, i) => {
-      if(el.name.length > 30){
-        heghtValue += 12
-      }
       let newValue = y + heghtValue
         doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
         doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
@@ -331,6 +328,9 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.strokeColor('black');
         }
         heghtValue += rowHeigth
+        if(el.name.length > 30){
+          heghtValue += 12
+        }
     })
     let pageWidth = doc.page.width;
     let pageHeight = doc.page.height;
