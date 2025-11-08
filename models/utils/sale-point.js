@@ -12,6 +12,10 @@ const SalePointSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Locatie'
 },
+  hours: String,
+  telephone: String,
+  email: String,
+
   latitude: Number,
   longitude: Number,
   notifications: [
