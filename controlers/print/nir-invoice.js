@@ -136,7 +136,7 @@ if(productsCount > 100){
 
 let ingChunks = splitIngredients(invoice.products, firstChunk, restChunks)
 
-console.log(ingChunks.length)
+console.log('chunks length ', ingChunks.length)
 
 
 
