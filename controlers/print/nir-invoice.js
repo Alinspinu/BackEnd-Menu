@@ -73,7 +73,7 @@ doc.text(`${invoice.locatie.account}`, 485  - 40, 90+rh , { width: 165, align: "
 // '+20'
 let yy = 130
 
-doc.roundedRect(185, 140, yy + 170, 54, 1)
+doc.roundedRect(185, yy + 30, 200, 54, 1)
 doc.lineWidth(0.8);
 doc.stroke()
 // doc.font('Courier')
