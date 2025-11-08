@@ -118,7 +118,7 @@ if(productsCount > 30 && productsCount <= 39){
   firstChunk = 30
   restChunks = 52
 }
-if(productsCount > 80 && productsCount <= 100){
+if(productsCount > 39 && productsCount <= 100){
   secondIndex = 38
   firstChunk = 38
   restChunks = 47
