@@ -34,7 +34,7 @@ module.exports.getOrder = async (req, res, next) => {
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
 
-        const check = 31 * 24 * 60 * 60 * 1000
+        const check = 32 * 24 * 60 * 60 * 1000
 
         if(start && end && (endTime - startTime > check)){
             console.log('a fost dat un query mai mare de 31 de zile')
