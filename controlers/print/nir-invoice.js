@@ -94,8 +94,8 @@ doc.text(`${invoice.issueDate}`, 260, yy + 50)
 doc.text(`${invoice.dueDate}`, 260, yy + 65)
 
 
-let rectStartH = 247
-let rectHeigth = 650
+let rectStartH = 267
+let rectHeigth = 630
 let headerHeight = 200
 // radare produse
 y = 257
@@ -160,7 +160,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
         headerHeight = headerHeight - 160
         rectStartH = rectStartH - 160
       }  else {
-        rectHeigth = rectHeigth - 170
+        rectHeigth = rectHeigth - 150
      }
      let index = 1
      if(page === 2) index = 1 + secondIndex
