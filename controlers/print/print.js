@@ -1310,6 +1310,8 @@ module.exports.printFactur1 = async (req, res, next) => {
   try{
   const invoices = await Invoice.find({locatie: loc, salPoint: point, createdAt: {$gte: startTime, $lt: endTime}}).populate({path: 'locatie'})
 
+  console.log('facturi ', invoices.length)
+
   for(let i of invoices){
       createInfoice(i, doc)
       doc.addPage()
@@ -1320,7 +1322,7 @@ module.exports.printFactur1 = async (req, res, next) => {
   doc.on("data", (chunk) => {
       buffers.push(chunk);
   });
-  
+
   doc.on("end", async () => {
     const pdfBuffer = Buffer.concat(buffers);
     res.type("application/pdf");
