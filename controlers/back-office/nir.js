@@ -283,7 +283,7 @@ module.exports.printNirsAndInvoices = async (req, res) => {
 
     let doc = new PDFDocument({
       size: 'A4',
-      layout: 'landscape'
+      layout: 'portrait'
     });
 
     const startTime = new Date(start).setUTCHours(0,0,0,0)
@@ -311,14 +311,13 @@ module.exports.printNirsAndInvoices = async (req, res) => {
       for(let n of nirs){
         const check = n.ingredients.findIndex(i => deps.includes(i.ing.dept.toString()))
         if(check !== -1){
-           createNir(n, doc)
-           doc.addPage({size: 'A4', layout: 'portrait'})
-           createNirInvoice(n.nirInvoice, doc)
-           doc.addPage({size: 'A4', layout: 'landscape'})
+          createNirInvoice(n.nirInvoice, doc)
+          doc.addPage({size: 'A4', layout: 'landscape'})
+          createNir(n, doc)
+          doc.addPage({size: 'A4', layout: 'portrait'})
         } else {
-           doc.addPage({size: 'A4', layout: 'portrait'})
            createNirInvoice(n.nirInvoice, doc)
-           doc.addPage({size: 'A4', layout: 'landscape'})
+           doc.addPage({size: 'A4', layout: 'portrait'})
         }
       }
 
