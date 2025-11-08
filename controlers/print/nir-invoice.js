@@ -107,7 +107,7 @@ let productsCount = invoice.products.length
 let rowHeigth = 12
 
 let firstChunk = 0
-let restChunks = 0
+let restChunks = 24
 let secondIndex = 30
 
 if(productsCount <= 30){
