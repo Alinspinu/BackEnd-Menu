@@ -302,7 +302,7 @@ module.exports.printNirsAndInvoices = async (req, res) => {
                   })
                   .populate({
                     path: 'locatie',
-                    select: 'bussinessName vatNumber register'
+                    select: 'bussinessName vatNumber register address'
                   })
                   .populate({
                     path: 'salePoint',
@@ -315,10 +315,6 @@ module.exports.printNirsAndInvoices = async (req, res) => {
                   })
                   .lean()
 
-        // res.setHeader('Content-Type', 'application/pdf');
-        // res.setHeader('Content-Disposition', 'inline; filename="report.pdf"');
-      
-        // doc.pipe(res);
         console.log('numar de niruri niruri ', nirs.length)
       for(let n of nirs){
         if(n.nirInvoice && n.nirInvoice._id){

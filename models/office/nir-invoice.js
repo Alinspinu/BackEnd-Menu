@@ -8,12 +8,21 @@ const nirInvoiceSchema = new Schema({
     cusomer: {
         name: String,
         vatNumber: String,
+        registration: String,
+        address: String,
+        city: String,
+        iban: String,
+        bank: String,
     },
     supplier: {
         name: String,
         vatNumber: String,
+        registration: String,
+        address: String,
+        city: String,
         iban: String,
         bank: String,
+
     },
     dueDate: String,
     issueDate: String,

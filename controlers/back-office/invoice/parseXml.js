@@ -23,14 +23,21 @@ function parseInvoiceData(invoiceData, id) {
     name: (supplierParty.PartyLegalEntity?.RegistrationName?._ ?? supplierParty.PartyLegalEntity?.RegistrationName )|| 'Unknown Supplier',
     vatNumber: (supplierParty.PartyTaxScheme?.CompanyID?._ ?? supplierParty.PartyTaxScheme?.CompanyID) || 'Unknown VAT Number',
     iban,
-    bank
+    bank,
+    registration: (supplierParty.PartyLegalEntity?.CompanyID?._ ?? supplierParty.PartyLegalEntity?.CompanyID) || 'Unknown Reg Number',
+    address: (supplierParty.PostalAddress?.StreetName?._ ?? supplierParty.PostalAddress?.StreetName) || 'Unknow address',
+    city: (supplierParty.PostalAddress?.CityName?._ ?? supplierParty.PostalAddress?.CityName) || 'Unknow city'
   };
+
 
   // --- Customer ---
   const customerParty = inv.AccountingCustomerParty?.Party || {};
   const customer = {
     name: (customerParty.PartyLegalEntity?.RegistrationName?._ ?? customerParty.PartyLegalEntity?.RegistrationName) || 'Unknown Customer',
-    vatNumber: (customerParty.PartyTaxScheme?.CompanyID?._ ?? customerParty.PartyTaxScheme?.CompanyID) || 'Unknown VAT Number'
+    vatNumber: (customerParty.PartyTaxScheme?.CompanyID?._ ?? customerParty.PartyTaxScheme?.CompanyID) || 'Unknown VAT Number',
+    registration: (customerParty.PartyLegalEntity?.CompanyID?._ ?? customerParty.PartyLegalEntity?.CompanyID) || 'Unknown Reg Number',
+    address: (customerParty.PostalAddress?.StreetName?._ ?? customerParty.PostalAddress?.StreetName) || 'Unknow address',
+    city: (customerParty.PostalAddress?.CityName?._ ?? customerParty.PostalAddress?.CityName) || 'Unknow city'
   };
 
   // --- Totals ---
