@@ -23,7 +23,7 @@ doc.fontSize(10);
 
 doc.font("public/font/Montserrat-Bold.ttf");
 doc.text(`C.I.F.`, 25 + 10, 50, { width: 50, align: "left" });
-doc.text(`Nr Reg.`, 25+ 10, 62, { width: 50, align: "left" });
+doc.text(`Nr Reg.`, 25+ 10, 64, { width: 50, align: "left" });
 doc.text(`Banca`, 25 + 10, 72 + 7, { width: 50, align: "left" })
 doc.text(`Cont:`, 25 + 10, 90 + 7, { width: 50, align: "left" })
 
@@ -35,7 +35,7 @@ doc.fontSize(10);
 
 doc.font('public/font/Montserrat-Regular.ttf')
 doc.text(`${invoice.supplier.vatNumber}`, 85, 50);
-doc.text(`${invoice.supplier.registration}`, 85, 62);
+doc.text(`${invoice.supplier.registration}`, 85, 64);
 doc.text(`${invoice.supplier.bank}`, 85, 72 +7)
 doc.text(`${invoice.supplier.iban}`, 85, 90 +7)
 
@@ -111,7 +111,7 @@ let restChunks = 0
 let secondIndex = 30
 
 if(productsCount <= 30){
-  firstChunk = 28
+  firstChunk = 26
 }
 
 if(productsCount > 30 && productsCount <= 40){
@@ -120,8 +120,8 @@ if(productsCount > 30 && productsCount <= 40){
 }
 
 if(productsCount > 40){
-  secondIndex = 41
-  firstChunk = 41
+  secondIndex = 40
+  firstChunk = 40
   restChunks = 54
 }
 
