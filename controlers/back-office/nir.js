@@ -310,10 +310,9 @@ module.exports.printNirsAndInvoices = async (req, res) => {
                   })
                   .lean()
       for(let n of nirs){
+        if(n.nirInvoice && n.nirInvoice._id){
         const check = n.ingredients.findIndex(i => deps.includes(i.ing.dept.toString()))
         if(check !== -1){
-          if(n.nirInvoice && n.nirInvoice._id){
-            console.log(n.nirInvoice._id)
             createNirInvoice(n.nirInvoice, doc)
             doc.addPage({size: 'A4', layout: 'landscape'})
             createNir(n, doc)
