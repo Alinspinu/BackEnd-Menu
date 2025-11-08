@@ -24,8 +24,8 @@ doc.fontSize(10);
 doc.font("public/font/Montserrat-Bold.ttf");
 doc.text(`C.I.F.`, 25 + 10, 50, { width: 50, align: "left" });
 doc.text(`Nr Reg.`, 25+ 10, 64, { width: 50, align: "left" });
-doc.text(`Banca`, 25 + 10, 72 + 7, { width: 50, align: "left" })
-doc.text(`Cont:`, 25 + 10, 90 + 7, { width: 50, align: "left" })
+doc.text(`Banca`, 25 + 10, 72 + 5, { width: 50, align: "left" })
+doc.text(`Cont:`, 25 + 10, 90 + 3, { width: 50, align: "left" })
 
 //date firma
 
@@ -36,8 +36,8 @@ doc.fontSize(10);
 doc.font('public/font/Montserrat-Regular.ttf')
 doc.text(`${invoice.supplier.vatNumber}`, 85, 50);
 doc.text(`${invoice.supplier.registration}`, 85, 64);
-doc.text(`${invoice.supplier.bank}`, 85, 72 +7)
-doc.text(`${invoice.supplier.iban}`, 85, 90 +7)
+doc.text(`${invoice.supplier.bank}`, 85, 72 +5)
+doc.text(`${invoice.supplier.iban}`, 85, 90 +3)
 
 //HEADER CLIENT
 //Nume client
@@ -54,8 +54,8 @@ doc.fontSize(10);
 doc.text('Client', 395 - 40, 50, { width: 35, align: "left" })
 doc.text(`C.I.F.`, 395 - 40, 62 +rh, { width: 30, align: "left" });
 doc.text(`Nr Reg.`, 395 - 40, 74 +rh, { width: 40, align: "left" });
-doc.text(`Banca`, 395 - 40, 82 + rh + 5, { width: 35, align: "left" })
-doc.text(`Cont:`, 395 - 40, 100 + rh + 5, { width: 30, align: "left" })
+doc.text(`Banca`, 395 - 40, 82 + rh + 3, { width: 35, align: "left" })
+doc.text(`Cont:`, 395 - 40, 100 + rh + 1, { width: 30, align: "left" })
 
 
 
@@ -63,12 +63,12 @@ doc.text(`Cont:`, 395 - 40, 100 + rh + 5, { width: 30, align: "left" })
 //date client
 doc.fontSize(10);
 // doc.font('public/font/Montserrat-Bold.ttf')
-doc.text(`${invoice.locatie.bussinessName}`, 395, 50, { width: 150, align: "left" });
+doc.text(`${invoice.locatie.bussinessName}`, 395 +5, 50, { width: 150, align: "left" });
 doc.font("public/font/Montserrat-Regular.ttf");
-doc.text(`${invoice.locatie.vatNumber}`, 395 , 62+rh , { width: 145, align: "left" });
-doc.text(`${invoice.locatie.register}`, 395 , 74+rh , { width: 145, align: "left" });
-doc.text(`${invoice.locatie.bank}`, 395, 82+rh + 5 , { width: 165, align: "left" });
-doc.text(`${invoice.locatie.account}`, 395 , 100+rh + 5 , { width: 165, align: "left" });
+doc.text(`${invoice.locatie.vatNumber}`, 395 + 5 , 62+rh , { width: 145, align: "left" });
+doc.text(`${invoice.locatie.register}`, 395 +5 , 74+rh , { width: 145, align: "left" });
+doc.text(`${invoice.locatie.bank}`, 395 + 5, 82+rh + 3 , { width: 165, align: "left" });
+doc.text(`${invoice.locatie.account}`, 395 + 5 , 100+rh + 1 , { width: 165, align: "left" });
 
 
 //Titlu factura
