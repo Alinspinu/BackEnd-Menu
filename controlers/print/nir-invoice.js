@@ -73,7 +73,7 @@ doc.text(`${invoice.locatie.account}`, 485  - 40, 90+rh , { width: 165, align: "
 // '+20'
 let yy = 130
 
-doc.roundedRect(185, 140, yy + 50, 54, 1)
+doc.roundedRect(185, yy + 20, 140 , 54, 1)
 doc.lineWidth(0.8);
 doc.stroke()
 // doc.font('Courier')
@@ -96,7 +96,7 @@ doc.text(`${invoice.dueDate}`, 260, yy + 65)
 
 let rectStartH = 267
 let rectHeigth = 630
-let headerHeight = 200
+let headerHeight = 220
 // radare produse
 y = 257
 let heghtValue = 12
