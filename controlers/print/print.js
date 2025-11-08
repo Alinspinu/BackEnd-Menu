@@ -1261,9 +1261,14 @@ module.exports.printConsum = async (req, res) => {
 module.exports.factura = async (req, res, next) => {
   const {id, email, mode} = req.body
   try{
+
+  let doc = new PDFDocument({
+    size: "A4",
+    layout: "portrait",
+  });
   const invoice = await Invoice.findById(id).populate({path: 'locatie'})
-  console.log(invoice.note)
-  const doc = createInfoice(invoice)
+
+    createInfoice(invoice, doc)
 
   const buffers = [];
   doc.on("data", (chunk) => {
@@ -1278,6 +1283,48 @@ module.exports.factura = async (req, res, next) => {
       res.type("application/pdf");
       res.send(pdfBuffer);
     }
+  });
+
+  doc.end()
+
+} catch(error){
+  console.log(error)
+  res.status(500).json(error)
+}
+  
+}
+
+
+module.exports.printFactur1 = async (req, res, next) => {
+  const {point, loc, start, end} = req.body
+
+  let doc = new PDFDocument({
+    size: "A4",
+    layout: "portrait",
+  });
+
+
+  const startTime = new Date(start).setUTCHours(0,0,0,0)
+  const endTime = new Date(end).setUTCHours(23,59,59,0)
+
+  try{
+  const invoices = await Invoice.find({locatie: loc, salPoint: point, createdAt: {$gte: startTime, $lt: endTime}}).populate({path: 'locatie'})
+
+  for(let i of invoices){
+      createInfoice(i, doc)
+      doc.addPage()
+  }
+
+
+  const buffers = [];
+  doc.on("data", (chunk) => {
+      buffers.push(chunk);
+  });
+  
+  doc.on("end", async () => {
+    const pdfBuffer = Buffer.concat(buffers);
+    res.type("application/pdf");
+    res.send(pdfBuffer);
   });
 
   doc.end()
