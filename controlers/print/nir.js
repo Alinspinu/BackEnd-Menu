@@ -47,8 +47,6 @@ function createNir (nir, doc) {
     // });
   
     // Add header
-
-    doc.addPage({ size: 'A4', layout: 'portrait' });
     doc.font("public/font/RobotoSlab-Regular.ttf")
     doc
       .fontSize(8)
@@ -263,7 +261,7 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
         doc.fontSize(7)
           .fillColor('gray')
           .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
-        doc.addPage()
+        doc.addPage({size: 'A4', layout: 'landscape'})
     } else {
         let extraPage = 0
         if(ingredients.length > 30 || (ingredients.length > 24 && page === 1)) {

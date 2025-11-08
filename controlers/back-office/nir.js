@@ -221,6 +221,11 @@ module.exports.payBill = async (req, res, next) => {
 module.exports.printNirByIngLogId = async (req, res) => {
   const {logId, loc, point} = req.body
 
+  let doc = new PDFDocument({
+    size: "A4",
+    layout: "portrait",
+});
+
   try{
 
     const nir = await Nir.findOne({'ingredients.logId': logId})
@@ -228,7 +233,7 @@ module.exports.printNirByIngLogId = async (req, res) => {
       const nirInvoice = await NirInvoice.findById(nir.nirInvoice)
       if(nirInvoice){
         const value = nir.ingredients.find(i => i.logId === logId).value
-        const doc = createNirInvoice(nirInvoice, value)
+        createNirInvoice(nirInvoice, doc, value)
         doc.end();
         res.type("application/pdf");
         doc.pipe(res);
@@ -490,10 +495,16 @@ module.exports.seaveNirInvoice = async (req, res) => {
 module.exports.printNirInvoice = async (req, res) => {
   try{
 
+    let doc = new PDFDocument({
+      size: "A4",
+      layout: "portrait",
+  });
+
     const {id} = req.query
 
     const nirInvoice = await NirInvoice.findById(id).populate({path: 'locatie'})
-    const doc = createNirInvoice(nirInvoice)
+
+     createNirInvoice(nirInvoice, doc)
 
     doc.end();
     res.type("application/pdf");

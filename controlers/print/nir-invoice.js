@@ -2,7 +2,7 @@ const PDFDocument = require("pdfkit");
 
 const {round} = require('../../utils/functions')
 
-function createNirInvoice(invoice, value = 0){
+function createNirInvoice(invoice, doc, value = 0){
 
   let doc = new PDFDocument({
     size: "A4",
@@ -326,7 +326,10 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
       doc.fontSize(7)
         .fillColor('gray')
         .text(`Pagina ${page} din ${pageCount}`, pageWidth / 2 - 40, pageHeight - 90);
-      doc.addPage()
+      doc.addPage({
+        size: "A4",
+        layout: "portrait",
+      })
   } else { 
 
     doc.fontSize(10)
