@@ -233,7 +233,7 @@ module.exports.printNirByIngLogId = async (req, res) => {
   
     // doc.pipe(res);
 
-    const nir = await Nir.findOne({'ingredients.logId': logId})
+    const nir = await Nir.findOne({'ingredients.logId': logId}).populate({path: 'locatie'})
     if(nir){
       const nirInvoice = await NirInvoice.findById(nir.nirInvoice)
       if(nirInvoice){
