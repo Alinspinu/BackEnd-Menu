@@ -39,7 +39,7 @@ module.exports.printNir = async (req, res, next) => {
 
     let doc = new PDFDocument();
 
-    doc = createNir(nir)
+    createNir(nir, doc)
 
     doc.end();
     res.type("application/pdf");
