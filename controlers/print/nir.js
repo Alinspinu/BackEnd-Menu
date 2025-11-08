@@ -408,8 +408,6 @@ function addIngredients(doc, ingredients, lineHeigth, y, page, pageLenght, valTo
             }) 
           })
 
-
-        console.log(vatValues)
         doc.font("public/font/RobotoSlab-Bold.ttf");
         doc.text("Responsabil", 80, y + height + 125);
         doc.text(`Data`, 400, y + height + 125);

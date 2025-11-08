@@ -328,7 +328,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.strokeColor('black');
         }
         heghtValue += rowHeigth
-        if(el.name.length > 30){
+        if(el.name.length > 45){
           heghtValue += 12
         }
     })
