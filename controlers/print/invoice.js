@@ -4,12 +4,8 @@ const {round} = require('../../utils/functions');
 const invoice = require("../../models/office/invoice");
 
 
-function createInfoice(invoice){
+function createInfoice(invoice, doc){
 
-  let doc = new PDFDocument({
-    size: "A4",
-    layout: "portrait",
-});
 if(invoice.discount.length){
   const discounts = invoice.discount
   discounts.forEach(d => {
