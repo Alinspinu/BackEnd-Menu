@@ -314,7 +314,7 @@ module.exports.printNirsAndInvoices = async (req, res) => {
         // res.setHeader('Content-Disposition', 'inline; filename="report.pdf"');
       
         // doc.pipe(res);
-        console.log(nirs.length)
+        console.log('numar de niruri niruri ', nirs.length)
       for(let n of nirs){
         if(n.nirInvoice && n.nirInvoice._id){
         const check = n.ingredients.findIndex(i => deps.includes(i.ing.dept.toString()))
