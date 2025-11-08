@@ -1308,7 +1308,7 @@ module.exports.printFactur1 = async (req, res, next) => {
   const endTime = new Date(end).setUTCHours(23,59,59,0)
 
   try{
-  const invoices = await Invoice.find({locatie: loc, salPoint: point, createdAt: {$gte: startTime, $lt: endTime}}).populate({path: 'locatie'})
+  const invoices = await Invoice.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}}).populate({path: 'locatie'})
 
   console.log('facturi ', invoices.length)
 
