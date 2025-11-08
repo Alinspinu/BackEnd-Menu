@@ -228,6 +228,11 @@ module.exports.printNirByIngLogId = async (req, res) => {
 
   try{
 
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="report.pdf"');
+  
+    doc.pipe(res);
+
     const nir = await Nir.findOne({'ingredients.logId': logId})
     if(nir){
       const nirInvoice = await NirInvoice.findById(nir.nirInvoice)
@@ -235,19 +240,19 @@ module.exports.printNirByIngLogId = async (req, res) => {
         const value = nir.ingredients.find(i => i.logId === logId).value
         createNirInvoice(nirInvoice, doc, value)
         doc.end();
-        res.type("application/pdf");
-        doc.pipe(res);
-        res.once("finish", () => {
-          const chunks = [];
-          doc.on("data", (chunk) => {
-            chunks.push(chunk);
-          });
-          doc.on("end", () => {
-            const buffer = Buffer.concat(chunks);
-            const base64String = buffer.toString("base64");
-            res.status(200).send(base64String)
-          });
-        });
+        // res.type("application/pdf");
+        // doc.pipe(res);
+        // res.once("finish", () => {
+        //   const chunks = [];
+        //   doc.on("data", (chunk) => {
+        //     chunks.push(chunk);
+        //   });
+        //   doc.on("end", () => {
+        //     const buffer = Buffer.concat(chunks);
+        //     const base64String = buffer.toString("base64");
+        //     res.status(200).send(base64String)
+        //   });
+        // });
       }
     }
 
