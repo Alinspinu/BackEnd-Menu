@@ -22,7 +22,7 @@ router.route('/delete-nirs').put(nirRoutes.deleteNirs)
 router.route('/get-nirs-by-date')
         .post(nirRoutes.getNirsByDate)
 
-router.route('print-nirs-invoices').post(nirRoutes.printNirsAndInvoices)
+router.route('/print-nirs-invoices').post(nirRoutes.printNirsAndInvoices)
 
 router.route('/update')
     .get(nirRoutes.updateIngsLogs)
