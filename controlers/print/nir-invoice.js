@@ -131,6 +131,10 @@ if(productsCount > 39){
 
 let ingChunks = splitIngredients(invoice.products, firstChunk, restChunks)
 
+console.log(ingChunks)
+
+console.log('remaining ', restChunks )
+
 
 let pages = ingChunks.length
 
