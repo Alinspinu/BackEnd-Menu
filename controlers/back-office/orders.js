@@ -34,6 +34,13 @@ module.exports.getOrder = async (req, res, next) => {
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
 
+        const check = 31 * 24 * 60 * 60 * 1000
+
+        if(start && end && (endTime - startTime > check)){
+            console.log('a fost dat un query mai mare de 31 de zile')
+            return res.status(200).json({message: 'Sunt peste 31 de zile'})
+        }
+
         const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}, status: 'done', salePoint: point, invoice: false})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
