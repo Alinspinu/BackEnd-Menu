@@ -73,7 +73,7 @@ doc.text(`${invoice.locatie.account}`, 485  - 40, 90+rh , { width: 165, align: "
 // '+20'
 let yy = 130
 
-doc.roundedRect(185, 140, yy + 90, 54, 1)
+doc.roundedRect(185, 140, yy + 50, 54, 1)
 doc.lineWidth(0.8);
 doc.stroke()
 // doc.font('Courier')
@@ -160,7 +160,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
         headerHeight = headerHeight - 160
         rectStartH = rectStartH - 160
       }  else {
-        rectHeigth = rectHeigth - 150
+        rectHeigth = rectHeigth - 170
      }
      let index = 1
      if(page === 2) index = 1 + secondIndex
