@@ -4,10 +4,6 @@ const {round} = require('../../utils/functions')
 
 function createNirInvoice(invoice, doc, value = 0){
 
-  let doc = new PDFDocument({
-    size: "A4",
-    layout: "portrait",
-});
 
 //HEADER FURNIZOR
 
