@@ -3,7 +3,7 @@ const PDFDocument = require("pdfkit");
 const {round} = require('../../utils/functions')
 
 
-function createNir (nir) {
+function createNir (nir, doc) {
   const firma = nir.locatie
       if(nir.discount.length){
       nir.discount.forEach(discount => {
@@ -41,10 +41,13 @@ function createNir (nir) {
       .toLocaleDateString("en-GB", options)
       .replace(/\//g, "-");
 
-    let doc = new PDFDocument({
-      size: "A4",
-      layout: "landscape",
-    });
+    //  doc = new PDFDocument({
+    //   size: "A4",
+    //   layout: "landscape",
+    // });
+
+    doc.size = 'A4'
+    doc.layout = 'landscape'
   
     // Add header
     doc.font("public/font/RobotoSlab-Regular.ttf")

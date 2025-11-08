@@ -19,6 +19,8 @@ const {createInfoice} =require('./invoice')
 const {createNir} = require('./nir');
 const dep = require('../../models/office/product/dep');
 
+const PDFDocument = require("pdfkit");
+
 
 module.exports.printNir = async (req, res, next) => {
   const {id} = req.query
@@ -35,7 +37,9 @@ module.exports.printNir = async (req, res, next) => {
       path: 'salePoint'
     })
 
-  const doc = createNir(nir)
+    let doc = new PDFDocument();
+
+    doc = createNir(nir)
 
     doc.end();
     res.type("application/pdf");

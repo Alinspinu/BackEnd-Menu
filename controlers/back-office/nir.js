@@ -6,9 +6,13 @@ const NirInvoice = require('../../models/office/nir-invoice')
 
 const Ingredient = require('../../models/office/inv-ingredient')
 
+const PDFDocument = require("pdfkit");
+
 const {createNirInvoice} = require('../print/nir-invoice')
 
 const {unloadIngs, uploadIngs} = require('../../utils/inventary')
+
+const {createNir} = require('../print/nir')
 
 
 
@@ -264,6 +268,66 @@ module.exports.getNirs = async(req, res, next) => {
   } catch(err) {
     console.log(err)
     res.status(500).json({messahe: err.message})
+  }
+}
+
+
+module.exports.printNirsAndInvoices = async (req, res) => {
+  const {loc, point, start, end, deps} = req.body
+  try{
+
+    let doc = new PDFDocument();
+
+    const startTime = new Date(start).setUTCHours(0,0,0,0)
+    const endTime = new Date(end).setUTCHours(23,59,59,0)
+
+    const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startTime, $lt: endTime}})
+                .populate({
+                  path: "suplier",
+                    select: "name vatNumber",
+                  })
+                  .populate({
+                    path: 'locatie',
+                    select: 'bussinessName'
+                  })
+                  .populate({
+                    path: 'salePoint',
+                    select: 'name'
+                  })
+                  .populate({path: 'nirInvoice'})
+                  .populate({
+                    path: 'ingredients.ing',
+                    select: 'dept'
+                  })
+                  .lean()
+      for(let n of nirs){
+        const check = n.ingredients.findIndex(i => deps.includes(i.ing.dept.toString()))
+        if(check !== -1){
+           doc += createNir(n)
+           doc += createNirInvoice(n.nirInvoice)
+        } else {
+          doc += createNirInvoice(n.nirInvoice)
+        }
+      }
+
+      doc.end();
+      res.type("application/pdf");
+      doc.pipe(res);
+      res.once("finish", () => {
+        const chunks = [];
+        doc.on("data", (chunk) => {
+          chunks.push(chunk);
+        });
+        doc.on("end", () => {
+          const buffer = Buffer.concat(chunks);
+          const base64String = buffer.toString("base64");
+          res.status(200).send(base64String)
+        });
+      });
+
+  } catch(e) {
+    console.log(e)
+    res.status(500).json(e)
   }
 }
 
