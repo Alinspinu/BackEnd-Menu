@@ -136,6 +136,8 @@ if(productsCount > 100){
 
 let ingChunks = splitIngredients(invoice.products, firstChunk, restChunks)
 
+console.log(ingChunks.length)
+
 
 
 let pages = ingChunks.length
@@ -145,9 +147,9 @@ if(ingChunks[ingChunks.length -1].length > firstChunk || (ingChunks[ingChunks.le
     pageCount = pageCount + 1
 }
 
-ingChunks.forEach((ch, i) => {
-    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, value, secondIndex)
-})
+// ingChunks.forEach((ch, i) => {
+//     doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, value, secondIndex)
+// })
 
 
 
@@ -328,7 +330,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.strokeColor('black');
         }
         heghtValue += rowHeigth
-        if(el.name.length > 45){
+        if(el.name.length > 40){
           heghtValue += 12
         }
     })
