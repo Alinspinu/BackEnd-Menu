@@ -45,11 +45,10 @@ function createNir (nir, doc) {
     //   size: "A4",
     //   layout: "landscape",
     // });
-
-    doc.size = 'A4'
-    doc.layout = 'landscape'
   
     // Add header
+
+    doc.addPage({ size: 'A4', layout: 'portrait' });
     doc.font("public/font/RobotoSlab-Regular.ttf")
     doc
       .fontSize(8)
