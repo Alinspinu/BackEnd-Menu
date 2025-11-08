@@ -111,6 +111,7 @@ let restChunks = 52
 let secondIndex = 30
 
 if(productsCount <= 30){
+  secondIndex = 26
   firstChunk = 26
 }
 
