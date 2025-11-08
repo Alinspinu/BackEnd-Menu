@@ -1,6 +1,6 @@
 const PDFDocument = require("pdfkit");
 
-const {round} = require('../../utils/functions')
+const {round} = require('../../utils/functions');
 
 function createNirInvoice(invoice, doc, value = 0){
 
@@ -116,18 +116,18 @@ if(productsCount <= 30){
 
 if(productsCount > 30 && productsCount <= 39){
   firstChunk = 30
-  restChunks = 54
+  restChunks = 52
 }
 if(productsCount > 80 && productsCount <= 100){
-  secondIndex = 40
-  firstChunk = 40
+  secondIndex = 38
+  firstChunk = 38
   restChunks = 47
 }
 
 if(productsCount > 100){
-  secondIndex = 40
-  firstChunk = 40
-  restChunks = 54
+  secondIndex = 38
+  firstChunk = 38
+  restChunks = 52
 }
 
 
@@ -136,11 +136,6 @@ if(productsCount > 100){
 
 let ingChunks = splitIngredients(invoice.products, firstChunk, restChunks)
 
-for(let c of ingChunks){
-  console.log('chunk length ', c.length)
-}
-
-console.log('remaining ', restChunks )
 
 
 let pages = ingChunks.length
@@ -317,7 +312,10 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
     // doc.fontSize(8)
     ch.forEach((el, i) => {
-        let newValue = y + heghtValue
+      if(el.name.length > 30){
+        heghtValue += 12
+      }
+      let newValue = y + heghtValue
         doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
         doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
         doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
