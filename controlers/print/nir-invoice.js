@@ -147,9 +147,9 @@ if(ingChunks[ingChunks.length -1].length > firstChunk || (ingChunks[ingChunks.le
     pageCount = pageCount + 1
 }
 
-// ingChunks.forEach((ch, i) => {
-//     doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, value, secondIndex)
-// })
+ingChunks.forEach((ch, i) => {
+    doc = addIngredients(doc, ch, rowHeigth, y, i+1, headerHeight, rectHeigth, rectStartH, heghtValue, pages, invoice.taxExclusiveAmount, invoice.taxInclusiveAmount, invoice.vatAmount, pageCount, value, secondIndex)
+})
 
 
 
