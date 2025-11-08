@@ -308,7 +308,7 @@ module.exports.printNirsAndInvoices = async (req, res) => {
                     path: 'ingredients.ing',
                     select: 'dept'
                   })
-                  .cursor()
+                  .lean()
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'inline; filename="report.pdf"');
