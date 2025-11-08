@@ -37,7 +37,10 @@ module.exports.printNir = async (req, res, next) => {
       path: 'salePoint'
     })
 
-    let doc = new PDFDocument();
+    let doc = new PDFDocument({
+      size: "A4",
+      layout: "landscape",
+    });
 
     createNir(nir, doc)
 
