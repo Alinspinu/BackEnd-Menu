@@ -338,7 +338,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.text(`${el.description.replace(/\n/g, '')}`, 49, newValue + 12, { width: 225, align: "left" })
           heghtValue += 12
           if(el.description.length > 50){
-            heghtValue += 12
+            heghtValue += 8
           }
           doc.fontSize(9)
         }
