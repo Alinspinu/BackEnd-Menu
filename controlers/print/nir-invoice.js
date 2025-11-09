@@ -316,9 +316,10 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
     // doc.fontSize(8)
     ch.forEach((el, i) => {
+      const name = el.name + ' ' + el.description || ''
       let newValue = y + heghtValue
         doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
-        doc.text(`${el.name}`, 47, newValue, { width: 225, align: 'left' })
+        doc.text(`${name}`, 47, newValue, { width: 225, align: 'left' })
         doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
         doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
         doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
@@ -332,10 +333,10 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.strokeColor('black');
         }
         heghtValue += rowHeigth
-        if(el.name.length > 40){
+        if(name.length > 40){
           heghtValue += 12
         }
-        if(el.name.length > 80){
+        if(name.length > 80){
           heghtValue += 12
         }
     })
