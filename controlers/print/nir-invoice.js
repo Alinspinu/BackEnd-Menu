@@ -335,7 +335,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
         if(el.description?.length){
           console.log(el.name, ' ', el.description)
           doc.fontSize(6)
-          doc.text(`${el.description.trim()}`, 49, newValue + 12, { width: 225, align: "left" })
+          doc.text(`${el.description.replace(/\n/g, '')}`, 49, newValue + 12, { width: 225, align: "left" })
           heghtValue += 12
           if(el.description.length > 50){
             heghtValue += 12
