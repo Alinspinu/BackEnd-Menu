@@ -316,7 +316,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
     // doc.fontSize(8)
     ch.forEach((el, i) => {
-      const name = el.name.replace(/\n/g, '') 
+      const name = el.name.replace(/\n/g, ' ') 
       let newValue = y + heghtValue
         doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
         doc.text(`${name}`, 47, newValue, { width: 225, align: 'left' })
@@ -347,6 +347,9 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           heghtValue += 12
         }
         if(name.length > 80){
+          heghtValue += 12
+        }
+        if(name.length > 100){
           heghtValue += 12
         }
     })
