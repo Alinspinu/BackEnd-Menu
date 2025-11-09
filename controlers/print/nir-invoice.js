@@ -316,7 +316,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
     // doc.fontSize(8)
     ch.forEach((el, i) => {
-      const name = el.name + ' ' + el.description || ''
+      const name = el.name 
       let newValue = y + heghtValue
         doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
         doc.text(`${name}`, 47, newValue, { width: 225, align: 'left' })
@@ -331,6 +331,12 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.strokeColor('red');
           doc.moveTo(26, newValue + rowHeigth -1).lineTo(272, newValue + rowHeigth -1).stroke();
           doc.strokeColor('black');
+        }
+        if(el.description?.length){
+          doc.fontSize(6)
+          doc.text(`${el.description}`, 49, newValue + 12, { width: 225, align: "left" })
+          heghtValue += 12
+          doc.fontSize(9)
         }
         heghtValue += rowHeigth
         if(name.length > 40){
