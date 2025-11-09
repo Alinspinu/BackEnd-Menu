@@ -333,7 +333,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.strokeColor('black');
         }
         if(el.description?.length){
-          console.log(el.name, ' ', el.description.length)
+          console.log(el.name, ' ', el.description)
           doc.fontSize(6)
           doc.text(`${el.description.trim()}`, 49, newValue + 12, { width: 225, align: "left" })
           heghtValue += 12
