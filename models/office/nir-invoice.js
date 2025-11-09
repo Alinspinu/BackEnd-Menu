@@ -31,6 +31,7 @@ const nirInvoiceSchema = new Schema({
     products: [
         {
             name: String,
+            description: String,
             price: Number,
             quantity: Number,
             totalNoVat: Number,
