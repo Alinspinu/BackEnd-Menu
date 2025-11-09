@@ -12,7 +12,7 @@ doc.fontSize(10)
 doc.font('public/font/Montserrat-Regular.ttf')
 doc.text('Furnizor', 25 + 10, 10)
 doc.fontSize(18);
-if(invoice.supplier.name.length > 45) doc.fontSize(12)
+if(invoice.supplier.name.length > 45) doc.fontSize(11)
 doc.font('public/font/Montserrat-Bold.ttf')
 doc.text(`${invoice.supplier.name}`, 25 + 10, 25);
 doc.lineWidth(1.3);
