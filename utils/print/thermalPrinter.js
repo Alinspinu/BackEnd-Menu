@@ -142,7 +142,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
       parts.push(doubleW, center);
       parts.push(Buffer.from('Optiune de Bacsis\n', 'ascii'))
       parts.push(lf, left, doubleW)
-      parts.push(Buffer.from(`0%       = ${order.total} Lei  []\n`, 'ascii'))
+      parts.push(Buffer.from(`0%        = ${order.total} Lei  []\n`, 'ascii'))
       parts.push(lf)
       parts.push(Buffer.from(`5% (${round(0.05 * order.total)})  =${order.total + round(0.05 * order.total)} Lei []\n`, 'ascii'))
       parts.push(lf)
@@ -152,7 +152,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
       parts.push(lf)
       parts.push(Buffer.from(`20% (${round(0.2 * order.total)})=${order.total + round(0.2 * order.total)} Lei []\n`, 'ascii'))
       parts.push(lf)
-      parts.push(Buffer.from(`Alta suma.............\n`, 'ascii'))
+      parts.push(Buffer.from(`Alta suma..............\n`, 'ascii'))
       parts.push(lf, normalSize)
       parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
     }
