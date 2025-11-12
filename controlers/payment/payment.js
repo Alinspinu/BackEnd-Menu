@@ -419,6 +419,7 @@ module.exports.printUnreg = async (req, res, next) => {
             const bytes = await createBillForPrinter(billl, locatie.logoUrl || ' ', locatie.qrUrl)
             if(bytes){
                 console.log('hit bytes ')
+                console.log(mainServer)
                 socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
             }
         }
