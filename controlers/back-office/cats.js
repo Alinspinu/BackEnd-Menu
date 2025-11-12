@@ -55,7 +55,7 @@ async function modifyCats(cats){
         for(let c of cats){
             if(c.locatie.toString()  === '690c818c21500095430c613f'){
                 console.log('HIT ', c.name)
-                for(let p of c.products){
+                for(let p of c.product){
                     await Product.findByIdAndUpdate(p._id, {mainCat: 'Dune'})
                 }
                 await Cat.findByIdAndUpdate(c._id, {mainCat: 'Dune'})
