@@ -411,11 +411,14 @@ module.exports.printBill = async (req, res, next) => {
 module.exports.printUnreg = async (req, res, next) => {
     try{
         const {bill, mainServer} = req.body
+        console.log('hit function ' )
         const billl = JSON.parse(bill)
         const locatie = await Locatie.findById(billl.locatie)
         if(locatie){
+            console.log('hit locatie ' )
             const bytes = await createBillForPrinter(billl, locatie.logoUrl || ' ', locatie.qrUrl)
             if(bytes){
+                console.log('hit bytes ')
                 socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
             }
         }
