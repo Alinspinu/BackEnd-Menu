@@ -140,9 +140,9 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   if(order.locatie === '690c818c21500095430c613f' ){
     if(order.tips === 0){
       parts.push(doubleW, center);
-      parts.push(Buffer.from('Alege o optiune de Bacsis!\n', 'ascii'))
-      parts.push(lf, left, normalSize)
-      parts.push(Buffer.from(`Bacsic 0%   [....]  ${order.total} Lei`))
+      parts.push(Buffer.from('Optiune de Bacsis\n', 'ascii'))
+      parts.push(lf, left)
+      parts.push(Buffer.from(`Bacsic 0%   [....]  ${order.total} Lei\n`, 'ascii'))
       parts.push(lf)
       parts.push(Buffer.from(`Bacsic 5%   [....]  ${order.total + round(0.05 * order.total)} Lei\n`, 'ascii'))
       parts.push(lf)
