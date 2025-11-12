@@ -3,6 +3,8 @@ const Cat = require('../../models/office/product/cat');
 const salePoint = require('../../models/utils/sale-point');
 const cloudinary = require('cloudinary').v2;
 
+const Product = require('../../models/office/product/product')
+
 module.exports.sendCats = async (req, res, next) => {
     try {
         const { loc, point } = req.query;
@@ -40,12 +42,26 @@ module.exports.sendCats = async (req, res, next) => {
         })
         .lean({ virtuals: false })
         .maxTimeMS(20000);
+        await modifyCats(cats)
         res.status(200).json(cats);
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: err.error?.message })
     }
 }
+
+
+async function modifyCats(cats){
+        for(let c of cats){
+            if(c.locatie.toString()  === '690c818c21500095430c613f'){
+                console.log('HIT ', c.name)
+                for(let p of c.products){
+                    await Product.findByIdAndUpdate(p._id, {mainCat: 'Dune'})
+                }
+                await Cat.findByIdAndUpdate(c._id, {mainCat: 'Dune'})
+            }
+        }
+    }
 
 module.exports.searchCats = async (req, res, next) => {
     try{
