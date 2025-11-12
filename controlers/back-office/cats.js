@@ -42,7 +42,7 @@ module.exports.sendCats = async (req, res, next) => {
         })
         .lean({ virtuals: false })
         .maxTimeMS(20000);
-        await modifyCats(cats)
+        // await modifyCats(cats)
         res.status(200).json(cats);
     } catch (err) {
         console.log(err)
