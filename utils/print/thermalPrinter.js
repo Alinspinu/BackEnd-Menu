@@ -75,8 +75,8 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
 
 
 
-  const logo = await imageToEscPosRaster(logoUrl, 184);
-  parts.push(center, logo, lf, lf);
+  // const logo = await imageToEscPosRaster(logoUrl, 184);
+  // parts.push(center, logo, lf, lf);
 
   parts.push(doubleWH, boldOn, center, underlineOn);
   parts.push(Buffer.from(`Comanda ${order.dayCounter}\n`, 'ascii'));
