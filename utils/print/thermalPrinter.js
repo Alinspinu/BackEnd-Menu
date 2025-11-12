@@ -142,15 +142,15 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
       parts.push(doubleW, center);
       parts.push(Buffer.from('Alege o optiune de Bacsis!\n', 'ascii'))
       parts.push(lf, left, normalSize)
-      parts.push(`Bacsic 0%   [....]  ${order.total} Lei`)
+      parts.push(Buffer.from(`Bacsic 0%   [....]  ${order.total} Lei`))
       parts.push(lf)
-      parts.push(`Bacsic 5%   [....]  ${order.total + round(0.05 * order.total)} Lei\n`, 'ascii')
+      parts.push(Buffer.from(`Bacsic 5%   [....]  ${order.total + round(0.05 * order.total)} Lei\n`, 'ascii'))
       parts.push(lf)
-      parts.push(`Bacsic 10%  [....]  ${order.total + round(0.1 * order.total)} Lei\n`, 'ascii')
+      parts.push(Buffer.from(`Bacsic 10%  [....]  ${order.total + round(0.1 * order.total)} Lei\n`, 'ascii'))
       parts.push(lf)
-      parts.push(`Bacsic 15%  [....]  ${order.total + round(0.15 * order.total)} Lei\n`, 'ascii')
+      parts.push(Buffer.from(`Bacsic 15%  [....]  ${order.total + round(0.15 * order.total)} Lei\n`, 'ascii'))
       parts.push(lf)
-      parts.push(`Bacsic 20%  [....]  ${order.total + round(0.2 * order.total)} Lei\n`, 'ascii')
+      parts.push(Buffer.from(`Bacsic 20%  [....]  ${order.total + round(0.2 * order.total)} Lei\n`, 'ascii'))
       parts.push(lf)
       parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
     }
