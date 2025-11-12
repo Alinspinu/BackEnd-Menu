@@ -370,11 +370,14 @@ module.exports.printBill = async (req, res, next) => {
             clientInfo: bill.clientInfo
         }
 
-        const locatie = await Locatie.findById(bill.locatie)
-        if(locatie){
-            const bytes = await createBillForPrinter(bill, locatie.logoUrl, locatie.qrUrl)
-            if(bytes){
-                socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
+        const digger = '690c818c21500095430c613f'
+        if(bill.locatie !== digger){
+            const locatie = await Locatie.findById(bill.locatie)
+            if(locatie){
+                const bytes = await createBillForPrinter(bill, locatie.logoUrl || ' ', locatie.qrUrl)
+                if(bytes){
+                    socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
+                }
             }
         }
 
@@ -409,9 +412,13 @@ module.exports.printUnreg = async (req, res, next) => {
     try{
         const {bill, mainServer} = req.body
         const billl = JSON.parse(bill)
-        const newRep = new RepBill({fiscal: false, bill: billl._id})
-        await newRep.save()
-        socket.emit('nefiscal', JSON.stringify({bill: billl, serverKey: mainServer.key, address: mainServer.fiscalPrinter.driverAddress}))
+        const locatie = await Locatie.findById(billl.locatie)
+        if(locatie){
+            const bytes = await createBillForPrinter(billl, locatie.logoUrl || ' ', locatie.qrUrl)
+            if(bytes){
+                socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
+            }
+        }
         res.status(200).json({message: 'Bonul a fost tipărit!'})
     } catch(err){
         handleError(err, res)
