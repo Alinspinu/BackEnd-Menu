@@ -137,23 +137,50 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   parts.push(boldOff, normalSize);
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
 
+  if(order.locatie === '690c818c21500095430c613f' ){
+    if(order.tips === 0){
+      parts.push(doubleW, center);
+      parts.push(Buffer.from('Alege o optiune de Bacsis!\n', 'ascii'))
+      parts.push(lf, left, normalSize)
+      parts.push(`Bacsic 0%   [....]  ${order.total} Lei`)
+      parts.push(lf)
+      parts.push(`Bacsic 5%   [....]  ${order.total + round(0.05 * order.total)} Lei\n`, 'ascii')
+      parts.push(lf)
+      parts.push(`Bacsic 10%  [....]  ${order.total + round(0.1 * order.total)} Lei\n`, 'ascii')
+      parts.push(lf)
+      parts.push(`Bacsic 15%  [....]  ${order.total + round(0.15 * order.total)} Lei\n`, 'ascii')
+      parts.push(lf)
+      parts.push(`Bacsic 20%  [....]  ${order.total + round(0.2 * order.total)} Lei\n`, 'ascii')
+      parts.push(lf)
+      parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
+    }
+  } else {
 
-  parts.push(doubleW);
-  if(order.payment.cash > 0) {
-    parts.push(Buffer.from(`${'Platit cash '.padEnd(13, ' ') + order.payment.cash.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
+    parts.push(doubleW);
+    if(order.payment.cash > 0) {
+      parts.push(Buffer.from(`${'Platit cash '.padEnd(13, ' ') + order.payment.cash.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
+    }
+    if(order.payment.card > 0) {
+      parts.push(Buffer.from(`${'Platit card '.padEnd(13, ' ') + order.payment.card.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
+    }
+    if(order.payment.online > 0) {
+      parts.push(Buffer.from(`${'Platit card '.padEnd(13, ' ')+ order.payment.online.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
+    }
+
   }
-  if(order.payment.card > 0) {
-    parts.push(Buffer.from(`${'Platit card '.padEnd(13, ' ') + order.payment.card.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
-  }
-  if(order.payment.online > 0) {
-    parts.push(Buffer.from(`${'Platit card '.padEnd(13, ' ')+ order.payment.online.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
-  }
+
+
   parts.push(normalSize);
+
   
   parts.push(lf, lf, center);
   parts.push(Buffer.from('Aceasta este o nota de plata informativa.\n',  'ascii'))
   parts.push(Buffer.from('Ea trebuie sa fie insotita de bonul fiscal!\n',  'ascii'))
-  parts.push(Buffer.from('Pentru valorile nutritionale si meniul online, \n scaneaza codul QR.\n',  'ascii'))
+  if(order.locatie === '690c818c21500095430c613f' ){
+    parts.push(Buffer.from('Pentru rezervari si meniul online, \n scaneaza codul QR.\n',  'ascii'))
+  } else {
+    parts.push(Buffer.from('Pentru valorile nutritionale si meniul online, \n scaneaza codul QR.\n',  'ascii'))
+  }
 
 
 
@@ -228,12 +255,7 @@ async function imageToEscPosRaster(imageUrl, maxWidth = 384, invert = false) {
   const header = Buffer.from([0x1D, 0x76, 0x30, 0x00, xL, xH, yL, yH]);
   const result = Buffer.concat([header, body]);
 
-  // 5. Debug preview (optional)
-//   await sharp(Buffer.from(errorBuffer), {
-//     raw: { width: w, height: h, channels: 1 }
-//   }).toFile("debug-output.png");
 
-  console.log(`✅ Preview saved to debug-output.png (${w}x${h})`);
 
   return result;
 }
