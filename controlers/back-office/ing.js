@@ -125,6 +125,7 @@ module.exports.saveIng = async(req, res, next) => {
 
 
    async function verifyIngredients(ings){
+
       console.log('ingrediente ', ings.length)
 
   }
@@ -240,7 +241,7 @@ module.exports.saveIng = async(req, res, next) => {
     module.exports.getIngUploadLog = async (req, res) => {
       try{ 
         const {id} = req.query
-        const ing = await Ingredient.findById(id).select('name um uploadLog')
+        const ing = await Ingredient.findById(id).select('name um uploadLog tva')
         res.status(200).json(ing)
       } catch(error) {
         console.log(error)
