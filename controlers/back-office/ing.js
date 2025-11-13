@@ -126,7 +126,27 @@ module.exports.saveIng = async(req, res, next) => {
 
    async function verifyIngredients(ings){
 
-      console.log('ingrediente ', ings.length)
+    const ingsToUpdate = []
+
+      for(let i of ings){
+        let check = false
+        for(let g of i.invGestiune){
+          for(let e of g.entries){
+            if(e.priceNoVat === 0 && e.priceWithVat > 0){
+              e.priceNoVat = round(e.priceWithVat / (1 + (i.tva/100)))
+              check = true
+            }
+          }
+        }
+        if(check) ingsToUpdate.push(i)
+      }
+
+      const promises = ingsToUpdate.map(i =>
+        Ingredient.findByIdAndUpdate(i._id, i, { new: true })
+      )
+
+      await Promise.all(promises)
+      console.log('Ingredients verified:', ings.length, '→ Updated:', ingsToUpdate.length);
 
   }
 
