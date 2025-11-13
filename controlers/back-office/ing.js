@@ -125,7 +125,7 @@ module.exports.saveIng = async(req, res, next) => {
 
 
    async function verifyIngredients(ings){
-
+      console.log('ingrediente ', ings.length)
 
   }
 
