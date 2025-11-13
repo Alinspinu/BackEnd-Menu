@@ -195,6 +195,7 @@ nirSchema.pre('save', async function (next){
           qty: el.qty,
           operation,
           uploadPrice: roundd(el.price * (1 + el.tva / 100)),
+          uploadNoVat: roundd(el.price),
           logId: el.logId,
           invoiceName: el.invoiceName,
           getiune: el.invGestiune

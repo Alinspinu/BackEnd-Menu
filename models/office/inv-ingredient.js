@@ -31,6 +31,10 @@ const invIngSchema = new Schema({
         type: Number,
         default: 0,
       },
+      uploadNoVat: {
+        type: Number,
+        default: 0,
+      },
       operation: {
         name: {
           type: String,
