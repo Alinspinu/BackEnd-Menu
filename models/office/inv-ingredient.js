@@ -117,6 +117,10 @@ const invIngSchema = new Schema({
     type: Number,
     default: 0
   },
+  transportPrice: {
+    type: Number,
+    default: 0
+  },
   gestiune: String,
   invGestiune: [
     {
@@ -140,6 +144,10 @@ const invIngSchema = new Schema({
           priceWithVat: {
             type: Number,
             required: true
+          },
+          transportPrice: {
+            type: Number,
+            default: 0
           },
           inQty: Number,
           suplierName: String,

@@ -4,7 +4,7 @@ const Counter = require("../utils/counter");
 const Ingredient = require('../office/inv-ingredient')
 const Inventary = require('../office/inventary')
 const Suplier = require('../office/suplier')
-const {roundd } = require('../../utils/functions')
+const {roundd, normalizeText } = require('../../utils/functions')
 
 const nirSchema = new Schema({
   suplier: { 
@@ -178,6 +178,20 @@ nirSchema.pre('save', async function (next){
       details: sup.name + " Nr Doc - " + doc.nrDoc
     };
 
+    const transp = doc.ingredients.find(i => normalizeText(i.name).includes('transport') )
+    let transportPricePerUnit = 0
+    if(transp){
+      let totalQty = 0
+      for(let i of doc.ingredients){
+        if(!normalizeText(i.name).includes('transport') ){
+          totalQty += i.qty
+        }
+      }
+      transportPricePerUnit = transp.price / totalQty
+    }
+
+
+
     const promises = doc.ingredients.map(async (el) => {
       const ingredient = await Ingredient.findById(el.ing);
       if (!ingredient) {
@@ -236,6 +250,7 @@ nirSchema.pre('save', async function (next){
             inQty: el.qty,
             date: doc.documentDate || new Date(),
             priceNoVat: el.price,
+            transportPrice: transportPricePerUnit,
             priceWithVat: roundd(el.price * (1 + el.tva / 100)),
             suplierNmae: sup.name,
             nir: doc._id
@@ -244,7 +259,7 @@ nirSchema.pre('save', async function (next){
           if(invGestiune[index].qty <= 0){
             ent.qty = roundd(invGestiune[index].qty + ent.qty);
             invGestiune[index].entries = [];
-          }
+          } 
           invGestiune[index].entries.push(ent);
           let total=0;
           invGestiune[index].entries = invGestiune[index].entries.filter(e=> {
@@ -266,6 +281,7 @@ nirSchema.pre('save', async function (next){
           $set: {
             tva: el.tva,
             price: el.price,
+            transportPrice: transportPricePerUnit,
             tvaPrice: ingredient.tvaPrice === 0 ? roundd(el.price * (1 + el.tva / 100)) : ingredient.tvaPrice,
             sellPrice: el.sellPrice,
             invGestiune: invGestiune,

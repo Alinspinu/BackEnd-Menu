@@ -104,6 +104,7 @@ async function unloadIngs (ings, qtyProdus) {
                       if(oldestEntry){
                         ingredientInv.price = oldestEntry.priceNoVat
                         ingredientInv.tvaPrice = oldestEntry.priceWithVat
+                        ingredientInv.transportPrice = oldestEntry.transportPrice
                         console.log('Am am acualizat pretul ingredientului dupa ultima intrare ', ingredientInv.tvaPrice)
                       } else {console.warn('!!!!!Atentie nu am gasit ultima intrare pretul ingredientului a ramas acelasi!')}
                     } else {
