@@ -129,7 +129,6 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     parts.push(lf);
     parts.push(Buffer.from(`${'Bacsis '.padEnd(13, ' ') + order.tips.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
   }
-
   parts.push(normalSize);
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
   parts.push(doubleWH, boldOn);
@@ -137,7 +136,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   parts.push(boldOff, normalSize);
   parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
 
-  if(order.locatie === '690c818c21500095430c613f' ){
+  if(order.locatie !== '6899cbbb5defa52bb2c0bd19' ){
     if(order.tips === 0){
       parts.push(doubleW, center);
       parts.push(Buffer.from('Optiune de Bacsis\n', 'ascii'))
