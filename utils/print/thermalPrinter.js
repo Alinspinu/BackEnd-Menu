@@ -129,18 +129,18 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     parts.push(lf);
     parts.push(Buffer.from(`${'Bacsis '.padEnd(13, ' ') + order.tips.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
   }
-  parts.push(normalSize);
-  parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
-  parts.push(doubleWH, boldOn);
+  parts.push(normalSize, center);
+  parts.push(Buffer.from('-'.repeat(42) + '\n', 'ascii'));
+  parts.push(doubleWH, boldOn, left);
   parts.push(Buffer.from(`${'TOTAL'.padEnd(13, ' ') + order.total.toFixed(2)} LEI\n`, 'ascii'));
-  parts.push(boldOff, normalSize);
-  parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
+  parts.push(boldOff, normalSize, center);
+  parts.push(Buffer.from('-'.repeat(42) + '\n', 'ascii'));
 
   if(order.locatie !== '6899cbbb5defa52bb2c0bd19' ){
     if(order.tips === 0){
       parts.push(doubleW, center);
       parts.push(Buffer.from('Optiune de Bacsis\n', 'ascii'))
-      parts.push(lf, left, doubleW)
+      parts.push(lf, left, normalSize)
       parts.push(Buffer.from(`0% (00.00)=${order.total.toFixed(2)} Lei []\n`, 'ascii'))
       parts.push(lf)
       parts.push(Buffer.from(`5% (${round(0.05 * order.total).toFixed(2)})=${(order.total + round(0.05 * order.total)).toFixed(2)} Lei []\n`, 'ascii'))
@@ -152,8 +152,8 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
       parts.push(Buffer.from(`20%(${round(0.2 * order.total).toFixed(2)})=${(order.total + round(0.2 * order.total)).toFixed(2)} Lei []\n`, 'ascii'))
       parts.push(lf)
       parts.push(Buffer.from(`Alta suma..............\n`, 'ascii'))
-      parts.push(lf, normalSize)
-      parts.push(Buffer.from('-'.repeat(48) + '\n', 'ascii'));
+      parts.push(lf, normalSize, center)
+      parts.push(Buffer.from('-'.repeat(42) + '\n', 'ascii'));
     }
   } else {
 
