@@ -93,9 +93,9 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     const toppings = item.toppings || [];
     const comment = item.comment || '';
 
-    if (name.length > 23) {
+    if (name.length > 20) {
       parts.push(Buffer.from(`${name}\n`, 'ascii'));
-      parts.push(Buffer.from(`${' '.padEnd(21, " ")}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
+      parts.push(Buffer.from(`${' '.padEnd(17, " ")}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
     } else {
       parts.push(Buffer.from(`${name}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
     }
@@ -132,7 +132,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   parts.push(normalSize, center);
   parts.push(Buffer.from('-'.repeat(42) + '\n', 'ascii'));
   parts.push(doubleWH, boldOn, left);
-  parts.push(Buffer.from(`${'TOTAL'.padEnd(13, ' ') + order.total.toFixed(2)} LEI\n`, 'ascii'));
+  parts.push(Buffer.from(`${'TOTAL'.padEnd(10, ' ') + order.total.toFixed(2)} LEI\n`, 'ascii'));
   parts.push(boldOff, normalSize, center);
   parts.push(Buffer.from('-'.repeat(42) + '\n', 'ascii'));
 
