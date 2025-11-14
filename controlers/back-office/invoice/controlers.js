@@ -251,7 +251,7 @@ module.exports.getMessagesByDate = async (req, res) => {
     if(locatie){
       if(locatie.anafToken && locatie.anafToken.token){
         const cif = locatie.vatNumber.replace(/\D/g, '')
-        let page = 2
+        let page = 1
         const apiUrl1 = `https://api.anaf.ro/prod/FCTEL/rest/listaMesajePaginatieFactura?startTime=${startDate}&endTime=${endDate}&cif=${cif}&pagina=${page}&filtru${filter}`
         const config = {
           headers: {
