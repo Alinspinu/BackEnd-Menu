@@ -925,6 +925,24 @@ module.exports.printConsum = async (req, res) => {
               product.productionCost += (i.qty * price * product.quantity)
             }
           }
+
+          for(let t of product.toppings){
+            if(t.ing.ings && t.ing.ings.length){
+              for(let ii of t.ing.ings){
+                let price = ii.ing.price
+                if(ii.ing.invGestiune[0].entries){
+                  price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
+                }
+                product.productionCost += (t.qty * ii.qty * price * product.quantity)
+              }
+            } else {
+              let price = t.ing.price
+              if(t.ing.invGestiune[0].entries){
+                price =  t.ing.invGestiune[0]?.entries[0]?.priceNoVat || t.ing.price
+              }
+              product.productionCost += (i.qty * price * product.quantity)
+            }
+          }
             product.tot = parseFloat(product.total)
             if(product.departament){
               if(product.sgrTax){
