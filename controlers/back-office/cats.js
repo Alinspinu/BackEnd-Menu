@@ -16,9 +16,9 @@ module.exports.sendCats = async (req, res, next) => {
                     path: 'subProducts', select: '-saleLog',
                     populate: [
                             {
-                            path: 'ings.ing', select: 'name um ings productIngredient qty invGestiune', 
+                            path: 'ings.ing', select: 'name um ings productIngredient qty invGestiune price', 
                                 populate: {
-                                    path: 'ings.ing', select: 'name um qty' 
+                                    path: 'ings.ing', select: 'name um qty price' 
                                 }
                             },
                             {
@@ -27,9 +27,9 @@ module.exports.sendCats = async (req, res, next) => {
                     ]
                 },
                 { 
-                    path: 'ings.ing', select: 'name qty um productIngredient ings',
+                    path: 'ings.ing', select: 'name qty um productIngredient ings price',
                         populate: {
-                            path: 'ings.ing', select: 'name um qty'
+                            path: 'ings.ing', select: 'name um qty price'
                         } 
                 },
                 {
