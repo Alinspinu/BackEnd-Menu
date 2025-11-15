@@ -815,8 +815,8 @@ module.exports.printConsum = async (req, res) => {
           i.products.forEach(product => {
             product.productionCost = 0
             for(let i of product.ings){
-              if(i.ings && i.ings.length){
-                for(let ii of i.ings){
+              if(i.ing.ings && i.ing.ings.length){
+                for(let ii of i.ing.ings){
                   product.productionCost += (i.qty * ii.qty * ii.ing.price * product.quantity)
                 }
               } else {
@@ -901,8 +901,8 @@ module.exports.printConsum = async (req, res) => {
           order.products.forEach(product => {
            product.productionCost = 0
             for(let i of product.ings){
-              if(i.ings && i.ings.length){
-                for(let ii of i.ings){
+              if(i.ing.ings && i.ing.ings.length){
+                for(let ii of i.ing.ings){
                   product.productionCost += (i.qty * ii.qty * ii.ing.price * product.quantity)
                 }
               } else {
