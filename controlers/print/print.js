@@ -830,6 +830,12 @@ module.exports.printConsum = async (req, res) => {
               let total0 = product.tva === 0 ? product.tot - product.discount : 0
               let total11 = product.tva === 11 ? product.tot - product.discount : 0
               let total21 = product.tva === 21 ? product.tot - product.discount : 0
+              let cons0 = product.tva === 0 ? product.productionCost || 0 : 0
+              let cons11 = product.tva === 11 ? product.productionCost : 0
+              let cons21 = product.tva === 21 ? product.productionCost : 0
+              let disc0 = product.tva === 0 ? product.discount || 0 : 0
+              let disc11 = product.tva === 11 ? product.discount : 0
+              let disc21 = product.tva === 21 ? product.discount : 0
               const productDep = productDeps.find(d => d.id === dbProd.departament.toString())
               if(productDep){
                   const prod = productDep.products.find(p => p.name === product.name)
@@ -845,6 +851,12 @@ module.exports.printConsum = async (req, res) => {
                   productDep.total0 += total0
                   productDep.total11 += total11
                   productDep.total21 += total21
+                  productDep.cons0 += cons0
+                  productDep.cons11 += cons11
+                  productDep.cons21 += cons21
+                  productDep.disc0 += disc0
+                  productDep.disc11 += disc11
+                  productDep.disc21 += disc21
   
               } else {
                 const d = departaments.find(dep => dep._id.toString() === dbProd.departament.toString())
@@ -855,6 +867,12 @@ module.exports.printConsum = async (req, res) => {
                     total0: total0,
                     total11: total11,
                     total21: total21,
+                    disc0: disc0,
+                    disc11: disc11,
+                    disc21: disc21,
+                    cons0: cons0,
+                    cons11: cons11,
+                    cons21: cons21,
                     products: [product],
                     ings: []
                   }
@@ -888,6 +906,12 @@ module.exports.printConsum = async (req, res) => {
               let total0 = product.tva === 0 ? product.tot - product.discount : 0
               let total11 = product.tva === 11 ? product.tot - product.discount : 0
               let total21 = product.tva === 21 ? product.tot - product.discount : 0
+              let cons0 = product.tva === 0 ? product.productionCost || 0 : 0
+              let cons11 = product.tva === 11 ? product.productionCost : 0
+              let cons21 = product.tva === 21 ? product.productionCost : 0
+              let disc0 = product.tva === 0 ? product.discount || 0 : 0
+              let disc11 = product.tva === 11 ? product.discount : 0
+              let disc21 = product.tva === 21 ? product.discount : 0
               const productDep = productDeps.find(d => d.id === product.departament.toString())
               if(productDep){
                   const prod = productDep.products.find(p => p.name === product.name)
@@ -903,6 +927,12 @@ module.exports.printConsum = async (req, res) => {
                   productDep.total0 += total0
                   productDep.total11 += total11
                   productDep.total21 += total21
+                  productDep.cons0 += cons0
+                  productDep.cons11 += cons11
+                  productDep.cons21 += cons21
+                  productDep.disc0 += disc0
+                  productDep.disc11 += disc11
+                  productDep.disc21 += disc21
 
               } else {
                 const d = departaments.find(dep => dep._id.toString() === product.departament.toString())
@@ -913,6 +943,12 @@ module.exports.printConsum = async (req, res) => {
                     total0: total0,
                     total11: total11,
                     total21: total21,
+                    cons0: cons0,
+                    cons11: cons11,
+                    cons21: cons21,
+                    disc0: disc0,
+                    disc11: disc11,
+                    disc21: disc21,
                     products: [product],
                     ings: []
                   }
@@ -1037,7 +1073,7 @@ module.exports.printConsum = async (req, res) => {
             'Cantitate',
             'Cost (f tva)',
             'Discount',
-            'Total',
+            'Total (pret * qty - discount)',
           ]
           pSheet.addRow(pTitle)
           pSheet.addRow(pHead)
@@ -1058,39 +1094,39 @@ module.exports.printConsum = async (req, res) => {
           })
           pSheet.addRow([
             '',
-            '',
             `TOTAL 0%`,
             '',
             '',
-            '',
+            `${round(d.cons21)}`,
+            `${round(d.disc0)}`,
             `${round(d.total0)}`,
           ])
   
           pSheet.addRow([
             '',
-            '',
             `TOTAL 11%`,
             '',
             '',
-            '',
+            `${round(d.cons21)}`,
+            `${round(d.disc11)}`,
             `${round(d.total11)}`,
           ])
           pSheet.addRow([
             '',
-            '',
             `TOTAL 21%`,
             '',
             '',
-            '',
+            `${round(d.cons21)}`,
+            `${round(d.disc21)}`,
             `${round(d.total21)}`,
           ])
           pSheet.addRow([
             '',
-            '',
             `TOTAL GENERAL`,
             '',
             '',
-            '',
+            `${round(d.cons0 + d.cons11 + d.cons21)}`,
+            `${round(d.disc0 + d.disc11 + d.disc21)}`,
             `${round(d.total11 + d.total21 + d.total0)}`
           ])
   
@@ -1099,15 +1135,15 @@ module.exports.printConsum = async (req, res) => {
           pSheet.getColumn(3).width = 5; 
           pSheet.getColumn(4).width = 10; 
           pSheet.getColumn(5).width = 10; 
-          pSheet.getColumn(6).width = 10; 
-          pSheet.getColumn(7).width = 10; 
-          pSheet.getColumn(8).width = 15; 
+          pSheet.getColumn(6).width = 20; 
+          pSheet.getColumn(7).width = 20; 
+          pSheet.getColumn(8).width = 20; 
   
           const lastRowNumber = pSheet.lastRow.number;
           for (let i = lastRowNumber; i > lastRowNumber - 4; i--) {
             const row = pSheet.getRow(i);
-            pSheet.mergeCells(`A${i}:B${i}`)
-            pSheet.mergeCells(`C${i}:F${i}`)
+            pSheet.mergeCells(`C${i}:E${i}`)
+            // pSheet.mergeCells(`C${i}:F${i}`)
             row.eachCell((cell) => {
               cell.font = { bold: true, size: 15 };
             });
