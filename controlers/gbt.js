@@ -155,8 +155,8 @@ module.exports.generateProductDescription = async (req, res) => {
     try{
 
       const response = await generateProductDescription(prompt, tone, length, audience) 
-      
-      res.status(200).josn({description: response})
+
+      res.status(200).json({description: response})
 
     } catch(error){
         console.log(error)
