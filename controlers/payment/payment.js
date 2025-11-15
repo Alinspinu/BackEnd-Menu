@@ -370,8 +370,8 @@ module.exports.printBill = async (req, res, next) => {
             clientInfo: bill.clientInfo
         }
 
-        const digger = '690c818c21500095430c613f'
-        if(bill.locatie !== digger){
+        const digger = '690c818c21500095430c613f 655e2e7c5a3d53943c6b7c53'
+        if(!bill.locatie.includes(digger)){
             const locatie = await Locatie.findById(bill.locatie)
             if(locatie){
                 const bytes = await createBillForPrinter(bill, locatie.logoUrl || ' ', locatie.qrUrl)
