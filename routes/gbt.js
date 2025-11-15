@@ -7,6 +7,8 @@ router.route('/get-response').post(gbt.getMessage)
 router.route('/cookie').post(gbt.saveCookie)
 router.route('/cookie').get(gbt.getCookie)
 
+router.route('/product-description').post(gbt.generateProductDescription)
+
 router.route('/image').post(gbt.image)
 
 router.route('/nutrition').post(gbt.getNutritionalValues)

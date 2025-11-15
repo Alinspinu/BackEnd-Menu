@@ -150,7 +150,65 @@ async function generateResponse(prompt) {
 }
 
 
-async function generateNutritionResponse(prompt) {
+module.exports.generateProductDescription = async (req, res) => {
+    const {prompt, tone, length, audience} = req.body
+    try{
+
+      const response = await generateProductDescription(prompt, tone, length, audience) 
+      
+      res.status(200).josn({description: response})
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
+async function generateProductDescription(prompt, tone, length, audience) {
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        {
+          role: "system",
+          content: `
+          You are a professional copywriter who creates short, appealing product descriptions for food and beverages.
+        
+          Your task: write a clear, creative, and attractive description based on the provided product name and ingredients.
+        
+          You must always follow these configurable style rules:
+        
+          - tone: ${tone}          
+          - length: ${length}        
+          - language: Romanian    
+          - target audience: ${audience}
+        
+          Rules:
+          - Mention key sensory words (flavor, texture, aroma).
+          - Never include pricing or nutrition info.
+          - Keep the tone consistent with the given style.
+          - Do not output markdown, only plain text.
+        
+          Always output **only the description text**, nothing else.
+          `
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.4,
+      top_p: 0.9,
+    })
+    return response.choices[0].message.content
+  } catch (error) {
+    console.error('Error generating response:', error);
+    throw(error)
+  }
+}
+
+async function generateNutritionResponse (prompt) {
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -188,10 +246,8 @@ async function generateNutritionResponse(prompt) {
       ],
       temperature: 0, // deterministic
       top_p: 1,
-      response_format: { type: "json_object" } // enforces JSON output
+      response_format: { type: "json_object" } 
     })
-    console.log(prompt)
-    console.log(response.choices[0].message)
     return response.choices[0].message.content
   } catch (error) {
     console.error('Error generating response:', error);
