@@ -1097,6 +1097,7 @@ module.exports.printConsum = async (req, res) => {
             `TOTAL 0%`,
             '',
             '',
+            '',
             `${round(d.cons21)}`,
             `${round(d.disc0)}`,
             `${round(d.total0)}`,
@@ -1105,6 +1106,7 @@ module.exports.printConsum = async (req, res) => {
           pSheet.addRow([
             '',
             `TOTAL 11%`,
+            '',
             '',
             '',
             `${round(d.cons21)}`,
@@ -1116,6 +1118,7 @@ module.exports.printConsum = async (req, res) => {
             `TOTAL 21%`,
             '',
             '',
+            '',
             `${round(d.cons21)}`,
             `${round(d.disc21)}`,
             `${round(d.total21)}`,
@@ -1123,6 +1126,7 @@ module.exports.printConsum = async (req, res) => {
           pSheet.addRow([
             '',
             `TOTAL GENERAL`,
+            '',
             '',
             '',
             `${round(d.cons0 + d.cons11 + d.cons21)}`,
