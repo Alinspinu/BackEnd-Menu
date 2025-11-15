@@ -813,7 +813,10 @@ module.exports.printConsum = async (req, res) => {
       if(invoices){
         invoices.forEach(i => {
           i.products.forEach(product => {
-            console.log(product.name, ' ', product.productionCost)
+            product.productionCost = 0
+            for(let i of product.ings){
+              product.productionCost += (i.qty * i.ing.price * product.quantity)
+            }
             product.tot = product.total
             product.tva = product.vatPrecent
             product.discount = product.discount?.value || 0
@@ -872,8 +875,9 @@ module.exports.printConsum = async (req, res) => {
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
-            if(product.productionCost > 30){
-              console.log(product.name, ' ', product.productionCost)
+           product.productionCost = 0
+            for(let i of product.ings){
+              product.productionCost += (i.qty * i.ing.price * product.quantity)
             }
             product.tot = parseFloat(product.total)
             if(product.departament){
@@ -891,6 +895,7 @@ module.exports.printConsum = async (req, res) => {
                     prod.quantity += product.quantity
                     prod.tot += product.tot
                     prod.discount += product.discount
+                    prod.productionCost += product.productionCost
                   } else {
                     productDep.products.push(product)
                   }
@@ -1030,6 +1035,7 @@ module.exports.printConsum = async (req, res) => {
             `TVA`,
             `Pret / um`,
             'Cantitate',
+            'Cost (f tva)',
             'Discount',
             'Total',
           ]
@@ -1044,6 +1050,7 @@ module.exports.printConsum = async (req, res) => {
                 `${p.tva} %`,
                 `${p.price}`,
                 `${p.quantity}`,
+                `${round(p.productionCost)}`,
                 `${round(p.discount)}`,
                 `${round(p.tot - p.discount)}`,
               ]
@@ -1093,7 +1100,8 @@ module.exports.printConsum = async (req, res) => {
           pSheet.getColumn(4).width = 10; 
           pSheet.getColumn(5).width = 10; 
           pSheet.getColumn(6).width = 10; 
-          pSheet.getColumn(7).width = 15; 
+          pSheet.getColumn(7).width = 10; 
+          pSheet.getColumn(8).width = 15; 
   
           const lastRowNumber = pSheet.lastRow.number;
           for (let i = lastRowNumber; i > lastRowNumber - 4; i--) {
