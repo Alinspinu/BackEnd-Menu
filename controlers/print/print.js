@@ -817,10 +817,18 @@ module.exports.printConsum = async (req, res) => {
             for(let i of product.ings){
               if(i.ing.ings && i.ing.ings.length){
                 for(let ii of i.ing.ings){
-                  product.productionCost += (i.qty * ii.qty * ii.ing.price * product.quantity)
+                  let price = ii.ing.price
+                  if(ii.ing.invGestiune[0].entries){
+                    price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
+                  }
+                  product.productionCost += (i.qty * ii.qty * price * product.quantity)
                 }
               } else {
-                product.productionCost += (i.qty * i.ing.price * product.quantity)
+                let price = i.ing.price
+                if(i.ing.invGestiune[0].entries){
+                  price =  i.ing.invGestiune[0]?.entries[0]?.priceNoVat || i.ing.price
+                }
+                product.productionCost += (i.qty * price * product.quantity)
               }
             }
             product.tot = product.total
@@ -900,15 +908,23 @@ module.exports.printConsum = async (req, res) => {
         orders.forEach(order=> {
           order.products.forEach(product => {
            product.productionCost = 0
-            for(let i of product.ings){
-              if(i.ing.ings && i.ing.ings.length){
-                for(let ii of i.ing.ings){
-                  product.productionCost += (i.qty * ii.qty * ii.ing.price * product.quantity)
+           for(let i of product.ings){
+            if(i.ing.ings && i.ing.ings.length){
+              for(let ii of i.ing.ings){
+                let price = ii.ing.price
+                if(ii.ing.invGestiune[0].entries){
+                  price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
                 }
-              } else {
-                product.productionCost += (i.qty * i.ing.price * product.quantity)
+                product.productionCost += (i.qty * ii.qty * price * product.quantity)
               }
+            } else {
+              let price = i.ing.price
+              if(i.ing.invGestiune[0].entries){
+                price =  i.ing.invGestiune[0]?.entries[0]?.priceNoVat || i.ing.price
+              }
+              product.productionCost += (i.qty * price * product.quantity)
             }
+          }
             product.tot = parseFloat(product.total)
             if(product.departament){
               if(product.sgrTax){
