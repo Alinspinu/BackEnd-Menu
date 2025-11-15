@@ -813,6 +813,7 @@ module.exports.printConsum = async (req, res) => {
       if(invoices){
         invoices.forEach(i => {
           i.products.forEach(product => {
+            console.log(product.name, ' ', product.productionCost)
             product.tot = product.total
             product.tva = product.vatPrecent
             product.discount = product.discount?.value || 0
@@ -835,6 +836,7 @@ module.exports.printConsum = async (req, res) => {
                     prod.discount += product.discount
                   } else {
                     productDep.products.push(product)
+            
                   }
   
                   productDep.total0 += total0
@@ -870,6 +872,7 @@ module.exports.printConsum = async (req, res) => {
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
+            console.log(product.name, ' ', product.productionCost)
             product.tot = parseFloat(product.total)
             if(product.departament){
               if(product.sgrTax){
