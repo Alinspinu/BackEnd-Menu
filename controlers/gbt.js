@@ -158,27 +158,28 @@ async function generateNutritionResponse(prompt) {
         {
           role: 'system',
           content: `
-          You are a nutrition assistant. 
-          Always output only valid JSON.
-          Given a list of ingredients with their quantities, calculate the total nutritional values per 100g of the final product and list allergens.
-          
-          Format the response strictly as:
-    
-            {
-              "nutrition": {
-                "energy": { "kJ": 0, "kcal": 0 },
-                "fat": { "all": 0, "satAcids": 0 },
-                "carbs": { "all": 0, "sugar": 0 },
-                "salts": 0,
-                "protein": 0
-              },
-              "allergens": [
-                "Lista alergenilor trebuie să fie scrisă în limba română și să conțină alergenii exact în acest format: gluten, crustacee, ouă, pește, arahide, soia, lapte, țelină, sulfiți, susan, muștar, lupin, moluște"
-              ]
-            }
-            
-            Do not add explanations, comments, or extra text.
-            `
+          You are a nutrition assistant.
+          Output only valid JSON.
+        
+          TASK:
+          - Calculate total nutritional values per 100g.
+          - Identify which allergens (from the EU 14 list) are present in the given ingredients.
+        
+          OUTPUT FORMAT:
+          {
+            "nutrition": {
+              "energy": { "kJ": number, "kcal": number },
+              "fat": { "all": number, "satAcids": number },
+              "carbs": { "all": number, "sugar": number },
+              "salts": number,
+              "protein": number
+            },
+            "allergens": [array of Romanian allergen names actually present]
+          }
+        
+          The allowed allergen names are:
+          gluten, crustacee, ouă, pește, arahide, soia, lapte, țelină, sulfiți, susan, muștar, lupin, moluște
+          `
         },
         {
           role: 'user',
