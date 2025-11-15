@@ -314,7 +314,6 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
           .populate({path: 'eFactura.gestiune', select: 'name'})
-          console.log(ing.eFactura)
         res.status(200).json({message: `Ingredientul ${ing.name} a fost actualizat cu succes!`, ing: ing})
       } catch(err){
         console.log(err)

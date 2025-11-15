@@ -909,20 +909,24 @@ module.exports.printConsum = async (req, res) => {
           order.products.forEach(product => {
            product.productionCost = 0
            for(let i of product.ings){
-            if(i.ing.ings && i.ing.ings.length){
-              for(let ii of i.ing.ings){
-                let price = ii.ing.price
-                if(ii.ing.invGestiune[0].entries){
-                  price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
+            if(i.ing){
+              if(i.ing.ings && i.ing.ings.length){
+                for(let ii of i.ing.ings){
+                  let price = ii.ing.price
+                  if(ii.ing.invGestiune[0].entries){
+                    price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
+                  }
+                  product.productionCost += (i.qty * ii.qty * price * product.quantity)
                 }
-                product.productionCost += (i.qty * ii.qty * price * product.quantity)
+              } else {
+                let price = i.ing.price
+                if(i.ing.invGestiune[0].entries){
+                  price =  i.ing.invGestiune[0]?.entries[0]?.priceNoVat || i.ing.price
+                }
+                product.productionCost += (i.qty * price * product.quantity)
               }
             } else {
-              let price = i.ing.price
-              if(i.ing.invGestiune[0].entries){
-                price =  i.ing.invGestiune[0]?.entries[0]?.priceNoVat || i.ing.price
-              }
-              product.productionCost += (i.qty * price * product.quantity)
+              console.log(i)
             }
           }
 
