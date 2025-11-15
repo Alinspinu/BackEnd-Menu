@@ -872,7 +872,9 @@ module.exports.printConsum = async (req, res) => {
       if(orders){
         orders.forEach(order=> {
           order.products.forEach(product => {
-            console.log(product.name, ' ', product.productionCost)
+            if(product.productionCost > 20){
+              console.log(product.name, ' ', product.productionCost)
+            }
             product.tot = parseFloat(product.total)
             if(product.departament){
               if(product.sgrTax){
