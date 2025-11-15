@@ -815,7 +815,13 @@ module.exports.printConsum = async (req, res) => {
           i.products.forEach(product => {
             product.productionCost = 0
             for(let i of product.ings){
-              product.productionCost += (i.qty * i.ing.price * product.quantity)
+              if(i.ings && i.ings.length){
+                for(let ii of i.ings){
+                  product.productionCost += (i.qty * ii.qty * ii.ing.price * product.quantity)
+                }
+              } else {
+                product.productionCost += (i.qty * i.ing.price * product.quantity)
+              }
             }
             product.tot = product.total
             product.tva = product.vatPrecent
@@ -895,7 +901,13 @@ module.exports.printConsum = async (req, res) => {
           order.products.forEach(product => {
            product.productionCost = 0
             for(let i of product.ings){
-              product.productionCost += (i.qty * i.ing.price * product.quantity)
+              if(i.ings && i.ings.length){
+                for(let ii of i.ings){
+                  product.productionCost += (i.qty * ii.qty * ii.ing.price * product.quantity)
+                }
+              } else {
+                product.productionCost += (i.qty * i.ing.price * product.quantity)
+              }
             }
             product.tot = parseFloat(product.total)
             if(product.departament){
@@ -972,7 +984,7 @@ module.exports.printConsum = async (req, res) => {
               tax.quantity += product.quantity
               tax.tot += (product.quantity * 0.5)
             } else {
-              d.products.push({name: 'Taxa SGR', price: 0.5, tva: 0, quantity: product.quantity, tot: product.quantity * 0.5, discount: 0})
+              d.products.push({name: 'Taxa SGR', price: 0.5, productionCost: 0.5, tva: 0, quantity: product.quantity, tot: product.quantity * 0.5, discount: 0})
             }
             d.total0 += (product.quantity * 0.5)
           }
