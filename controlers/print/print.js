@@ -1073,7 +1073,7 @@ module.exports.printConsum = async (req, res) => {
             'Cantitate',
             'Cost (f tva)',
             'Discount',
-            'Total (pret * qty - discount)',
+            'Total (D * E - G)',
           ]
           pSheet.addRow(pTitle)
           pSheet.addRow(pHead)
