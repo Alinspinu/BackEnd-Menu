@@ -940,7 +940,7 @@ module.exports.printConsum = async (req, res) => {
               if(t.ing.invGestiune[0].entries){
                 price =  t.ing.invGestiune[0]?.entries[0]?.priceNoVat || t.ing.price
               }
-              product.productionCost += (i.qty * price * product.quantity)
+              product.productionCost += (t.qty * price * product.quantity)
             }
           }
             product.tot = parseFloat(product.total)
