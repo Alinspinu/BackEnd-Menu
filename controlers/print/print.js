@@ -1098,7 +1098,7 @@ module.exports.printConsum = async (req, res) => {
             '',
             '',
             '',
-            `${round(d.cons21)}`,
+            `${round(d.cons0)}`,
             `${round(d.disc0)}`,
             `${round(d.total0)}`,
           ])
@@ -1109,7 +1109,7 @@ module.exports.printConsum = async (req, res) => {
             '',
             '',
             '',
-            `${round(d.cons21)}`,
+            `${round(d.cons11)}`,
             `${round(d.disc11)}`,
             `${round(d.total11)}`,
           ])
