@@ -1024,10 +1024,12 @@ module.exports.printConsum = async (req, res) => {
             if(tax){
               tax.quantity += product.quantity
               tax.tot += (product.quantity * 0.5)
+              tax.productionCost += (product.quantity * 0.5)
             } else {
               d.products.push({name: 'Taxa SGR', price: 0.5, productionCost: 0.5, tva: 0, quantity: product.quantity, tot: product.quantity * 0.5, discount: 0})
             }
             d.total0 += (product.quantity * 0.5)
+            d.cons0 += (product.quantity * 0.5)
           }
 
           product.ings.forEach(ing => {
