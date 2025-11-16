@@ -133,6 +133,7 @@ module.exports.saveIng = async(req, res, next) => {
           const oldP = i.price
           for(let ii of i.ings){
             i.price += (ii.ing.price * ii.qty)
+            console.log(ii.name, ' ', ii.ing.price, ' lei ', ii.qty, ' ', ii.ing.um)
           }
           ingsToUpdate.push(i)
           console.log(i.name, 'new price ', i.price, 'old price ', oldP)
