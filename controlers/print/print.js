@@ -819,9 +819,9 @@ module.exports.printConsum = async (req, res) => {
                 if(i.ing.ings && i.ing.ings.length){
                   for(let ii of i.ing.ings){
                     let price = ii.ing.price
-                    // if(ii.ing.invGestiune[0].entries){
-                    //   price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
-                    // }
+                    if(ii.ing.invGestiune[0].entries){
+                      price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
+                    }
                     product.productionCost += (i.qty * ii.qty * price * product.quantity)
                   }
                 } else {
@@ -916,9 +916,9 @@ module.exports.printConsum = async (req, res) => {
               if(i.ing.ings && i.ing.ings.length){
                 for(let ii of i.ing.ings){
                   let price = ii.ing.price
-                  // if(ii.ing.invGestiune[0].entries){
-                  //   price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
-                  // }
+                  if(ii.ing.invGestiune[0].entries){
+                    price =  ii.ing.invGestiune[0]?.entries[0]?.priceNoVat || ii.ing.price
+                  }
                   product.productionCost += (i.qty * ii.qty * price * product.quantity)
                 }
               } else {
@@ -1300,9 +1300,9 @@ module.exports.printConsum = async (req, res) => {
 
         ing.ing.invGestiune[0]?.entries?.sort((a, b) => new Date(a.date) - new Date(b.date));
         let price = ing.ing.price
-        // if(ing.ing.invGestiune[0].entries){
-        //   price =  ing.ing.invGestiune[0]?.entries[0]?.priceNoVat || ing.ing.price
-        // }
+        if(ing.ing.invGestiune[0].entries){
+          price =  ing.ing.invGestiune[0]?.entries[0]?.priceNoVat || ing.ing.price
+        }
 
 
         const priceNoVat = price * ing.qty
