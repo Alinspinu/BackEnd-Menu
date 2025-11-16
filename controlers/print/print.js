@@ -1333,7 +1333,8 @@ module.exports.printConsum = async (req, res) => {
         '',
         '',
         '',
-        `${round(totals.priceNoVat)}`,
+         `${round(d.cons0 + d.cons11 + d.cons21)}`,
+        // `${round(totals.priceNoVat)}`,
       ]
       worksheet.addRow(totalsRow)
 
