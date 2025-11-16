@@ -131,6 +131,7 @@ module.exports.saveIng = async(req, res, next) => {
       for(let i of ings){
         if(i.productIngredient && i.ings.length){
           const oldP = i.price
+          i.price = 0
           for(let ii of i.ings){
             i.price += (ii.ing.price * ii.qty)
             console.log(ii.ing.name, ' ', ii.ing.price, ' lei ', ii.qty, ' ', ii.ing.um)
