@@ -111,7 +111,7 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'eFactura.gestiune', select: 'name'})
         const totalItems = 1500
         const totalPages = Math.ceil(totalItems / limit);
-        // verifyIngredients(items)
+        verifyIngredients(items)
         res.status(200).json({
           items,
           totalPages,
@@ -129,13 +129,14 @@ module.exports.saveIng = async(req, res, next) => {
     const ingsToUpdate = []
 
       for(let i of ings){
-          i.transportPrice = 0
-        for(let g of i.invGestiune){
-          for(let e of g.entries){
-            e.transportPrice = 0
+        if(i.productIngredient && i.ings.length){
+          const oldP = i.price
+          for(let ii of i.ings){
+            i.price += (ii.ing.price * ii.qty)
           }
+          ingsToUpdate.push(i)
+          console.log(i.name, 'new price ', i.price, 'old price ', oldP)
         }
-        ingsToUpdate.push(i)
       }
 
       const promises = ingsToUpdate.map(i =>
