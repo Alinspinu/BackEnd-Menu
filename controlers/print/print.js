@@ -799,7 +799,7 @@ module.exports.printConsum = async (req, res) => {
                         populate: {path: 'ings.ing'}
                       }
                     ]).lean()
-    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: start, $lte: end}, status: 'done'}).populate([
+    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: start, $lte: end}, status: 'done', user: '64ac67f274937927c7aa9c05'}).populate([
       {
         path: 'products.ings.ing', 
         populate: {path: 'ings.ing'}
