@@ -1102,45 +1102,45 @@ module.exports.printConsum = async (req, res) => {
         // })
 
 
-      //   if(product.toppings?.length){
-      //     product.toppings.forEach(topping=>{
-      //       topping.qty = topping.qty * product.quantity
-      //       if(topping.ing.ings.length){
-      //         topping.ing.ings.forEach(ig => {
-      //           ig.qty = ig.qty * product.quantity
-      //           const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
-      //           if (existingIngredient) {
-      //             const updatedIng = {
-      //               qty: existingIngredient.qty + ig.qty,
-      //               ing: existingIngredient.ing
-      //             }
-      //               d.ings = d.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
-      //           } else {
-      //             d.ings.push(ig);
-      //           }
-      //         })
-      //       }
-      //       else{
-      //         const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
-      //         if (existingIngredient) {
-      //           const updatedIng = {
-      //             qty: existingIngredient.qty + topping.qty,
-      //             ing: existingIngredient.ing
-      //           }
-      //           d.ings = d.ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
-      //         } else {
-      //           const ig = {
-      //             qty: topping.qty,
-      //             ing: topping.ing
-      //           }
-      //           d.ings.push(ig);
-      //         }
-      //       }
-      //     })
-      //   }
+        // if(product.toppings?.length){
+        //   product.toppings.forEach(topping=>{
+        //     topping.qty = topping.qty * product.quantity
+        //     if(topping.ing.ings.length){
+        //       topping.ing.ings.forEach(ig => {
+        //         ig.qty = ig.qty * product.quantity
+        //         const existingIngredient = d.ings.find(p =>p.ing.name === ig.ing.name);
+        //         if (existingIngredient) {
+        //           const updatedIng = {
+        //             qty: existingIngredient.qty + ig.qty,
+        //             ing: existingIngredient.ing
+        //           }
+        //             d.ings = d.ings.map(p => (p.ing.name === ig.ing.name ? updatedIng : p));
+        //         } else {
+        //           d.ings.push(ig);
+        //         }
+        //       })
+        //     }
+        //     else{
+        //       const existingIngredient = d.ings.find(p =>p.ing.name === topping.ing.name);
+        //       if (existingIngredient) {
+        //         const updatedIng = {
+        //           qty: existingIngredient.qty + topping.qty,
+        //           ing: existingIngredient.ing
+        //         }
+        //         d.ings = d.ings.map(p => (p.ing.name === topping.ing.name ? updatedIng : p));
+        //       } else {
+        //         const ig = {
+        //           qty: topping.qty,
+        //           ing: topping.ing
+        //         }
+        //         d.ings.push(ig);
+        //       }
+        //     }
+        //   })
+        // }
 
-      //   })
-      //  })
+        })
+       })
 
       const workbook = new exceljs.Workbook();
 
