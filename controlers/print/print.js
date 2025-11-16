@@ -1358,6 +1358,9 @@ module.exports.printConsum = async (req, res) => {
               size: 13
           }
       })
+      worksheet.getRow(7).eachCell((cell)=>{
+        cell.numFmt = '#,##0.00'; 
+      })
 
       worksheet.getColumn(1).width = 5;
       worksheet.getColumn(2).width = 30; 
