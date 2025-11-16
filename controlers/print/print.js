@@ -1177,11 +1177,11 @@ module.exports.printConsum = async (req, res) => {
                 `${i+1}`,
                 `${p.name}`,
                 `${p.tva} %`,
-                `${p.price}`,
-                `${p.quantity}`,
-                `${round(p.productionCost)}`,
-                `${round(p.discount)}`,
-                `${round(p.tot - p.discount)}`,
+                p.price,
+                p.quantity,
+                round(p.productionCost),
+                round(p.discount),
+                round(p.tot - p.discount),
               ]
               )
           })
@@ -1191,9 +1191,9 @@ module.exports.printConsum = async (req, res) => {
             '',
             '',
             '',
-            `${round(d.cons0)}`,
-            `${round(d.disc0)}`,
-            `${round(d.total0)}`,
+            round(d.cons0),
+            round(d.disc0),
+            round(d.total0),
           ])
   
           pSheet.addRow([
@@ -1202,9 +1202,9 @@ module.exports.printConsum = async (req, res) => {
             '',
             '',
             '',
-            `${round(d.cons11)}`,
-            `${round(d.disc11)}`,
-            `${round(d.total11)}`,
+            round(d.cons11),
+            round(d.disc11),
+            round(d.total11),
           ])
           pSheet.addRow([
             '',
@@ -1212,9 +1212,9 @@ module.exports.printConsum = async (req, res) => {
             '',
             '',
             '',
-            `${round(d.cons21)}`,
-            `${round(d.disc21)}`,
-            `${round(d.total21)}`,
+            round(d.cons21),
+            round(d.disc21),
+            round(d.total21),
           ])
           pSheet.addRow([
             '',
@@ -1222,9 +1222,9 @@ module.exports.printConsum = async (req, res) => {
             '',
             '',
             '',
-            `${round(d.cons0 + d.cons11 + d.cons21)}`,
-            `${round(d.disc0 + d.disc11 + d.disc21)}`,
-            `${round(d.total11 + d.total21 + d.total0)}`
+            round(d.cons0 + d.cons11 + d.cons21),
+            round(d.disc0 + d.disc11 + d.disc21),
+            round(d.total11 + d.total21 + d.total0)
           ])
   
           pSheet.getColumn(1).width = 5;
@@ -1317,9 +1317,9 @@ module.exports.printConsum = async (req, res) => {
             `${d.name}`,
             `${ing.ing.um}`,
             `${ing.ing.tva} %`,
-            `${price}`,
+            price,
             round(priceNoVat),
-            `${round(ing.qty)}`,
+            round(ing.qty),
           ]
           )
          totals.priceNoVat += priceNoVat 
@@ -1335,8 +1335,8 @@ module.exports.printConsum = async (req, res) => {
         '',
         '',
         '',
-         `${round(d.cons0 + d.cons11 + d.cons21)}`,
-        // `${round(totals.priceNoVat)}`,
+        //  `${round(d.cons0 + d.cons11 + d.cons21)}`,
+          round(totals.priceNoVat),
       ]
       worksheet.addRow(totalsRow)
 
