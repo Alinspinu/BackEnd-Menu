@@ -1318,7 +1318,7 @@ module.exports.printConsum = async (req, res) => {
             `${ing.ing.um}`,
             `${ing.ing.tva} %`,
             `${price}`,
-            `${round(priceNoVat)}`,
+            round(priceNoVat),
             `${round(ing.qty)}`,
           ]
           )
