@@ -261,7 +261,8 @@ module.exports.sendLocatie = async (req, res, next) => {
 module.exports.modifySuplierSoldList = async (req, res) => {
     const {loc, list} = req.body
     try{
-        const locatie = await Locatie.findByIdAndUpdate(loc, {supliersList: list}, {new: true})
+        console.log(list)
+        const locatie = await Locatie.findByIdAndUpdate(loc, {supliersList: list}, {new: true}).populate({path: 'supliersList', select: 'name'})
         res.status(200).json(locatie)
     } catch(error){
         console.log(error)
