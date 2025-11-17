@@ -10,7 +10,7 @@ async function createNirsListXcelBuffer(nirs, start, end, locatie){
       const worksheet = workbook.addWorksheet('Lista documente');
       const docTitle =  [
           `${name}`,'',`Lista documente primite in perioada ${formatedDateToShow(start).split('ora')[0]} ---  ${formatedDateToShow(end).split('ora')[0]}`]
-      worksheet.addRow(docTitle)
+      const head = worksheet.addRow(docTitle)
       worksheet.addRow([])
       worksheet.addRow([])
       worksheet.addRow(['Nr','Furnizor',`Data Document`, `Numar Document`, 'Valoare'])
@@ -25,6 +25,24 @@ async function createNirsListXcelBuffer(nirs, start, end, locatie){
         ]
         worksheet.addRow(row)
       })
+
+      head.eachCell((cell) => {
+        cell.font = {
+        size: 12,
+        bold: true,
+        };
+    });
+
+
+      worksheet.getColumn(1).width = 4;
+      worksheet.getColumn(2).width = 35; 
+      worksheet.getColumn(3).width = 15; 
+      worksheet.getColumn(4).width = 25; 
+      worksheet.getColumn(5).width = 20; 
+
+      worksheet.mergeCells('A1:B1')
+      worksheet.mergeCells('C1:E1')
+      worksheet.mergeCells('A2:E3')
 
       const buffer = await workbook.xlsx.writeBuffer();
       return buffer;
