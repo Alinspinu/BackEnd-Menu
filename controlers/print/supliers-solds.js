@@ -27,8 +27,8 @@ function createSupliersSolds(supliers, doc){
         doc.text(`${s.name}`, 25, height)
         doc.text(`${s.sold} Lei`, 250, height)
         doc.lineWidth(0.6);
-        doc.moveTo(10, height).lineTo(340, height).stroke();
-        
+        doc.moveTo(10, height+15).lineTo(340, height+15).stroke();
+
         height+=17
         total += s.sold
     }
