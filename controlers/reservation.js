@@ -90,7 +90,8 @@ module.exports.modifyReservationStatus = async(req, res) => {
 
 module.exports.getReservations = async(req, res) => {
     const {loc, date, point} = req.query
-    const currentDate = new Date(date)
+    const day = 24*60*60*1000
+    const currentDate = new Date(date).getTime() - day
     try{
         const reservations = await Reservation.find(
             {
