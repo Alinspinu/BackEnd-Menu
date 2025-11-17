@@ -15,5 +15,7 @@ router.route('/print-invoices').post(printRoutes.printFactur1)
 
 router.route('/products-recipes').post(printRoutes.printProductRecipes)
 
+router.route('/supliers-sold').post(printRoutes.printSolds)
+
 
 module.exports = router

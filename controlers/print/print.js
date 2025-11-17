@@ -17,10 +17,67 @@ const { formatedDateToShow } = require('../../utils/functions');
 const {createRecipt} = require('./recipt')
 const {createInfoice} =require('./invoice')
 const {createNir} = require('./nir');
+const {createSupliersSolds} = require('./supliers-solds')
 const dep = require('../../models/office/product/dep');
 
 const PDFDocument = require("pdfkit");
 
+
+
+module.exports.printSolds = async (req, res) => {
+  const {loc} = req.body
+  try{
+
+    const locatie = await Locatie.findById(loc).populate({path: 'supliersList'})
+
+    let doc = new PDFDocument({
+      size: "A4",
+      layout: "landscape",
+    });
+
+    createSupliersSolds(locatie.supliersList, doc)
+
+    doc.end();
+    res.type("application/pdf");
+    doc.pipe(res);
+    res.once("finish", () => {
+      const chunks = [];
+      doc.on("data", (chunk) => {
+        chunks.push(chunk);
+      });
+      doc.on("end", () => {
+        const buffer = Buffer.concat(chunks);
+        const base64String = buffer.toString("base64");
+        res.status(200).send(base64String)
+      });
+    });
+
+  } catch(error){
+    console.log(error)
+  }
+}
+
+
+function updateSuplierRecords(suplier){
+  suplier.sold = 0
+  const sortedRecords = suplier.records.sort((a,b)=>+new Date(a.date)-(+new Date(b.date)));
+  sortedRecords[0].sold = 0
+  // if(sortedRecords[0].typeOf === 'intrare'){
+  // } else {
+  //     sortedRecords[0].sold = -sortedRecords[0].document.amount
+  // }
+  sortedRecords.forEach(r => {
+          if(r.typeOf === 'intrare'){
+           suplier.sold = round( suplier.sold + r.document.amount)
+           r.sold = suplier.sold
+          } else {
+           suplier.sold = round( suplier.sold - r.document.amount)
+           r.sold = suplier.sold
+          }
+      })
+      suplier.record = sortedRecords
+    return suplier
+ }
 
 module.exports.printNir = async (req, res, next) => {
   const {id} = req.query
