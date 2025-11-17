@@ -7,7 +7,7 @@ function createSupliersSolds(supliers, doc){
 
     let height = 30
 
-    doc.image('public/icons/logo-true.png', 200, height, {width: 80})
+    doc.image('public/icons/logo_true.png', 200, height, {width: 80})
 
     height += 40
 
