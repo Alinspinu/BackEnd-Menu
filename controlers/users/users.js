@@ -250,7 +250,7 @@ module.exports.generateUserQrCode = async (req, res, next) => {
 module.exports.sendLocatie = async (req, res, next) => {
     try{
         const {id} = req.query
-        const locatie = await Locatie.findById(id).select('-gmail.app')
+        const locatie = await Locatie.findById(id).select('-gmail.app').populate({path: 'supliersList', select: 'name'})
         res.status(200).json(locatie)
     } catch (err){
         console.log(err)

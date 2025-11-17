@@ -33,6 +33,7 @@ router.route('/loc')
     .put(users.editLocatie)
     .post(users.updateVivaData)
 
+router.route('/edit-list').put(users.modifySuplierSoldList)
 
 router.route('/locatie')
     .put(users.editLocatieData)
