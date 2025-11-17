@@ -295,7 +295,7 @@ module.exports.printNirsList = async (req, res) => {
                   .populate({path: 'locatie', select: 'bussinessName'})
 
 
-    const buffer = createNirsListXcelBuffer(nirs, startTime, endTime, nirs[0].locatie.bussinessName)
+    const buffer = await createNirsListXcelBuffer(nirs, startTime, endTime, nirs[0].locatie.bussinessName)
 
     res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
     res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
