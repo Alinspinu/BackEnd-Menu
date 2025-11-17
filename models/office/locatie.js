@@ -54,6 +54,12 @@ const locatieSchema = new Schema({
         type: Boolean,
         required: true
       },
+      supliersList: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: 'Suplier'
+        }
+      ],
       spendings: {
         rent: {
           type: Number,

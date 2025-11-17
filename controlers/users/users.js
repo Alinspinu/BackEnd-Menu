@@ -258,6 +258,18 @@ module.exports.sendLocatie = async (req, res, next) => {
     }
 }
 
+module.exports.modifySuplierSoldList = async (req, res) => {
+    const {loc, list} = req.body
+    try{
+        const locatie = await Locatie.findByIdAndUpdate(loc, {supliersList: list}, {new: true})
+        res.status(200).json(locatie)
+    } catch(error){
+        console.log(error)
+        res.status(200).json(error)
+    }
+
+}
+
 module.exports.addAnafToken = async (req, res) => {
     const {loc, id} = req.body
     try{
