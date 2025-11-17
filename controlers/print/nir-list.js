@@ -9,11 +9,11 @@ async function createNirsListXcelBuffer(nirs, start, end, locatie){
       let name = locatie
       const worksheet = workbook.addWorksheet('Lista documente');
       const docTitle =  [
-          `${name}`,'',`Lista documente primite in perioada ${formatedDateToShow(start).split('ora')[0]} ---  ${formatedDateToShow(end).split('ora')[0]}`]
-      const head = worksheet.addRow(docTitle)
+          `${name}`,'', `Lista documente perioada ${formatedDateToShow(start).split('ora')[0]} ---  ${formatedDateToShow(end).split('ora')[0]}`]
+      worksheet.addRow(docTitle)
       worksheet.addRow([])
       worksheet.addRow([])
-      worksheet.addRow(['Nr','Furnizor',`Data Document`, `Numar Document`, 'Valoare'])
+      const head = worksheet.addRow(['Nr','Furnizor',`Data Document`, `Numar Document`, 'Valoare'])
 
       nirs.forEach((n, i) => {
         const row = [
@@ -40,8 +40,6 @@ async function createNirsListXcelBuffer(nirs, start, end, locatie){
       worksheet.getColumn(4).width = 25; 
       worksheet.getColumn(5).width = 20; 
 
-      worksheet.mergeCells('A1:B1')
-      worksheet.mergeCells('C1:E1')
       worksheet.mergeCells('A2:E3')
 
       const buffer = await workbook.xlsx.writeBuffer();
