@@ -98,7 +98,7 @@ module.exports.getReservations = async(req, res) => {
                 locatie: loc, 
                 salePoint: point, 
             }
-        ).limit(20)
+        )
          .populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}, {path: 'salePoint'}])
         res.status(200).json(reservations)
     } catch(error){
