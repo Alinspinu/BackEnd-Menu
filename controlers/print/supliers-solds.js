@@ -26,10 +26,10 @@ function createSupliersSolds(supliers, doc){
         doc.text(`${i+1}.`, 10, height)
         doc.text(`${s.name}`, 25, height)
         doc.text(`${s.sold} Lei`, 250, height)
-        height+=15
+        height+=20
         total += s.sold
-        doc.lineWidth(0.4);
-        doc.moveTo(10, height).lineTo(300, height).stroke();
+        doc.lineWidth(0.6);
+        doc.moveTo(10, height).lineTo(340, height).stroke();
     }
    })
 
