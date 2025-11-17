@@ -9,7 +9,7 @@ function createSupliersSolds(supliers, doc){
 
     doc.image('public/icons/logo_true.png', 200, height, {width: 80})
 
-    height += 40
+    height += 60
 
     let total = 0
 
@@ -23,16 +23,16 @@ function createSupliersSolds(supliers, doc){
     doc.font("public/font/Montserrat-Regular.ttf");
    supliers.forEach((s, i) => {
        doc.text(`${i+1}`, 180, height)
-       doc.text(`${s.name}`, 185, height)
-       doc.text(`${s.sold} Lei`, 275, height)
+       doc.text(`${s.name}`, 195, height)
+       doc.text(`${s.sold} Lei`, 355, height)
        height+=13
        total += s.sold
    })
 
    doc.fontSize(14)
    doc.font('public/font/Montserrat-Bold.ttf')
-   doc.text('TOTAL', 180, height)
-   doc.text(`${round(total)}`, 270, height)
+   doc.text('TOTAL', 195, height)
+   doc.text(`${round(total)}`, 345, height)
 
 
 return doc

@@ -31,8 +31,8 @@ module.exports.printSolds = async (req, res) => {
     const locatie = await Locatie.findById(loc).populate({path: 'supliersList'})
 
     let doc = new PDFDocument({
-      size: "A4",
-      layout: "landscape",
+      size: "A5",
+      layout: "portrait",
     });
 
     createSupliersSolds(locatie.supliersList, doc)
