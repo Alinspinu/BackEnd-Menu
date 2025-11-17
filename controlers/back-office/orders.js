@@ -660,9 +660,10 @@ module.exports.prepStatusDone = async (req, res, next) => {
         if(!order){
             return res.status(404).json({message: 'No order was found'})
         }
-        console.log(order)
-        console.log(id)
         for(let m of order.monitors){
+            if(!m.section){
+                console.log(m.products)
+            }
             if(m.section.toString() === section){
                 m.prep = false
                 m.products.forEach(p => p.prep = 'done')
