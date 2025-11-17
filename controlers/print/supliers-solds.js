@@ -1,4 +1,4 @@
-const {round} = require('../../utils/functions');
+const {round, formatDateDMY} = require('../../utils/functions');
 
 
 
@@ -15,7 +15,7 @@ function createSupliersSolds(supliers, doc){
 
     doc.fontSize(14)
     doc.font('public/font/Montserrat-Bold.ttf')
-    doc.text('Situatie furnizori', 160, height)
+    doc.text(`Restante furnizori la data de ${formatDateDMY(new Date())}`, 100, height)
 
     height += 30
 
