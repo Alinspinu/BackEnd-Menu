@@ -9,7 +9,7 @@ async function createNirsListXcelBuffer(nirs, start, end, locatie){
       let name = locatie
       const worksheet = workbook.addWorksheet('Lista documente');
       const docTitle =  [
-          `${name}`,'', `Lista documente perioada ${formatedDateToShow(start).split('ora')[0]} ---  ${formatedDateToShow(end).split('ora')[0]}`]
+          `${name}`,'', `Lista documente${formatedDateToShow(start).split('ora')[0]} ---  ${formatedDateToShow(end).split('ora')[0]}`]
       worksheet.addRow(docTitle)
       worksheet.addRow([])
       worksheet.addRow([])
