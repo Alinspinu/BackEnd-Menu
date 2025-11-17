@@ -293,7 +293,7 @@ module.exports.printNirsList = async (req, res) => {
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startTime, $lte: endTime }})
                   .populate({path: 'suplier', select: 'name'})
                   .populate({path: 'locatie', select: 'bussinessName'})
-                  .sort({ documentDate: -1 });
+                  .sort({ documentDate: 1 });
 
 
     const buffer = await createNirsListXcelBuffer(nirs, startTime, endTime, nirs[0].locatie.bussinessName)

@@ -23,7 +23,8 @@ async function createNirsListXcelBuffer(nirs, start, end, locatie){
             `${n.nrDoc}`,
             n.totalDoc
         ]
-        worksheet.addRow(row)
+       const numRow = worksheet.addRow(row)
+        newRow.getCell(3).numFmt = 'dd/mm/yyyy';
       })
 
       head.eachCell((cell) => {
