@@ -17,22 +17,22 @@ function createSupliersSolds(supliers, doc){
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text('Situatie furnizori', 160, height)
 
-    height += 20
+    height += 30
 
     doc.fontSize(12)
     doc.font("public/font/Montserrat-Regular.ttf");
    supliers.forEach((s, i) => {
-       doc.text(`${i+1}`, 40, height)
-       doc.text(`${s.name}`, 60, height)
-       doc.text(`${s.sold} Lei`, 300, height)
+       doc.text(`${i+1}`, 10, height)
+       doc.text(`${s.name}`, 30, height)
+       doc.text(`${s.sold} Lei`, 260, height)
        height+=13
        total += s.sold
    })
 
    doc.fontSize(14)
    doc.font('public/font/Montserrat-Bold.ttf')
-   doc.text('TOTAL', 60, height)
-   doc.text(`${round(total)}`, 290, height)
+   doc.text('TOTAL', 30, height)
+   doc.text(`${round(total)}`, 250, height)
 
 
 return doc
