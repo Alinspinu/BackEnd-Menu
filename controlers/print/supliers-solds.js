@@ -17,7 +17,7 @@ function createSupliersSolds(supliers, doc){
     doc.font('public/font/Montserrat-Bold.ttf')
     doc.text(`Restante furnizori la data de ${formatDateDMY(new Date())}`, 100, height)
 
-    height += 30
+    height += 50
 
     doc.fontSize(12)
     doc.font("public/font/Montserrat-Regular.ttf");
