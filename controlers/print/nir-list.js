@@ -39,7 +39,7 @@ async function createNirsListXcelBuffer(nirs, start, end, locatie){
       worksheet.getColumn(2).width = 35; 
       worksheet.getColumn(3).width = 15; 
       worksheet.getColumn(4).width = 25; 
-      worksheet.getColumn(5).width = 20; 
+      worksheet.getColumn(5).width = 10; 
 
       worksheet.mergeCells('A2:E3')
 
