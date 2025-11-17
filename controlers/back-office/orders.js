@@ -636,7 +636,7 @@ module.exports.liftStatusDone = async (req, res, next) => {
             return res.status(404).json({message: 'No order was found'})
         }
         for(let m of order.monitors){
-            if(m.section.toString() === section){
+            if(m.section?.toString() === section){
                 m.lifted = true 
             }
         }
