@@ -672,7 +672,7 @@ module.exports.prepStatusDone = async (req, res, next) => {
         socket.emit('billl', JSON.stringify({bill: newOrder, secondaryServer: server}))
         res.status(200).json({message: 'Comanda a fost marcată ca și terminată!', order: newOrder, server: server})
     } catch(err){
-        console.log(err.message)
+        console.log(err)
         res.status(500).json(err)
     }
 }
