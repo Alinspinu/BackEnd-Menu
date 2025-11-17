@@ -139,8 +139,16 @@ module.exports.checkAndNotifyReservations = async () => {
       });
   
       if (reservations.length > 0) {
-        const  userIds = (await User.find({'employee.active': true, 'checkIn.value': true }).select('_id')).map(u => u._id)
         const notificationPromises = reservations.map(async (reservation) => {
+        const salePoint = await SalePoint.findById(reservation.salePoint)
+        if (!salePoint) {
+          console.warn(`Sale point not found for reservation ${reservation._id}`);
+          return;
+        }
+          const userIds = salePoint.notifications.flatMap(u => {
+              if (!u.reservation) return [];
+              return [u.user];
+            });
             const notif = {
               sender: 'Admin',
               user: '64fdd7da9df46ea2df9cf8c8',
