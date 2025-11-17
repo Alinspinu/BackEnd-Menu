@@ -14,6 +14,8 @@ const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 
 const {createNir} = require('../print/nir')
 
+const {createNirsListXcelBuffer} = require('../print/nir-list')
+
 
 
 
@@ -282,6 +284,32 @@ module.exports.getNirs = async(req, res, next) => {
 }
 
 
+
+module.exports.printNirsList = async (req, res) => {
+  const {start, end, loc, point} = req.body
+  try{
+    const startTime = new Date(start).setHours(0,0,0,0)
+    const endTime = new Date(end).setHours(23,59,59,9999)
+    const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startTime, $lte: endTime }})
+                  .populate({path: 'Suplier', select: 'name'})
+                  .populate({path: 'Locatie', select: 'bussinessName'})
+
+
+    const buffer = createNirsListXcelBuffer(nirs, startTime, endTime, nirs[0].locatie.bussinessName)
+
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
+
+    // Send the buffer directly
+    res.send(Buffer.from(buffer));
+
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
 module.exports.printNirsAndInvoices = async (req, res) => {
   const {loc, point, start, end, deps} = req.body
   try{
@@ -351,6 +379,10 @@ module.exports.printNirsAndInvoices = async (req, res) => {
     res.status(500).json(e)
   }
 }
+
+
+
+
 
 
 // function modifyProducts(products) {

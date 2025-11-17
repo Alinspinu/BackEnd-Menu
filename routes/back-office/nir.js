@@ -6,7 +6,7 @@ const printRoutes = require('../../controlers/print/print')
 
 router.route('/save-nir').post(nirRoutes.saveNir);
 router.route('/print-nir').get(printRoutes.printNir);
-router.route('/export-xcel').post(printRoutes.createNirsXcel)
+router.route('/export-xcel').post(nirRoutes.printNirsList)
 router.route('/get-nirs')
         .post(nirRoutes.getNirs)
         .get(nirRoutes.getNirsBySuplier)
