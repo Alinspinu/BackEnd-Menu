@@ -97,7 +97,6 @@ module.exports.getReservations = async(req, res) => {
             {
                 locatie: loc, 
                 salePoint: point, 
-                date: {$gte: currentDate}
             }
         ).limit(20)
          .populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}, {path: 'salePoint'}])
