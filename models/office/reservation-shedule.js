@@ -75,6 +75,7 @@ const reservationSheduleSchema = new Schema({
                                     type: Number,
                                     default: 0
                                 },
+                                full: Boolean,
                                 start: {
                                     type: Date,
                                     required: true

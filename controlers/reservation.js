@@ -110,6 +110,7 @@ module.exports.createReservationShedule = async (req, res) => {
             people: 0,
             start,
             end,
+            full: false,
             visible: true,
             reservations: []
           });
