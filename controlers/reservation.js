@@ -38,7 +38,7 @@ module.exports.getReservationShedule = async (req, res) => {
     try{
        const y = new Date(year)
        console.log(y)
-        const shedule = await ReservationSchedule.find({locatie: loc, salePoint: point, 'year.date': y})
+        const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, 'year.date': y})
 
         res.status(200).json(shedule)
 
