@@ -12,6 +12,7 @@ router.route('/product-description').post(gbt.generateProductDescription)
 router.route('/image').post(gbt.image)
 
 router.route('/nutrition').post(gbt.getNutritionalValues)
+router.route('/chat').post(gbt.gbtChat)
 
 
 module.exports = router

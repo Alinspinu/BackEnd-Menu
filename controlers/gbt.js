@@ -56,6 +56,32 @@ module.exports.getNutritionalValues = async (req, res) => {
 
 
 
+module.exports.gbtChat = async (req, res) => {
+
+  const {prompt}  = req.body
+  try {
+    const response = await openai.chat.completions.create({
+      model: 'gpt-4o-mini', 
+      messages: [
+        { role: 'user',
+         content: prompt,
+         },
+         {
+         role: 'system',
+         content: `you are senior develeoper resolve code problems`
+         } 
+        ],
+      temperature: 0,
+      top_p: 1
+    });
+    return response.choices[0].message.content
+  } catch (error) {
+    console.error('Error generating response:', error);
+    throw(error)
+  }
+}
+
+
 
 module.exports.image = async(req, res, next) => {
   try{

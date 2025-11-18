@@ -37,7 +37,6 @@ module.exports.getReservationShedule = async (req, res) => {
     const {loc, point, year} = req.query
     try{
        const y = new Date(year)
-       console.log(y)
         const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, 'year.date': y})
 
         res.status(200).json(shedule)
@@ -68,32 +67,62 @@ module.exports.createReservationShedule = async (req, res) => {
     }
 }
 
-function generateYearData(yearNumber = 2025) {
-    const yearDate = new Date(yearNumber, 0, 1); // Jan 1 of the year
+
+  function generateYearData(yearNumber = 2025) {
+    const yearDate = new Date(yearNumber, 0, 1);
   
     const months = [];
   
     for (let month = 0; month < 12; month++) {
       const monthDate = new Date(yearNumber, month, 1);
       const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
+  
       const days = [];
+  
       for (let day = 1; day <= daysInMonth; day++) {
-        const dayDate = new Date(yearNumber, month, day);
+  
+        // Create 24 hourly slots
+        const hours = [];
+        for (let hour = 0; hour < 24; hour++) {
+          const start = new Date(yearNumber, month, day, hour, 0);
+          const end = new Date(yearNumber, month, day, hour + 1, 0);
+  
+          const label =
+            `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`;
+  
+          hours.push({
+            label,
+            avalableTables: 0,
+            bookedTables: 0,
+            people: 0,
+            start,
+            end,
+            visible: true,
+            reservations: []
+          });
+        }
+  
         days.push({
-          date: dayDate,
-          avalableTables: 0,
+          dayOfTheMonth: day,
+          date: new Date(yearNumber, month, day),
           bookedTables: 0,
           people: 0,
-          reservations: []
+          hours
         });
       }
+  
       months.push({
         date: monthDate,
+        bookedTables: 0,
+        people: 0,
         days
       });
     }
+  
     return {
       date: yearDate,
+      bookedTables: 0,
+      people: 0,
       months
     };
   }
