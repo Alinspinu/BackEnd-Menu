@@ -20,7 +20,7 @@ const webPush = require('web-push');
 
 const crypto = require('crypto');
 
-const SECRET = "dir6Yk-iw0m8-ojstp3-esjndy-ejnd"; 
+const SECRET = "dir6Yk-iw0m8h-ojstp3-esjndy-ejnd"; 
 const ALGO = "aes-256-ctr";
 
 
