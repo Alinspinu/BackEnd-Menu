@@ -15,7 +15,9 @@ router.route('/update', authApi).post(resControlers.modifyReservationStatus)
 router.route('/online').post(resControlers.addReservationFromClient)
 router.route('/contact').post(resControlers.createContact)
 
-router.route('/add-shedule').post(resControlers.createReservationShedule)
+router.route('/shedule')
+        .get(resControlers.getReservationShedule)
+        .post(resControlers.createReservationShedule)
 
 
 
