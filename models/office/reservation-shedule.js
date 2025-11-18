@@ -63,6 +63,10 @@ const reservationSheduleSchema = new Schema({
                                     type: Number,
                                     default: 0
                                 },
+                                seats: {
+                                    type: Number,
+                                    default: 0
+                                },
                                 bookedTables:  {
                                     type: Number,
                                     default: 0
