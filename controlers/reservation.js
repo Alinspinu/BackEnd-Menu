@@ -47,6 +47,19 @@ module.exports.getReservationShedule = async (req, res) => {
     }
 }
 
+module.exports.updateReservationShedule = async (req, res) => {
+    const {shedule} = req.body
+    try{
+        const updatedShedule = await ReservationSchedule.findByIdAndUpdate(SyntheticModule._id, shedule, {new: true})
+        res.status(200).json(updatedShedule)
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+    
+}
+
 module.exports.createReservationShedule = async (req, res) => {
     const {point, loc, year} = req.body
     try{
