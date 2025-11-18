@@ -18,21 +18,35 @@ const reservationSheduleSchema = new Schema({
             type: Date,
             required: true
         },
+        bookedTables:  {
+            type: Number,
+            default: 0
+        },
+        people:  {
+            type: Number,
+            default: 0
+        },
         months: [
             {
                 date: {
                     type: Date,
                     required: true,
                 },
+                bookedTables:  {
+                    type: Number,
+                    default: 0
+                },
+                people:  {
+                    type: Number,
+                    default: 0
+                },
+
                 days: [
                     {
+                        label: Number,
                         date: {
                             type: Date,
                             required: true,
-                        },
-                        avalableTables: {
-                            type: Number,
-                            default: 0
                         },
                         bookedTables:  {
                             type: Number,
@@ -42,8 +56,21 @@ const reservationSheduleSchema = new Schema({
                             type: Number,
                             default: 0
                         },
-                        reservations: [
+                        hours: [
                             {
+                                label: String,
+                                avalableTables: {
+                                    type: Number,
+                                    default: 0
+                                },
+                                bookedTables:  {
+                                    type: Number,
+                                    default: 0
+                                },
+                                people:  {
+                                    type: Number,
+                                    default: 0
+                                },
                                 start: {
                                     type: Date,
                                     required: true
@@ -52,12 +79,19 @@ const reservationSheduleSchema = new Schema({
                                     type: Date,
                                     requred: true
                                 },
-                                details:{
-                                    type: Schema.Types.ObjectId,
-                                    ref: 'Reservation' 
-                                } 
+                                visible: {
+                                    type: Boolean
+                                },
+                                reservations: [
+                                    {
+                                        type: Schema.Types.ObjectId,
+                                        ref: 'Reservation' 
+                                    }
+                                ]
                             }
-                        ]
+                            
+                        ],
+                
                     }
                 ],
             }
@@ -69,4 +103,4 @@ const reservationSheduleSchema = new Schema({
 
 
 
-module.exports = mongoose.model("ReservationShedule", reservationSheduleSchema);
+module.exports = mongoose.model("ReservationSchedule", reservationSheduleSchema);
