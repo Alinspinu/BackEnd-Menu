@@ -1,4 +1,5 @@
 const Reservation = require('../models/office/reservation')
+const ReservationSchedule = require('../models/office/reservation-shedule')
 const User = require('../models/users/user')
 const Notification = require('../models/users/notification')
 const SalePoint = require('../models/utils/sale-point')
@@ -22,6 +23,66 @@ webPush.setVapidDetails(
     process.env.WEB_PUSH_PUBLIC,
     process.env.WEB_PUSH_PRIVATE,
   );
+
+
+
+module.exports.createReservationShedule = async (req, res) => {
+    const {point, loc, year} = req.body
+    try{
+        const yearData = generateYearData(year);
+
+        const schedule = new ReservationSchedule({
+          salePoint: point,
+          locatie: loc,
+          year: yearData
+        });
+      
+        const savedShedule =  await schedule.save();
+
+        res.status(200).json(savedShedule)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+function generateYearData(yearNumber = 2025) {
+    const yearDate = new Date(yearNumber, 0, 1); // Jan 1 of the year
+  
+    const months = [];
+  
+    for (let month = 0; month < 12; month++) {
+      const monthDate = new Date(yearNumber, month, 1);
+  
+      // Calculate number of days in this month
+      const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
+  
+      const days = [];
+  
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayDate = new Date(yearNumber, month, day);
+  
+        days.push({
+          date: dayDate,
+          avalableTables: 0,
+          bookedTables: 0,
+          people: 0,
+          reservations: []
+        });
+      }
+  
+      months.push({
+        date: monthDate,
+        days
+      });
+    }
+  
+    return {
+      date: yearDate,
+      months
+    };
+  }
+  
 
 
 module.exports.addReservationFromClient = async(req, res)  => {

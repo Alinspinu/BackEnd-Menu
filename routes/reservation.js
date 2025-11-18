@@ -15,6 +15,8 @@ router.route('/update', authApi).post(resControlers.modifyReservationStatus)
 router.route('/online').post(resControlers.addReservationFromClient)
 router.route('/contact').post(resControlers.createContact)
 
+router.route('/add-shedule').post(resControlers.createReservationShedule)
+
 
 
 module.exports = router
