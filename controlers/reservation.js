@@ -30,8 +30,8 @@ webPush.setVapidDetails(
 module.exports.getReservationShedule = async (req, res) => {
     const {loc, point, year} = req.query
     try{
-        console.log(loc, point, year)
-        const shedule = await ReservationSchedule.find({locatie: loc, salePoint: point, year: year})
+       const y = new Date(year)
+        const shedule = await ReservationSchedule.find({locatie: loc, salePoint: point, year: y})
 
         res.status(200).json(shedule)
 
