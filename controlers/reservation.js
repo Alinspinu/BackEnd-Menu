@@ -50,7 +50,7 @@ module.exports.getReservationShedule = async (req, res) => {
 module.exports.updateReservationShedule = async (req, res) => {
     const {shedule} = req.body
     try{
-        const updatedShedule = await ReservationSchedule.findByIdAndUpdate(SyntheticModule._id, shedule, {new: true})
+        const updatedShedule = await ReservationSchedule.findByIdAndUpdate(shedule._id, shedule, {new: true})
         res.status(200).json({shedule: updatedShedule, message: 'Modificarile au fost efectuate!'})
 
     } catch(error){
