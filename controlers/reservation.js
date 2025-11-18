@@ -18,6 +18,12 @@ const socket = io("https://socket.flowmanager.ro")
 const webPush = require('web-push');
 
 
+const crypto = require('crypto');
+
+const SECRET = "dir6Yk-iw0m8-ojstp3-esjndy-ejnd"; 
+const ALGO = "aes-256-ctr";
+
+
 webPush.setVapidDetails(
     'mailto:alin@flowmanager.ro',
     process.env.WEB_PUSH_PUBLIC,
@@ -69,15 +75,10 @@ function generateYearData(yearNumber = 2025) {
   
     for (let month = 0; month < 12; month++) {
       const monthDate = new Date(yearNumber, month, 1);
-  
-      // Calculate number of days in this month
       const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
-  
       const days = [];
-  
       for (let day = 1; day <= daysInMonth; day++) {
         const dayDate = new Date(yearNumber, month, day);
-  
         days.push({
           date: dayDate,
           avalableTables: 0,
@@ -86,17 +87,46 @@ function generateYearData(yearNumber = 2025) {
           reservations: []
         });
       }
-  
       months.push({
         date: monthDate,
         days
       });
     }
-  
     return {
       date: yearDate,
       months
     };
+  }
+
+
+  module.exports.encriptURLObject = async (req, res) => {
+    const {point, loc} = req.body
+    try{
+        const dataToEncript = JSON.stringify({point, loc})
+        const encriptedData = encryptObject(dataToEncript)
+
+        const url = `https://front.flowmnager.ro/reserve?data=${encriptedData}`
+        res.status(200).json({url: url})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+  }
+
+  function encryptObject(obj) {
+    const iv = crypto.randomBytes(16); // random IV for security
+  
+    const cipher = crypto.createCipheriv(
+      ALGO,
+      Buffer.from(SECRET),
+      iv
+    );
+  
+    const json = JSON.stringify(obj);
+    const encrypted = Buffer.concat([cipher.update(json), cipher.final()]);
+  
+    // return "iv:encrypted" format
+    return iv.toString("hex") + ":" + encrypted.toString("hex");
   }
   
 

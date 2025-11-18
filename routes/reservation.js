@@ -19,6 +19,8 @@ router.route('/shedule')
         .get(resControlers.getReservationShedule)
         .post(resControlers.createReservationShedule)
 
+router.route('/encript-url').post(resControlers.encriptURLObject)
+
 
 
 module.exports = router
