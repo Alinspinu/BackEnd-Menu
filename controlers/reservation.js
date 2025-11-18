@@ -39,7 +39,7 @@ module.exports.createReservationShedule = async (req, res) => {
       
         const savedShedule =  await schedule.save();
 
-        res.status(200).json(savedShedule)
+        res.status(200).json({shedule: savedShedule, message: `Calendarul de rezervări pentru anul ${year} a fost creat!`})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
