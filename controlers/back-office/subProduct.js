@@ -59,6 +59,7 @@ module.exports.editSubproduct = async (req, res, next) => {
                 ])
         res.status(200).json({ message: 'Sub Produsl a fost modificat cu succes', subProd: productToSend })
     } catch(error) {
+        console.log(error)
         res.status(500).json(error)
     }
 
