@@ -27,7 +27,16 @@ module.exports.saveSubProd = async (req, res, next) => {
         productSub.subProducts.push(newSubProduct);
         await newSubProduct.save();
         await productSub.save();
-        const subToSend = await SubProduct.findById(newSubProduct._id).populate({ path: 'product', select: 'category' });
+        const subToSend = await SubProduct.findById(newSubProduct._id)
+                .populate({ path: 'product', select: 'category' })
+                .populate([
+                    {
+                    path: 'ings.ing',
+                    select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                    populate: innerIngPopulate
+                    },
+                    { path: 'ings.gestiune', select: 'name' }
+                ]);
         res.status(200).json({ message: `${name}, was saved in ${productSub.name}`, subProduct: subToSend })
     } catch (err) {
         console.log(err);
@@ -38,7 +47,16 @@ module.exports.saveSubProd = async (req, res, next) => {
 module.exports.editSubproduct = async (req, res, next) => {
     const { sub } = req.body;
     try{
-        const productToSend = await SubProduct.findByIdAndUpdate(sub._id, sub, {new: true}).populate({ path: 'product', select: 'category' })
+        const productToSend = await SubProduct.findByIdAndUpdate(sub._id, sub, {new: true})
+                .populate({ path: 'product', select: 'category' })
+                .populate([
+                    {
+                    path: 'ings.ing',
+                    select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                    populate: innerIngPopulate
+                    },
+                    { path: 'ings.gestiune', select: 'name' }
+                ])
         res.status(200).json({ message: 'Sub Produsl a fost modificat cu succes', subProd: productToSend })
     } catch(error) {
         res.status(500).json(error)
