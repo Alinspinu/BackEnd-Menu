@@ -3,6 +3,20 @@ const Product = require('../../models/office/product/product')
 const Cat = require('../../models/office/product/cat')
 const SubProduct = require('../../models/office/product/sub-product')
 
+
+
+const innerIngPopulate = [
+    {
+        path: 'ings.ing',
+        select: 'name tvaPrice qty um'
+    },
+    {
+        path: 'ings.gestiune',
+        select: 'name'
+    }
+]
+
+
 module.exports.saveSubProd = async (req, res, next) => {
     const {loc} = req.query
     try {
