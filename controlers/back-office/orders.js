@@ -53,7 +53,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds, message: 'ok'})
     }
 
@@ -83,7 +83,6 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point}).lean()
-             await modyfyOrdersProducts(orders)
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds,  message: 'ok'})
     }
     try{
@@ -94,6 +93,7 @@ module.exports.getOrder = async (req, res, next) => {
 
 async function modyfyOrdersProducts(orders){
 
+    let ordersToSave = []
 
     for(let o of orders){
         let total = 0
@@ -101,12 +101,18 @@ async function modyfyOrdersProducts(orders){
         total += (p.price *p.quantity - p.discount)
       }
       if(o.total !== total + o.tips){
+        o.total -= o.tips
+        ordersToSave.push(o)
         console.log('order index ', o.index, 'order Total ', o.total, ' calc total ', total + o.tips, ' total products ', o.totalProducts)
       }
     }
 
+    const promises = ordersToSave.map(o => 
+         Order.findByIdAndUpdate(o._id, o, {new: true})
+    )
 
-
+    await Promise.all(promises)
+    console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
 
 }
 
