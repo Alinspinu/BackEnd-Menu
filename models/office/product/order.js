@@ -309,6 +309,8 @@ const orderTrueSchema = new Schema({
 
 }, { timestamps: true, })
 
+orderTrueSchema.path('createdAt').immutable(false);
+
 orderTrueSchema.index({ createdAt: 1 })
 orderTrueSchema.index({ updatedAt: 1 })
 

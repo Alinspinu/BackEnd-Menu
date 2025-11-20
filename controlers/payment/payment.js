@@ -367,7 +367,8 @@ module.exports.printBill = async (req, res, next) => {
             paymentMethod: bill.paymentMethod,
             tips: bill.tips,
             total: bill.total,
-            clientInfo: bill.clientInfo
+            clientInfo: bill.clientInfo,
+            createdAt: new Date()
         }
 
         const digger = ['690c818c21500095430c613f', '655e2e7c5a3d53943c6b7c53']
