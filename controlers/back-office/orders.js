@@ -101,7 +101,7 @@ async function modyfyOrdersProducts(orders){
         total += (p.price *p.quantity - p.discount)
       }
       if(o.payment.online && o.payment.online !== o.total){
-        // o.total -= o.tips
+        o.total = o.payment.online
         ordersToSave.push(o)
         console.log('order index ', o.index, 'order payment ', o.payment.online, ' calc total ', total, ' total tips ', o.tips)
       }
@@ -111,7 +111,7 @@ async function modyfyOrdersProducts(orders){
          Order.findByIdAndUpdate(o._id, o, {new: true})
     )
 
-    // await Promise.all(promises)
+    await Promise.all(promises)
     console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
 
 }
