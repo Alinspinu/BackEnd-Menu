@@ -123,22 +123,20 @@ module.exports.saveIng = async(req, res, next) => {
       }
     };
 
+    const dune ='690c818c21500095430c613f'
 
    async function verifyIngredients(ings){
 
     const ingsToUpdate = []
 
       for(let i of ings){
-        if(i.productIngredient && i.ings.length){
-          const oldP = i.price
-          i.price = 0
-          for(let ii of i.ings){
-            i.price += (ii.ing.price * ii.qty)
-            console.log(ii.ing.name, ' ', ii.ing.price, ' lei ', ii.qty, ' ', ii.ing.um)
+          if(i.locatie === dune){
+            i.qty = 0
+            if(i.invGestiune.length){
+              i.invGestiune[0].qty = 0
+            }
+            ingsToUpdate.push(i)
           }
-          ingsToUpdate.push(i)
-          console.log(i.name, 'new price ', i.price, 'old price ', oldP)
-        }
       }
 
       const promises = ingsToUpdate.map(i =>

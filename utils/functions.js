@@ -147,27 +147,6 @@ function formatedDateToShow(date, timeDifferece = 0){
 
 
 
-const username = '655e2e7c5a3d53943c6b7c53';
-const password = 'afara-ploua';
-
-const credentials = Buffer.from(`${username}:${password}`).toString('base64');
-const headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Basic ${credentials}`
-}
-const baseUrl = 'https://print-orders-true.loca.lt/'
-// const baseUrl = 'http://localhost:8081/'
-
-    async function sendToPrint(data, url) {
-        try{
-            const response = await axios.post(`${baseUrl}${url}`, data, {headers})
-            return response
-        } catch(err){
-            console.log(err.message)
-            throw(err)
-        }
-    }
-
 
     function handleError(error, res) {
         if (error.response) {
@@ -254,23 +233,6 @@ function normalizeText(text) {
 }
 
 
-
-// function getNowShedule(shedules){
-//   // console.log(shedules)
-//   const dateNow = new Date()
-//   dateNow.setHours(0,0,0,0)
-//   const shedule = shedules.find(s=> {
-//     console.log('start date', new Date(s.days[0].date))
-//     console.log('end date', new Date(s.days[s.days.length -1].date))
-//       const startDate = new Date(s.days[0].date)
-//       const endDate = new Date(s.days[s.days.length -1].date)
-//       endDate.setHours(0,0,0,0)
-//       startDate.setHours(0,0,0,0)
-//       return dateNow.getTime() <= endDate.getTime() && dateNow.getTime() >= startDate.getTime()
-//   })
-//   console.log(shedule)
-//   return shedule
-// }
 module.exports = {
     comparePasswords, 
     hashPassword, 
@@ -281,7 +243,6 @@ module.exports = {
     encryptData, 
     decryptData, 
     roundd, 
-    sendToPrint,
     handleError,
     convertToDateISOString,
     generateSoketId,
