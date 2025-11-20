@@ -130,7 +130,7 @@ module.exports.saveIng = async(req, res, next) => {
     const ingsToUpdate = []
 
       for(let i of ings){
-          if(i.locatie === dune){
+          if(i.locatie.toString() === dune){
             i.qty = 0
             if(i.invGestiune.length){
               i.invGestiune[0].qty = 0
