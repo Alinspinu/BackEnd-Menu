@@ -100,10 +100,10 @@ async function modyfyOrdersProducts(orders){
       for(let p of o.products){
         total += (p.price *p.quantity - p.discount)
       }
-      if(o.total !== total + o.tips){
-        o.total -= o.tips
+      if(o.payment.online && o.payment.online !== o.total){
+        // o.total -= o.tips
         ordersToSave.push(o)
-        console.log('order index ', o.index, 'order Total ', o.total, ' calc total ', total + o.tips, ' total products ', o.totalProducts)
+        console.log('order index ', o.index, 'order payment ', o.payment.online, ' calc total ', total, ' total products ', o.totalProducts)
       }
     }
 
