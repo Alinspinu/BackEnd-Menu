@@ -101,7 +101,7 @@ async function modyfyOrdersProducts(orders){
         total += (p.price *p.quantity - p.discount)
       }
       if(o.total !== total + o.tips){
-        console.log('order index ', o.index, 'order Total ', o.total, ' calc total ', total, ' total products ', o.totalProducts)
+        console.log('order index ', o.index, 'order Total ', o.total, ' calc total ', total + o.tips, ' total products ', o.totalProducts)
       }
     }
 
