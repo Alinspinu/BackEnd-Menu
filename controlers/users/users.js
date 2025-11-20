@@ -206,7 +206,7 @@ module.exports.sendCustomer = async (req, res, next) => {
       }
       if(mode === 'card' && loc !== '690c818c21500095430c613f' ){
         if(id.length < 22){
-            const customer = await User.findOne({cardIndex:  id}).select('name email cashBack discount cardIndex telephone');
+            const customer = await User.findOne({cardIndex:  id, locatie: loc}).select('name email cashBack discount cardIndex telephone');
             if(customer){
                 res.status(200).json({message: 'All good', customer: customer})
             } else {
