@@ -111,7 +111,7 @@ async function modyfyOrdersProducts(orders){
          Order.findByIdAndUpdate(o._id, o, {new: true})
     )
 
-    await Promise.all(promises)
+    // await Promise.all(promises)
     console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
 
 }
