@@ -103,7 +103,7 @@ async function modyfyOrdersProducts(orders){
       if(o.payment.online && o.payment.online !== o.total){
         // o.total -= o.tips
         ordersToSave.push(o)
-        console.log('order index ', o.index, 'order payment ', o.payment.online, ' calc total ', total, ' total products ', o.totalProducts)
+        console.log('order index ', o.index, 'order payment ', o.payment.online, ' calc total ', total, ' total tips ', o.tips)
       }
     }
 
