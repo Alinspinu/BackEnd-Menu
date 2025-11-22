@@ -297,16 +297,60 @@ module.exports.updateReservation = async(req, res) => {
     }
 }
 
-module.exports.deleteReservation = async(req, res) => {
-    const {id} = req.query;
-    try{
-        await Reservation.findByIdAndDelete(id)
-        res.status(200).json({message: 'success'})
-    } catch(error){
-        console.log(error)
-        res.status(500).json(error)
+module.exports.deleteReservation = async (req, res) => {
+    const { id } = req.query;
+  
+    try {
+      const reservation = await Reservation.findById(id);
+  
+      if (!reservation) {
+        return res.status(404).json({ message: 'Reservation not found' });
+      }
+  
+      const year = new Date(reservation.date).getFullYear();
+      const date = new Date(year, 0, 1);
+  
+      const shedule = await ReservationSchedule.findOne({
+        locatie: reservation.locatie,
+        salePoint: reservation.salePoint,
+        'year.date': date
+      });
+  
+      if (!shedule) {
+        return res.status(404).json({ message: 'Schedule not found' });
+      }
+  
+      for (const m of shedule.year.months) {
+        for (const d of m.days) {
+          for (const h of d.hours) {
+            const index = h.reservations.findIndex(r =>
+              r.toString() === reservation._id.toString()
+            );
+  
+            if (index !== -1) {
+              h.people -= reservation.guests;
+              h.full = false;
+              d.people -= reservation.guests;
+              h.reservations.splice(index, 1);
+            }
+          }
+        }
+      }
+  
+      await Reservation.findByIdAndDelete(id);
+  
+      const savedShedule = await shedule.save();
+  
+      res.status(200).json({
+        message: 'Rezervarea a fost ștearsă cu succes și programul actualizat',
+        shedule: savedShedule
+      });
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error', error });
     }
-}
+  };
 
 
 
