@@ -49,10 +49,12 @@ const reservationSchema = new Schema({
         ref: 'SalePoint'
       },
 
-    resHour: {
+    resHour: [
+        {
         type: Schema.Types.ObjectId,
         ref: 'ResHour'
-    }
+        }
+    ] 
 
 }, {timestamps: true})
 
