@@ -129,7 +129,7 @@ module.exports.createReservationShedule = async (req, res) => {
               salePoint: point,
               locatie: loc,
               shedule: schedule._id,
-              label: `${String(hour).padStart(2, "0")}:00`,
+              label: `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`,
               availableTables: 0,
               bookedTables: 0,
               people: 0,
