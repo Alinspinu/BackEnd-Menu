@@ -352,19 +352,18 @@ module.exports.updateReservation = async(req, res) => {
                                 const next2 = d.hours[i + 2];
 
                                 if(next2){
-                                    const suposedLast = d.hours[i+2].reservations.find(r => r.toString() === reservation._id.toString())
-                                    if(suposedLast) {
-                                        suposedLast.people -= reservation.guests;
-                                        suposedLast.full = false;
-                                        suposedLast.reservations.splice(index, 1);
+                                    const suposedLast = next2.reservations.findIndex(r => r.toString() === reservation._id.toString())
+                                    if(suposedLast !== -1) {
+                                        next2.people -= reservation.guests;
+                                        next2.full = false;
+                                        next2.reservations.splice(suposedLast, 1);
                                     } else {
                                         if(next1){
-                                            const suposedLast = d.hours[i+1].reservations.find(r => r.toString() === reservation._id.toString())
-                                            if(suposedLast) {
-                                                console.log(suposedLast)
-                                                suposedLast.people -= reservation.guests;
-                                                suposedLast.full = false;
-                                                suposedLast.reservations.splice(index, 1);
+                                            const suposedLast = next1.reservations.findIndex(r => r.toString() === reservation._id.toString())
+                                            if(suposedLast !== -1) {
+                                                next1.people -= reservation.guests;
+                                                next1.full = false;
+                                                next1.reservations.splice(suposedLast, 1);
                                             } else{
                                                 h.people -= reservation.guests;
                                                 h.full = false;
