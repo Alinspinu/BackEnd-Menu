@@ -354,7 +354,7 @@ orderTrueSchema.post('save', async function (doc, next) {
             if (duplicates.length > 1) {
             
               const idsToDelete = duplicates.slice(1).map(d => d._id);
-              await mongoose.model('Order').deleteMany({ _id: { $in: idsToDelete } });
+              await mongoose.model('Order').deleteMany({ _id: { $in: idsToDelete}, salePoint: doc.salePoint });
               console.log(`Deleted ${idsToDelete.length} duplicate document(s) for soketId: ${doc.soketId}`);
             }
         }
