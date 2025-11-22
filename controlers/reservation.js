@@ -50,8 +50,29 @@ module.exports.getReservationShedule = async (req, res) => {
 module.exports.updateReservationShedule = async (req, res) => {
     const {shedule} = req.body
     try{
+
+            shedule.year.people = 0
+            shedule.year.bookedTables = 0
+
+        for (const m of shedule.year.months) {
+            m.people = 0
+            m.bookedTables = 0
+            for (const d of m.days) {
+                d.people = 0
+                d.bookedTables = 0
+              for (const h of d.hours) {
+                h.people = 0
+                m.bookedTables = 0
+                h.full = false;
+              }
+            }
+          }
+          
+
         const updatedShedule = await ReservationSchedule.findByIdAndUpdate(shedule._id, shedule, {new: true})
         res.status(200).json({shedule: updatedShedule, message: 'Modificarile au fost efectuate!'})
+
+
 
     } catch(error){
         console.log(error)
