@@ -474,14 +474,59 @@ module.exports.updateReservation = async(req, res) => {
     }
 }
 
+
+
+
+
+
 module.exports.deleteReservation = async (req, res) => {
     const { id } = req.query;
   
     try {
-      await Reservation.findByIdAndDelete(id);  
-      res.status(200).json({
-        message: 'Rezervarea a fost ștearsă cu succes și programul actualizat',
-      });
+      const reservation = await Reservation.findById(id).populate('resHour');
+  
+      if (!reservation) {
+        return res.status(404).json({ message: 'Rezervarea nu a fost găsită!' });
+      }
+  
+      let sheduleId;
+      const updates = [];
+  
+      for (const h of reservation.resHour) {
+        sheduleId = h.shedule;
+  
+        updates.push(
+          ResHour.findByIdAndUpdate(
+            h._id,
+            { $inc: { people: -reservation.guests }, $set: { full: false } },
+            { new: false }
+          )
+        );
+      }
+  
+      return Promise.all(updates)
+        .then(() => Reservation.findByIdAndDelete(id))
+        .then(() => {
+          return ReservationSchedule.findById(sheduleId)
+            .populate({
+              path: 'year.months',
+              populate: {
+                path: 'days',
+                populate: { path: 'hours' }
+              }
+            })
+            .lean();
+        })
+        .then(newShedule => {
+          res.status(200).json({
+            shedule: newShedule,
+            message: 'Rezervarea a fost ștearsă cu succes și programul actualizat'
+          });
+        })
+        .catch(error => {
+          console.error(error);
+          res.status(500).json({ message: 'Server error', error });
+        });
   
     } catch (error) {
       console.error(error);
