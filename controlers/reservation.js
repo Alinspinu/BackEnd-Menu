@@ -1,5 +1,5 @@
 const Reservation = require('../models/office/reservation')
-const {ReservationSchedule, ResMonths, ResDays, ResHours} = require('../models/office/reservation-shedule')
+const {ReservationSchedule, ResMonth, ResDays, ResHours} = require('../models/office/reservation-shedule')
 const User = require('../models/users/user')
 const Notification = require('../models/users/notification')
 const SalePoint = require('../models/utils/sale-point')
@@ -19,6 +19,7 @@ const webPush = require('web-push');
 
 
 const crypto = require('crypto');
+const { schedule } = require('node-cron')
 
 const SECRET = "dir6Yk-iw0m8h-ojstp3-esjndy-ejnd"; 
 const ALGO = "aes-256-ctr";
@@ -38,7 +39,7 @@ module.exports.getReservationShedule = async (req, res) => {
     try{
        const y = new Date(year)
         const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, 'year.date': y})
-                    .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours'}}})
+                    .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours'}}}).lean()
 
         res.status(200).json(shedule)
 
@@ -48,19 +49,48 @@ module.exports.getReservationShedule = async (req, res) => {
     }
 }
 
-module.exports.updateReservationShedule = async (req, res) => {
-    const {shedule} = req.body
-    try{          
+module.exports.updateReservationSheduleSettings = (req, res) => {
+    const { shedule, day } = req.body;
+  
+    // collect all update promises
+    const updates = [];
+  
+    shedule.months.forEach(m => {
+      m.days.forEach(d => {
+        d.hours.forEach(h => {
+          const hh = day.hours.find(hr => hr.label === h.label);
+          if (hh) {
+            updates.push(
+              ResHours.findByIdAndUpdate(
+                h._id,
+                {
+                  visible: hh.visible,
+                  avalableTables: hh.avalableTables,
+                  seats: hh.seats
+                },
+                { new: false }
+              )
+            );
+          }
+        });
+      });
+    });
+  
+    // run all updates in parallel
+    Promise.all(updates)
+      .then(() => ReservationSchedule.findById(shedule._id))
+      .then(newShedule => {
+        res.status(200).json({
+          shedule: newShedule,
+          message: 'Programul a fost actualizat'
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        res.status(500).json(error);
+      });
+  };
 
-        const updatedShedule = await ReservationSchedule.findByIdAndUpdate(shedule._id, shedule, {new: true})
-        res.status(200).json({shedule: updatedShedule, message: 'Modificarile au fost efectuate!'})
-
-    } catch(error){
-        console.log(error)
-        res.status(500).json(error)
-    }
-    
-}
 
 
 module.exports.createReservationShedule = async (req, res) => {
@@ -86,7 +116,7 @@ module.exports.createReservationShedule = async (req, res) => {
   
       for (let month = 0; month < 12; month++) {
   
-        const monthDoc = await ResMonths.create({
+        const monthDoc = await ResMonth.create({
           salePoint: point,
           locatie: loc,
           shedule: schedule._id,

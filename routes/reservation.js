@@ -18,7 +18,7 @@ router.route('/contact').post(resControlers.createContact)
 router.route('/shedule')
         .get(resControlers.getReservationShedule)
         .post(resControlers.createReservationShedule)
-        .put(resControlers.updateReservationShedule)
+        .put(resControlers.updateReservationSheduleSettings)
 
 router.route('/encript-url').post(resControlers.encriptURLObject)
 
