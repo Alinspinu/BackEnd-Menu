@@ -288,14 +288,132 @@ module.exports.getReservationById = async(req, res) => {
 
 module.exports.updateReservation = async(req, res) => {
     const {update, id} = req.body
-    try{
-        const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true}).populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}])
-        socket.emit('reservation', JSON.stringify(updatedReservation))
-        res.status(200).json(updatedReservation)
-    } catch(error){
-        console.log(error)
-        res.status(500).json(error)
+  
+    try {
+      const reservation = await Reservation.findById(id);
+  
+      if (!reservation) {
+        return res.status(404).json({ message: 'Reservation not found' });
+      }
+
+      let updatedReservation 
+
+      const resDate = new Date(reservation.date).getTime()
+      const updDate = new Date(update.date).getTime()
+
+      if(reservation.guests !== update.guest || resDate !== updDate){
+
+
+        const year = new Date(reservation.date).getFullYear();
+        const date = new Date(year, 0, 1);
+    
+        const shedule = await ReservationSchedule.findOne({
+          locatie: reservation.locatie,
+          salePoint: reservation.salePoint,
+          'year.date': date
+        });
+    
+        if (!shedule) {
+          return res.status(404).json({ message: 'Schedule not found' });
+        }
+
+        for (const m of shedule.year.months) {
+            for (const d of m.days) {
+                let foundfirst = false
+                d.hours.forEach((h, i) => {
+                    const index = h.reservations.findIndex(r =>
+                        r.toString() === reservation._id.toString()
+                    );
+                    if (index !== -1) {
+                        if(reservation.guests !== update.guests){
+                            const diference = reservation.guests - update.guests
+                            h.people -= diference;
+                            d.people -= diference;
+                            if(h.seats - h.people < 2){
+                                h.full = true
+                            } else {
+                                h.full = false
+                            }
+                        }
+                        const hourDate = new Date(h.start).getTime()
+                        if(resDate < hourDate && !foundfirst){
+                            if(i > 0){
+                                foundfirst = true
+                                const earlierHour = d.hours[i-1]
+                                earlierHour.reservations.push(id)
+                                earlierHour.people += reservation.guests
+                                if(earlierHour.seats - earlierHour.people < 2){
+                                    earlierHour.full = true
+                                } else {
+                                    earlierHour.full = false
+                                }
+
+                                const next1 = d.hours[i + 1];
+                                const next2 = d.hours[i + 2];
+
+                                if(next2){
+                                    const suposedLast = d.hours[i+2].reservations.find(r => r.toString() === reservation._id.toString())
+                                    if(suposedLast) {
+                                        suposedLast.people -= reservation.guests;
+                                        suposedLast.full = false;
+                                        suposedLast.reservations.splice(index, 1);
+                                    } else {
+                                        if(next1){
+                                            const suposedLast = d.hours[i+1].reservations.find(r => r.toString() === reservation._id.toString())
+                                            if(suposedLast) {
+                                                suposedLast.people -= reservation.guests;
+                                                suposedLast.full = false;
+                                                suposedLast.reservations.splice(index, 1);
+                                            } else{
+                                                h.people -= reservation.guests;
+                                                h.full = false;
+                                                h.reservations.splice(index, 1);
+                                            }
+                                        }
+                                    }
+                                }
+    
+                            }
+
+
+
+                        }
+                    }
+
+                })
+            }
+        }
+
+        const savedShedule = await shedule.save();
+        updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true});
+
+        res.status(200).json({
+            message: 'Rezervarea a fost modificata cu succeess cu succes și programul actualizat',
+            shedule: savedShedule,
+            reservation: updatedReservation
+          });
+      } else {
+        updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true});
+        res.status(200).json({
+            message: 'Rezervarea a fost modificata cu succeess',
+            shedule: undefined,
+            reservation: updatedReservation
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error', error });
     }
+
+
+    // try{
+    //     const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true}).populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}])
+    //     socket.emit('reservation', JSON.stringify(updatedReservation))
+    //     res.status(200).json(updatedReservation)
+    // } catch(error){
+    //     console.log(error)
+    //     res.status(500).json(error)
+    // }
 }
 
 module.exports.deleteReservation = async (req, res) => {
