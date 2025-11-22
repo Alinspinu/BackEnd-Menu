@@ -53,9 +53,7 @@ module.exports.getReservationShedule = async (req, res) => {
 module.exports.updateSheduleHours = async (req, res) => {
     const {hours, sheduleId} = req.body
     try{
-
         const updates = []
-
         for(let h of hours){
             updates.push(
                 ResHour.findByIdAndUpdate(
@@ -65,10 +63,8 @@ module.exports.updateSheduleHours = async (req, res) => {
                 )
               );
         }
-
         Promise.all(updates)
-        
-        .then(() => ReservationSchedule.findById(sheduleId))
+        .then(() => ReservationSchedule.findById(sheduleId)).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours'}}}).lean()
         .then(newShedule => {
           res.status(200).json({
             shedule: newShedule,
@@ -115,7 +111,7 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
   
     // run all updates in parallel
     Promise.all(updates)
-      .then(() => ReservationSchedule.findById(shedule._id))
+      .then(() => ReservationSchedule.findById(shedule._id)).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours'}}}).lean()
       .then(newShedule => {
         res.status(200).json({
           shedule: newShedule,
