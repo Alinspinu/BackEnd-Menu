@@ -361,6 +361,7 @@ module.exports.updateReservation = async(req, res) => {
                                         if(next1){
                                             const suposedLast = d.hours[i+1].reservations.find(r => r.toString() === reservation._id.toString())
                                             if(suposedLast) {
+                                                console.log(suposedLast)
                                                 suposedLast.people -= reservation.guests;
                                                 suposedLast.full = false;
                                                 suposedLast.reservations.splice(index, 1);
