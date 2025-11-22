@@ -55,7 +55,7 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
     // collect all update promises
     const updates = [];
   
-    shedule.months.forEach(m => {
+    shedule.year.months.forEach(m => {
       m.days.forEach(d => {
         d.hours.forEach(h => {
           const hh = day.hours.find(hr => hr.label === h.label);
