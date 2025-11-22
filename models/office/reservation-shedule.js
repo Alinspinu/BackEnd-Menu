@@ -22,86 +22,14 @@ const reservationSheduleSchema = new Schema({
             type: Number,
             default: 0
         },
-        people:  {
+    people:  {
             type: Number,
             default: 0
         },
         months: [
             {
-                date: {
-                    type: Date,
-                    required: true,
-                },
-                bookedTables:  {
-                    type: Number,
-                    default: 0
-                },
-                people:  {
-                    type: Number,
-                    default: 0
-                },
-
-                days: [
-                    {
-                        label: Number,
-                        date: {
-                            type: Date,
-                            required: true,
-                        },
-                        bookedTables:  {
-                            type: Number,
-                            default: 0
-                        },
-                        people:  {
-                            type: Number,
-                            default: 0
-                        },
-                        hours: [
-                            {
-                                label: String,
-                                avalableTables: {
-                                    type: Number,
-                                    default: 0
-                                },
-                                seats: {
-                                    type: Number,
-                                    default: 0
-                                },
-                                bookedTables:  {
-                                    type: Number,
-                                    default: 0
-                                },
-                                people:  {
-                                    type: Number,
-                                    default: 0
-                                },
-                                full: {
-                                   type: Boolean,
-                                   default: false   
-                                },
-                                start: {
-                                    type: Date,
-                                    required: true
-                                }, 
-                                end: {
-                                    type: Date,
-                                    requred: true
-                                },
-                                visible: {
-                                    type: Boolean
-                                },
-                                reservations: [
-                                    {
-                                        type: Schema.Types.ObjectId,
-                                        ref: 'Reservation' 
-                                    }
-                                ]
-                            }
-                            
-                        ],
-                
-                    }
-                ],
+                type: Schema.Types.ObjectId,
+                ref: 'ResMonth' 
             }
         ],
     }
@@ -110,5 +38,150 @@ const reservationSheduleSchema = new Schema({
 
 
 
+const monthSchema = new Schema({
+        date: {
+            type: Date,
+            required: true,
+        },
+        bookedTables:  {
+            type: Number,
+            default: 0
+        },
+        people:  {
+            type: Number,
+            default: 0
+        },
 
-module.exports = mongoose.model("ReservationSchedule", reservationSheduleSchema);
+        salePoint:{
+            type: Schema.Types.ObjectId,
+            ref: 'SalePoint'
+        },
+        shedule: {
+            type: Schema.Types.ObjectId,
+            ref: 'ReservationSchedule'
+        },
+        locatie: {
+            type: Schema.Types.ObjectId,
+            ref: 'Locatie'
+        },
+
+        days: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'ResDay' 
+            }
+        ],
+    
+})
+
+
+const daySchema = new Schema(            {
+    label: Number,
+    date: {
+        type: Date,
+        required: true,
+    },
+    bookedTables:  {
+        type: Number,
+        default: 0
+    },
+    people:  {
+        type: Number,
+        default: 0
+    },
+
+    salePoint:{
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+    },
+
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    },
+
+    hours: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'ResHour' 
+        }
+    ],
+
+    shedule: {
+        type: Schema.Types.ObjectId,
+        ref: 'ReservationSchedule'
+    }
+
+})
+
+
+const hourSchema = new Schema({
+    salePoint:{
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+    },
+
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    },
+    label: String,
+    avalableTables: {
+        type: Number,
+        default: 0
+    },
+    seats: {
+        type: Number,
+        default: 0
+    },
+    bookedTables:  {
+        type: Number,
+        default: 0
+    },
+    people:  {
+        type: Number,
+        default: 0
+    },
+    full: {
+       type: Boolean,
+       default: false   
+    },
+    start: {
+        type: Date,
+        required: true
+    }, 
+    end: {
+        type: Date,
+        requred: true
+    },
+    visible: {
+        type: Boolean
+    },
+
+    shedule: {
+        type: Schema.Types.ObjectId,
+        ref: 'ReservationSchedule'
+    },
+
+    reservations: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Reservation' 
+        }
+    ]
+})
+
+
+
+
+const ResHours = mongoose.model('ResHour', hourSchema);
+const ResDays = mongoose.model('ResDay', daySchema);
+const ResMonths = mongoose.model('ResMonth', monthSchema);
+const ReservationSchedule = mongoose.model('ReservationSchedule', reservationSheduleSchema);
+
+module.exports = {
+  ResHours,
+  ResDays,
+  ResMonths,
+  ReservationSchedule
+};

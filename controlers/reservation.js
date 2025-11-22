@@ -1,5 +1,5 @@
 const Reservation = require('../models/office/reservation')
-const ReservationSchedule = require('../models/office/reservation-shedule')
+const {ReservationSchedule, ResMonths, ResDays, ResHours} = require('../models/office/reservation-shedule')
 const User = require('../models/users/user')
 const Notification = require('../models/users/notification')
 const SalePoint = require('../models/utils/sale-point')
@@ -37,7 +37,7 @@ module.exports.getReservationShedule = async (req, res) => {
     const {loc, point, year} = req.query
     try{
        const y = new Date(year)
-        const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, 'year.date': y}).populate({path: 'year.months.days.hours.reservations', select: 'date'}).lean()
+        const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, 'year.date': y})
 
         res.status(200).json(shedule)
 
@@ -61,86 +61,194 @@ module.exports.updateReservationShedule = async (req, res) => {
     
 }
 
+
 module.exports.createReservationShedule = async (req, res) => {
-    const {point, loc, year} = req.body
-    try{
-        const yearData = generateYearData(year);
-
-        const schedule = new ReservationSchedule({
-          salePoint: point,
-          locatie: loc,
-          year: yearData
-        });
-      
-        const savedShedule =  await schedule.save();
-
-        res.status(200).json({shedule: savedShedule, message: `Calendarul de rezervări pentru anul ${year} a fost creat!`})
-    } catch(error){
-        console.log(error)
-        res.status(500).json(error)
-    }
-}
-
-
-  function generateYearData(yearNumber = 2025) {
-    const yearDate = new Date(yearNumber, 0, 1);
+    const { point, loc, year } = req.body;
   
-    const months = [];
-  
-    for (let month = 0; month < 12; month++) {
-      const monthDate = new Date(yearNumber, month, 1);
-      const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
-  
-      const days = [];
-  
-      for (let day = 1; day <= daysInMonth; day++) {
-  
-        // Create 24 hourly slots
-        const hours = [];
-        for (let hour = 0; hour < 24; hour++) {
-          const start = new Date(yearNumber, month, day, hour, 0);
-          const end = new Date(yearNumber, month, day, hour + 1, 0);
-  
-          const label =
-            `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`;
-  
-          hours.push({
-            label,
-            avalableTables: 0,
-            bookedTables: 0,
-            people: 0,
-            start,
-            end,
-            full: false,
-            visible: true,
-            reservations: []
-          });
-        }
-  
-        days.push({
-          dayOfTheMonth: day,
-          date: new Date(yearNumber, month, day),
+    try {
+      // 1️⃣ Create main schedule
+      const schedule = await ReservationSchedule.create({
+        salePoint: point,
+        locatie: loc,
+        year: {
+          date: new Date(year, 0, 1),
           bookedTables: 0,
           people: 0,
-          hours
+          months: []
+        }
+      });
+  
+      const yearNumber = parseInt(year);
+  
+      // 2️⃣ CREATE MONTHS
+      const monthIds = [];
+  
+      for (let month = 0; month < 12; month++) {
+  
+        const monthDoc = await ResMonths.create({
+          salePoint: point,
+          locatie: loc,
+          shedule: schedule._id,
+          date: new Date(yearNumber, month, 1),
+          bookedTables: 0,
+          people: 0,
+          days: []
         });
+  
+        monthIds.push(monthDoc._id);
+  
+        const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
+        const dayIds = [];
+  
+        // 3️⃣ CREATE DAYS
+        for (let day = 1; day <= daysInMonth; day++) {
+  
+          const dayDoc = await ResDays.create({
+            salePoint: point,
+            locatie: loc,
+            shedule: schedule._id,
+            label: day,
+            date: new Date(yearNumber, month, day),
+            bookedTables: 0,
+            people: 0,
+            hours: []
+          });
+  
+          dayIds.push(dayDoc._id);
+  
+          const hourIds = [];
+  
+          // 4️⃣ CREATE HOURS
+          for (let hour = 0; hour < 24; hour++) {
+  
+            const start = new Date(yearNumber, month, day, hour, 0);
+            const end = new Date(yearNumber, month, day, hour + 1, 0);
+  
+            const hourDoc = await ResHours.create({
+              salePoint: point,
+              locatie: loc,
+              shedule: schedule._id,
+              label: `${String(hour).padStart(2, "0")}:00`,
+              availableTables: 0,
+              bookedTables: 0,
+              people: 0,
+              full: false,
+              visible: true,
+              start,
+              end,
+              reservations: []
+            });
+  
+            hourIds.push(hourDoc._id);
+          }
+  
+          // attach hour IDs to day
+          dayDoc.hours = hourIds;
+          await dayDoc.save();
+        }
+  
+        // attach day IDs to month
+        monthDoc.days = dayIds;
+        await monthDoc.save();
       }
   
-      months.push({
-        date: monthDate,
-        bookedTables: 0,
-        people: 0,
-        days
-      });
-    }
+      // 5️⃣ attach month IDs to schedule
+      schedule.year.months = monthIds;
+      const savedSchedule = await schedule.save();
   
-    return {
-      date: yearDate,
-      bookedTables: 0,
-      people: 0,
-      months
-    };
-  }
+      return res.status(200).json({
+        shedule: savedSchedule,
+        message: `Calendarul de rezervări pentru anul ${year} a fost creat!`
+      });
+  
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Server error", error });
+    }
+  };
+
+
+
+// module.exports.createReservationShedule = async (req, res) => {
+//     const {point, loc, year} = req.body
+//     try{
+//         const yearData = generateYearData(year);
+
+//         const schedule = new ReservationSchedule({
+//           salePoint: point,
+//           locatie: loc,
+//           year: yearData
+//         });
+      
+//         const savedShedule =  await schedule.save();
+
+//         res.status(200).json({shedule: savedShedule, message: `Calendarul de rezervări pentru anul ${year} a fost creat!`})
+//     } catch(error){
+//         console.log(error)
+//         res.status(500).json(error)
+//     }
+// }
+
+
+//   function generateYearData(yearNumber = 2025) {
+//     const yearDate = new Date(yearNumber, 0, 1);
+  
+//     const months = [];
+  
+//     for (let month = 0; month < 12; month++) {
+//       const monthDate = new Date(yearNumber, month, 1);
+//       const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
+  
+//       const days = [];
+  
+//       for (let day = 1; day <= daysInMonth; day++) {
+  
+//         // Create 24 hourly slots
+//         const hours = [];
+//         for (let hour = 0; hour < 24; hour++) {
+//           const start = new Date(yearNumber, month, day, hour, 0);
+//           const end = new Date(yearNumber, month, day, hour + 1, 0);
+  
+//           const label =
+//             `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`;
+  
+//           hours.push({
+//             label,
+//             avalableTables: 0,
+//             bookedTables: 0,
+//             people: 0,
+//             start,
+//             end,
+//             full: false,
+//             visible: true,
+//             reservations: []
+//           });
+//         }
+  
+//         days.push({
+//           dayOfTheMonth: day,
+//           date: new Date(yearNumber, month, day),
+//           bookedTables: 0,
+//           people: 0,
+//           hours
+//         });
+//       }
+  
+//       months.push({
+//         date: monthDate,
+//         bookedTables: 0,
+//         people: 0,
+//         days
+//       });
+//     }
+  
+//     return {
+//       date: yearDate,
+//       bookedTables: 0,
+//       people: 0,
+//       months
+//     };
+//   }
 
 
   module.exports.encriptURLObject = async (req, res) => {
@@ -288,181 +396,23 @@ module.exports.getReservationById = async(req, res) => {
 
 module.exports.updateReservation = async(req, res) => {
     const {update, id} = req.body
-  
-    try {
-      const reservation = await Reservation.findById(id);
-  
-      if (!reservation) {
-        return res.status(404).json({ message: 'Reservation not found' });
-      }
-
-      let updatedReservation 
-
-      const resDate = new Date(reservation.date).getTime()
-      const updDate = new Date(update.date).getTime()
-
-      if(reservation.guests !== update.guest || resDate !== updDate){
-
-
-        const year = new Date(reservation.date).getFullYear();
-        const date = new Date(year, 0, 1);
-    
-        const shedule = await ReservationSchedule.findOne({
-          locatie: reservation.locatie,
-          salePoint: reservation.salePoint,
-          'year.date': date
-        });
-    
-        if (!shedule) {
-          return res.status(404).json({ message: 'Schedule not found' });
-        }
-
-        for (const m of shedule.year.months) {
-            for (const d of m.days) {
-                let foundfirst = false
-                d.hours.forEach((h, i) => {
-                    const index = h.reservations.findIndex(r =>
-                        r.toString() === reservation._id.toString()
-                    );
-                    if (index !== -1) {
-                        if(reservation.guests !== update.guests){
-                            const diference = reservation.guests - update.guests
-                            h.people -= diference;
-                            d.people -= diference;
-                            if(h.seats - h.people < 2){
-                                h.full = true
-                            } else {
-                                h.full = false
-                            }
-                        }
-                        const hourDate = new Date(h.start).getTime()
-                        if(resDate < hourDate && !foundfirst){
-                            if(i > 0){
-                                foundfirst = true
-                                const earlierHour = d.hours[i-1]
-                                earlierHour.reservations.push(id)
-                                earlierHour.people += reservation.guests
-                                if(earlierHour.seats - earlierHour.people < 2){
-                                    earlierHour.full = true
-                                } else {
-                                    earlierHour.full = false
-                                }
-
-                                const next1 = d.hours[i + 1];
-                                const next2 = d.hours[i + 2];
-
-                                if(next2){
-                                    const suposedLast = next2.reservations.findIndex(r => r.toString() === reservation._id.toString())
-                                    if(suposedLast !== -1) {
-                                        next2.people -= reservation.guests;
-                                        next2.full = false;
-                                        next2.reservations.splice(suposedLast, 1);
-                                    } else {
-                                        if(next1){
-                                            const suposedLast = next1.reservations.findIndex(r => r.toString() === reservation._id.toString())
-                                            if(suposedLast !== -1) {
-                                                next1.people -= reservation.guests;
-                                                next1.full = false;
-                                                next1.reservations.splice(suposedLast, 1);
-                                            } else{
-                                                h.people -= reservation.guests;
-                                                h.full = false;
-                                                h.reservations.splice(index, 1);
-                                            }
-                                        }
-                                    }
-                                }
-    
-                            }
-
-
-
-                        }
-                    }
-
-                })
-            }
-        }
-
-        const savedShedule = await shedule.save();
-        updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true});
-
-        res.status(200).json({
-            message: 'Rezervarea a fost modificata cu succeess cu succes și programul actualizat',
-            shedule: savedShedule,
-            reservation: updatedReservation
-          });
-      } else {
-        updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true});
-        res.status(200).json({
-            message: 'Rezervarea a fost modificata cu succeess',
-            shedule: undefined,
-            reservation: updatedReservation
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error', error });
+    try{
+        const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true}).populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}])
+        socket.emit('reservation', JSON.stringify(updatedReservation))
+        res.status(200).json(updatedReservation)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
     }
-
-
-    // try{
-    //     const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true}).populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}])
-    //     socket.emit('reservation', JSON.stringify(updatedReservation))
-    //     res.status(200).json(updatedReservation)
-    // } catch(error){
-    //     console.log(error)
-    //     res.status(500).json(error)
-    // }
 }
 
 module.exports.deleteReservation = async (req, res) => {
     const { id } = req.query;
   
     try {
-      const reservation = await Reservation.findById(id);
-  
-      if (!reservation) {
-        return res.status(404).json({ message: 'Reservation not found' });
-      }
-  
-      const year = new Date(reservation.date).getFullYear();
-      const date = new Date(year, 0, 1);
-  
-      const shedule = await ReservationSchedule.findOne({
-        locatie: reservation.locatie,
-        salePoint: reservation.salePoint,
-        'year.date': date
-      });
-  
-      if (!shedule) {
-        return res.status(404).json({ message: 'Schedule not found' });
-      }
-  
-      for (const m of shedule.year.months) {
-        for (const d of m.days) {
-          for (const h of d.hours) {
-            const index = h.reservations.findIndex(r =>
-              r.toString() === reservation._id.toString()
-            );
-  
-            if (index !== -1) {
-              h.people -= reservation.guests;
-              h.full = false;
-              d.people -= reservation.guests;
-              h.reservations.splice(index, 1);
-            }
-          }
-        }
-      }
-  
-      await Reservation.findByIdAndDelete(id);
-  
-      const savedShedule = await shedule.save();
-  
+      await Reservation.findByIdAndDelete(id);  
       res.status(200).json({
         message: 'Rezervarea a fost ștearsă cu succes și programul actualizat',
-        shedule: savedShedule
       });
   
     } catch (error) {
