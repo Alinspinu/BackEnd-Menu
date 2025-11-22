@@ -64,7 +64,7 @@ module.exports.updateSheduleHours = async (req, res) => {
               );
         }
         Promise.all(updates)
-        .then(() => ReservationSchedule.findById(sheduleId)).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours'}}}).lean()
+        .then(() => ReservationSchedule.findById(sheduleId).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours'}}}).lean())
         .then(newShedule => {
           res.status(200).json({
             shedule: newShedule,
@@ -111,7 +111,7 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
   
     // run all updates in parallel
     Promise.all(updates)
-      .then(() => ReservationSchedule.findById(shedule._id)).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours'}}}).lean()
+      .then(() => ReservationSchedule.findById(shedule._id).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours'}}}).lean())
       .then(newShedule => {
         res.status(200).json({
           shedule: newShedule,
