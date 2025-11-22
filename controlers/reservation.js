@@ -1,5 +1,5 @@
 const Reservation = require('../models/office/reservation')
-const {ReservationSchedule, ResMonth, ResDays, ResHours} = require('../models/office/reservation-shedule')
+const {ReservationSchedule, ResMonth, ResDays, ResHour} = require('../models/office/reservation-shedule')
 const User = require('../models/users/user')
 const Notification = require('../models/users/notification')
 const SalePoint = require('../models/utils/sale-point')
@@ -49,6 +49,43 @@ module.exports.getReservationShedule = async (req, res) => {
     }
 }
 
+
+module.exports.updateSheduleHours = async (req, res) => {
+    const {hours, sheduleId} = req.body
+    try{
+
+        const updates = []
+
+        for(let h of hours){
+            updates.push(
+                ResHour.findByIdAndUpdate(
+                  h._id,
+                  h,
+                  { new: false }
+                )
+              );
+        }
+
+        Promise.all(updates)
+        
+        .then(() => ReservationSchedule.findById(sheduleId))
+        .then(newShedule => {
+          res.status(200).json({
+            shedule: newShedule,
+            message: 'Programul a fost actualizat'
+          });
+        })
+        .catch(error => {
+          console.error(error);
+          res.status(500).json(error);
+        });
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+} 
+
 module.exports.updateReservationSheduleSettings = (req, res) => {
     const { shedule, day } = req.body;
   
@@ -61,7 +98,7 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
           const hh = day.hours.find(hr => hr.label === h.label);
           if (hh) {
             updates.push(
-              ResHours.findByIdAndUpdate(
+              ResHour.findByIdAndUpdate(
                 h._id,
                 {
                   visible: hh.visible,
@@ -155,7 +192,7 @@ module.exports.createReservationShedule = async (req, res) => {
             const start = new Date(yearNumber, month, day, hour, 0);
             const end = new Date(yearNumber, month, day, hour + 1, 0);
   
-            const hourDoc = await ResHours.create({
+            const hourDoc = await ResHour.create({
               salePoint: point,
               locatie: loc,
               shedule: schedule._id,

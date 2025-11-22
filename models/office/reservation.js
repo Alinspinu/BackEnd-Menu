@@ -18,7 +18,7 @@ const reservationSchema = new Schema({
         name: {
             type: String,
             required: true
-        },
+        }, 
         email: {
             type: String
         },
@@ -47,7 +47,12 @@ const reservationSchema = new Schema({
     salePoint: {
         type: Schema.Types.ObjectId,
         ref: 'SalePoint'
-      }
+      },
+
+    resHour: {
+        type: Schema.Types.ObjectId,
+        ref: 'ResHour'
+    }
 
 }, {timestamps: true})
 

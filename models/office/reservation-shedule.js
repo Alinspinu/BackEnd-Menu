@@ -174,14 +174,14 @@ const hourSchema = new Schema({
 
 
 
-const ResHours = mongoose.model('ResHour', hourSchema);
+const ResHour = mongoose.model('ResHour', hourSchema);
 const ResDays = mongoose.model('ResDay', daySchema);
-const ResMonths = mongoose.model('ResMonth', monthSchema);
+const ResMonth = mongoose.model('ResMonth', monthSchema);
 const ReservationSchedule = mongoose.model('ReservationSchedule', reservationSheduleSchema);
 
 module.exports = {
-  ResHours,
+  ResHour,
   ResDays,
-  ResMonths,
+  ResMonth,
   ReservationSchedule
 };
