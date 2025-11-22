@@ -349,7 +349,7 @@ orderTrueSchema.post('save', async function (doc, next) {
     try {
         if(doc.soketId){
 
-            const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId });
+            const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId, salePoint: doc.salePoint });
             console.log('duplicate orders', duplicates.length)
             if (duplicates.length > 1) {
             
