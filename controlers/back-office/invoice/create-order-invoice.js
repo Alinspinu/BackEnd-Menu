@@ -132,23 +132,9 @@ function createOrderInvoice(order, customer, supplier, unload) {
   }
 
 
-  // invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
-  //   const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
-  //   if(existingRate){
-  //     existingRate.taxable += p.totalNoVat
-  //     existingRate.tax += p.total
-  //   } else {
-  //     invoice.vatGroups.push({rate: p.vatPrecent, tax: p.total, taxable: p.totalNoVat})
-  //   }
-  //   return sum + (p.totalNoVat || 0)
-  // }, 0)
   
   invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
 
-    // if (p.name === 'Bacsis' || p.name === 'SGR - garantie ambalaj') {
-    //   // still add to total, but skip VAT group
-    //   return sum + p.totalNoVat
-    // }
     const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
   
     const taxable = p.totalNoVat
@@ -177,18 +163,13 @@ function createOrderInvoice(order, customer, supplier, unload) {
     v.tax = round(v.tax)
   })
 
-  // invoice.vatGroups.forEach(v => {
-  //   v.tax = round(v.tax - v.taxable)
-  //   v.taxable = round(v.taxable)
-  // })
+
 
 
   invoice.vatAmount = round(
     invoice.vatGroups.reduce((sum, v) => sum + v.tax, 0)
   )
 
-  // invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
-  console.log(invoice)
   return invoice
 }
 
