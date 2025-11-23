@@ -139,19 +139,15 @@ if(productsCount <= 30){
   firstChunk = 28
 }
 
-if(productsCount > 30 && productsCount <= 60){
-  firstChunk = 30
+if(productsCount > 30 && productsCount <= 80){
+  firstChunk = 38
   restChunks = 54
 }
 
-// if(productsCount > 41 && productsCount <= 60){
-//   firstChunk = 30
-//   restChunks = 54
-// }
 
-if(productsCount > 60){
+if(productsCount > 80){
   secondIndex = 41
-  firstChunk = 41
+  firstChunk = 38
   restChunks = 54
 }
 
