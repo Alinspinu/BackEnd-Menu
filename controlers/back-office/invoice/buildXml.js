@@ -160,6 +160,46 @@ function buildEFacturaHeaderXML(invoice, date) {
     // });
 
 
+    // invoice.products.forEach((p, i) => {
+    //   const line = doc.ele('cac:InvoiceLine');
+    
+    //   line.ele('cbc:ID').txt((i + 1).toString());
+    //   line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt(p.quantity);
+    //   line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(p.totalNoVat);
+    
+    //   if (p.discount && p.discount.value > 0) {
+    //     line.ele('cac:AllowanceCharge')
+    //       .ele('cbc:ChargeIndicator').txt('false').up()
+    //       .ele('cbc:AllowanceChargeReasonCode').txt(p.discount.reasonCode).up()
+    //       .ele('cbc:AllowanceChargeReason').txt(p.discount.reason).up()
+    //       .ele('cbc:MultiplierFactorNumeric').txt(p.discount.precent).up()
+    //       .ele('cbc:Amount', { currencyID: invoice.currencyId }).txt(p.discount.value);
+    //   }
+    
+    //   const taxCategory = line.ele('cac:Item')
+    //     .ele('cbc:Name').txt(p.name).up()
+    //     .ele('cac:ClassifiedTaxCategory');
+    
+    //   if (p.name === 'Bacsis') {
+    //     taxCategory
+    //       .ele('cbc:ID').txt('Z').up()
+    //       .ele('cbc:Percent').txt('0').up()
+    //       .ele('cbc:TaxExemptionReasonCode').txt('VATEX-TS').up()
+    //       .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+    //   } else {
+    //     taxCategory
+    //       .ele('cbc:ID').txt('S').up()
+    //       .ele('cbc:Percent').txt(p.vatPrecent).up()
+    //       .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+    //   }
+    
+    //   line.ele('cac:Price')
+    //     .ele('cbc:PriceAmount', { currencyID: invoice.currencyId }).txt(p.price);
+    // });
+
+
+
+
     invoice.products.forEach((p, i) => {
       const line = doc.ele('cac:InvoiceLine');
     
@@ -167,6 +207,7 @@ function buildEFacturaHeaderXML(invoice, date) {
       line.ele('cbc:InvoicedQuantity', { unitCode: p.unitCode }).txt(p.quantity);
       line.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(p.totalNoVat);
     
+      // ✅ discount stays only on the line — not in price
       if (p.discount && p.discount.value > 0) {
         line.ele('cac:AllowanceCharge')
           .ele('cbc:ChargeIndicator').txt('false').up()
@@ -176,16 +217,28 @@ function buildEFacturaHeaderXML(invoice, date) {
           .ele('cbc:Amount', { currencyID: invoice.currencyId }).txt(p.discount.value);
       }
     
+      // ✅ ITEM + TAX
       const taxCategory = line.ele('cac:Item')
         .ele('cbc:Name').txt(p.name).up()
         .ele('cac:ClassifiedTaxCategory');
     
+      // ✅ TIP (Bacșiș) → zero VAT & exempt reason
       if (p.name === 'Bacsis') {
         taxCategory
           .ele('cbc:ID').txt('Z').up()
           .ele('cbc:Percent').txt('0').up()
           .ele('cbc:TaxExemptionReasonCode').txt('VATEX-TS').up()
           .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+    
+      // ✅ SGR (garantie ambalaj) → zero VAT & different reason
+      } else if (p.name === 'SGR - garantie ambalaj') {
+        taxCategory
+          .ele('cbc:ID').txt('Z').up()
+          .ele('cbc:Percent').txt('0').up()
+          .ele('cbc:TaxExemptionReasonCode').txt('VATEX-SGR').up()
+          .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+    
+      // ✅ normal taxable products
       } else {
         taxCategory
           .ele('cbc:ID').txt('S').up()
@@ -193,6 +246,7 @@ function buildEFacturaHeaderXML(invoice, date) {
           .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
       }
     
+      // ✅ price BEFORE discount & BEFORE VAT (BT-146)
       line.ele('cac:Price')
         .ele('cbc:PriceAmount', { currencyID: invoice.currencyId }).txt(p.price);
     });
