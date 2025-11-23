@@ -227,7 +227,6 @@ function buildEFacturaHeaderXML(invoice, date) {
         taxCategory
           .ele('cbc:ID').txt('Z').up()
           .ele('cbc:Percent').txt('0').up()
-          .ele('cbc:TaxExemptionReasonCode').txt('VATEX-TS').up()
           .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
     
       // ✅ SGR (garantie ambalaj) → zero VAT & different reason
@@ -235,7 +234,6 @@ function buildEFacturaHeaderXML(invoice, date) {
         taxCategory
           .ele('cbc:ID').txt('Z').up()
           .ele('cbc:Percent').txt('0').up()
-          .ele('cbc:TaxExemptionReasonCode').txt('VATEX-SGR').up()
           .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
     
       // ✅ normal taxable products
