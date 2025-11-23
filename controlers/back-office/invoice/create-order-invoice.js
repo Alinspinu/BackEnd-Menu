@@ -145,11 +145,10 @@ function createOrderInvoice(order, customer, supplier, unload) {
   
   invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
 
-    if (p.name === 'Bacsis' || p.name === 'SGR - garantie ambalaj') {
-      // still add to total, but skip VAT group
-      return sum + p.totalNoVat
-    }
-
+    // if (p.name === 'Bacsis' || p.name === 'SGR - garantie ambalaj') {
+    //   // still add to total, but skip VAT group
+    //   return sum + p.totalNoVat
+    // }
     const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
   
     const taxable = p.totalNoVat
