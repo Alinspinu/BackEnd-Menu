@@ -57,7 +57,8 @@ function createOrderInvoice(order, customer, supplier, unload) {
 
 
     products: order.products.map(p => {
-      let price = p.price;
+      let sgrTax = p.sgrTax ? 0.5 : 0
+      let price = p.price - sgrTax;
       const vatRate = 1 + (p.tva / 100);
       const priceNoVat = round(price / vatRate);
       let product = {
@@ -66,11 +67,11 @@ function createOrderInvoice(order, customer, supplier, unload) {
         unitCode: 'H87',
         price: priceNoVat,
         vatPrecent: p.tva,
-        total: +p.total-p.discount, 
+        total: +p.total-p.discount - (sgrTax * p.quantity), 
         totalNoVat: round(priceNoVat * p.quantity),
         productId: p._id,
         subProductId: p.subProductId,
-        ings: p.ings
+        ings: p.ings,
       };
       if(p.discount > 0){
         const discount = p.discount;
@@ -84,7 +85,7 @@ function createOrderInvoice(order, customer, supplier, unload) {
       }
       return product
     }),
-
+ 
     vatAmount: 0,
     vatGroups: [],
     taxExclusiveAmount: 0,
@@ -97,6 +98,40 @@ function createOrderInvoice(order, customer, supplier, unload) {
     locatie: order.locatie,
     salePoint: order.salePoint
   }
+
+
+  order.products
+  .filter(p => p.sgrTax)
+  .forEach(p => {
+    invoice.products.push({
+      name: 'SGR - garantie ambalaj',
+      quantity: p.quantity,
+      unitCode: 'H87',
+      price: 0.5,
+      vatPrecent: 0,          // ✅ zero VAT
+      total: round(0.5 * p.quantity),
+      totalNoVat: round(0.5 * p.quantity),
+      ings: []
+    })
+  })
+
+  
+
+  if(order.tips > 0){
+    const tipsProduct = {
+      name: 'Bacsis',
+      quantity: 1,
+      unitCode: 'H87',
+      price: order.tips,
+      vatPrecent: 0,
+      total: order.tips, 
+      totalNoVat: order.tips,
+      ings: []
+    }
+    invoice.products.push(tipsProduct)
+  }
+
+
   // invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
   //   const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
   //   if(existingRate){
@@ -109,6 +144,12 @@ function createOrderInvoice(order, customer, supplier, unload) {
   // }, 0)
   
   invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
+
+    if (p.name === 'Bacsis' || p.name === 'SGR - garantie ambalaj') {
+      // still add to total, but skip VAT group
+      return sum + p.totalNoVat
+    }
+
     const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
   
     const taxable = p.totalNoVat
@@ -124,6 +165,7 @@ function createOrderInvoice(order, customer, supplier, unload) {
         tax
       })
     }
+
   
     return sum + taxable
   }, 0)
