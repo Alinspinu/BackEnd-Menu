@@ -57,7 +57,7 @@ function createOrderInvoice(order, customer, supplier, unload) {
 
 
     products: order.products.map(p => {
-      const price = p.price;
+      let price = p.price;
       const vatRate = 1 + (p.tva / 100);
       const priceNoVat = round(price / vatRate);
       let product = {
@@ -97,25 +97,56 @@ function createOrderInvoice(order, customer, supplier, unload) {
     locatie: order.locatie,
     salePoint: order.salePoint
   }
+  // invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
+  //   const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
+  //   if(existingRate){
+  //     existingRate.taxable += p.totalNoVat
+  //     existingRate.tax += p.total
+  //   } else {
+  //     invoice.vatGroups.push({rate: p.vatPrecent, tax: p.total, taxable: p.totalNoVat})
+  //   }
+  //   return sum + (p.totalNoVat || 0)
+  // }, 0)
+  
   invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
     const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
-    if(existingRate){
-      existingRate.taxable += p.totalNoVat
-      existingRate.tax += p.total
+  
+    const taxable = p.totalNoVat
+    const vat = round(p.total - p.totalNoVat)
+  
+    if (existingRate) {
+      existingRate.taxable += taxable
+      existingRate.vat += vat
     } else {
-      invoice.vatGroups.push({rate: p.vatPrecent, tax: p.total, taxable: p.totalNoVat})
+      invoice.vatGroups.push({
+        rate: p.vatPrecent,
+        taxable,
+        vat
+      })
     }
-    return sum + (p.totalNoVat || 0)
+  
+    return sum + taxable
   }, 0)
 
   invoice.taxExclusiveAmount = round(invoice.taxExclusiveAmount)
 
+  // invoice.vatGroups.forEach(v => {
+  //   v.tax = round(v.tax - v.taxable)
+  //   v.taxable = round(v.taxable)
+  // })
+
   invoice.vatGroups.forEach(v => {
-    v.tax = round(v.tax - v.taxable)
     v.taxable = round(v.taxable)
+    v.vat = round(v.vat)
   })
+
+  invoice.vatAmount = round(
+    invoice.vatGroups.reduce((sum, v) => sum + v.vat, 0)
+  )
+
+  console.log(invoice)
   
-  invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
+  // invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
   return invoice
 }
 
