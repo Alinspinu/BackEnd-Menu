@@ -13,7 +13,8 @@ const {sendReservationEmail, sendAdminMessage} = require('../utils/mail')
 
 
 const { io } = require('socket.io-client');
-const socket = io("https://socket.flowmanager.ro", {
+const socket = io("https://flowmanager.ro", {
+  path: '/socket.io/',
   transports: ["websocket"]
 });
 
@@ -25,7 +26,6 @@ const webPush = require('web-push');
 
 
 const crypto = require('crypto');
-const { schedule } = require('node-cron')
 
 const SECRET = "dir6Yk-iw0m8h-ojstp3-esjndy-ejnd"; 
 const ALGO = "aes-256-ctr";
