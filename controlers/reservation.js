@@ -125,7 +125,7 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
         })
       .then(newShedule => {
         console.log(newShedule)
-        socket.emit('reservationShedule', JSON.stringify(newShedule))
+        socket.emit('reservationShedule', JSON.stringify(newShedule._id))
         res.status(200).json({
           shedule: newShedule,
           message: 'Programul a fost actualizat'
