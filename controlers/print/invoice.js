@@ -133,7 +133,7 @@ let rowHeigth = 12
 
 let firstChunk = 0
 let restChunks = 0
-let secondIndex = 30
+let secondIndex = 36
 
 if(productsCount <= 30){
   firstChunk = 28
@@ -146,7 +146,6 @@ if(productsCount > 30 && productsCount <= 80){
 
 
 if(productsCount > 80){
-  secondIndex = 41
   firstChunk = 36
   restChunks = 54
 }
