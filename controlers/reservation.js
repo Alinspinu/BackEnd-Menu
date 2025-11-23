@@ -12,8 +12,14 @@ const {sendReservationEmail, sendAdminMessage} = require('../utils/mail')
 
 
 
-const io = require('socket.io-client')
-const socket = io("https://socket.flowmanager.ro")
+const { io } = require('socket.io-client');
+const socket = io("https://socket.flowmanager.ro", {
+  transports: ["websocket"]
+});
+
+socket.on("connect", () => {
+  console.log("Connected to external socket server:", socket.id);
+});
 
 const webPush = require('web-push');
 
