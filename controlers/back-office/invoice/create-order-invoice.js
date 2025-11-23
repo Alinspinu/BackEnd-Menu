@@ -130,23 +130,21 @@ function createOrderInvoice(order, customer, supplier, unload) {
 
   invoice.taxExclusiveAmount = round(invoice.taxExclusiveAmount)
 
-  // invoice.vatGroups.forEach(v => {
-  //   v.tax = round(v.tax - v.taxable)
-  //   v.taxable = round(v.taxable)
-  // })
+
 
   invoice.vatGroups.forEach(v => {
+    v.tax = round(v.tax - v.taxable)
     v.taxable = round(v.taxable)
     v.vat = round(v.vat)
   })
+
 
   invoice.vatAmount = round(
     invoice.vatGroups.reduce((sum, v) => sum + v.vat, 0)
   )
 
+  invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
   console.log(invoice)
-  
-  // invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
   return invoice
 }
 
