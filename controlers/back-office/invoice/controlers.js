@@ -71,7 +71,7 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
       return res.status(404).json({message: 'Missing token'})
     }
     const xml = invoice.invoice ? buildEFacturaHeaderXML(invoice) : buildEFacturaHeaderXML(invoice, invoice.issueDate)
-    // console.log(xml)
+    console.log(xml)
     let vatNumber = invoice.supplier.vatNumber.replace(/\D/g, '');
     const response = await uploadInvoice(xml, vatNumber, false, token)
     invoice.eFacturaId = response.eFacturaId
