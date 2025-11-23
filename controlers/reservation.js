@@ -54,6 +54,19 @@ module.exports.getReservationShedule = async (req, res) => {
         res.status(500).json(error)
     }
 }
+module.exports.getReservationSheduleById = async (req, res) => {
+    const {id} = req.query
+    try{
+        const shedule = await ReservationSchedule.findById(id)
+                    .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
+
+        res.status(200).json(shedule)
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
 
 
 module.exports.updateSheduleHours = async (req, res) => {
@@ -74,7 +87,7 @@ module.exports.updateSheduleHours = async (req, res) => {
             return  ReservationSchedule.findById(sheduleId).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
         })
         .then(newShedule => {
-        socket.emit('reservationShedule', JSON.stringify(newShedule))
+        socket.emit('reservationShedule', JSON.stringify({id: newShedule._id, point: newShedule.salePoint}))
           res.status(200).json({
             shedule: newShedule,
             message: 'Programul a fost actualizat'
@@ -125,7 +138,7 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
         })
       .then(newShedule => {
         console.log(newShedule)
-        socket.emit('reservationShedule', JSON.stringify(newShedule._id))
+        socket.emit('reservationShedule', JSON.stringify({id: newShedule._id, point: newShedule.salePoint}))
         res.status(200).json({
           shedule: newShedule,
           message: 'Programul a fost actualizat'

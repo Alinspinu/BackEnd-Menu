@@ -21,6 +21,7 @@ router.route('/shedule')
         .put(resControlers.updateReservationSheduleSettings)
 router.route('/shedule-hours')
         .put(resControlers.updateSheduleHours)
+router.route('/shedule-id').get(resControlers.getReservationById)
 
 router.route('/encript-url').post(resControlers.encriptURLObject)
 
