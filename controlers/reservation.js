@@ -118,6 +118,7 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
             return  ReservationSchedule.findById(shedule._id).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
         })
       .then(newShedule => {
+        console.log(newShedule)
         socket.emit('reservationShedule', JSON.stringify(newShedule))
         res.status(200).json({
           shedule: newShedule,
