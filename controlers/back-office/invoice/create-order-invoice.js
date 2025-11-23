@@ -116,12 +116,12 @@ function createOrderInvoice(order, customer, supplier, unload) {
   
     if (existingRate) {
       existingRate.taxable += taxable
-      existingRate.vat += vat
+      existingRate.tax += vat
     } else {
       invoice.vatGroups.push({
         rate: p.vatPrecent,
         taxable,
-        vat
+        tax
       })
     }
   
@@ -131,19 +131,22 @@ function createOrderInvoice(order, customer, supplier, unload) {
   invoice.taxExclusiveAmount = round(invoice.taxExclusiveAmount)
 
 
-
   invoice.vatGroups.forEach(v => {
-    v.tax = round(v.tax - v.taxable)
     v.taxable = round(v.taxable)
-    v.vat = round(v.vat)
+    v.tax = round(v.tax)
   })
+
+  // invoice.vatGroups.forEach(v => {
+  //   v.tax = round(v.tax - v.taxable)
+  //   v.taxable = round(v.taxable)
+  // })
 
 
   invoice.vatAmount = round(
-    invoice.vatGroups.reduce((sum, v) => sum + v.vat, 0)
+    invoice.vatGroups.reduce((sum, v) => sum + v.tax, 0)
   )
 
-  invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
+  // invoice.vatAmount = round(invoice.taxInclusiveAmount - invoice.taxExclusiveAmount)
   console.log(invoice)
   return invoice
 }
