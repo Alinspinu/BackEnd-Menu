@@ -383,7 +383,6 @@ module.exports.updateShedule = async (req, res, next) => {
             }
             const newPontaj =  await Pontaj.findOneAndUpdate({month: month, locatie: loc}, {$push: {[`days.${pontDayIndex}.users`]: userToPush}, $inc: {[`days.${pontDayIndex}.workValue`]: dayValue ,[`days.${pontDayIndex}.taxValue`]: taxValue} }, {new: true, upsert: true})
         }
-        console.log(shedule.days[dayIndex].users)
         const dayUserIndex = shedule.days[dayIndex].users.findIndex(obj => obj.employee?._id.toString() === user.employee);
         if(dayUserIndex !== -1){
            shedule.days[dayIndex].users[dayUserIndex].workPeriod = user.workPeriod
