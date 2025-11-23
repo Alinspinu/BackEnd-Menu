@@ -112,11 +112,11 @@ function createOrderInvoice(order, customer, supplier, unload) {
     const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
   
     const taxable = p.totalNoVat
-    const vat = round(p.total - p.totalNoVat)
+    const tax = round(p.total - p.totalNoVat)
   
     if (existingRate) {
       existingRate.taxable += taxable
-      existingRate.tax += vat
+      existingRate.tax += tax
     } else {
       invoice.vatGroups.push({
         rate: p.vatPrecent,
