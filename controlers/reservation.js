@@ -502,12 +502,13 @@ module.exports.updateReservation = async(req, res) => {
     const {update, id, hours} = req.body
     try{
         if(hours && id && update){
-            const reservation = await Reservation.findByIdAndUpdate(id, update, {new: true})
+            const reservation = await Reservation.findById(id)
+            const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true})
             await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: -reservation.guests}})
-            await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: reservation.guests}})
+            await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: updatedReservation.guests}})
             socket.emit('reservationShedule', JSON.stringify({id: hours[0].shedule, point: hours[0].salePoint}))
-            socket.emit('reservation', JSON.stringify(reservation))
-            res.status(200).json(reservation)
+            socket.emit('reservation', JSON.stringify(updatedReservation))
+            res.status(200).json(updatedReservation)
         } else {
             res.status(404).json({message: 'ERROR Missing data'})
         }
