@@ -152,7 +152,6 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
             return  ReservationSchedule.findById(shedule._id).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
         })
       .then(newShedule => {
-        console.log(newShedule)
         socket.emit('reservationShedule', JSON.stringify({id: newShedule._id, point: newShedule.salePoint}))
         res.status(200).json({
           shedule: newShedule,
@@ -500,11 +499,18 @@ module.exports.getReservationById = async(req, res) => {
 }
 
 module.exports.updateReservation = async(req, res) => {
-    const {update, id} = req.body
+    const {update, id, hours} = req.body
     try{
-        const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true}).populate([{path: 'user', select: 'employee.fullName'}, {path: 'client.client'}])
-        socket.emit('reservation', JSON.stringify(updatedReservation))
-        res.status(200).json(updatedReservation)
+        if(hours && id && update){
+            const reservation = await Reservation.findByIdAndUpdate(id, update, {new: true})
+            await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: -reservation.guests}})
+            await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: reservation.guests}})
+            socket.emit('reservationShedule', JSON.stringify({id: hours[0].shedule, point: hours[0].salePoint}))
+            socket.emit('reservation', JSON.stringify(reservation))
+            res.status(200).json(reservation)
+        } else {
+            res.status(404).json({message: 'ERROR Missing data'})
+        }
     } catch(error){
         console.log(error)
         res.status(500).json(error)
@@ -545,18 +551,10 @@ module.exports.deleteReservation = async (req, res) => {
         .then(() => Reservation.findByIdAndDelete(id))
         .then(() => {
           return ReservationSchedule.findById(sheduleId)
-            .populate({
-              path: 'year.months',
-              populate: {
-                path: 'days',
-                populate: { path: 'hours' }
-              }
-            })
-            .lean();
         })
         .then(newShedule => {
+          socket.emit('reservationShedule', JSON.stringify({id: newShedule._id, point: newShedule.salePoint}))
           res.status(200).json({
-            shedule: newShedule,
             message: 'Rezervarea a fost ștearsă cu succes și programul actualizat'
           });
         })
