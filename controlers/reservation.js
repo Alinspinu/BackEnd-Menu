@@ -60,7 +60,7 @@ module.exports.getReservationShedules = async (req, res) => {
     try{
         console.log('locatie ', loc, 'point ', point)
         const shedules = await ReservationSchedule.find({locatie: loc, salePoint: point})
-        res.status(shedules)
+        res.status(200).json(shedules)
     } catch(error){
         res.status(500).json(error)
         console.log(error)
