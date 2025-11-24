@@ -58,7 +58,6 @@ module.exports.getReservationShedule = async (req, res) => {
 module.exports.getReservationShedules = async (req, res) => {
     const {loc, point} = req.query
     try{
-
         const shedules = await ReservationSchedule.find({locatie: loc, salePoint: point})
         res.status(shedules)
     } catch(error){
@@ -70,11 +69,9 @@ module.exports.getReservationShedules = async (req, res) => {
 
 module.exports.getReservationSheduleById = async (req, res) => {
     const {id} = req.query
-    console.log(id)
     try{
         const shedule = await ReservationSchedule.findById(id)
                     .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
-
 
         console.log(shedule)
         res.status(200).json(shedule)
