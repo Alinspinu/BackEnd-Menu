@@ -25,7 +25,7 @@ function createSupliersSolds(supliers, doc){
     if(s.sold !== 0){
         doc.text(`${i+1}.`, 10, height)
         doc.text(`${s.name}`, 25, height)
-        doc.text(`${s.sold} Lei`, 250, height)
+        doc.text(`${round(s.sold)} Lei`, 250, height)
         doc.lineWidth(0.6);
         doc.moveTo(10, height+15).lineTo(340, height+15).stroke();
 
@@ -37,7 +37,7 @@ function createSupliersSolds(supliers, doc){
    doc.fontSize(14)
    doc.font('public/font/Montserrat-Bold.ttf')
    doc.text('TOTAL', 25, height)
-   doc.text(`${round(total)} Lei`, 250, height)
+   doc.text(`${round(total)} Lei`, 210, height)
 
 
 return doc
