@@ -56,11 +56,11 @@ module.exports.getReservationShedule = async (req, res) => {
 }
 
 module.exports.getReservationShedules = async (req, res) => {
-    const {loc, point} = req.body
+    const {loc, point} = req.query
     try{
 
         const shedules = await ReservationSchedule.find({locatie: loc, salePoint: point})
-
+        res.status(shedules)
     } catch(error){
         res.status(500).json(error)
         console.log(error)
