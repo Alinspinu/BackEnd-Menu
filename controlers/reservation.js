@@ -55,6 +55,18 @@ module.exports.getReservationShedule = async (req, res) => {
     }
 }
 
+module.exports.getReservationShedules = async (req, res) => {
+    const {loc, point} = req.body
+    try{
+
+        const shedules = await ReservationSchedule.find({locatie: loc, salePoint: point})
+
+    } catch(error){
+        res.status(500).json(error)
+        console.log(error)
+    }
+}
+
 
 module.exports.getReservationSheduleById = async (req, res) => {
     const {id} = req.query
@@ -352,7 +364,7 @@ module.exports.createReservationShedule = async (req, res) => {
         const dataToEncript = JSON.stringify({point, loc})
         const encriptedData = encryptObject(dataToEncript)
 
-        const url = `https://front.flowmnager.ro/reserve?data=${encriptedData}`
+        const url = `https://front.flowmanager.ro/reserve?data=${encriptedData}`
         res.status(200).json({url: url})
     } catch(error){
         console.log(error)
