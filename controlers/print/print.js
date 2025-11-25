@@ -1845,7 +1845,7 @@ module.exports.printProductRecipes = async (req, res, next) => {
             `Cost productie`, 
             `Pret Vanzare`, 
             'Adaos',
-            'Cost procent',
+            // 'Cost procent',
           ]
           worksheet.addRow(docTitle)
           worksheet.addRow()
