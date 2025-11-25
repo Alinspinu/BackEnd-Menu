@@ -545,9 +545,15 @@ module.exports.deleteReservation = async (req, res) => {
 
       let kids = reservation.kids || 0
 
+      let ppl = reservation.guests
+
+      if(ppl > 5 && ppl <9) ppl = 8
+
       if(kids > 1){
         kids = kids / 2
       }
+
+      console.log('oameni de zcazut ', ppl+kids)
 
   
       for (const h of reservation.resHour) {
@@ -556,7 +562,7 @@ module.exports.deleteReservation = async (req, res) => {
         updates.push(
           ResHour.findByIdAndUpdate(
             h._id,
-            { $inc: { people: -reservation.guests + kids }, $set: { full: false } },
+            { $inc: { people: -(ppl + kids) }, $set: { full: false } },
             { new: false }
           )
         );
