@@ -1908,22 +1908,22 @@ module.exports.printProductRecipes = async (req, res, next) => {
                     bold: true,
                 }
               })
-                // ings.forEach((ing, i) => {
-                //   const tot = round(ing.qty * ing.ing.tvaPrice)
-                //   worksheet.addRow(
-                //     [
-                //       'Ing',
-                //       `${ing.ing.name}`,
-                //       `${round(ing.qty)} ${ing.ing.um}`,
-                //       '',
-                //       '',
-                //       `${tot} Lei`,
-                //       '',
-                //       '',
-                //     ]
-                //     )
-                // })
-                // worksheet.addRow()
+                ings.forEach((ing, i) => {
+                  const tot = round(ing.qty * ing.ing.tvaPrice)
+                  worksheet.addRow(
+                    [
+                      'Ing',
+                      `${ing.ing.name}`,
+                      `${round(ing.qty)} ${ing.ing.um}`,
+                      '',
+                      '',
+                      `${tot} Lei`,
+                      '',
+                      '',
+                    ]
+                    )
+                })
+                worksheet.addRow()
                
             })
             worksheet.addRow()
@@ -1959,21 +1959,21 @@ module.exports.printProductRecipes = async (req, res, next) => {
              worksheet.addRow()
            }
           }
-        // if(ing) ings.forEach((ing, i) => {
-        //   const tot = round(ing.qty * ing.ing.tvaPrice)
-        //   worksheet.addRow(
-        //     [
-        //       'Ing',
-        //       `${ing.ing.name}`,
-        //       `${round(ing.qty)} ${ing.ing.um}`,
-        //       '',
-        //       '',
-        //       `${tot} Lei`,
-        //       '',
-        //       '',
-        //     ]
-        //     )
-        // })
+        if(ing) ings.forEach((ing, i) => {
+          const tot = round(ing.qty * ing.ing.tvaPrice)
+          worksheet.addRow(
+            [
+              'Ing',
+              `${ing.ing.name}`,
+              `${round(ing.qty)} ${ing.ing.um}`,
+              '',
+              '',
+              tot,
+              '',
+              '',
+            ]
+            )
+        })
         worksheet.addRow()
         })
         worksheet.getColumn(1).width = 5;
