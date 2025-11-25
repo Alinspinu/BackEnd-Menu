@@ -501,10 +501,14 @@ module.exports.updateReservation = async(req, res) => {
     const {update, id, hours} = req.body
     try{
         if(hours && id && update){
+          let newkids = update.kids || 0
+          if(newkids > 1) kids = newkids / 2
             const reservation = await Reservation.findById(id)
+            let oldkids = reservation.kids || 0
+            if(oldkids > 1) kids = oldkids / 2
             const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true})
-            await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: -reservation.guests}})
-            await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: updatedReservation.guests}})
+            await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: -reservation.guests + oldkids}})
+            await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: updatedReservation.guests + newkids}})
             socket.emit('reservationShedule', JSON.stringify({id: hours[0].shedule, point: hours[0].salePoint}))
             socket.emit('reservation', JSON.stringify(updatedReservation))
             res.status(200).json(updatedReservation)
@@ -534,6 +538,13 @@ module.exports.deleteReservation = async (req, res) => {
   
       let sheduleId;
       const updates = [];
+
+      let kids = reservation.kids || 0
+
+      if(kids > 1){
+        kids = kids / 2
+      }
+
   
       for (const h of reservation.resHour) {
         sheduleId = h.shedule;
@@ -541,7 +552,7 @@ module.exports.deleteReservation = async (req, res) => {
         updates.push(
           ResHour.findByIdAndUpdate(
             h._id,
-            { $inc: { people: -reservation.guests }, $set: { full: false } },
+            { $inc: { people: -reservation.guests + kids }, $set: { full: false } },
             { new: false }
           )
         );

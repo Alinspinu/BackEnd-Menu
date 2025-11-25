@@ -30,6 +30,7 @@ const reservationSchema = new Schema({
     date: Date,
     dateString: String,
     guests: Number,
+    kids: Number,
     position: String,
     details: String,
     notified: {

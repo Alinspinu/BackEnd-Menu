@@ -181,35 +181,6 @@ module.exports.updateProducts = async (req, res) => {
     return Promise.all(productPromises);
   }
 
-//   function modifyProducts(products) {
-//     const productPromises = products.map(p => {
-//         const subPromises = p.subProducts.map(s => {
-//             let cost = 0
-//             for(let i of s.ings){
-//              const price = i.qty * i.ing.tvaPrice 
-//              cost += price
-//             }
-//             return s.save().then(savedP => {
-//                 console.log(savedP.name, 'a fost modificat cu success! ', savedP.productionCost);
-//               });
-//         })
-
-//       });
-  
-//     return Promise.all(productPromises);
-//   }
-  
-
-
-//   for(let s of p.subProducts){
-       
-//     s.productionCost = round(cost)
-// }
-
-// return p.save().then(savedP => {
-//   console.log(savedP.name, 'a fost modificat cu success! ', savedP.productionCost);
-// });
-
 
 
   module.exports.getProduct = async (req, res, next) => {
