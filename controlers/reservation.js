@@ -74,7 +74,6 @@ module.exports.getReservationSheduleById = async (req, res) => {
         const shedule = await ReservationSchedule.findById(id)
                     .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
 
-        console.log(shedule)
         res.status(200).json(shedule)
 
     } catch(error){

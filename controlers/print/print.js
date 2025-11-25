@@ -1845,6 +1845,7 @@ module.exports.printProductRecipes = async (req, res, next) => {
             `Cost productie`, 
             `Pret Vanzare`, 
             'Adaos',
+            'Cost procent',
           ]
           worksheet.addRow(docTitle)
           worksheet.addRow()
@@ -1859,10 +1860,10 @@ module.exports.printProductRecipes = async (req, res, next) => {
                 `${i+1}`,
                 `${product.name}`,
                 '',
-                `${round(rT)} Lei`,
-                `${product.price} Lei`,
-                `${round((product.price-rT)/rT * 100)} %`,
-                '',
+                 round(rT),
+                 product.price,
+                 round((product.price-rT)/rT * 100),
+                 round(rT/product.price),
               ]
               )
               const rowCount = worksheet.rowCount
@@ -1894,10 +1895,10 @@ module.exports.printProductRecipes = async (req, res, next) => {
                   ``,
                   `${sub.name}`,
                   ``,
-                  `${round(rT)} Lei`,
-                  `${sub.price} Lei`,
-                  `${round((sub.price-rT)/rT * 100)} %`,
-                  '',
+                  round(rT),
+                  sub.price,
+                  round((sub.price-rT)/rT * 100),
+                  round(rT/sub.price),
                 ]
                 )
                 
@@ -1907,22 +1908,22 @@ module.exports.printProductRecipes = async (req, res, next) => {
                     bold: true,
                 }
               })
-                ings.forEach((ing, i) => {
-                  const tot = round(ing.qty * ing.ing.tvaPrice)
-                  worksheet.addRow(
-                    [
-                      'Ing',
-                      `${ing.ing.name}`,
-                      `${round(ing.qty)} ${ing.ing.um}`,
-                      '',
-                      '',
-                      `${tot} Lei`,
-                      '',
-                      '',
-                    ]
-                    )
-                })
-                worksheet.addRow()
+                // ings.forEach((ing, i) => {
+                //   const tot = round(ing.qty * ing.ing.tvaPrice)
+                //   worksheet.addRow(
+                //     [
+                //       'Ing',
+                //       `${ing.ing.name}`,
+                //       `${round(ing.qty)} ${ing.ing.um}`,
+                //       '',
+                //       '',
+                //       `${tot} Lei`,
+                //       '',
+                //       '',
+                //     ]
+                //     )
+                // })
+                // worksheet.addRow()
                
             })
             worksheet.addRow()
@@ -1958,21 +1959,21 @@ module.exports.printProductRecipes = async (req, res, next) => {
              worksheet.addRow()
            }
           }
-        if(ing) ings.forEach((ing, i) => {
-          const tot = round(ing.qty * ing.ing.tvaPrice)
-          worksheet.addRow(
-            [
-              'Ing',
-              `${ing.ing.name}`,
-              `${round(ing.qty)} ${ing.ing.um}`,
-              '',
-              '',
-              `${tot} Lei`,
-              '',
-              '',
-            ]
-            )
-        })
+        // if(ing) ings.forEach((ing, i) => {
+        //   const tot = round(ing.qty * ing.ing.tvaPrice)
+        //   worksheet.addRow(
+        //     [
+        //       'Ing',
+        //       `${ing.ing.name}`,
+        //       `${round(ing.qty)} ${ing.ing.um}`,
+        //       '',
+        //       '',
+        //       `${tot} Lei`,
+        //       '',
+        //       '',
+        //     ]
+        //     )
+        // })
         worksheet.addRow()
         })
         worksheet.getColumn(1).width = 5;
