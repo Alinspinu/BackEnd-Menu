@@ -501,14 +501,18 @@ module.exports.updateReservation = async(req, res) => {
     const {update, id, hours} = req.body
     try{
         if(hours && id && update){
+          let ppl = update.guests
+          if(ppl > 5 && ppl < 9) ppl = 8
           let newkids = update.kids || 0
           if(newkids > 1) kids = newkids / 2
             const reservation = await Reservation.findById(id)
             let oldkids = reservation.kids || 0
             if(oldkids > 1) kids = oldkids / 2
+            let oldppl = reservation.guests
+            if(oldppl > 5 && oldppl < 9) ppl = 8
             const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true})
-            await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: -reservation.guests + oldkids}})
-            await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: updatedReservation.guests + newkids}})
+            await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: - (oldppl + oldkids)}})
+            await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: ppl + newkids}})
             socket.emit('reservationShedule', JSON.stringify({id: hours[0].shedule, point: hours[0].salePoint}))
             socket.emit('reservation', JSON.stringify(updatedReservation))
             res.status(200).json(updatedReservation)
