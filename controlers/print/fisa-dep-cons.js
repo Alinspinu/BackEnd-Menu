@@ -20,7 +20,7 @@ async function createSheetListXcelBuffer(sheet){
     let total = 0
   sheet.ings.forEach((e, i) => {
     total += (e.ing.price * e.qty)
-    worksheet.addRow([`${i+1}`,`${e.name}`, `${e.getiune.name}`, `${e.ing.um}`, e.ing.price, e.qty, round(e.ing.price * e.qty), ])
+    worksheet.addRow([`${i+1}`,`${e.ing.name}`, `${e.getiune.name}`, `${e.ing.um}`, e.ing.price, e.qty, round(e.ing.price * e.qty), ])
   })
   const space =   worksheet.addRow([])
   const footer =  worksheet.addRow(['Totaluri',``,'','', ``, ``, round(total),])
