@@ -22,10 +22,15 @@ async function createSheetListXcelBuffer(sheet){
     let total = 0
   sheet.ings.forEach((e, i) => {
     total += (e.ing.price * e.qty)
-    worksheet.addRow([`${i+1}`,`${e.ing.name}`, `${e.gestiune.name}`, `${e.ing.um}`, e.qty, e.ing.price, round(e.ing.price * e.qty), ])
+   const r = worksheet.addRow([`${i+1}`,`${e.ing.name}`, `${e.gestiune.name}`, `${e.ing.um}`, e.qty, e.ing.price, round(e.ing.price * e.qty), ])
     if(e.ing.productIngredient){
+        r.eachCell((cell) => {
+            cell.font = {
+              color: { argb: 'FFFF9999' } 
+            };
+          });
         e.ing.ings.forEach((ee, i) => {
-         const row =  worksheet.addRow(['',`${ee.ing.name}`, `${e.gestiune.name}`, `${ee.ing.um}`, ee.qty, ee.ing.price, round(ee.ing.price * ee.qty), ])
+         const row =  worksheet.addRow(['',`${ee.ing.name}`, `${e.gestiune.name}`, `${ee.ing.um}`, round(ee.qty * e.qty), ee.ing.price, round(ee.ing.price * ee.qty *e.qty), ])
          row.eachCell((cell) => {
             cell.font = {
               color: { argb: 'FFFFC7CE' } // Red text
