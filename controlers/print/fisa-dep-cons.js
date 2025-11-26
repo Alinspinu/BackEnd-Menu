@@ -7,13 +7,14 @@ async function createSheetListXcelBuffer(sheet){
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}`);
   const docTitle =  [
-      `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}, punct de lucru ${sheet.salePoint.name}`,'','']
+      `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}`]
   worksheet.addRow(docTitle)
+  worksheet.addRow([`Punct de lucru ${sheet.salePoint.name}`], '')
   worksheet.addRow([])
   worksheet.addRow([])
-  const subTitle = ['', `Responsabil`, `${sheet.user.name}`]
+  const subTitle = [`Responsabil`, '', `${sheet.user.name}`]
   worksheet.addRow(subTitle)
-  const date = ['', 'Data', formatedDateToShow(sheet.date)]
+  const date = ['Data','', formatedDateToShow(sheet.date)]
   worksheet.addRow(date)
   worksheet.addRow([])
   worksheet.addRow([])
@@ -56,9 +57,9 @@ async function createSheetListXcelBuffer(sheet){
   worksheet.mergeCells(fn, 1, fn, 5); 
   worksheet.mergeCells(sn, 1, sn, 9); 
 
-  worksheet.mergeCells('A2:I3');
-  worksheet.mergeCells('A4:B4');
-  worksheet.mergeCells('A5:B5');
+  worksheet.mergeCells('A3:I4');
+  worksheet.mergeCells('A5:B6');
+  worksheet.mergeCells('A6:B6');
   worksheet.mergeCells('A6:I7');
 
   worksheet.getColumn(1).width = 4;
