@@ -18,22 +18,24 @@ async function createSheetListXcelBuffer(sheet){
   worksheet.addRow(date)
   worksheet.addRow([])
   worksheet.addRow([])
-  const head = worksheet.addRow(['Nr',`Ingredient`, 'Gestiune', 'UM', 'Cantitate', 'Pret (f Tva)',  'Total (f Tva)'])
+  const head = worksheet.addRow(['Nr',`Ingredient`, 'Tip',  'Gestiune', 'UM', 'Cantitate', 'Pret (f Tva)',  'Total (f Tva)'])
     let total = 0
   sheet.ings.forEach((e, i) => {
+    const type = e.ing.productIngredient ? 'Compus' : 'Simplu'
     total += (e.ing.price * e.qty)
-   const r = worksheet.addRow([`${i+1}`,`${e.ing.name}`, `${e.gestiune.name}`, `${e.ing.um}`, e.qty, e.ing.price, round(e.ing.price * e.qty), ])
+   const r = worksheet.addRow([`${i+1}`,`${e.ing.name}`, type, `${e.gestiune.name}`, `${e.ing.um}`, e.qty, e.ing.price, round(e.ing.price * e.qty), ])
     if(e.ing.productIngredient){
-        r.eachCell((cell) => {
-            cell.font = {
-              color: { argb: 'FFFF9999' } 
-            };
-          });
+        // r.eachCell((cell) => {
+        //     cell.font = {
+        //       color: { argb: 'FFFF9999' } 
+        //     };
+        //   });
         e.ing.ings.forEach((ee, i) => {
-         const row =  worksheet.addRow(['',`${ee.ing.name}`, `${e.gestiune.name}`, `${ee.ing.um}`, round(ee.qty * e.qty), ee.ing.price, round(ee.ing.price * ee.qty *e.qty), ])
+         const type = ee.ing.productIngredient ? 'Compus' : 'Simplu'
+         const row =  worksheet.addRow(['',`${ee.ing.name}`, type, `${e.gestiune.name}`, `${ee.ing.um}`, round(ee.qty * e.qty), ee.ing.price, round(ee.ing.price * ee.qty *e.qty), ])
          row.eachCell((cell) => {
             cell.font = {
-              color: { argb: 'FFFFC7CE' } // Red text
+              color: { argb: 'FFFF9999' } // Red text
             };
           });
         })
