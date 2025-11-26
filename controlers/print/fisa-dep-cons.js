@@ -5,7 +5,6 @@ const {formatedDateToShow, round} = require('../../utils/functions')
 
 async function createSheetListXcelBuffer(sheet){
   const workbook = new ExcelJS.Workbook();
-  let name = data.name
   const worksheet = workbook.addWorksheet(`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}`);
   const docTitle =  [
       `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}, punct de lucru ${sheet.salePoint.name}`,'','']
