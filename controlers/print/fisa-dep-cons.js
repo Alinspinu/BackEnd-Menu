@@ -55,7 +55,7 @@ async function createSheetListXcelBuffer(sheet){
   worksheet.mergeCells(1, 1, 1, 2); // Columns A–D
   worksheet.mergeCells(1, 3, 1, 9); // Columns E–F
   worksheet.mergeCells(fn, 1, fn, 6); 
-  worksheet.mergeCells(sn, 1, sn, 9); 
+  worksheet.mergeCells(sn, 1, sn, 7); 
 
   worksheet.mergeCells('A3:G4');
   worksheet.mergeCells('A5:B5');
