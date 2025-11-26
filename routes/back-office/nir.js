@@ -33,6 +33,7 @@ router.route('/sheet')
     .get(nirRoutes.getSheets)
     .post(nirRoutes.addImpSheet)
     .delete(nirRoutes.deleteSheet)
+    .put(nirRoutes.printSheet)
 
 router.route('/nir-invoice')
     .get(nirRoutes.printNirInvoice)

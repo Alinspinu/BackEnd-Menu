@@ -15,6 +15,7 @@ const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 const {createNir} = require('../print/nir')
 
 const {createNirsListXcelBuffer} = require('../print/nir-list')
+const {createSheetListXcelBuffer} = require('../print/fisa-dep-cons')
 
 
 
@@ -100,6 +101,29 @@ module.exports.getSheetsByPeriod = async (req, res) => {
   } catch(error){
     console.log(error)
     res.status(500).json(error)
+  }
+}
+
+module.exports.printSheet = async (req, res) => {
+  try{
+    const {id} = req.body
+
+    const sheet = await ImpSheet.findById(id)
+            .populate({path: 'user', select: 'name'})
+            .populate({path: 'salePoint', select: 'locatie name', populate: {path: 'locatie', select: 'bussinessName'}})
+            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice'})
+            .populate({path: 'ings.gestiune', select: 'name'})
+    const buffer = await createSheetListXcelBuffer(sheet);
+    
+    // Set headers for file download
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
+
+    // Send the buffer directly
+    res.send(Buffer.from(buffer));
+  } catch(error){
+    console.log(error)
+    res.status(200).json(error)
   }
 }
 
