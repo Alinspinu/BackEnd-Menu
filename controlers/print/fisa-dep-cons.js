@@ -23,7 +23,7 @@ async function createSheetListXcelBuffer(sheet){
   sheet.ings.forEach((e, i) => {
     total += (e.ing.price * e.qty)
     worksheet.addRow([`${i+1}`,`${e.ing.name}`, `${e.gestiune.name}`, `${e.ing.um}`, e.qty, e.ing.price, round(e.ing.price * e.qty), ])
-    if(e.productIngredient){
+    if(e.ing.productIngredient){
         e.ings.forEach((e, i) => {
             worksheet.addRow(['',`${e.ing.name}`, `${e.gestiune.name}`, `${e.ing.um}`, e.qty, e.ing.price, round(e.ing.price * e.qty), ])
         })
