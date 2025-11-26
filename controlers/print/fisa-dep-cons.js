@@ -18,11 +18,11 @@ async function createSheetListXcelBuffer(sheet){
   worksheet.addRow(date)
   worksheet.addRow([])
   worksheet.addRow([])
-  worksheet.addRow(['Nr',`Ingredient`, 'Gestiune', 'UM', 'Pret (f Tva)', 'Cantitate', 'Total (f Tva)'])
+  const head = worksheet.addRow(['Nr',`Ingredient`, 'Gestiune', 'UM', 'Cantitate', 'Pret (f Tva)',  'Total (f Tva)'])
     let total = 0
   sheet.ings.forEach((e, i) => {
     total += (e.ing.price * e.qty)
-    worksheet.addRow([`${i+1}`,`${e.ing.name}`, `${e.gestiune.name}`, `${e.ing.um}`, e.ing.price, e.qty, round(e.ing.price * e.qty), ])
+    worksheet.addRow([`${i+1}`,`${e.ing.name}`, `${e.gestiune.name}`, `${e.ing.um}`, e.qty, e.ing.price, round(e.ing.price * e.qty), ])
   })
   const space =   worksheet.addRow([])
   const footer =  worksheet.addRow(['Total',``,'','', ``, ``, round(total),])
@@ -32,6 +32,13 @@ async function createSheetListXcelBuffer(sheet){
             bold: true,
             size: 13
         }
+  })
+
+  head.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 12
+    }
   })
 
   worksheet.getRow(5).eachCell((cell)=>{
@@ -49,9 +56,10 @@ async function createSheetListXcelBuffer(sheet){
 
   const fn = footer.number
   const sn = space.number
+  const hn = head.number
 
 
-
+  
   worksheet.mergeCells(fn, 1, fn, 6); 
   worksheet.mergeCells(sn, 1, sn, 7); 
 
