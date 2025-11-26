@@ -53,7 +53,7 @@ async function createSheetListXcelBuffer(sheet){
 
 
   worksheet.mergeCells(1, 1, 1, 2); // Columns A–D
-  worksheet.mergeCells(1, 3, 1, 7); 
+  worksheet.mergeCells(2, 3, 2, 7); 
   worksheet.mergeCells(1, 3, 2, 7); 
   worksheet.mergeCells(fn, 1, fn, 6); 
   worksheet.mergeCells(sn, 1, sn, 7); 
