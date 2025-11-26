@@ -111,7 +111,7 @@ module.exports.printSheet = async (req, res) => {
     const sheet = await ImpSheet.findById(id)
             .populate({path: 'user', select: 'name'})
             .populate({path: 'salePoint', select: 'locatie name', populate: {path: 'locatie', select: 'bussinessName'}})
-            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice'})
+            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice', populate: {path: 'ings.ing', select: 'um price name'}})
             .populate({path: 'ings.gestiune', select: 'name'})
     const buffer = await createSheetListXcelBuffer(sheet);
     
