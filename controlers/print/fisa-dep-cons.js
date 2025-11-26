@@ -9,12 +9,12 @@ async function createSheetListXcelBuffer(sheet){
   const docTitle =  [
       `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}`]
   worksheet.addRow(docTitle)
-  worksheet.addRow([`Punct de lucru ${sheet.salePoint.name}`], '')
+  worksheet.addRow([`${sheet.salePoint.name}`], '')
   worksheet.addRow([])
   worksheet.addRow([])
   const subTitle = [`Responsabil`, '', `${sheet.user.name}`]
   worksheet.addRow(subTitle)
-  const date = ['Data','', formatedDateToShow(sheet.date)]
+  const date = ['Data','', formatedDateToShow(sheet.date).split('ora')[0]]
   worksheet.addRow(date)
   worksheet.addRow([])
   worksheet.addRow([])
@@ -25,7 +25,7 @@ async function createSheetListXcelBuffer(sheet){
     worksheet.addRow([`${i+1}`,`${e.ing.name}`, `${e.gestiune.name}`, `${e.ing.um}`, e.ing.price, e.qty, round(e.ing.price * e.qty), ])
   })
   const space =   worksheet.addRow([])
-  const footer =  worksheet.addRow(['Totaluri',``,'','', ``, ``, round(total),])
+  const footer =  worksheet.addRow(['Total',``,'','', ``, ``, round(total),])
 
   footer.eachCell((cell) => {
         cell.font = {
@@ -34,7 +34,7 @@ async function createSheetListXcelBuffer(sheet){
         }
   })
 
-  worksheet.getRow(4).eachCell((cell)=>{
+  worksheet.getRow(5).eachCell((cell)=>{
     cell.font = {
         bold: true,
         size: 13
@@ -54,7 +54,7 @@ async function createSheetListXcelBuffer(sheet){
 
   worksheet.mergeCells(1, 1, 1, 2); // Columns A–D
   worksheet.mergeCells(1, 3, 1, 9); // Columns E–F
-  worksheet.mergeCells(fn, 1, fn, 5); 
+  worksheet.mergeCells(fn, 1, fn, 6); 
   worksheet.mergeCells(sn, 1, sn, 9); 
 
   worksheet.mergeCells('A3:I4');
@@ -63,14 +63,13 @@ async function createSheetListXcelBuffer(sheet){
   worksheet.mergeCells('A7:I8');
 
   worksheet.getColumn(1).width = 4;
-  worksheet.getColumn(2).width = 18; 
-  worksheet.getColumn(3).width = 10; 
-  worksheet.getColumn(4).width = 12; 
-  worksheet.getColumn(5).width = 18; 
-  worksheet.getColumn(6).width = 13; 
-  worksheet.getColumn(7).width = 13; 
-  worksheet.getColumn(8).width = 13; 
-  worksheet.getColumn(9).width = 22; 
+  worksheet.getColumn(2).width = 20; 
+  worksheet.getColumn(3).width = 12; 
+  worksheet.getColumn(4).width = 8; 
+  worksheet.getColumn(5).width = 12; 
+  worksheet.getColumn(6).width = 12; 
+  worksheet.getColumn(7).width = 12; 
+
 
 
 
