@@ -42,7 +42,7 @@ async function createSheetListXcelBuffer(sheet){
     }
   })
   const space =   worksheet.addRow([])
-  const footer =  worksheet.addRow(['Total',``,'','', ``, ``, round(total),])
+  const footer =  worksheet.addRow(['Total',``,'','', ``, ``,``, round(total),])
 
   footer.eachCell((cell) => {
         cell.font = {
