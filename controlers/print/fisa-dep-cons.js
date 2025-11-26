@@ -10,9 +10,10 @@ async function createSheetListXcelBuffer(sheet){
       `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}, punct de lucru ${sheet.salePoint.name}`,'','']
   worksheet.addRow(docTitle)
   worksheet.addRow([])
-  const subTitle = [`Responsabil`, `${sheet.user.name}`]
+  worksheet.addRow([])
+  const subTitle = ['', `Responsabil`, `${sheet.user.name}`]
   worksheet.addRow(subTitle)
-  const date = ['Data', formatedDateToShow(sheet.date)]
+  const date = ['', 'Data', formatedDateToShow(sheet.date)]
   worksheet.addRow(date)
   worksheet.addRow([])
   worksheet.addRow([])
