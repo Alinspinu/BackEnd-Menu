@@ -3,11 +3,14 @@ const router = express.Router();
 const resControlers = require('../controlers/reservation.js')
 const {authApi} = require('../auth/auth.js')
 
-router.route('/', authApi)
-    .get(resControlers.getReservations)
-    .post(resControlers.addReservation)
-    .put(resControlers.updateReservation)
-    .delete(resControlers.deleteReservation)
+router.post('/', resControlers.addReservation);
+
+router
+  .route('/')
+  .all(authApi) // applies only to GET, PUT, DELETE here
+  .get(resControlers.getReservations)
+  .put(resControlers.updateReservation)
+  .delete(resControlers.deleteReservation);
 
 router.route('/id', authApi).get(resControlers.getReservationById)
 router.route('/update', authApi).post(resControlers.modifyReservationStatus)
