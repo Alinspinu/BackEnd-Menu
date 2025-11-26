@@ -517,6 +517,7 @@ module.exports.updateReservation = async(req, res) => {
             socket.emit('reservation', JSON.stringify(updatedReservation))
             res.status(200).json(updatedReservation)
         } else {
+          console.log( 'ERROR Missing data')
             res.status(404).json({message: 'ERROR Missing data'})
         }
     } catch(error){
