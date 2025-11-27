@@ -22,6 +22,14 @@ const imparimentSheetSchema = new Schema({
             }
         }
     ],
+
+    products: [
+        {
+            name: String,
+            qty: Number,
+            cost: Number,
+        }
+    ],
     consumption: {
         type: Boolean,
         default: false
