@@ -168,11 +168,16 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
     const token = jwt.sign({ userId: newUser._id }, process.env.AUTH_SECRET, { expiresIn: '15m' });
 
     const templateSource = fs.readFileSync('views/layouts/resetPassword.ejs', 'utf-8');
+
+    let url = ''
+    if(newUser.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
+    if(newUser.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+    if(newUser.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
     const templateData = {
         link: `${baseUrlRedirect}reset-password?token=${token}`,
         name: newUser.name,
         locatie: newUser.locatie.name,
-        logoUrl: newUser.locatie.name === 'T ZERO' ? 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg' : 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+        logoUrl: url
     };
     const renderedTemplate = ejs.render(templateSource, {data: templateData});
 
