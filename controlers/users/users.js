@@ -138,10 +138,10 @@ module.exports.sendUser = async (req, res, next) => {
 
 
 module.exports.editUser = async (req, res, next) => {
-    const {update} = req.body;
+    const {update, cardIndex} = req.body;
     const {id} = req.query;
     try{
-        const user = await User.findByIdAndUpdate(id, update, {new: true}).populate({path: 'employee.employeePosition'})
+        const user = await User.findByIdAndUpdate(id, {employee: update.employee, cardIndex: cardIndex}, {new: true}).populate({path: 'employee.employeePosition'})
         console.log(user.employee.employeePosition)
         res.status(200).json({message: 'Utilizatorul a fost actualizat!', user: user})
     } catch (err) {
