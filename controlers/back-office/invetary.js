@@ -162,8 +162,8 @@ module.exports.updateInventary = async (req, res) => {
         if(dbIng){
             const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
             if(ingGest){
-                ingGest.qty = dbIng.qty + i.faptic
-                // ingGest.qty = round(ingGest.qty - (i.scriptic - i.faptic))
+                // ingGest.qty = dbIng.qty + i.faptic
+                ingGest.qty = round(ingGest.qty - (i.scriptic - i.faptic))
                 if(ingGest.entries.length){
                     const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
                     ingGest.entries = entries
@@ -179,8 +179,8 @@ module.exports.updateInventary = async (req, res) => {
                     ingGest.entries.push(entry)
                 }
             }
-            // dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
-            dbIng.qty = round(dbIng.qty + i.faptic)
+            dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
+            // dbIng.qty = round(dbIng.qty + i.faptic)
          return dbIng.save().then(i => {
             console.log(`Ingredientul ${i.name} a fost actulizat cu succees!`)
             console.log('Cantitate totala ', i.qty)
