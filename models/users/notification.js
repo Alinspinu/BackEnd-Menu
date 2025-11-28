@@ -18,6 +18,7 @@ const notificationSchema = new Schema({
     event: String,
     redirectLink: String,
     message: String,
+    serverKey: String,
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
