@@ -90,7 +90,7 @@ async function  updateReservationShedule(shedule){
         }
       }
 
-   const sh =   await ReservationSchedule.findByIdAndUpdate(shedule._id, shedule, {new: true})
+   const sh =   await ReservationSchedule.findByIdAndUpdate(shedule._id, shedule, {new: true}) .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
    return sh
 }
 
