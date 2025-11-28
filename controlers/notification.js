@@ -172,7 +172,7 @@ module.exports.checkAndNotifyReservations = async () => {
                   url: 'https://front.flowmanager.ro/reservations'
                 },
               },
-              message: `Avem o rezevare ${formatedDateToShow(reservation.date, +2)}, ${reservation.client.name}, ${reservation.guests} persoane, ${reservation.position || 'fara detalii'}!`
+              message: `Avem o rezevare ${formatedDateToShow(reservation.date, +2)}, ${reservation.client.name}, ${reservation.guests} persoane, ${reservation.kids || '0'} copii, ${reservation.position || 'fara detalii'}!`
             };
             try {
                 const newNot = new Notification(notif);
