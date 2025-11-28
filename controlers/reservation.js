@@ -80,20 +80,24 @@ async function  updateReservationShedule(shedule){
               let total = 0
               for(let r of h.reservations){
                 total += r.guests
-                console.log('reservation guests', total)
-                if(r.kids > 0){
-                  total += r.kids/2
+                if(r.kids === 1){
+                  total += 1
                 } 
+                if(r.kids > 1){
+                  total += r.kids/2
+                }
               }
-              h.people = total
-             const hh = await ResHour.findByIdAndUpdate(h._id, h, {new: true})
+              if(h.people !== total) {
+                h.people = total
+               const hh = await ResHour.findByIdAndUpdate(h._id, h, {new: true})
+              }
             }
             
           }
         }
       }
 
-   const sh =   await ReservationSchedule.findById(shedule._id).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}})
+   const sh = await ReservationSchedule.findById(shedule._id).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}})
    return sh
 }
 
