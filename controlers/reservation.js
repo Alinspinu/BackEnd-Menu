@@ -513,6 +513,7 @@ module.exports.addReservation = async(req, res)  => {
         }
         const newReservation = new Reservation(reservation)
         const savedReservation = await newReservation.save()
+        console.log(savedReservation)
         await sendReservationEmail(savedReservation)
         socket.emit('reservation', JSON.stringify(savedReservation))
         res.status(200).json(savedReservation)
