@@ -49,8 +49,8 @@ module.exports.getReservationShedule = async (req, res) => {
 
         
 
-        // const sh = await updateReservationShedule(shedule)
-        res.status(200).json(shedule)
+        const sh = await updateReservationShedule(shedule)
+        res.status(200).json(sh)
 
     } catch(error){
         console.log(error)
@@ -78,7 +78,6 @@ async function  updateReservationShedule(shedule){
           for(let h of d.hours){
             if(h.reservations.length){
               let total = 0
-              console.log('total ', h.people)
               for(let r of h.reservations){
                 total += r.guests
                 console.log('reservation guests', total)
@@ -88,15 +87,14 @@ async function  updateReservationShedule(shedule){
               }
               h.people = total
              const hh = await ResHour.findByIdAndUpdate(h._id, h, {new: true})
-              console.log('people after total ', hh.people)
             }
             
           }
         }
       }
 
-  //  const sh =   await ReservationSchedule.findByIdAndUpdate(shedule._id, { $set: { "year.months": shedule.year.months } }, {new: true}) .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}})
-  //  return sh
+   const sh =   await ReservationSchedule.findById(shedule._id).populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}})
+   return sh
 }
 
 
