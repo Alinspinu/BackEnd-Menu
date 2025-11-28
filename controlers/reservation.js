@@ -89,6 +89,8 @@ async function  updateReservationShedule(shedule){
               }
             }
             h.people = total
+
+            console.log('people after total ', h.people)
           }
         }
       }
