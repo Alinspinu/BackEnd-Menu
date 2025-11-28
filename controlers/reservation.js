@@ -80,6 +80,7 @@ async function  updateReservationShedule(shedule){
             if(h.reservations.length){
               console.log('total ', h.people)
               for(let r of h.reservations){
+                console.log('reservation guests', r.guests)
                 total += r.guests
                 if(r.kids > 0){
                   total += r.kids/2
