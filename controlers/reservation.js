@@ -47,7 +47,10 @@ module.exports.getReservationShedule = async (req, res) => {
         const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, 'year.date': y})
                     .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
 
-        res.status(200).json(shedule)
+        
+
+        const sh = await updateReservationShedule(shedule)
+        res.status(200).json(sh)
 
     } catch(error){
         console.log(error)
@@ -65,6 +68,30 @@ module.exports.getReservationShedules = async (req, res) => {
         res.status(500).json(error)
         console.log(error)
     }
+}
+
+
+
+async function  updateReservationShedule(shedule){
+      for(let m of shedule.year.months){
+        for(let d of m.days){
+          for(let h of d.hours){
+            if(h.reservations.length){
+              let total = 0
+              for(let r of h.reservations){
+                total += r.guests
+                if(r.kids > 0){
+                  total += r.kids/2
+                } 
+              }
+              h.people = total
+            }
+          }
+        }
+      }
+
+   const sh =   await ReservationSchedule.findByIdAndUpdate(shedule._id, shedule, {new: true})
+   return sh
 }
 
 
