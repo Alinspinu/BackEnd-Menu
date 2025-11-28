@@ -216,9 +216,9 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
 async function sendMailToCustomer(data, emails) {
     const templateSource = fs.readFileSync('views/layouts/new-mail.ejs', 'utf-8');
         let url = ''
-            if(newUser.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
-            if(newUser.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
-            if(newUser.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'  
+            if(data.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
+            if(data.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+            if(data.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'  
         const renderedTemplate = ejs.render(templateSource,{data: data, url: url});
     
         const appKey = decryptData(data.locatie.gmail.app.key, data.locatie.gmail.app.secret, data.locatie.gmail.app.iv);
@@ -253,9 +253,9 @@ async function sendMailToCustomer(data, emails) {
 async function sendReservationEmail(reservation) {
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8');      
             let url = ''
-            if(newUser.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
-            if(newUser.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
-            if(newUser.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
+            if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
+            if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+            if(reservation.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
         const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url});
     
         const appKey = decryptData(reservation.locatie.gmail.app.key, reservation.locatie.gmail.app.secret, reservation.locatie.gmail.app.iv);
