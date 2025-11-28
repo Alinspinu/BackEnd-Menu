@@ -76,16 +76,16 @@ async function  updateReservationShedule(shedule){
       for(let m of shedule.year.months){
         for(let d of m.days){
           for(let h of d.hours){
+            let total = 0
             if(h.reservations.length){
-              let total = 0
               for(let r of h.reservations){
                 total += r.guests
                 if(r.kids > 0){
                   total += r.kids/2
                 } 
               }
-              h.people = total
             }
+            h.people = total
           }
         }
       }
