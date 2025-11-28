@@ -76,8 +76,8 @@ async function  updateReservationShedule(shedule){
       for(let m of shedule.year.months){
         for(let d of m.days){
           for(let h of d.hours){
-            let total = 0
             if(h.reservations.length){
+              let total = 0
               console.log('total ', h.people)
               for(let r of h.reservations){
                 // console.log('reservation guests', total)
@@ -87,10 +87,10 @@ async function  updateReservationShedule(shedule){
                   total += r.kids/2
                 } 
               }
+              h.people = total
+              console.log('people after total ', h.people)
             }
-            h.people = total
-
-            console.log('people after total ', h.people)
+            
           }
         }
       }
