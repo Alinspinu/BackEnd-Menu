@@ -49,7 +49,7 @@ module.exports.getReservationShedule = async (req, res) => {
 
         
 
-        const sh = await updateReservationShedule(shedule)
+        // const sh = await updateReservationShedule(shedule)
         res.status(200).json(shedule)
 
     } catch(error){
