@@ -10,6 +10,7 @@ const webPush = require('web-push');
 const io = require('socket.io-client');
 const SalePoint = require('../models/utils/sale-point');
 const socket = io("https://socket.flowmanager.ro")
+const PrintServer = require('../models/utils/print-server')
 
 
 webPush.setVapidDetails(
@@ -145,6 +146,14 @@ module.exports.checkAndNotifyReservations = async () => {
           console.warn(`Sale point not found for reservation ${reservation._id}`);
           return;
         }
+
+          let serverKey = ''
+
+          const printServers = await PrintServer.find({locatie: salePoint.locatie, salePoint: reservation.salePoint})
+
+          if(printServers && printServers.length){
+            serverKey = printServers[0].key
+          }
           const userIds = salePoint.notifications.flatMap(u => {
               if (!u.reservation) return [];
               return [u.user];
@@ -153,6 +162,7 @@ module.exports.checkAndNotifyReservations = async () => {
               sender: 'Admin',
               user: '64fdd7da9df46ea2df9cf8c8',
               reciver: '',
+              serverKey: serverKey,
               locatie: reservation.locatie,
               status: [],
               redirectLink: '',
