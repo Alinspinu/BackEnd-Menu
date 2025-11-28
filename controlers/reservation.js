@@ -513,8 +513,8 @@ module.exports.addReservation = async(req, res)  => {
         }
         const newReservation = new Reservation(reservation)
         const savedReservation = await newReservation.save()
-        const res = await Reservation.findById(savedReservation._id).populate({path: 'locatie'}).populate({path: 'salePoint'})
-        await sendReservationEmail(res)
+        const ress = await Reservation.findById(savedReservation._id).populate({path: 'locatie'}).populate({path: 'salePoint'})
+        await sendReservationEmail(ress)
         socket.emit('reservation', JSON.stringify(savedReservation))
         res.status(200).json(savedReservation)
     } catch(error){
