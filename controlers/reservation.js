@@ -119,6 +119,7 @@ module.exports.getReservationSheduleById = async (req, res) => {
 
 module.exports.updateSheduleHours = async (req, res) => {
     const {hours, sheduleId} = req.body
+    console.log(hours)
     try{
         const updates = []
         for(let h of hours){
