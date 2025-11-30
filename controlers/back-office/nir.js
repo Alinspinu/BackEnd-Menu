@@ -77,8 +77,8 @@ module.exports.createSheetByOrder = async (req, res) => {
 
 
     const order = await Order.findById(id)
-              .populate({path: 'products.toppings.ing', select: 'productIngredient ings price', populate: {path: 'ings.ing', select: 'productIngredient ings price'} })
-              .populate({path: 'products.ings.ing', select: 'productIngredient ings price', populate: {path: 'ings.ing', select: 'productIngredient ings price'}})
+              .populate({path: 'products.toppings.ing', select: 'productIngredient name ings price', populate: {path: 'ings.ing', select: 'productIngredient name ings price'} })
+              .populate({path: 'products.ings.ing', select: 'productIngredient name ings price', populate: {path: 'ings.ing', select: 'productIngredient name ings price'}})
 
     const sheet = {
       user: order.employee.user,
