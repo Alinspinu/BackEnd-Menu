@@ -125,13 +125,25 @@ let headerHeight = 200 + 50
 // radare produse
 y = 237 + 50
 let heghtValue = 12
+ 
 
+const products = []
+
+invoice.products.forEach(p => {
+  const existing = products.find(pp => pp._id.toString() === p._id.toString())
+  if(existing){
+    existing.totalNoVat += p.totalNoVat
+    el.quantity += p.quantity
+  } else {
+    products.push(p)
+  }
+})
 
 
 
 // doc.font("Courier");
 doc.fontSize(9)
-let productsCount = invoice.products.length
+let productsCount = products.length
 let rowHeigth = 12
 
 let firstChunk = 0
@@ -158,7 +170,7 @@ if(productsCount > 80){
 
  
 
-let ingChunks = splitIngredients(invoice.products, firstChunk, restChunks)
+let ingChunks = splitIngredients(products, firstChunk, restChunks)
 
 
 let pages = ingChunks.length
