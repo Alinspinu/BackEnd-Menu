@@ -89,14 +89,14 @@ module.exports.createSheetByOrder = async (req, res) => {
       date: new Date(),
       consumption: false
     }
-    for(let p of order.products){
 
+    for(let p of order.products){
       for(let i of p.ings){
         i.qty = i.qty * p.quantity
         if(i.ing.productIngredient){
           for(let ii of i.ing.ings){
              ii.qty = ii.qty * i.qty
-              const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing_id.toString())
+              const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing._id.toString())
               if(existing){
                 existing.qty += ii.qty 
               } else {
@@ -104,7 +104,7 @@ module.exports.createSheetByOrder = async (req, res) => {
               }
           }
         } else {
-            const existing = sheet.ings.find(iii => iii?.ing?._id === i.ing_id)
+            const existing = sheet.ings.find(iii => iii?.ing?._id === i.ing._id)
             if(existing){
               existing.qty += i.qty
             } else {
