@@ -137,6 +137,8 @@ module.exports.saveIng = async(req, res, next) => {
                 i.invGestiune[0].entries.priceNoVat = i.price
                 i.invGestiune[0].entries.priceWithVat = round(i.price * (1 + (i.tva/100)))
                 ingsToUpdate.push(i)
+              } else {
+                console.log('hittt')
               }
             }
           }
