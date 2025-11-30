@@ -102,9 +102,14 @@ async function unloadIngs (ings, qtyProdus) {
                         return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
                       });
                       if(oldestEntry){
-                        ingredientInv.price = oldestEntry.priceNoVat
-                        ingredientInv.tvaPrice = oldestEntry.priceWithVat
-                        ingredientInv.transportPrice = oldestEntry.transportPrice
+                        if(oldestEntry.priceNoVat > 0){
+                          ingredientInv.price = oldestEntry.priceNoVat
+                          ingredientInv.tvaPrice = oldestEntry.priceWithVat
+                          ingredientInv.transportPrice = oldestEntry.transportPrice
+                        } else {
+                          oldestEntry.priceNoVat = ingredientInv.price 
+                          oldestEntry.priceWithVat = ingredientInv.tvaPrice 
+                        }
                         console.log('Am am acualizat pretul ingredientului dupa ultima intrare ', ingredientInv.tvaPrice)
                       } else {console.warn('!!!!!Atentie nu am gasit ultima intrare pretul ingredientului a ramas acelasi!')}
                     } else {
@@ -121,8 +126,14 @@ async function unloadIngs (ings, qtyProdus) {
                       return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
                     });
                     if(oldestEntry){
-                      ingredientInv.price = oldestEntry.priceNoVat
-                      ingredientInv.tvaPrice = oldestEntry.priceWithVat
+                      if(oldestEntry.priceNoVat > 0){
+                        ingredientInv.price = oldestEntry.priceNoVat
+                        ingredientInv.tvaPrice = oldestEntry.priceWithVat
+                        ingredientInv.transportPrice = oldestEntry.transportPrice
+                      } else {
+                        oldestEntry.priceNoVat = ingredientInv.price 
+                        oldestEntry.priceWithVat = ingredientInv.tvaPrice 
+                      }
                       console.log('Am am acualizat pretul ingredientului dupa ultima intrare ', ingredientInv.tvaPrice)
                     } else {console.warn('!!!!!Atentie nu am gasit ultima intrare pretul ingredientului a ramas acelasi!')}
                   } else {
