@@ -111,7 +111,7 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'eFactura.gestiune', select: 'name'})
         const totalItems = 1500
         const totalPages = Math.ceil(totalItems / limit);
-        // verifyIngredients(items)
+        await  verifyIngredients(items)
         res.status(200).json({
           items,
           totalPages,
@@ -130,12 +130,15 @@ module.exports.saveIng = async(req, res, next) => {
     const ingsToUpdate = []
 
       for(let i of ings){
-          if(i.locatie.toString() === dune){
-            i.qty = 0
-            if(i.invGestiune.length){
-              i.invGestiune[0].qty = 0
+          if(i.invGestiune.length){
+            if(i.invGestiune[0].entries.length){
+              if(i.invGestiune[0].entries.priceNoVat <= 0){
+                console.log(i.name, 'pret ing ', i.price)
+                i.invGestiune[0].entries.priceNoVat = i.price
+                i.invGestiune[0].entries.priceWithVat = round(i.price * (1 + (i.tva/100)))
+                ingsToUpdate.push(i)
+              }
             }
-            ingsToUpdate.push(i)
           }
       }
 
