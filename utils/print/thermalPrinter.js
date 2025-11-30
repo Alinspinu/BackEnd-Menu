@@ -73,7 +73,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
 
   parts.push(reset);
 
-
+  let totalProd = 0
 
   const logo = await imageToEscPosRaster(logoUrl, 184);
   parts.push(center, logo, lf, lf);
@@ -92,7 +92,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     const qty = item.quantity.toString();
     const toppings = item.toppings || [];
     const comment = item.comment || '';
-
+    totalProd += (item.price * item.quantity)
     if (name.length > 20) {
       parts.push(Buffer.from(`${name}\n`, 'ascii'));
       parts.push(Buffer.from(`${' '.padEnd(17, " ")}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
@@ -113,9 +113,11 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
 
   const discount = order.discount > 0 ? round(order.discount) : 0
 
+  const tot = round(totalProd)
+
   parts.push(lf);
   if(order.discount > 0){
-    parts.push(Buffer.from(`${'Subtotal '.padEnd(37, ' ')  + order.totalProducts.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
+    parts.push(Buffer.from(`${'Subtotal '.padEnd(37, ' ')  + tot.toFixed(2).padStart(5, ' ')} LEI\n`, 'ascii'))
     parts.push(doubleW);
     parts.push(lf);
     parts.push(Buffer.from(`${'Discount '.padEnd(13, ' ') + '-' + discount} LEI\n`, 'ascii'))

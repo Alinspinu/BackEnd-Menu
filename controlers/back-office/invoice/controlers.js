@@ -17,6 +17,7 @@ const {buildEFacturaHeaderXML} = require('./buildXml')
 const {createOrderInvoice} = require('./create-order-invoice')
 const {downloadZipFile, downloadZipFileCheck} = require('./download-zip')
 const {uploadInvoice, checkInvoiceStatus, chageValues} = require('./upload')
+const {unloadIngs, createProductSaleReport} = require('../../../utils/inventary')
 
     
 
@@ -36,6 +37,18 @@ module.exports.createOrderInvoice = async (req, res) => {
       order.invoice = true
 
       const so = await Order.findByIdAndUpdate(order._id, order, {new: true})
+      await createProductSaleReport(so.products, so.updatedAt)
+
+      so.products.map(async (el) => {
+        if (el.toppings.length) {
+          await unloadIngs(el.toppings, el.quantity);
+        }
+        if (el.ings.length) {
+           await unloadIngs(el.ings, el.quantity);
+        }
+      });
+
+
       socket.emit('billl', JSON.stringify({bill: so}))
     }
 
