@@ -108,9 +108,9 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     const toppings = item.toppings || [];
     const comment = item.comment || '';
     totalProd += (item.price * item.quantity)
-    if (name.length > 20) {
+    if (name.length > 18) {
       parts.push(Buffer.from(`${name}\n`, 'ascii'));
-      parts.push(Buffer.from(`${' '.padEnd(17, " ")}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
+      parts.push(Buffer.from(`${' '.padEnd(15, " ")}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
     } else {
       parts.push(Buffer.from(`${name}${qty} BUC X ${price} = ${total} LEI\n`, 'ascii'));
     }
