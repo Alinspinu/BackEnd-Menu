@@ -146,7 +146,12 @@ module.exports.createSheetByOrder = async (req, res) => {
 
     }
 
-    res.status(200).json(sheet)
+    const newSheet = new ImpSheet(sheet)
+    const savedSheet = await newSheet.save()
+
+    await unloadIngs(savedSheet.ings, 1)
+
+    res.status(200).json({message: 'Fișa de deprecieri a fost creată și stocul actualizat!'})
 
   } catch(error){
     console.log(error)
