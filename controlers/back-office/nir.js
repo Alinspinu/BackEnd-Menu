@@ -96,7 +96,7 @@ module.exports.createSheetByOrder = async (req, res) => {
         if(i.ing.productIngredient){
           for(let ii of i.ing.ings){
              ii.qty = ii.qty * i.qty
-              const existing = sheet.ings.find(iii => iii.ing._id === ii.ing_id)
+              const existing = sheet.ings.find(iii => iii.ing._id.toString() === ii.ing_id.toString())
               if(existing){
                 existing.qty += ii.qty 
               } else {
