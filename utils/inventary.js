@@ -226,19 +226,21 @@ async function uploadIngs (ings, qtyProdus) {
                 if(gestIndex !== -1){
                   let gest = ingredientInv.invGestiune[gestIndex]
                   gest.qty = round(gest.qty + cantFinal)
+                  
+                  if(gest.entries.length){
+                    const oldestEntry = gest.entries.reduce((oldest, current) => {
+                      return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
+                    });
+    
+                    if(oldestEntry){
+                        const eIndex =  gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
+                        if(eIndex !== -1){
+                          gest.entries[eIndex].qty = round(gest.entries[eIndex].qty + cantFinal)
   
-                  const oldestEntry = gest.entries.reduce((oldest, current) => {
-                    return new Date(current.date).getTime() < new Date(oldest.date).getTime() ? current : oldest;
-                  });
-  
-                  if(oldestEntry){
-                      const eIndex =  gest.entries.findIndex(g => g._id.toString() === oldestEntry._id.toString())
-                      if(eIndex !== -1){
-                        gest.entries[eIndex].qty = round(gest.entries[eIndex].qty + cantFinal)
-
-                        console.log(ingredientInv.name, 'a fost încarcat cu +',  cantFinal, ' / stoc final ', gest.entries[eIndex].qty )
-                      }
-                  }  else { console.warn('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost incarcata doar in principal!, stoc final ', gest.qty)}
+                          console.log(ingredientInv.name, 'a fost încarcat cu +',  cantFinal, ' / stoc final ', gest.entries[eIndex].qty )
+                        }
+                    }  else { console.warn('!!!!Atentie nu au fost gasite intrari in gestiune, cantitatea a fost incarcata doar in principal!, stoc final ', gest.qty)}
+                  }
                   ingredientInv.invGestiune[gestIndex] = gest
                 }  else {console.warn('Au fost gasite gestiuni dar nu a fost gasta gestiune ingredientului ', ing.gestiune)}
               } else {console.warn('Nu au fost gasite gestiuni de inventar')}
