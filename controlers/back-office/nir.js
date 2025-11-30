@@ -92,7 +92,7 @@ module.exports.createSheetByOrder = async (req, res) => {
     for(let p of order.products){
 
       for(let i of p.ings){
-        i.qty = i.qty * product.quantity
+        i.qty = i.qty * p.quantity
         if(i.ing.productIngredient){
           for(let ii of i.ing.ings){
              ii.qty = ii.qty * i.qty
