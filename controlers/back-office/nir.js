@@ -104,7 +104,7 @@ module.exports.createSheetByOrder = async (req, res) => {
               }
           }
         } else {
-            const existing = sheet.ings.find(iii => iii?.ing?._id === i.ing._id)
+            const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === i.ing._id.toString())
             if(existing){
               existing.qty += i.qty
             } else {
@@ -112,6 +112,28 @@ module.exports.createSheetByOrder = async (req, res) => {
             }
         }
       }
+
+      for(let t of p.toppings){
+        t.qty = t.qty * p.quantity
+        if(i.ing.productIngredient){
+          for(let ii of t.ing.ings){
+            ii.qty = ii.qty * t.qty
+             const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing._id.toString())
+             if(existing){
+               existing.qty += ii.qty 
+             } else {
+               sheet.ings.push(ii)
+             }
+        }
+      } else {
+        const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === t.ing._id.toString())
+        if(existing){
+          existing.qty += t.qty
+        } else {
+          sheet.ings.push(t)
+        }
+      } 
+    }
 
       const existing = sheet.products.find(pp => pp.name === p.name)
       if(existing){
@@ -138,6 +160,9 @@ function clacProduction(product){
   let total = 0
   for(let i of product.ings){
     total += i.ing.price * i.qty * product.quantity
+  }
+  for(let t of product.toppings){
+    total += t.ing.price * t.qty * product.quantity
   }
   return round(total)
 }
