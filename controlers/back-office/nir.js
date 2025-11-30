@@ -119,7 +119,7 @@ module.exports.createSheetByOrder = async (req, res) => {
         existing.cost += clacProduction(p)
       } else {
         const prd = {name: p.name, qty: p.quantity, cost: clacProduction(p)}
-        sheet.existing.push(prd)
+        sheet.products.push(prd)
       }
 
     }
