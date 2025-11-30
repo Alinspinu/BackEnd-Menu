@@ -132,13 +132,13 @@ module.exports.saveIng = async(req, res, next) => {
       for(let i of ings){
           if(i.invGestiune.length){
             if(i.invGestiune[0].entries.length){
-              if(i.invGestiune[0].entries.priceNoVat <= 0){
+              if(i.invGestiune[0].entries[0].priceNoVat <= 0){
                 console.log(i.name, 'pret ing ', i.price)
                 i.invGestiune[0].entries.priceNoVat = i.price
                 i.invGestiune[0].entries.priceWithVat = round(i.price * (1 + (i.tva/100)))
                 ingsToUpdate.push(i)
               } else {
-                console.log('hittt')
+                // console.log('hittt')
               }
             }
           }
