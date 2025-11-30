@@ -133,7 +133,7 @@ invoice.products.forEach(p => {
   const existing = products.find(pp => pp.name.toString() === p.name.toString())
   if(existing){
     existing.totalNoVat += p.totalNoVat
-    el.quantity += p.quantity
+    existing.quantity += p.quantity
   } else {
     products.push(p)
   }
