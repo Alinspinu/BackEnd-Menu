@@ -3,6 +3,7 @@ const Nir = require('../../models/office/nir')
 const ImpSheet = require('../../models/office/imp-sheet')
 const Report = require('../../models/office/report');
 const NirInvoice = require('../../models/office/nir-invoice')
+const Order = require('../../models/office/product/order')
 
 const Ingredient = require('../../models/office/inv-ingredient')
 
@@ -14,8 +15,11 @@ const {unloadIngs, uploadIngs} = require('../../utils/inventary')
 
 const {createNir} = require('../print/nir')
 
+const {round} = require('../../utils/functions')
+
 const {createNirsListXcelBuffer} = require('../print/nir-list')
-const {createSheetListXcelBuffer} = require('../print/fisa-dep-cons')
+const {createSheetListXcelBuffer} = require('../print/fisa-dep-cons');
+const product = require('../../models/office/product/product');
 
 
 
@@ -62,6 +66,80 @@ module.exports.deleteSheet = async (req, res) => {
     console.log(error)
     res.status(500).json(error)
   }
+}
+
+
+
+module.exports.createSheetByOrder = async (req, res) => {
+
+  const {id} = req.body
+  try{
+
+
+    const order = await Order.findById(id)
+              .populate({path: 'products.toppings.ing', select: 'productIngredient ings price', populate: {path: 'ings.ing', select: 'productIngredient ings price'} })
+              .populate({path: 'products.ings.ing', select: 'productIngredient ings price', populate: {path: 'ings.ing', select: 'productIngredient ings price'}})
+
+    const sheet = {
+      user: order.employee.user,
+      locatie: order.locatie,
+      salePoint: order.salePoint,
+      products: [],
+      ings: [],
+      date: new Date(),
+      consumption: false
+    }
+    for(let p of order.products){
+
+      for(let i of p.ings){
+        i.qty = i.qty * product.quantity
+        if(i.ing.productIngredient){
+          for(let ii of i.ing.ings){
+             ii.qty = ii.qty * i.qty
+              const existing = sheet.ings.find(iii => iii.ing._id === ii.ing_id)
+              if(existing){
+                existing.qty += ii.qty 
+              } else {
+                sheet.ings.push(ii)
+              }
+          }
+        } else {
+            const existing = sheet.ings.find(iii => iii.ing._id === i.ing_id)
+            if(existing){
+              existing.qty += i.qty
+            } else {
+              sheet.ings.push(i)
+            }
+        }
+      }
+
+      const existing = sheet.products.find(pp => pp.name === p.name)
+      if(existing){
+        existing.qty += p.quantity
+        existing.cost += clacProduction(p)
+      } else {
+        const prd = {name: p.name, qty: p.quantity, cost: clacProduction(p)}
+        sheet.existing.push(prd)
+      }
+
+    }
+
+    res.status(200).json(sheet)
+
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
+
+function clacProduction(product){
+  const total = 0
+  for(let i of p.ings){
+    total += i.ing.price * i.qty * product.quantity
+  }
+  return round(total)
 }
 
 module.exports.getSheets = async (req, res) => {

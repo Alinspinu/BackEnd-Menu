@@ -35,6 +35,8 @@ router.route('/sheet')
     .delete(nirRoutes.deleteSheet)
     .put(nirRoutes.printSheet)
 
+ router.route('/order-sheet').post(nirRoutes.createSheetByOrder)
+
 router.route('/nir-invoice')
     .get(nirRoutes.printNirInvoice)
     .post(nirRoutes.seaveNirInvoice)
