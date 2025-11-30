@@ -83,7 +83,21 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   parts.push(underlineOff, lf, lf);
 
   parts.push(left, normalSize);
-  order.products.forEach((item) => {
+
+
+  const products = []
+
+  order.products.forEach(p => {
+    const existing = products.find(pp => pp.name === p.name && !p.toppings.lenght)
+    if(existing){
+      existing.total += (+p.total)
+      existing.quantity += p.quantity
+    } else {
+      products.push(p)
+    }
+  })
+
+  products.forEach((item) => {
     const normalName = stripRomanianDiacritics(item.name);
     const name = normalName.padEnd(21, " ");
     const price = item.price.toFixed(2).padStart(5, ' ');
