@@ -130,7 +130,7 @@ let heghtValue = 12
 const products = []
 
 invoice.products.forEach(p => {
-  const existing = products.find(pp => pp._id.toString() === p._id.toString())
+  const existing = products.find(pp => pp.name.toString() === p.name.toString())
   if(existing){
     existing.totalNoVat += p.totalNoVat
     el.quantity += p.quantity
