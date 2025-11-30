@@ -93,6 +93,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
       existing.total += (+p.total)
       existing.quantity += p.quantity
     } else {
+      p.total = +p.total
       products.push(p)
     }
   })
