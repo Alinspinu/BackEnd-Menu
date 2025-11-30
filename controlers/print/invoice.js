@@ -126,6 +126,9 @@ let headerHeight = 200 + 50
 y = 237 + 50
 let heghtValue = 12
 
+
+
+
 // doc.font("Courier");
 doc.fontSize(9)
 let productsCount = invoice.products.length
@@ -147,7 +150,7 @@ if(productsCount > 30 && productsCount <= 80){
 
 if(productsCount > 80){
   firstChunk = 36
-  restChunks = 54
+  restChunks = 50
 }
 
 
