@@ -17,7 +17,7 @@ const {buildEFacturaHeaderXML} = require('./buildXml')
 const {createOrderInvoice} = require('./create-order-invoice')
 const {downloadZipFile, downloadZipFileCheck} = require('./download-zip')
 const {uploadInvoice, checkInvoiceStatus, chageValues} = require('./upload')
-const {unloadIngs, createProductSaleReport} = require('../../../utils/inventary')
+const {unloadIngs, createProductSaleReport, uploadIngs} = require('../../../utils/inventary')
 
     
 
@@ -66,6 +66,13 @@ module.exports.saveInvoice = async (req, res) => {
     invoice.unload = true
     const newInvoice = new Invoice(invoice)
     const savedInvoice = await newInvoice.save()
+
+    const inv = await Invoice.findById(savedInvoice._id).populate({ path: 'products.ings.ing', populate: { path: 'ings.ing' } })
+
+    for(let p of inv.products){
+      await unloadIngs(p.ings, p.quantity)
+    }
+
     res.status(200).json({message: 'Factura a fost savată cu succes!', invoice: savedInvoice})
   } catch(error) {
     console.log(error)
@@ -173,6 +180,13 @@ module.exports.editInvoice = async (req, res) => {
 module.exports.deleteInvoice = async (req, res) => {
   const {id} = req.query
   try{
+
+    const inv = await Invoice.findById(id).populate({ path: 'products.ings.ing', populate: { path: 'ings.ing' } })
+
+    for(let p of inv.products){
+      await uploadIngs(p.ings, p.quantity)
+    }
+
     await Invoice.findByIdAndDelete(id)
     res.status(200).json({message: 'Factura a fost ștearsă cu success!'})
   } catch(error){
