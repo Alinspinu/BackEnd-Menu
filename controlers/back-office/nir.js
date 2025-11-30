@@ -71,14 +71,20 @@ module.exports.deleteSheet = async (req, res) => {
 
 
 module.exports.createSheetByOrder = async (req, res) => {
+  const { id } = req.body;
 
-  const {id} = req.body
-  try{
-
-
+  try {
     const order = await Order.findById(id)
-              .populate({path: 'products.toppings.ing', select: 'productIngredient name ings price', populate: {path: 'ings.ing', select: 'productIngredient name ings price'} })
-              .populate({path: 'products.ings.ing', select: 'productIngredient name ings price', populate: {path: 'ings.ing', select: 'productIngredient name ings price'}})
+      .populate({
+        path: 'products.toppings.ing',
+        select: 'productIngredient name ings price',
+        populate: { path: 'ings.ing', select: 'productIngredient name ings price' }
+      })
+      .populate({
+        path: 'products.ings.ing',
+        select: 'productIngredient name ings price',
+        populate: { path: 'ings.ing', select: 'productIngredient name ings price' }
+      });
 
     const sheet = {
       user: order.employee.user,
@@ -88,80 +94,79 @@ module.exports.createSheetByOrder = async (req, res) => {
       ings: [],
       date: new Date(),
       consumption: false
-    }
+    };
 
-    for(let p of order.products){
-      for(let i of p.ings){
-        i.qty = i.qty * p.quantity
-        if(i.ing.productIngredient){
-          for(let ii of i.ing.ings){
-             ii.qty = ii.qty * i.qty
-              const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing._id.toString())
-              if(existing){
-                existing.qty += ii.qty 
-              } else {
-                sheet.ings.push(ii)
-              }
-          }
-        } else {
-            const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === i.ing._id.toString())
-            if(existing){
-              existing.qty += i.qty
-            } else {
-              sheet.ings.push(i)
-            }
-        }
-      }
+    // Helper — compares ObjectIds safely
+    const idsEqual = (a, b) => a.toString() === b.toString();
 
-      for(let t of p.toppings){
-        t.qty = t.qty * p.quantity
-        if(t.ing.productIngredient){
-          for(let ii of t.ing.ings){
-            ii.qty = ii.qty * t.qty
-             const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing._id.toString())
-             if(existing){
-               existing.qty += ii.qty 
-             } else {
-               sheet.ings.push(ii)
-             }
+    // Helper — pushes or increments ingredient in sheet.ings
+    const addIng = (ing, qty) => {
+      const existing = sheet.ings.find(i => idsEqual(i.ing._id, ing._id));
+      if (existing) existing.qty += qty;
+      else sheet.ings.push({ ing, qty });
+    };
+
+    // Helper — process ingredients or nested ingredients
+    const processIngredient = (baseIng, multipliedQty) => {
+      const totalQty = baseIng.qty * multipliedQty;
+
+      if (baseIng.ing.productIngredient) {
+        // Ingredient with sub-ingredients
+        for (const sub of baseIng.ing.ings) {
+          const subQty = sub.qty * totalQty;
+          addIng(sub.ing, subQty);
         }
       } else {
-        const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === t.ing._id.toString())
-        if(existing){
-          existing.qty += t.qty
-        } else {
-          sheet.ings.push(t)
-        }
-      } 
-    }
+        // Simple ingredient
+        addIng(baseIng.ing, totalQty);
+      }
+    };
 
-      const existing = sheet.products.find(pp => pp.name === p.name)
-      if(existing){
-        existing.qty += p.quantity
-        existing.cost += clacProduction(p)
-      } else {
-        const prd = {name: p.name, qty: p.quantity, cost: clacProduction(p)}
-        sheet.products.push(prd)
+    // MAIN LOOP
+    for (const p of order.products) {
+      // INGREDIENTS
+      for (const i of p.ings) {
+        processIngredient(i, p.quantity);
       }
 
+      // TOPPINGS
+      for (const t of p.toppings) {
+        processIngredient(t, p.quantity);
+      }
+
+      // PRODUCTS
+      const existingProduct = sheet.products.find(prod => prod.name === p.name);
+      const cost = clacProduction(p);
+
+      if (existingProduct) {
+        existingProduct.qty += p.quantity;
+        existingProduct.cost += cost;
+      } else {
+        sheet.products.push({
+          name: p.name,
+          qty: p.quantity,
+          cost
+        });
+      }
     }
 
-    res.status(200).json(sheet)
+    return res.status(200).json(sheet);
 
-  } catch(error){
-    console.log(error)
-    res.status(500).json(error)
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
   }
-}
+};
+
 
 
 
 function clacProduction(product){
   let total = 0
-  for(let i of product.ings){
+  for(const i of product.ings){
     total += i.ing.price * i.qty * product.quantity
   }
-  for(let t of product.toppings){
+  for(const t of product.toppings){
     total += t.ing.price * t.qty * product.quantity
   }
   return round(total)
