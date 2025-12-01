@@ -363,7 +363,7 @@ module.exports.compareScriptic = async (req, res) => {
           }
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
           if(scaled.ing?.name === 'Oua'){
-            console.log(scaled.gestiune)
+            // console.log(scaled.gestiune)
           }
           // console.log(w)
           if (scaled?.ing?.ings?.length) {
@@ -399,7 +399,7 @@ module.exports.compareScriptic = async (req, res) => {
           }
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
           if(scaled.ing?.name === 'Oua'){
-            console.log(scaled.gestiune)
+            // console.log(scaled.gestiune)
           }
           // console.log(w)
           if (scaled?.ing?.ings?.length) {
@@ -490,6 +490,9 @@ module.exports.compareScriptic = async (req, res) => {
     const compareById = (id) => (id ? compareMap.get(idStr(id)) : undefined);
 
     for (const ingDoc of ings || []) {
+      if(ingDoc.name === 'Cocktail Mango'){
+        console.log(ingDoc.uploadLog)
+      }
       const comp = compareById(ingDoc._id);
       if (!comp) continue; // if it never appeared elsewhere, skip uploads
 
@@ -522,7 +525,7 @@ module.exports.compareScriptic = async (req, res) => {
       gestiune: firstInventary.gestiune,
     }).save();
 
-    console.log(savedCompare)
+    // console.log(savedCompare)
     await savedCompare.populate({ path: 'gestiune', select: 'name' });
     res.status(200).json({ message: 'Inventarul comparat a fost generat cu succes!', inv: savedCompare });
   } catch (err) {
