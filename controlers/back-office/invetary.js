@@ -326,7 +326,7 @@ module.exports.compareScriptic = async (req, res) => {
     for (const sheet of impSheets) {
       for (const w of sheet.ings) {
         if (w?.ing?.productIngredient) processComposite(depMap, w, 1);
-        else processLeaf(depMap, w, 1);
+         processLeaf(depMap, w, 1);
       }
     }
 
@@ -340,7 +340,8 @@ module.exports.compareScriptic = async (req, res) => {
             const qty = r((sub.qty || 0) * (w.qty || 0));
             if (qty) addTo(depMap, sub.ing, qty);
           }
-        } else processLeaf(depMap, w, 1);
+        } 
+         processLeaf(depMap, w, 1);
       }
       for (const w of bp.toppings || []) {
         if (w?.ing?.ings?.length) {
@@ -349,7 +350,8 @@ module.exports.compareScriptic = async (req, res) => {
             const qty = r((sub.qty || 0) * (w.qty || 0));
             if (qty) addTo(depMap, sub.ing, qty);
           }
-        } else processLeaf(depMap, w, 1);
+        } 
+         processLeaf(depMap, w, 1);
       }
     }
     // === 5) orders -> consMap
@@ -365,14 +367,15 @@ module.exports.compareScriptic = async (req, res) => {
           if(scaled.ing?.name === 'Oua'){
             // console.log(scaled.gestiune)
           }
-          // console.log(w)
+          console.log(w)
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
               if (!sub?.ing?._id || !gestMatch(sub)) continue;
               const qty = r((sub.qty || 0) * (scaled.qty || 1));
               if (qty) addTo(consMap, sub.ing, qty);
             }
-          } else processLeaf(consMap, scaled, 1);
+          }
+          processLeaf(consMap, scaled, 1);
         }
 
         for (const t of prod.toppings || []) {
@@ -383,7 +386,8 @@ module.exports.compareScriptic = async (req, res) => {
               const qty = r((sub.qty || 0) * (scaled.qty || 0));
               if (qty) addTo(consMap, sub.ing, qty);
             }
-          } else processLeaf(consMap, scaled, 1);
+          }
+           processLeaf(consMap, scaled, 1);
         }
       }
     }
@@ -408,7 +412,8 @@ module.exports.compareScriptic = async (req, res) => {
               const qty = r((sub.qty || 0) * (scaled.qty || 0));
               if (qty) addTo(consMap, sub.ing, qty);
             }
-          } else processLeaf(consMap, scaled, 1);
+          }
+           processLeaf(consMap, scaled, 1);
         }
       }
     }
