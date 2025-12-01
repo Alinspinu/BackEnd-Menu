@@ -255,7 +255,7 @@ module.exports.compareScriptic = async (req, res) => {
 
     // 2) Load the rest in parallel
     const [ings, delProds, impSheets, orders, invoices] = await Promise.all([
-      Ingredient.find({ locatie: loc, productIngredient: false, salePoint: point }).select('name uploadLog um').lean(),
+      Ingredient.find({ locatie: loc, salePoint: point }).select('name uploadLog um').lean(),
       DelProd.find({
         locatie: loc,
         createdAt: { $gte: startTime, $lt: endTime },
