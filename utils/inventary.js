@@ -29,7 +29,13 @@ async function unloadIngs (ings, qtyProdus) {
                 console.log('Am gasit ingredient compus cu gestiune...')
                   if(ingredientInv.qty <= cantFinal){
                     const diference = cantFinal - ingredientInv.qty
-                    ingredientInv.uploadLog.push({date: new Date(), qty: ingredientInv.production.qty, operation: {name: 'productie', details: 'Intrare prin productie'}})
+                    ingredientInv.uploadLog.push(
+                      {
+                        date: new Date(), 
+                        qty: ingredientInv.production.qty, 
+                        uploadNoVat: calcRecipeTotal(ingredientInv.ings).price,
+                        uploadPrice: calcRecipeTotal(ingredientInv.ings).priceNoVat,
+                        operation: {name: 'intrare', details: 'Intrare prin productie'}})
                     ingredientInv.qty = round(ingredientInv.production.qty - diference)
                     await unloadIngs(ingredientInv.ings, ingredientInv.production.qty)
                   }
