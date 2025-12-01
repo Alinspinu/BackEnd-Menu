@@ -494,6 +494,9 @@ module.exports.compareScriptic = async (req, res) => {
       if (!comp) continue; // if it never appeared elsewhere, skip uploads
 
       for (const log of ingDoc.uploadLog || []) {
+        if(log.operation?.name === 'productie'){
+          console.log(ingDoc.name)
+        }
         const d = new Date(log.date);
         // compare by day (UTC 00:00)
         const t = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
