@@ -497,7 +497,7 @@ module.exports.compareScriptic = async (req, res) => {
         const d = new Date(log.date);
         // compare by day (UTC 00:00)
         const t = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-        if (t >= startTime.getTime() && t <= endTime.getTime() && log.operation?.name === 'intrare') {
+        if (t >= startTime.getTime() && t <= endTime.getTime() && (log.operation?.name === 'intrare' || log.operation?.name === 'productie')) {
           comp.upload.value = r(comp.upload.value + (log.qty || 0));
           comp.upload.entries.push(log);
         }
