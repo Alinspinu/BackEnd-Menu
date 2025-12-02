@@ -4,13 +4,14 @@ const Schema = mongoose.Schema;
 
 
 const eventSchema = new Schema({
-    date: {
+    start: {
         type: Date, 
         index: true
     },
 
-    dateLabel: {
-        type: String,
+    end: {
+        type: Date, 
+        index: true
     },
 
     description:{
@@ -19,6 +20,31 @@ const eventSchema = new Schema({
 
     eventUrl: {
         type: String,
+    },
+
+    status: {
+        type: String
+    },
+
+    poster:{
+        path: {
+            type: String,
+        },
+        filename: {
+            type: String,
+        },
+    },
+
+    price: {
+        type: Number
+    },
+
+    seats: {
+        type: Number
+    },
+
+    people: {
+        type: Number
     },
 
     name: {

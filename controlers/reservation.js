@@ -70,7 +70,7 @@ module.exports.createEvent = async (req, res) => {
     const url = `https://front.flowmanager.ro/event-reserve?data=${encriptedData}`
 
     newEvent.eventUrl = url
-    const savedEvent = await Event.save()
+    const savedEvent = await newEvent.save()
 
     res.status(200).json({message: 'Evenimentul a fost creat cu success!', event: savedEvent})
 
