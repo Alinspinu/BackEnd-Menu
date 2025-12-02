@@ -6,6 +6,7 @@ const SalePoint = require('../models/utils/sale-point')
 const Subscription = require('../models/utils/subscription')
 const ContactMessage = require('../models/utils/contact-mes')
 const Locatie = require('../models/office/locatie')
+const Event = require('../models/office/event')
 
 
 const {sendReservationEmail, sendAdminMessage} = require('../utils/mail')
@@ -36,6 +37,79 @@ webPush.setVapidDetails(
     process.env.WEB_PUSH_PUBLIC,
     process.env.WEB_PUSH_PRIVATE,
   );
+
+
+
+
+
+module.exports.getEvents = async (req, res) => {
+  const {loc, point} = req.query
+
+  try{
+    const events = await Event.find({locatie: loc, salePoint: point})
+            .populate({path: 'reservations'})
+
+    res.status(200).json(events)
+  } catch(error){
+    console.log(error)
+    res.status(200).json(error)
+  }
+}
+
+
+module.exports.createEvent = async (req, res) => {
+  const {event} = req.body;
+
+  try{
+
+    const newEvent = new Event(event)
+
+    const dataToEncript = JSON.stringify({point: event.salePoint, loc: event.locatie, eventId: newEvent._id})
+    const encriptedData = encryptObject(dataToEncript)
+
+    const url = `https://front.flowmanager.ro/event-reserve?data=${encriptedData}`
+
+    newEvent.eventUrl = url
+    const savedEvent = await Event.save()
+
+    res.status(200).json({message: 'Evenimentul a fost creat cu success!', event: savedEvent})
+
+  } catch(err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
+
+
+
+module.exports.editEvent = async (req, res) => {
+  const {event} = req.body
+
+ try{
+  const editedEv = await Event.findByIdAndUpdate(event._id, event, {new: true})
+  res.status(200).json({message: 'Evenimentul a fost creat cu success!', event: editedEv})
+ } catch(error){
+  console.log(error)
+  res.status(500).json(error)
+ }
+
+}
+
+
+
+
+module.exports.deleteEvent = async (req, res) => {
+  const {id} = req.query
+  try{
+
+    await Event.findByIdAndDelete(id)
+
+    res.status(200).json({message: 'Evenimentul a fost șters cu success!'})
+  } catch(error){
+    console.log(error)
+    res.status(500).josn(error)
+  }
+}
 
 
 
@@ -514,6 +588,7 @@ module.exports.addReservation = async(req, res)  => {
         const newReservation = new Reservation(reservation)
         const savedReservation = await newReservation.save()
         const ress = await Reservation.findById(savedReservation._id).populate({path: 'locatie'}).populate({path: 'salePoint'})
+        if(ress.email)
         await sendReservationEmail(ress)
         socket.emit('reservation', JSON.stringify(savedReservation))
         res.status(200).json(savedReservation)

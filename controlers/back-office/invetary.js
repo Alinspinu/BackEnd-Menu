@@ -367,7 +367,7 @@ module.exports.compareScriptic = async (req, res) => {
           if(scaled.ing?.name === 'Oua'){
             // console.log(scaled.gestiune)
           }
-          console.log(w)
+          // console.log(w)
           if (scaled?.ing?.ings?.length) {
             for (const sub of scaled.ing.ings) {
               if (!sub?.ing?._id || !gestMatch(sub)) continue;
@@ -495,9 +495,6 @@ module.exports.compareScriptic = async (req, res) => {
     const compareById = (id) => (id ? compareMap.get(idStr(id)) : undefined);
 
     for (const ingDoc of ings || []) {
-      if(ingDoc.name === 'Cocktail Mango'){
-        console.log(ingDoc.uploadLog)
-      }
       const comp = compareById(ingDoc._id);
       if (!comp) continue; // if it never appeared elsewhere, skip uploads
 

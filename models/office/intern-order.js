@@ -12,15 +12,15 @@ const interOrderSchema = new Schema({
         {   
             name: String,
             qty: Number,
-            productSender: {
+            productClient: {
                 type: Schema.Types.ObjectId,
                 ref: 'Product'
             },
-            ingredientSender: {
+            ingredientClient: {
                 type: Schema.Types.ObjectId,
                 ref: 'IngredientInv'
             },
-            productReciver: {
+            productSuplier: {
                 type: Schema.Types.ObjectId,
                 ref: 'Product'
             },
@@ -44,18 +44,49 @@ const interOrderSchema = new Schema({
             }
         }
     ],
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
+
+    client: {
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        locatie: {
+           type: Schema.Types.ObjectId,
+           ref: 'Locatie'
+        },
+        salePoint:{
+            type: Schema.Types.ObjectId,
+            ref: 'SalePoint'
+        },
+
+        recived: {
+            status: Boolean,
+            details: String,
+        },
+
     },
-    locatie: {
-        type: Schema.Types.ObjectId,
-        ref: 'Locatie'
-    },
-    salePoint: {
-        type: Schema.Types.ObjectId,
-        ref: 'SalePoint'
-      }
+    
+    suplier: {
+        user: {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        locatie: {
+           type: Schema.Types.ObjectId,
+           ref: 'Locatie'
+        },
+        salePoint:{
+            type: Schema.Types.ObjectId,
+            ref: 'SalePoint'
+        },
+        deliverd: {
+            status: Boolean,
+            details: String,
+
+        }
+    }
+
+
 });
 
 
