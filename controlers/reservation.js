@@ -82,6 +82,21 @@ module.exports.createEvent = async (req, res) => {
 
 
 
+module.exports.getEventById = async (req, res) => {
+  const {id} = req.query
+  try{
+
+    const event = await Event.findById(id)
+
+    res.status(200).json(event)
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
+
 module.exports.editEvent = async (req, res) => {
   const {event} = req.body
 
