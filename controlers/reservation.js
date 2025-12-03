@@ -64,7 +64,7 @@ module.exports.createEvent = async (req, res) => {
 
     const newEvent = new Event(event)
 
-    const dataToEncript = JSON.stringify({point: event.salePoint, loc: event.locatie, eventId: newEvent._id})
+    const dataToEncript = JSON.stringify({eventId: newEvent._id})
     const encriptedData = encryptObject(dataToEncript)
 
     const url = `https://front.flowmanager.ro/event-reserve?data=${encriptedData}`

@@ -50,6 +50,13 @@ const eventSchema = new Schema({
     name: {
         type: String,
     },
+
+    hours: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'ResHour' 
+        }
+    ],
     
     reservations: [
         {
