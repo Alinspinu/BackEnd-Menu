@@ -27,6 +27,7 @@ const reservationSchema = new Schema({
             ref: 'User'
         }
     },
+    eventId: String,
     date: Date,
     dateString: String,
     guests: Number,
