@@ -87,7 +87,9 @@ module.exports.getEventById = async (req, res) => {
   const {id} = req.query
   try{
 
-    const event = await Event.findById(id).populate({path: 'hours'})
+    const event = await Event.findById(id)
+            .populate({path: 'hours'})
+            .populate({path: 'reservations'})
 
     res.status(200).json(event)
   } catch(error){
