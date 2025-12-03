@@ -48,6 +48,7 @@ module.exports.getEvents = async (req, res) => {
   try{
     const events = await Event.find({locatie: loc, salePoint: point})
             .populate({path: 'reservations'})
+            .populate({path: 'hours'})
 
     res.status(200).json(events)
   } catch(error){
@@ -70,8 +71,8 @@ module.exports.createEvent = async (req, res) => {
     const url = `https://front.flowmanager.ro/event-reserve?data=${encriptedData}`
 
     newEvent.eventUrl = url
+    await newEvent.populate('hours');
     const savedEvent = await newEvent.save()
-
     res.status(200).json({message: 'Evenimentul a fost creat cu success!', event: savedEvent})
 
   } catch(err) {
@@ -86,7 +87,7 @@ module.exports.getEventById = async (req, res) => {
   const {id} = req.query
   try{
 
-    const event = await Event.findById(id)
+    const event = await Event.findById(id).populate({path: 'hours'})
 
     res.status(200).json(event)
   } catch(error){
@@ -102,6 +103,8 @@ module.exports.editEvent = async (req, res) => {
 
  try{
   const editedEv = await Event.findByIdAndUpdate(event._id, event, {new: true})
+            .populate({path: 'hours'})
+            .populate({path: 'reservations'})
   res.status(200).json({message: 'Evenimentul a fost creat cu success!', event: editedEv})
  } catch(error){
   console.log(error)
