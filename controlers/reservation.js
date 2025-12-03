@@ -689,7 +689,7 @@ module.exports.deleteReservation = async (req, res) => {
 
       console.log('oameni de zcazut ', ppl+kids)
 
-      if(reservation.eventId.length){
+      if(reservation.eventId?.length){
         updates.push(
           Event.findByIdAndUpdate(reservation.eventId, {$inc: {people: -(ppl+kids), $pull: {reservations: id}}})
         )
