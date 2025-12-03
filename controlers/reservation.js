@@ -214,6 +214,7 @@ module.exports.getReservationSheduleById = async (req, res) => {
 module.exports.updateSheduleHours = async (req, res) => {
     const {hours, sheduleId} = req.body
     console.log(hours)
+    console.log(sheduleId)
     try{
         const updates = []
         for(let h of hours){
@@ -688,6 +689,11 @@ module.exports.deleteReservation = async (req, res) => {
 
       console.log('oameni de zcazut ', ppl+kids)
 
+      if(reservation.eventId.length){
+        updates.push(
+          Event.findByIdAndUpdate(reservation.eventId, {$inc: {people: -(ppl+kids), $pull: {reservations: id}}})
+        )
+      }
   
       for (const h of reservation.resHour) {
         sheduleId = h.shedule;
