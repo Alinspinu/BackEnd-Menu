@@ -12,7 +12,6 @@ const Gestiune = require('../models/office/product/gestiune')
 
 
 async function getBillProducts(orders, filter) {
-    console.log('comezi la produse', orders.length)
 
     let products = [];
     let modifiedProducts = []
@@ -951,7 +950,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             }
         }
     } else {
-        console.log(dbEmployee.fullName)
+        // console.log(dbEmployee.fullName)
     }
     }
 
