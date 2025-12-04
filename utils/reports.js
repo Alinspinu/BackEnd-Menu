@@ -109,8 +109,10 @@ async function getBillProducts(orders, filter) {
 
 
     async function processBill(bill, department) {
+        let total = 0
         for (const prod of bill.products) {
             const product = prod
+            total += ((product.price * product.quantity)- product.discount)
             if (normalizeText(product.dep) === department) {
                 const existingProduct = products.find(p => p.name === product.name && arraysAreEqual(p.toppings, product.toppings));
                 if (existingProduct) {
@@ -138,7 +140,11 @@ async function getBillProducts(orders, filter) {
 
                 }
             }
+            if(total !== bill.total){
+                console.log(' Bill total ', bill.total, 'product total ', total)
+            }   
         }
+
     }
 
 async function getIngredients(products){
