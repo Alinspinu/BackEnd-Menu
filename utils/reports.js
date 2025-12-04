@@ -111,7 +111,7 @@ async function getBillProducts(orders, filter) {
     async function processBill(bill, department) {
         for (const prod of bill.products) {
             const product = prod
-            if (product.dep === department) {
+            if (normalizeText(product.dep) === department) {
                 const existingProduct = products.find(p => p.name === product.name && arraysAreEqual(p.toppings, product.toppings));
                 if (existingProduct) {
                     existingProduct.quantity += product.quantity;
