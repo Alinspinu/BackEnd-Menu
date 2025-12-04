@@ -520,6 +520,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         return round(total * p.quantity)
     }
  
+    let totall = 0
 
     //CALC SALES
   
@@ -530,6 +531,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
                 if(g){
                     const price = (prod.price*prod.quantity) - prod.discount
+                    totall += price
                     const totalRecipe = calacProductRecipe(prod)
                     const existingProduct = g.products.find(p => p.name === prod.name)
                     if(existingProduct){
@@ -592,6 +594,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         }
 
     }
+
+    console.log('TOTAL CHECK ',totall)
 
 
     //CALC SUPLIES
