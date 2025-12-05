@@ -11,7 +11,7 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
   worksheet.addRow(docTitle)
   worksheet.addRow([`${salePoint.name}`], '')
   worksheet.addRow([])
-  worksheet.addRow([
+ const head = worksheet.addRow([
     'Nr',
     'Nume produs',
     'Cota tva',
@@ -30,20 +30,43 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
     'Incasat fara tva',
   ])
 
+  head.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+  })
 
-
+  let costTotalVat = 0
+  let costTotalNoVat = 0
+  let saleTotalVat = 0
+  let saleTotalNoVat = 0
+  let discountTotalVat = 0
+  let discountTotalNoVat = 0
+  let cashInTotalVat = 0
+  let cashInTotalNoVat = 0
+  let totalQty = 0
   products.forEach((p, i) => {
-
+    totalQty += p.quantity
     const costUmVat =  calcProductionValue(p.toppings, p.ings, p.quantity)
     const costUmNoVat = calcProductionValueNoVat(p.toppings, p.ings, p.quantity)
     const priceNoVat = round(p.price / (1+ (p.tva/100)))
     const costVat = round(p.quantity * costUmVat)
+    costTotalVat += costVat
     const costNoVat = round(p.quantity * costUmNoVat)
+    costTotalNoVat += costNoVat
     const saleVat = round(p.price * p.quantity)
+    saleTotalVat += saleVat
     const saleNoVat = round(saleVat / (1 + (p.tva/100)))
+    saleTotalNoVat += saleNoVat
     const discountNoVat = round(p.discount / (1 + (p.tva/100))) || 0
+    discountTotalNoVat += discountNoVat
+    discountTotalVat += p.discount
+    
     const cashInWithVat = round(saleVat - p.discount)
+    cashInTotalVat += cashInWithVat
     const cashInNoVat = round(saleNoVat - discountNoVat)
+    cashInTotalNoVat += cashInNoVat
     worksheet.addRow(
         [
             i+1,
@@ -62,9 +85,36 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
             discountNoVat,
             cashInWithVat,
             cashInNoVat
-
         ]
     )
+  })
+
+  const totals = worksheet.addRow(
+    [   
+        '',
+        'TOTLURI',
+        '',
+        '',
+        '',
+        '',
+        '',
+        totalQty,
+        round(costTotalVat),
+        round(costTotalNoVat),
+        round(saleTotalVat),
+        round(saleTotalNoVat),
+        round(discountTotalVat),
+        round(discountTotalNoVat),
+        round(cashInTotalVat),
+        round(cashInTotalNoVat)
+    ]
+  )
+
+  totals.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 13
+    }
   })
 
 
@@ -72,15 +122,19 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
   worksheet.getColumn(1).width = 4;
   worksheet.getColumn(2).width = 25; 
   worksheet.getColumn(3).width = 8; 
-  worksheet.getColumn(4).width = 15; 
-  worksheet.getColumn(5).width = 8; 
-  worksheet.getColumn(6).width = 15; 
-  worksheet.getColumn(7).width = 15; 
-  worksheet.getColumn(8).width = 15; 
-  worksheet.getColumn(9).width = 15; 
-  worksheet.getColumn(10).width = 15; 
-  worksheet.getColumn(11).width = 15; 
-  worksheet.getColumn(12).width = 15; 
+  worksheet.getColumn(4).width = 17; 
+  worksheet.getColumn(5).width = 17; 
+  worksheet.getColumn(6).width = 17; 
+  worksheet.getColumn(7).width = 17; 
+  worksheet.getColumn(8).width = 17; 
+  worksheet.getColumn(9).width = 17; 
+  worksheet.getColumn(10).width = 17; 
+  worksheet.getColumn(11).width = 17; 
+  worksheet.getColumn(12).width = 17; 
+  worksheet.getColumn(13).width = 17; 
+  worksheet.getColumn(14).width = 17; 
+  worksheet.getColumn(15).width = 17; 
+  worksheet.getColumn(16).width = 17; 
 
 
 
