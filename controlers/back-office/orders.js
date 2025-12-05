@@ -264,6 +264,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
                 
             if(download && download.bool){
                 const date = `${formatedDateToShow(startTime) - formatedDateToShow(endTime)}`
+                console.log(date)
                 let buffer
                 if(download.type === 'products'){
                     buffer = await createProductsReportXcelBuffer(result.allProd, salePoint, date);
