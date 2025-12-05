@@ -5,7 +5,7 @@ const {formatedDateToShow, round} = require('../../utils/functions')
 
 async function createProductsReportXcelBuffer(products, salePoint, date){
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet(`Raport produse vandute din ${date}`);
+  const worksheet = workbook.addWorksheet(`Raport produse vandute`);
   const docTitle =  [
       `${salePoint.locatie.bussinessName}`,'',`Raport produse vandute din ${date} `]
   worksheet.addRow(docTitle)
