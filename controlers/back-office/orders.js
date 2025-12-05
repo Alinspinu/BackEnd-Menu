@@ -23,9 +23,7 @@ const socket = io('https://flowmanager.ro', {
       transports: ['websocket']
     })
 // const socket = io("https://socket.flowmanager.ro")
-const salePoint = require('../../models/utils/sale-point');
 const order = require('../../models/office/product/order');
-const salePoint = require('../../models/utils/sale-point');
 // const socket = io("http://localhost:8090")
 
 
