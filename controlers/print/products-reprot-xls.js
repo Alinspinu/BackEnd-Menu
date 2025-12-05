@@ -33,17 +33,6 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
 
 
 
-  worksheet.mergeCells('A1:B1');
-  worksheet.mergeCells('C1:H1');
-  worksheet.mergeCells('A2:H2');
-  
-  worksheet.mergeCells('A3:H4');
-  worksheet.mergeCells('A5:B5');
-  worksheet.mergeCells('C5:H5');
-  worksheet.mergeCells('A6:B6');
-  worksheet.mergeCells('C6:H6');
-  worksheet.mergeCells('A7:H8');
-
   worksheet.getColumn(1).width = 4;
   worksheet.getColumn(2).width = 20; 
   worksheet.getColumn(3).width = 8; 
