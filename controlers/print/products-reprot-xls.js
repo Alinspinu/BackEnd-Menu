@@ -48,8 +48,8 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
   let totalQty = 0
   products.forEach((p, i) => {
     totalQty += p.quantity
-    const costUmVat =  calcProductionValue(p.toppings, p.ings, p.quantity)
-    const costUmNoVat = calcProductionValueNoVat(p.toppings, p.ings, p.quantity)
+    const costUmVat =  calcProductionValue(p.toppings, p.ings, 1)
+    const costUmNoVat = calcProductionValueNoVat(p.toppings, p.ings, 1)
     const priceNoVat = round(p.price / (1+ (p.tva/100)))
     const costVat = round(p.quantity * costUmVat)
     costTotalVat += costVat
