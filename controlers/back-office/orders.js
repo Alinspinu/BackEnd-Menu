@@ -263,7 +263,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
             const ingredients = await getIngredients(result.allProd)
                 
             if(download && download.bool){
-                const date = `${formatedDateToShow(startTime) - formatedDateToShow(endTime)}`
+                const date = `${formatedDateToShow(startTime)} - ${formatedDateToShow(endTime)}`
                 console.log(date)
                 let buffer
                 if(download.type === 'products'){
