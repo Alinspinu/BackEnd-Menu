@@ -130,7 +130,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
         // totalOut0 += o.tips
       }
       for(let p of o.products){
-        if(p.name !== 'Croissant cu unt'){
+        // if(p.name !== 'Croissant cu unt'){
           if(!p.departament) console.log('produst fara departament ' , p.name)
             if(p.departament?.toString() === dep){
               let sgrTax = 0
@@ -194,7 +194,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
                 }
               }
         }
-          }
+          // }
       }
     }
 
