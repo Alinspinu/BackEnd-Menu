@@ -249,11 +249,18 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
             }
           }
           }
+          day.entries.forEach(e => {
+            if(e.tva === 0){
+              console.log(e.description, ' ', formatedDateToShow(e.date))
+            }
+          })
       }
     }
     days[0].in0 = +inv0Value;
     days[0].in11 = +inv11Value;
     days[0].in21 = +inv21Value;
+
+
 
     for (let i = 0; i < days.length; i++) {
       const day = days[i];
