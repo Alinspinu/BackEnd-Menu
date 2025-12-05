@@ -130,68 +130,70 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
         totalOut0 += o.tips
       }
       for(let p of o.products){
-        if(!p.departament) console.log('produst fara departament ' , p.name)
-          if(p.departament?.toString() === dep){
-            let sgrTax = 0
-            if(p.sgrTax){
-              sgrTax = 0.5 * p.quantity
-              const existinSGREntry = day.entries.find(e => e.description === 'Vanzare SGR')
-              if(existinSGREntry){
-                existinSGREntry.value += sgrTax
-              } else {
-                const entry = {
-                  date: o.createdAt,
-                  description: 'Vanzare SGR',
-                  nrDoc: o.dayCounter,
-                  value: sgrTax,
-                  type: 'iesire',
-                  docId: o._id.toString(), 
-                  tva: 0
+        if(p.name !== 'Croissant cu unt'){
+          if(!p.departament) console.log('produst fara departament ' , p.name)
+            if(p.departament?.toString() === dep){
+              let sgrTax = 0
+              if(p.sgrTax){
+                sgrTax = 0.5 * p.quantity
+                const existinSGREntry = day.entries.find(e => e.description === 'Vanzare SGR')
+                if(existinSGREntry){
+                  existinSGREntry.value += sgrTax
+                } else {
+                  const entry = {
+                    date: o.createdAt,
+                    description: 'Vanzare SGR',
+                    nrDoc: o.dayCounter,
+                    value: sgrTax,
+                    type: 'iesire',
+                    docId: o._id.toString(), 
+                    tva: 0
+                  }
+                  day.entries.push(entry)
                 }
-                day.entries.push(entry)
+                totalOutSGR += sgrTax
+                totalOut0 += sgrTax
+  
               }
-              totalOutSGR += sgrTax
-              totalOut0 += sgrTax
-
-            }
-            if(p.ings[0]){
-              if(p.ings[0].gestiune){
-                if(p.ings[0].gestiune.toString() === gest){
-                    const price = round(((p.price * p.quantity) - p.discount)-sgrTax)
-
-                    if(p.tva === 11){
-                      totalOut11 += price
-                    }
-                    if(p.tva === 21){
-                      totalOut21 += price
-                      console.log('prduse cu tva 21 la data ', formatedDateToShow(o.createdAt), p.name)
-                    }
-
-                    const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul' && e.tva === p.tva)
-                    if(existingEntry){
-                      existingEntry.value += price
-                    } else {
-                      const entry = {
-                        date: o.createdAt,
-                        description: 'Vanzare cu amanuntul',
-                        nrDoc: o.dayCounter,
-                        value: price,
-                        type: 'iesire',
-                        docId: o._id.toString(), 
-                        tva: p.tva,
+              if(p.ings[0]){
+                if(p.ings[0].gestiune){
+                  if(p.ings[0].gestiune.toString() === gest){
+                      const price = round(((p.price * p.quantity) - p.discount)-sgrTax)
+  
+                      if(p.tva === 11){
+                        totalOut11 += price
                       }
-                      day.entries.push(entry)
+                      if(p.tva === 21){
+                        totalOut21 += price
+                        console.log('prduse cu tva 21 la data ', formatedDateToShow(o.createdAt), p.name)
+                      }
+  
+                      const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul' && e.tva === p.tva)
+                      if(existingEntry){
+                        existingEntry.value += price
+                      } else {
+                        const entry = {
+                          date: o.createdAt,
+                          description: 'Vanzare cu amanuntul',
+                          nrDoc: o.dayCounter,
+                          value: price,
+                          type: 'iesire',
+                          docId: o._id.toString(), 
+                          tva: p.tva,
+                        }
+                        day.entries.push(entry)
+                      }
+                    } else {
+                      console.log('ingredient gasit ca marfa cu alta gestiune decat bar ',  formatedDateToShow(o.createdAt), ' ', p.quantity, ' ',   p.name, ' ',  p.ings[0].gestiune)
                     }
                   } else {
-                    console.log('ingredient gasit ca marfa cu alta gestiune decat bar ',  formatedDateToShow(o.createdAt), ' ', p.quantity, ' ',   p.name, ' ',  p.ings[0].gestiune)
+                    console.log('ingredient fara gestiune', p.name)
                   }
                 } else {
-                  console.log('ingredient fara gestiune', p.name)
+                  console.log('ingredient fara ingredient', p.name)
                 }
-              } else {
-                console.log('ingredient fara ingredient', p.name)
               }
-            }
+        }
           }
       }
     }
