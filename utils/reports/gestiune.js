@@ -248,12 +248,12 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
   
             }
           }
-          }
           day.entries.forEach(e => {
-            if(e.tva === 0){
+            if(e.tva === 0 && e.type === 'intrare'){
               console.log(e.description, ' ', formatedDateToShow(e.date))
             }
           })
+          }
       }
     }
     days[0].in0 = +inv0Value;
