@@ -5,12 +5,15 @@ const DelProd = require('../../models/office/product/deletetProduct')
 const Ingredient = require('../../models/office/inv-ingredient')
 const Product = require('../../models/office/product/product')
 const Counter = require('../../models/utils/counter')
+const SalePoint = require('../../models/utils/sale-point')
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
-const {generateSoketId} = require('../../utils/functions')
+const {generateSoketId, formatedDateToShow} = require('../../utils/functions')
 
 const {unloadIngs, uploadIngs, createProductSaleReport} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
+
+const {createProductsReportXcelBuffer} = require('../print/products-reprot-xls')
 
 
 
@@ -22,6 +25,7 @@ const socket = io('https://flowmanager.ro', {
 // const socket = io("https://socket.flowmanager.ro")
 const salePoint = require('../../models/utils/sale-point');
 const order = require('../../models/office/product/order');
+const salePoint = require('../../models/utils/sale-point');
 // const socket = io("http://localhost:8090")
 
 
@@ -29,7 +33,11 @@ const order = require('../../models/office/product/order');
 //************************SEND ORDERS********************** */
 
 module.exports.getOrder = async (req, res, next) => {
-    const {start, end, day, loc, point} = req.body
+    const {start, end, day, loc, point, download} = req.body
+
+
+    const salePoint = await salePoint.findById(point).populate({path: 'locatie', select: 'bussinesName'})
+
     if(start && end){
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
@@ -37,7 +45,6 @@ module.exports.getOrder = async (req, res, next) => {
         const check = 32 * 24 * 60 * 60 * 1000
 
         if(start && end && (endTime - startTime > check)){
-            console.log('a fost dat un query mai mare de 31 de zile')
             return res.status(200).json({message: 'Sunt peste 31 de zile'})
         }
 
@@ -54,7 +61,7 @@ module.exports.getOrder = async (req, res, next) => {
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
         // await modyfyOrdersProducts(orders)
-        res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds, message: 'ok'})
+            res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds, message: 'ok'})
     }
 
     if(day && !end && !start) {
@@ -70,6 +77,7 @@ module.exports.getOrder = async (req, res, next) => {
                     .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: start, $lt: end}, salePoint: point}).lean()
         // await modyfyOrdersProducts(orders)
+
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds,  message: 'ok'})
     }
     if(!day && !end && !start) {
@@ -77,7 +85,9 @@ module.exports.getOrder = async (req, res, next) => {
         const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'}).lean()
+                        .populate({path : 'products.departament', select: 'name'})
+                        .populate({path: 'salePoint', select: 'name'})
+                        .lean()
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
@@ -209,7 +219,8 @@ module.exports.calcDep = async (req, res, next) => {
 
 module.exports.getHavyOrders = async (req, res, next) => {
     try{
-        const {start, end, day, loc, filter, report, point} = req.body
+        const {start, end, day, loc, filter, report, point, download} = req.body
+        const salePoint = await salePoint.findById(point).populate({path: 'locatie', select: 'bussinesName'})
         if(start && end){
             const startTime = new Date(start).setUTCHours(0,0,0,0)
             const endTime = new Date(end).setUTCHours(23,59,59,9999)
@@ -249,16 +260,38 @@ module.exports.getHavyOrders = async (req, res, next) => {
                                                 select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog", 
                                                 }
                                             }
-                                        }).lean({virtuals: false})    
-             console.log('comenzi', orders.length)                                                                    
+                                        }).lean({virtuals: false})                                                                      
             const result = await getBillProducts(orders, filter)
             const ingredients = await getIngredients(result.allProd)
-            if(report === 'report'){
-               const report = await createDayReport(result.allProd, ingredients, loc, orders, startTime, point)
-               res.status(200).json(report)
+                
+            if(download && download.bool){
+                const date = `${formatedDateToShow(start) - formatedDateToShow(end)}`
+                let buffer
+                if(download.type === 'products'){
+                    buffer = await createProductsReportXcelBuffer(result.allProd, salePoint, date);
+                } else if(download.type === 'orders'){
+
+                } else if( download.type === 'totals'){
+
+                } else {
+                    return res.status(404).json({message: 'Nu a fost selectat un tip de download'})
+                }
+        
+                // Set headers for file download
+                res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
+
+                // Send the buffer directly
+                res.send(Buffer.from(buffer));
             } else {
-                res.status(200).json({result: result, ingredients: ingredients})
+                if(report === 'report'){
+                   const report = await createDayReport(result.allProd, ingredients, loc, orders, startTime, point)
+                   res.status(200).json(report)
+                } else {
+                    res.status(200).json({result: result, ingredients: ingredients})
+                }
             }
+
         }
     } catch(err){
         console.log(err)
