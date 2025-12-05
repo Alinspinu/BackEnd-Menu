@@ -46,7 +46,10 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
   let cashInTotalVat = 0
   let cashInTotalNoVat = 0
   let totalQty = 0
-  products.forEach((p, i) => {
+
+  const sortedProducts = products.sort((a, b) => a.name.localeCompare(b))
+
+  sortedProducts.forEach((p, i) => {
     totalQty += p.quantity
     const costUmVat =  calcProductionValue(p.toppings, p.ings, 1)
     const costUmNoVat = calcProductionValueNoVat(p.toppings, p.ings, 1)
@@ -131,10 +134,10 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
   worksheet.getColumn(10).width = 17; 
   worksheet.getColumn(11).width = 17; 
   worksheet.getColumn(12).width = 17; 
-  worksheet.getColumn(13).width = 17; 
-  worksheet.getColumn(14).width = 17; 
-  worksheet.getColumn(15).width = 17; 
-  worksheet.getColumn(16).width = 17; 
+  worksheet.getColumn(13).width = 18; 
+  worksheet.getColumn(14).width = 18; 
+  worksheet.getColumn(15).width = 18; 
+  worksheet.getColumn(16).width = 18; 
 
 
 
