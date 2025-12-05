@@ -13,7 +13,7 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
 
 
   products.forEach((p, i) => {
-    workbook.addRow(
+    worksheet.addRow(
         [
             i+1,
             `${p.name}`,
