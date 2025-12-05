@@ -165,7 +165,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
                       }
                       if(p.tva === 21){
                         totalOut21 += price
-                        console.log('prduse cu tva 21 la data ', formatedDateToShow(o.createdAt), p.name)
+                        // console.log('prduse cu tva 21 la data ', formatedDateToShow(o.createdAt), p.name)
                       }
   
                       const existingEntry = day.entries.find(e => e.description === 'Vanzare cu amanuntul' && e.tva === p.tva)
