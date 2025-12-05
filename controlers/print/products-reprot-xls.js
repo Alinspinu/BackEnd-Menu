@@ -34,11 +34,11 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
 
   products.forEach((p, i) => {
 
-    const costUmVat =  calcProductionValue(p.toppings, p.ings)
-    const costUmNoVat = calcProductionValueNoVat(p.toppings, p.ings)
+    const costUmVat =  calcProductionValue(p.toppings, p.ings, p.quantity)
+    const costUmNoVat = calcProductionValueNoVat(p.toppings, p.ings, p.quantity)
     const priceNoVat = round(p.price / (1+ (p.tva/100)))
-    const costVat = round(p.quantity * calcProductionValue(p.toppings, p.ings))
-    const costNoVat = round(p.quantity * calcProductionValueNoVat(p.toppings, p.ings))
+    const costVat = round(p.quantity * costUmVat)
+    const costNoVat = round(p.quantity * costUmNoVat)
     const saleVat = round(p.price * p.quantity)
     const saleNoVat = round(saleVat / (1 + (p.tva/100)))
     const discountNoVat = round(p.discount / (1 + (p.tva/100))) || 0
@@ -70,17 +70,17 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
 
 
   worksheet.getColumn(1).width = 4;
-  worksheet.getColumn(2).width = 20; 
+  worksheet.getColumn(2).width = 25; 
   worksheet.getColumn(3).width = 8; 
-  worksheet.getColumn(4).width = 12; 
+  worksheet.getColumn(4).width = 15; 
   worksheet.getColumn(5).width = 8; 
-  worksheet.getColumn(6).width = 12; 
-  worksheet.getColumn(7).width = 12; 
-  worksheet.getColumn(8).width = 12; 
-  worksheet.getColumn(9).width = 12; 
-  worksheet.getColumn(10).width = 12; 
-  worksheet.getColumn(11).width = 12; 
-  worksheet.getColumn(12).width = 12; 
+  worksheet.getColumn(6).width = 15; 
+  worksheet.getColumn(7).width = 15; 
+  worksheet.getColumn(8).width = 15; 
+  worksheet.getColumn(9).width = 15; 
+  worksheet.getColumn(10).width = 15; 
+  worksheet.getColumn(11).width = 15; 
+  worksheet.getColumn(12).width = 15; 
 
 
 
@@ -110,7 +110,7 @@ function calcProductionValue(toppings, ings, qty, name = ''){
         toppingsTotal = round(toppingsTotal + (ingg.qty * tvaPrice))
       }
     } else {
-      // console.log(ing)
+      console.log(ing)
     }
   }
   return round(total + toppingsTotal - vegyDif(toppings, ings))
@@ -130,7 +130,7 @@ function calcProductionValueNoVat(toppings, ings, qty ){
         toppingsTotal = round(toppingsTotal + (ingg.qty * ingg.ing.price))
       }
     } else {
-      // console.log(ing)
+      console.log(ing)
     }
   }
   return round(total + toppingsTotal - vegyDif(toppings, ings))
