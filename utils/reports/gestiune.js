@@ -248,11 +248,6 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
   
             }
           }
-          day.entries.forEach(e => {
-            if(e.tva === 0 && e.type === 'intrare'){
-              console.log(e.description, ' ', formatedDateToShow(e.date))
-            }
-          })
           }
       }
     }
@@ -264,6 +259,12 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
 
     for (let i = 0; i < days.length; i++) {
       const day = days[i];
+
+      day.entries.forEach(e => {
+        if(e.tva === 0 && e.type === 'intrare'){
+          console.log(e.description, ' ', formatedDateToShow(e.date), ' ', e.value)
+        }
+      })
     
       if (!day) {
         console.warn(`⚠️ Missing day at index ${i}`);
