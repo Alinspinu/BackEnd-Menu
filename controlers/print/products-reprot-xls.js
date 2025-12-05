@@ -47,7 +47,7 @@ async function createProductsReportXcelBuffer(products, salePoint, date){
   let cashInTotalNoVat = 0
   let totalQty = 0
 
-  const sortedProducts = products.sort((a, b) => a.name.localeCompare(b))
+  const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
 
   sortedProducts.forEach((p, i) => {
     totalQty += p.quantity
