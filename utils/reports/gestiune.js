@@ -124,10 +124,10 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
             docId: o._id.toString(), 
             tva: 0
           }
-          day.entries.push(entry)
+          // day.entries.push(entry)
         }
         totalOutBacsis += o.tips
-        totalOut0 += o.tips
+        // totalOut0 += o.tips
       }
       for(let p of o.products){
         if(p.name !== 'Croissant cu unt'){
