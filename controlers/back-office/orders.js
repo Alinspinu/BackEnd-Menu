@@ -220,7 +220,7 @@ module.exports.calcDep = async (req, res, next) => {
 module.exports.getHavyOrders = async (req, res, next) => {
     try{
         const {start, end, day, loc, filter, report, point, download} = req.body
-        const salePoint = await salePoint.findById(point).populate({path: 'locatie', select: 'bussinesName'})
+        const salePoint = await SalePoint.findById(point).populate({path: 'locatie', select: 'bussinesName'})
         if(start && end){
             const startTime = new Date(start).setUTCHours(0,0,0,0)
             const endTime = new Date(end).setUTCHours(23,59,59,9999)
