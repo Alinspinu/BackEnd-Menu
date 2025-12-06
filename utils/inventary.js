@@ -22,7 +22,8 @@ async function unloadIngs (ings, qtyProdus) {
             ingredientInv.ings.forEach(obj => {
               obj.qty = round(obj.qty * ing.qty)
             })
-            await unloadIngs(ingredientInv.ings, qtyProdus)
+            await unloadIngs(ingredientInv.ings, qtyProdus) /// what is wromng here?
+            return
           } else {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
             if(ingredientInv.production && !ingredientInv.production.tehnic && ingredientInv.productIngredient){
@@ -37,7 +38,8 @@ async function unloadIngs (ings, qtyProdus) {
                         uploadPrice: calcRecipeTotal(ingredientInv.ings).priceNoVat,
                         operation: {name: 'intrare', details: 'Intrare prin productie'}})
                     ingredientInv.qty = round(ingredientInv.production.qty - diference)
-                    await unloadIngs(ingredientInv.ings, ingredientInv.production.qty)
+                    await unloadIngs(ingredientInv.ings, ingredientInv.production.qty)  /// what is wromng here?
+                    return
                   }
             }
 
@@ -196,6 +198,7 @@ async function uploadIngs (ings, qtyProdus) {
             if(ingredientInv.ings.length && ingredientInv.production.tehnic){
               ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
               await uploadIngs(ingredientInv.ings, qtyProdus)
+              return
             }else {
               let cantFinal = parseFloat(ing.qty * qtyProdus);
               ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
