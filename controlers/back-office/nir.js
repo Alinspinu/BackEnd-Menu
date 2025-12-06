@@ -97,7 +97,7 @@ module.exports.createSheetByOrder = async (req, res) => {
     for(let p of order.products){
       const exixstingGest = gestiuni.find(g => g === p.gestiune.toString())
       if(!exixstingGest){
-        gestiuni.push(exixstingGest)
+        gestiuni.push(p.gestiune)
       }
     }
 
