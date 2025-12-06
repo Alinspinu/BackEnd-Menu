@@ -59,7 +59,7 @@ module.exports.deleteSheet = async (req, res) => {
     const {id} = req.query;
     const dbSheet = await ImpSheet.findById(id)
     if(dbSheet){
-      await uploadIngs(dbSheet.ings, 1, dbSheet.gestiune.toString())
+      await uploadIngs(dbSheet.ings, 1, dbSheet.gestiune?.toString())
       await ImpSheet.deleteOne({_id: id}) 
     }
     res.status(200).json({message: 'Fișa a fost ștearsă cu success!'})
