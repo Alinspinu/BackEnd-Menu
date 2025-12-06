@@ -476,11 +476,12 @@ module.exports.registerDeletedOrderProducts = async (req, res, next) => {
 
 module.exports.uploadIngs = async (req, res, next) => {
     try{
-        const {loc} = req.query
-        const {ings, quantity, operation} = req.body;
+        const {ings, quantity, gestiune} = req.body;
         if(ings && quantity){
-        await  uploadIngs(ings, quantity, operation)
+        await  uploadIngs(ings, quantity, gestiune)
         res.status(200).json({message: 'Success, stocul a fost actualizat!'})
+        }else {
+            res.status(404).json({message: 'Lipsa date'})
         }
     } catch (err) {
         console.log(err)
@@ -490,10 +491,12 @@ module.exports.uploadIngs = async (req, res, next) => {
 
 module.exports.unloadIngs = async (req, res, next) => {
     try{
-        const {ings, quantity, operation} = req.body;
+        const {ings, quantity, gestiune} = req.body;
         if(ings && quantity){
-        await  unloadIngs(ings, quantity, operation)
+        await  unloadIngs(ings, quantity, gestiune)
         res.status(200).json({message: 'Success, stocul a fost actualizat!'})
+        } else {
+            res.status(404).json({message: 'Lipsa date'})
         }
     } catch (err) {
         console.log(err)

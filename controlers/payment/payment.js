@@ -388,10 +388,10 @@ module.exports.printBill = async (req, res, next) => {
 
         savedBill.products.map(async (el) => {
             if (el.toppings.length) {
-              await unloadIngs(el.toppings, el.quantity);
+              await unloadIngs(el.toppings, el.quantity, el.gestiune.toString());
             }
             if (el.ings.length) {
-               await unloadIngs(el.ings, el.quantity);
+               await unloadIngs(el.ings, el.quantity, el.gestiune.toString());
             }
           });
 

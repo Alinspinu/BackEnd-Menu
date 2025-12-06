@@ -31,17 +31,18 @@ module.exports.addImpSheet = async (req, res) => {
         await ImpSheet.deleteOne({_id: sheet._id})
         let tempSheet = sheet
         tempSheet.ings = tempSheet.ings.map(i =>{ return {qty: i.qty, ing: i.ing, gestiune: i.gestiune._id}})
-        await uploadIngs(tempSheet.ings, 1)
+        await uploadIngs(tempSheet.ings, 1, tempSheet.gestiune)
       }
 
       const newSheet = new ImpSheet(sheet)
       const savedSheet = await newSheet.save()
-      await unloadIngs(savedSheet.ings, 1)
+      await unloadIngs(savedSheet.ings, 1, savedSheet.gestiune.toString())
 
       const dbSheet = await ImpSheet.findById(savedSheet._id)
             .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice'})
             .populate({path: 'ings.gestiune', select: 'name'})
             .populate({path: 'user', select: 'employee.fullName'})
+            .populate({path: 'gestiune'})
       if(dbSheet){
         res.status(200).json({message: "Fișa a fost savată cu succes!", sheet: dbSheet})
       } else{
@@ -58,7 +59,7 @@ module.exports.deleteSheet = async (req, res) => {
     const {id} = req.query;
     const dbSheet = await ImpSheet.findById(id)
     if(dbSheet){
-      await uploadIngs(dbSheet.ings, 1)
+      await uploadIngs(dbSheet.ings, 1, dbSheet.gestiune.toString())
       await ImpSheet.deleteOne({_id: id}) 
     }
     res.status(200).json({message: 'Fișa a fost ștearsă cu success!'})
@@ -149,7 +150,7 @@ module.exports.createSheetByOrder = async (req, res) => {
     const newSheet = new ImpSheet(sheet)
     const savedSheet = await newSheet.save()
 
-    await unloadIngs(savedSheet.ings, 1)
+    await unloadIngs(savedSheet.ings, 1, savedSheet.gestiune.toString())
 
     res.status(200).json({message: 'Fișa de deprecieri a fost creată și stocul actualizat!'})
 
@@ -175,22 +176,43 @@ function clacProduction(product){
 module.exports.getSheets = async (req, res) => {
     try{
         const {loc, point} = req.query
-        const sheets = await ImpSheet.find({locatie: loc, salePoint: point})
+        const sheets = await ImpSheet.find({})
         .sort({date: -1})
         .limit(50)
         .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
         .populate({path: 'ings.gestiune', select: 'name'})
         .populate({path: 'user', select: 'employee.fullName'})
+        // .populate({path: 'gestiune'})
 
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
           const bDate = new Date(b.date).getTime()
           return bDate - aDate
         })
+    await updateSheets(sheets)
     res.status(200).json(sortedSheets)
     } catch(error){
       console.log(error)
     }
+}
+
+async function updateSheets(sheets){
+    const shhetsToUpdate = []
+
+    for(let s of sheets){
+      if(!s.gestiune){
+        s.gestiune = s.ings[0].gestiune
+        shhetsToUpdate.push(s)
+      }
+    }
+
+
+        const promises = shhetsToUpdate.map(o => 
+             ImpSheet.findByIdAndUpdate(o._id, o, {new: true})
+        )
+    
+        await Promise.all(promises)
+        console.log('sheets verified:', sheets.length, '→ Updated:', promises.length);
 }
 
 
@@ -205,6 +227,7 @@ module.exports.getSheetsByPeriod = async (req, res) => {
         .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
         .populate({path: 'ings.gestiune', select: 'name'})
         .populate({path: 'user', select: 'employee.fullName'})
+        .populate({path: 'gestiune'})
     res.status(200).json(sheets)
   } catch(error){
     console.log(error)
@@ -221,6 +244,7 @@ module.exports.printSheet = async (req, res) => {
             .populate({path: 'salePoint', select: 'locatie name', populate: {path: 'locatie', select: 'bussinessName'}})
             .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice', populate: {path: 'ings.ing', select: 'um price name'}})
             .populate({path: 'ings.gestiune', select: 'name'})
+            .populate({path: 'gestiune'})
     const buffer = await createSheetListXcelBuffer(sheet);
     
     // Set headers for file download
