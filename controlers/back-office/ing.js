@@ -132,7 +132,7 @@ module.exports.saveIng = async(req, res, next) => {
     const ingsToUpdate = []
 
       for(let i of ings){
-          if(i.invGestiune.length){
+          if(i.invGestiune?.length){
             let update = false
             for(let g of i.invGestiune){
               if(!g.sale){
