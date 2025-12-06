@@ -81,60 +81,86 @@ module.exports.createSheetByOrder = async (req, res) => {
               .populate({path: 'products.toppings.ing', select: 'productIngredient name ings price', populate: {path: 'ings.ing', select: 'productIngredient name ings price'} })
               .populate({path: 'products.ings.ing', select: 'productIngredient name ings price', populate: {path: 'ings.ing', select: 'productIngredient name ings price'}})
 
-    const sheet = {
-      user: order.employee.user,
-      locatie: order.locatie,
-      salePoint: order.salePoint,
-      products: [],
-      ings: [],
-      date: new Date(),
-      consumption: false
-    }
+    // const sheet = {
+    //   user: order.employee.user,
+    //   locatie: order.locatie,
+    //   salePoint: order.salePoint,
+    //   products: [],
+    //   ings: [],
+    //   date: new Date(),
+    //   consumption: false
+    // }
+
+    let gestiuni = []
+    let sheets = []
 
     for(let p of order.products){
-      for(let i of p.ings){
-        i.qty = i.qty * p.quantity
-        if(i.ing.productIngredient){
-          for(let ii of i.ing.ings){
-             ii.qty = ii.qty * i.qty
-              const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing._id.toString())
+      const exixstingGest = gestiuni.find(g => g === p.gestiune.toString())
+      if(!exixstingGest){
+        gestiuni.push(exixstingGest)
+      }
+    }
+
+    for(let g of gestiuni){
+      sheets.push({
+        user: order.employee.user,
+        locatie: order.locatie,
+        salePoint: order.salePoint,
+        products: [],
+        ings: [],
+        gestiune: g,
+        date: new Date(),
+        consumption: false
+      })
+    }
+
+
+    for(let p of order.products){
+      const sheet = sheets.find(s => s.gestiune === p.gestiune.toString()) 
+      if(sheet){
+        for(let i of p.ings){
+          i.qty = i.qty * p.quantity
+          if(i.ing.productIngredient){
+            for(let ii of i.ing.ings){
+               ii.qty = ii.qty * i.qty
+                const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing._id.toString())
+                if(existing){
+                  existing.qty += ii.qty 
+                } else {
+                  sheet.ings.push(ii)
+                }
+            }
+          } else {
+              const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === i.ing._id.toString())
               if(existing){
-                existing.qty += ii.qty 
+                existing.qty += i.qty
               } else {
-                sheet.ings.push(ii)
+                sheet.ings.push(i)
               }
           }
-        } else {
-            const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === i.ing._id.toString())
-            if(existing){
-              existing.qty += i.qty
-            } else {
-              sheet.ings.push(i)
-            }
         }
-      }
 
-      for(let t of p.toppings){
-        t.qty = t.qty * p.quantity
-        if(t.ing.productIngredient){
-          for(let ii of t.ing.ings){
-            ii.qty = ii.qty * t.qty
-             const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing._id.toString())
-             if(existing){
-               existing.qty += ii.qty 
-             } else {
-               sheet.ings.push(ii)
-             }
-        }
-      } else {
-        const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === t.ing._id.toString())
-        if(existing){
-          existing.qty += t.qty
+        for(let t of p.toppings){
+          t.qty = t.qty * p.quantity
+          if(t.ing.productIngredient){
+            for(let ii of t.ing.ings){
+              ii.qty = ii.qty * t.qty
+               const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === ii.ing._id.toString())
+               if(existing){
+                 existing.qty += ii.qty 
+               } else {
+                 sheet.ings.push(ii)
+               }
+          }
         } else {
-          sheet.ings.push(t)
-        }
-      } 
-    }
+          const existing = sheet.ings.find(iii => iii?.ing?._id.toString() === t.ing._id.toString())
+          if(existing){
+            existing.qty += t.qty
+          } else {
+            sheet.ings.push(t)
+          }
+        } 
+      }
 
       const existing = sheet.products.find(pp => pp.name === p.name)
       if(existing){
@@ -146,13 +172,17 @@ module.exports.createSheetByOrder = async (req, res) => {
       }
 
     }
+    }
 
-    const newSheet = new ImpSheet(sheet)
-    const savedSheet = await newSheet.save()
+    for(let s of sheets){
+      const newSheet = new ImpSheet(s)
+      const savedSheet = await newSheet.save()
+  
+      await unloadIngs(savedSheet.ings, 1, savedSheet.gestiune.toString())
+    }
 
-    await unloadIngs(savedSheet.ings, 1, savedSheet.gestiune.toString())
 
-    res.status(200).json({message: 'Fișa de deprecieri a fost creată și stocul actualizat!'})
+    res.status(200).json({message: `Fișa (${sheets.length}) de deprecieri a fost creată și stocul actualizat!`})
 
   } catch(error){
     console.log(error)
