@@ -72,7 +72,7 @@ async function unloadIngs (ings, qtyProdus) {
 
 
             if(ingredientInv.invGestiune.length){
-              const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === ing.gestiune?.toString())
+              const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === ingredientInv.gestiune?.toString())
               if(gestIndex !== -1){
                 const gest = ingredientInv.invGestiune[gestIndex];
                 console.log('Procesare.... ', ingredientInv.name)
@@ -229,7 +229,7 @@ async function uploadIngs (ings, qtyProdus) {
 
 
               if(ingredientInv.invGestiune.length){
-                const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === ing.gestiune?.toString())
+                const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === ingredientInv.gestiune?.toString())
                 if(gestIndex !== -1){
                   let gest = ingredientInv.invGestiune[gestIndex]
                   gest.qty = round(gest.qty + cantFinal)

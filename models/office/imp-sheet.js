@@ -34,6 +34,10 @@ const imparimentSheetSchema = new Schema({
         type: Boolean,
         default: false
     },
+    gestiune: {
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
+    },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User'

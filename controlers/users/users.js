@@ -52,7 +52,6 @@ module.exports.sendEmployees = async (req, res) => {
         const user = await User.find({locatie: loc, client: false, 'employee.active': true}).select('-password').populate({path: 'employee.employeePosition'});
         const sortedUsers = user.sort((a, b) => a.name.localeCompare(b.name));
         // await modifyUsers(sortedUsers)
-        console.log(sortedUsers)
         res.status(200).json(sortedUsers)
     } catch(err) {
         console.log(err)
@@ -142,7 +141,6 @@ module.exports.editUser = async (req, res, next) => {
     const {id} = req.query;
     try{
         const user = await User.findByIdAndUpdate(id, {employee: update.employee, cardIndex: cardIndex}, {new: true}).populate({path: 'employee.employeePosition'})
-        console.log(user.employee.employeePosition)
         res.status(200).json({message: 'Utilizatorul a fost actualizat!', user: user})
     } catch (err) {
         console.log(err)
@@ -262,7 +260,6 @@ module.exports.sendLocatie = async (req, res, next) => {
 module.exports.modifySuplierSoldList = async (req, res) => {
     const {loc, list} = req.body
     try{
-        console.log(list)
         const locatie = await Locatie.findByIdAndUpdate(loc, {supliersList: list}, {new: true}).populate({path: 'supliersList', select: 'name'})
         res.status(200).json(locatie)
     } catch(error){
@@ -336,7 +333,6 @@ module.exports.refreshToken = async (req, res) => {
 
           if(response.data.access_token && response.data.refresh_token) {
               const token = await AnafToken.findByIdAndUpdate(loc.anafToken._id, {token: response.data.access_token, refresh: response.data.refresh_token}, {new: true})
-              console.log(token)
               res.status(200).json({time: getJwtValidityInDays(token.token)})
           } else {
             res.status(500).json({message: 'Something went wromng at the token refresh'})
@@ -443,7 +439,6 @@ module.exports.newCustomer = async (req, res, next) => {
           });
           const savedUser = await user.save();
           const customer = await User.findById(savedUser._id).select('name telephone email cashBack discount locatie').populate({path: 'locatie'});
-          console.log(customer)
           if(!client){
               await sendEmployeeEmail(customer, 'https://front.flowmanager.ro/');
           }
