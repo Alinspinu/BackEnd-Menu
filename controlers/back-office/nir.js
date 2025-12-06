@@ -114,6 +114,8 @@ module.exports.createSheetByOrder = async (req, res) => {
       })
     }
 
+    console.log('gestiuni', gestiuni)
+
 
     for(let p of order.products){
       const sheet = sheets.find(s => s.gestiune === p.gestiune.toString()) 
