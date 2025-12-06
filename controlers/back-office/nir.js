@@ -208,7 +208,7 @@ function clacProduction(product){
 module.exports.getSheets = async (req, res) => {
     try{
         const {loc, point} = req.query
-        const sheets = await ImpSheet.find()
+        const sheets = await ImpSheet.find({locatie: loc, salePoint: point})
         .sort({date: -1})
         .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
         .populate({path: 'ings.gestiune', select: 'name'})
