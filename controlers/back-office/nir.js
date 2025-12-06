@@ -208,20 +208,19 @@ function clacProduction(product){
 module.exports.getSheets = async (req, res) => {
     try{
         const {loc, point} = req.query
-        const sheets = await ImpSheet.find({locatie: loc, salePoint: point})
+        const sheets = await ImpSheet.find()
         .sort({date: -1})
-        .limit(50)
         .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
         .populate({path: 'ings.gestiune', select: 'name'})
         .populate({path: 'user', select: 'employee.fullName'})
-        .populate({path: 'gestiune'})
+        // .populate({path: 'gestiune'})
 
         const sortedSheets = sheets.sort((a,b) => {
           const aDate = new Date(a.date).getTime()
           const bDate = new Date(b.date).getTime()
           return bDate - aDate
         })
-    // await updateSheets(sheets)
+    await updateSheets(sheets)
     res.status(200).json(sortedSheets)
     } catch(error){
       console.log(error)
