@@ -129,6 +129,7 @@ const invIngSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Gestiune'
       },
+      sale: Boolean,
       name: String,
       entries: [
         {
