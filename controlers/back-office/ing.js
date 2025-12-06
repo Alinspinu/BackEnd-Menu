@@ -111,7 +111,7 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'dept', select: 'name'})
           .populate({path: 'eFactura.gestiune', select: 'name'})
           .lean()
-        const totalItems = 3000
+        const totalItems = 4000
         const totalPages = Math.ceil(totalItems / limit);
         await  verifyIngredients(items)
         res.status(200).json({
