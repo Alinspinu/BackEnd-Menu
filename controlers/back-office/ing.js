@@ -101,7 +101,8 @@ module.exports.saveIng = async(req, res, next) => {
       const limit = 600; 
       const skip = (page - 1) * limit;
       try{  
-        const items = await Ingredient.find({locatie: loc, salePoint: point}).skip(skip).limit(limit)
+        const items = await Ingredient.find({}).skip(skip).limit(limit)
+        // const items = await Ingredient.find({locatie: loc, salePoint: point}).skip(skip).limit(limit)
           .select([ '-unloadLog', '-uploadLog'])
           .populate({path: 'ings.ing', select: '-unloadLog -uploadLog'})
           .populate({path: 'ings.gestiune', select: 'name'})
@@ -109,9 +110,10 @@ module.exports.saveIng = async(req, res, next) => {
           .populate({path: 'gest', select: 'name'})
           .populate({path: 'dept', select: 'name'})
           .populate({path: 'eFactura.gestiune', select: 'name'})
-        const totalItems = 1500
+          .lean()
+        const totalItems = 3000
         const totalPages = Math.ceil(totalItems / limit);
-        // await  verifyIngredients(items)
+        await  verifyIngredients(items)
         res.status(200).json({
           items,
           totalPages,
@@ -131,10 +133,16 @@ module.exports.saveIng = async(req, res, next) => {
 
       for(let i of ings){
           if(i.invGestiune.length){
+            let update = false
             for(let g of i.invGestiune){
-              g.sale = true
+              if(!g.sale){
+                g.sale = true
+                update = true
+              }
             }
-            ingsToUpdate.push(i)
+            if(update){
+              ingsToUpdate.push(i)
+            }
           }
 
       }

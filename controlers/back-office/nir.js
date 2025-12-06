@@ -81,15 +81,6 @@ module.exports.createSheetByOrder = async (req, res) => {
               .populate({path: 'products.toppings.ing', select: 'productIngredient name ings price', populate: {path: 'ings.ing', select: 'productIngredient name ings price'} })
               .populate({path: 'products.ings.ing', select: 'productIngredient name ings price', populate: {path: 'ings.ing', select: 'productIngredient name ings price'}})
 
-    // const sheet = {
-    //   user: order.employee.user,
-    //   locatie: order.locatie,
-    //   salePoint: order.salePoint,
-    //   products: [],
-    //   ings: [],
-    //   date: new Date(),
-    //   consumption: false
-    // }
 
     let gestiuni = []
     let sheets = []
@@ -114,7 +105,6 @@ module.exports.createSheetByOrder = async (req, res) => {
       })
     }
 
-    console.log('gestiuni', gestiuni)
 
 
     for(let p of order.products){
@@ -237,14 +227,12 @@ async function updateSheets(sheets){
         shhetsToUpdate.push(s)
       }
     }
+    const promises = shhetsToUpdate.map(o => 
+          ImpSheet.findByIdAndUpdate(o._id, o, {new: true})
+    )
 
-
-        const promises = shhetsToUpdate.map(o => 
-             ImpSheet.findByIdAndUpdate(o._id, o, {new: true})
-        )
-    
-        await Promise.all(promises)
-        console.log('sheets verified:', sheets.length, '→ Updated:', promises.length);
+    await Promise.all(promises)
+    console.log('sheets verified:', sheets.length, '→ Updated:', promises.length);
 }
 
 
