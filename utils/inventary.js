@@ -11,7 +11,7 @@ const norm = s => s?.trim().toLowerCase()
 
 const veggie = ['lapte vegetal', 'lapte mazare', 'lapte ovaz' ]
 
-async function unloadIngs (ings, qtyProdus) {
+async function unloadIngs (ings, qtyProdus, gestiune) {
   try{
     for (const ing of ings) {
         const ingredientInv = await IngInv.findById(ing.ing).populate({path: 'ings.ing', select: 'price tva'}).exec();
@@ -72,7 +72,11 @@ async function unloadIngs (ings, qtyProdus) {
 
 
             if(ingredientInv.invGestiune.length){
-              const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === ingredientInv.gestiune?.toString())
+              let gestt = ingredientInv.gestiune?.toString()
+              if(gestiune){
+                gestt = gestiune.toString()
+              }
+              const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === gestt)
               if(gestIndex !== -1){
                 const gest = ingredientInv.invGestiune[gestIndex];
                 console.log('Procesare.... ', ingredientInv.name)
@@ -186,7 +190,7 @@ function calcRecipeTotal(ings) {
 }
 
 
-async function uploadIngs (ings, qtyProdus) {
+async function uploadIngs (ings, qtyProdus, gestiune) {
   try{
     for (const ing of ings) {
         const ingredientInv = await IngInv.findById(ing.ing).populate({path: 'ings.ing', select: 'price tva'}).exec();
@@ -229,7 +233,11 @@ async function uploadIngs (ings, qtyProdus) {
 
 
               if(ingredientInv.invGestiune.length){
-                const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === ingredientInv.gestiune?.toString())
+                let gestt  = ingredientInv.gestiune?.toString()
+                if(gestiune){
+                  gestt = gestiune.toStrimg()
+                }
+                const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === gestt)
                 if(gestIndex !== -1){
                   let gest = ingredientInv.invGestiune[gestIndex]
                   gest.qty = round(gest.qty + cantFinal)
