@@ -118,7 +118,7 @@ module.exports.createSheetByOrder = async (req, res) => {
 
 
     for(let p of order.products){
-      const sheet = sheets.find(s => s.gestiune === p.gestiune.toString()) 
+      const sheet = sheets.find(s => s.gestiune.toString() === p.gestiune.toString()) 
       if(sheet){
         for(let i of p.ings){
           i.qty = i.qty * p.quantity
