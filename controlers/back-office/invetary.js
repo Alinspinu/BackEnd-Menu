@@ -35,8 +35,8 @@ module.exports.createInventary = async (req, res, next) => {
                     name: i.name,
                     faptic: 0,
                     scriptic: gest.qty,
-                    lastPrice: i.price,
-                    averagePrice: getAveragePrice(gest),
+                    lastPrice: round(i.price),
+                    averagePrice: round(getAveragePrice(gest)) || round(i.price),
                     dep: i.dept.name,
                     um: i.um
                 }
