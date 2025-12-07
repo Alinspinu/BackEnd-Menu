@@ -15,7 +15,8 @@ const compInvSchema = new Schema({
             saleUnload: Number,
             depVal: Number,
             dep: String,
-            price: Number,
+            firstPrice: Number,
+            secondPrice: Number,
             upload: {
                 value: Number,
                 entries: [

@@ -20,6 +20,8 @@ const inventarySchema = new Schema({
             gestiune: String,
             dep: String,
             um: String,
+            lastPrice: Number,
+            averagePrice: Number,
         }
     ],
     fapticValue: {

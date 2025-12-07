@@ -28,13 +28,15 @@ module.exports.createInventary = async (req, res, next) => {
             const gest = i.invGestiune.find(g => g.gestiune._id.toString() === gestiune)
             if(gest){          
                 for(let e of gest.entries){
-                    scripticValue += (e.priceWithVat * e.qty)
+                    scripticValue += (e.priceNoVat * e.qty)
                 }
                 const ing = {
                     ing: i._id,
                     name: i.name,
                     faptic: 0,
                     scriptic: gest.qty,
+                    lastPrice: i.price,
+                    averagePrice: getAveragePrice(gest),
                     dep: i.dept.name,
                     um: i.um
                 }
@@ -65,6 +67,14 @@ module.exports.createInventary = async (req, res, next) => {
     console.log(err)
     res.status(500).json(err)
   }
+}
+
+
+function getAveragePrice(item) {
+  const totalCost = item.entries.reduce((sum, e) => sum + (e.qty * e.priceNoVat), 0);
+  const totalQty = item.entries.reduce((sum, e) => sum + e.qty, 0);
+
+  return totalCost / totalQty;
 }
 
 
@@ -111,10 +121,15 @@ module.exports.updateInventary = async (req, res) => {
    try{
      const {inventaryId, loc, point} = req.query;
      if(inventaryId === "all"){
-       const inventaries = await Inventary.find({locatie: loc, salePoint: point})
-                            .select('-ingredients')
-                            .populate({path: 'gestiune', select: 'name'})
-       res.status(200).json(inventaries)
+       const inventaries = await Inventary.find()
+                                .populate({ path: 'ingredients.ing', select: 'price invGestiune' })
+                                .lean()
+            await updateInventaries(inventaries)
+            res.status(200).json([inventaries[0]])
+      //  const inventaries = await Inventary.find({locatie: loc, salePoint: point})
+      //                       .select('-ingredients')
+      //                       .populate({path: 'gestiune', select: 'name'})
+      //  res.status(200).json(inventaries)
      } else {
        const inventary = await Inventary.findById(inventaryId)
                         .populate([
@@ -127,6 +142,38 @@ module.exports.updateInventary = async (req, res) => {
      console.log(err)
      res.status(500).json(err)
    }
+ }
+
+
+ async function updateInventaries(invs){
+  const invsToUpdate = []
+
+  for(let i of invs){
+    for(let ing of i.ingredients){
+      if(ing.ing){
+        const gest = ing.ing.invGestiune.find(g => g.gestiune.toString() === i.gestiune.toString())
+        ing.lastPrice = ing.ing.price
+        if(gest){
+          ing.averagePrice = getAveragePrice(gest)
+        } else {
+          ing.averagePrice = ing.ing.price
+        }
+
+      } else {
+        console.log('Inventary ing without ING ', ing.name, ing.ing)
+      }
+    }
+    invsToUpdate.push(i)
+  }
+
+
+    const promises = invsToUpdate.map(i =>
+      Inventary.findByIdAndUpdate(i._id, i, { new: true })
+    )
+
+    await Promise.all(promises)
+    console.log('Inventare verified:', invs.length, '→ Updated:', invsToUpdate.length);
+
  }
 
 
@@ -171,8 +218,8 @@ module.exports.updateInventary = async (req, res) => {
                     const entry = {
                         qty: ingGest.qty,
                         date: inventary.date,
-                        priceNoVat: dbIng.price,
-                        priceWithVat: round(dbIng.price * (1 + dbIng.tva / 100)),
+                        priceNoVat: i.averagePrice,
+                        priceWithVat: round(i.averagePrice * (1 + dbIng.tva / 100)),
                         inQty: i.faptic,
                         suplierName: 'Intrare din inventar'
                     }
@@ -436,6 +483,8 @@ module.exports.compareScriptic = async (req, res) => {
           scripticUnload: 0,
           saleUnload: 0,
           depVal: 0,
+          firstPrice: ingDoc.price || 0,
+          secondPrice: ingDoc.price || 0,
           price: ingDoc.price || 0,
           dep: undefined,
           upload: { value: 0, entries: [] },
@@ -452,7 +501,8 @@ module.exports.compareScriptic = async (req, res) => {
         ci.name  = ci.name || it.name;
         ci.um    = ci.um   || it.um;
         ci.first = r(ci.first + (it.faptic || 0));
-        ci.price = ingDoc.price ?? ci.price ?? 0;
+        ci.firstPrice = it.averagePrice ?? ci.firstPrice ?? 0;
+        ci.price = it.lastPrice ?? ci.price ?? 0
         ci.dep ??= it.dep;
       });
     }
@@ -464,7 +514,8 @@ module.exports.compareScriptic = async (req, res) => {
         ci.name   = ci.name || it.name;
         ci.um     = ci.um   || it.um;
         ci.second = r(ci.second + (it.faptic || 0));
-        ci.price  = ingDoc.price ?? ci.price ?? 0;
+        ci.secondPrice = it.averagePrice ?? ci.secondPrice ?? 0;
+        ci.price = it.lastPrice ?? ci.price ?? 0
         ci.dep   ??= it.dep;
       });
     }
@@ -475,7 +526,7 @@ module.exports.compareScriptic = async (req, res) => {
         ci.depVal = r(ci.depVal + (qty || 0));
         ci.um   = ci.um || ing?.um || '';
         ci.name = ci.name || ing?.name || '';
-        ci.price = ing?.price ?? ci.price ?? 0;
+        ci.price = ci.price ?? ing?.price ?? 0;
       });
     }
 
@@ -485,7 +536,7 @@ module.exports.compareScriptic = async (req, res) => {
         ci.saleUnload = r(ci.saleUnload + (qty || 0));
         ci.um   = ci.um || ing?.um || '';
         ci.name = ci.name || ing?.name || '';
-        ci.price = ing?.price ?? ci.price ?? 0;
+        ci.price =  ci.price ?? ing?.price ?? 0;
       });
     }
 
