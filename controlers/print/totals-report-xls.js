@@ -49,7 +49,8 @@ function groupByDateAndHourSum(data, intervals) {
 
   
     data.forEach(item => {
-      const d = new Date(item.createdAt);
+      const dx = new Date(item.createdAt);
+      const d = new Date(d.getTime() + 2 * 60 * 60 * 1000);
   
       // Convert date to key (YYYY-MM-DD)
       const dayKey = d.toISOString().split("T")[0];
