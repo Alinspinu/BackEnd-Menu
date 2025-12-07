@@ -35,7 +35,7 @@ module.exports.getOrder = async (req, res, next) => {
     const {start, end, day, loc, point, download} = req.body
 
 
-    const salePoint = await SalePoint.findById(point).populate({path: 'locatie', select: 'bussinesName'})
+    const salePoint = await SalePoint.findById(point).populate({path: 'locatie'})
 
     if(start && end){
         const startTime = new Date(start).setUTCHours(0,0,0,0)

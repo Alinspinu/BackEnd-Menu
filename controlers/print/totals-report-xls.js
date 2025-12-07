@@ -19,27 +19,33 @@ async function createTotalsReportXcelBuffer(orders, salePoint, date){
   const grouped = groupByDateAndHourSum(orders, intervals);
 
   // ROWS
+
   Object.keys(grouped).forEach(day => {
     const row = [];
   
-    // Format date: dd.MM.yyyy
+    // Format date dd.MM.yyyy
     const [y, m, d] = day.split("-");
-    const formatted = `${d}.${m}.${y}`;
-    row.push(formatted);
+    row.push(`${d}.${m}.${y}`);
   
     let totalForDay = 0;
   
     intervals.forEach((_, index) => {
       const val = grouped[day][index];
       row.push(val);
-      totalForDay += val;
+  
+      totalForDay += val;             // daily total
+      intervalTotals[index] += val;   // interval total
     });
   
-    // Add TOTAL column
-    row.push(totalForDay);
+    row.push(totalForDay);            // daily total at the end
+    grandTotal += totalForDay;        // accumulate grand total
   
     worksheet.addRow(row);
   });
+  
+  // FINAL TOTAL ROW
+  const totalRow = ["TOTAL", ...intervalTotals, grandTotal];
+  worksheet.addRow(totalRow);
 
 
 
