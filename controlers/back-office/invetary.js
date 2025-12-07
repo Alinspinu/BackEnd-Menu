@@ -121,15 +121,15 @@ module.exports.updateInventary = async (req, res) => {
    try{
      const {inventaryId, loc, point} = req.query;
      if(inventaryId === "all"){
-      //  const inventaries = await Inventary.find()
-      //                           .populate({ path: 'ingredients.ing', select: 'price invGestiune' })
-      //                           .lean()
-      //       await updateInventaries(inventaries)
-      //       res.status(200).json([inventaries[0]])
-       const inventaries = await Inventary.find({locatie: loc, salePoint: point})
-                            .select('-ingredients')
-                            .populate({path: 'gestiune', select: 'name'})
-       res.status(200).json(inventaries)
+       const inventaries = await Inventary.find()
+                                .populate({ path: 'ingredients.ing', select: 'price invGestiune' })
+                                .lean()
+            await updateInventaries(inventaries)
+            res.status(200).json([inventaries[0]])
+      //  const inventaries = await Inventary.find({locatie: loc, salePoint: point})
+      //                       .select('-ingredients')
+      //                       .populate({path: 'gestiune', select: 'name'})
+      //  res.status(200).json(inventaries)
      } else {
        const inventary = await Inventary.findById(inventaryId)
                         .populate([
@@ -152,11 +152,11 @@ module.exports.updateInventary = async (req, res) => {
     for(let ing of i.ingredients){
       if(ing.ing){
         const gest = ing.ing.invGestiune?.find(g => g.gestiune?.toString() === i.gestiune?.toString())
-        ing.lastPrice = ing.ing.price
+        ing.lastPrice = round(ing.ing.price)
         if(gest){
-          ing.averagePrice = getAveragePrice(gest) || ing.ing.price
+          ing.averagePrice = round(getAveragePrice(gest)) || round(ing.ing.price)
         } else {
-          ing.averagePrice = ing.ing.price
+          ing.averagePrice = round(ing.ing.price)
         }
 
       } else {
