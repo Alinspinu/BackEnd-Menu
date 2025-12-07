@@ -250,16 +250,40 @@ module.exports.getComaredInv = async (req, res) => {
     try{
         const {point, loc, id} = req.query
         if(id){
-          const compInv =  await ComparedInventary.findById(id).populate({path: 'gestiune', select: 'name'})
+          const compInv =  await ComparedInventary.findById(id).populate({path: 'gestiune', select: 'name'}).lean()
             res.status(200).json(compInv)
         } else {
-            const compareInv = await ComparedInventary.find({locatie: loc, salePoint: point}).populate({path: 'gestiune', select: 'name'})
+            const compareInv = await ComparedInventary.find({}).populate({path: 'gestiune', select: 'name'}).lean()
+            // const compareInv = await ComparedInventary.find({locatie: loc, salePoint: point}).populate({path: 'gestiune', select: 'name'}).lean()
+            await modifyCompare(compareInv)
             res.status(200).json(compareInv)
         }
     } catch(error){
         consol.log(error)
         res.status(500).json('Eroare la descacarea inventar compus', error)
     }
+}
+
+
+async function modifyCompare(invs){
+  const invsToUpdate = []
+
+  for(let i of invs){
+    for(let ing of i.ingredients){
+        ing.firstPrice = ing.price
+        ing.secondPrice = ing.price
+    }
+    invsToUpdate.push(i)
+  }
+
+
+    const promises = invsToUpdate.map(i =>
+      ComparedInventary.findByIdAndUpdate(i._id, i, { new: true })
+    )
+
+    await Promise.all(promises)
+    console.log('Inventare verified:', invs.length, '→ Updated:', invsToUpdate.length);
+
 }
 
 
