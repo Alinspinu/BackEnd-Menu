@@ -93,7 +93,6 @@ module.exports.updateInventary = async (req, res) => {
         if(ing){
             for(let g of  dbIng.invGestiune){
                 if(g.gestiune.toString() === inventary.gestiune.toString()){
-                    console.log(allocateFromNewest(g.entries, value))
                     inventary.fapticValue = round(inventary.fapticValue - allocateFromNewest(g.entries, ing.faptic).totalCost)
                     inventary.fapticValue = round(inventary.fapticValue + allocateFromNewest(g.entries, value).totalCost)
                 }
@@ -646,7 +645,7 @@ function allocateFromNewest(entries, globalQty) {
       remaining = 0;
     }
   
-    const totalCost = allocations.reduce((sum, a) => sum + a.priceWithVat * a.qty, 0);  
+    const totalCost = allocations.reduce((sum, a) => sum + a.priceNoVat * a.qty, 0);  
     return {totalCost, allocations};
   }
   
