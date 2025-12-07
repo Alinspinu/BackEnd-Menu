@@ -14,25 +14,31 @@ async function createTotalsReportXcelBuffer(orders, salePoint, date){
   worksheet.addRow([`${salePoint.name}`], '')
   worksheet.addRow([])
   
-  const header = ["Date", ...intervals.map(i => `${i.start} - ${i.end}`)];
+  const header = ["Date", ...intervals.map(i => `${i.start} - ${i.end}`, 'Total')];
   worksheet.addRow(header)
   const grouped = groupByDateAndHourSum(orders, intervals);
 
   // ROWS
   Object.keys(grouped).forEach(day => {
     const row = [];
-
-    // Format date dd.MM.yyyy
+  
+    // Format date: dd.MM.yyyy
     const [y, m, d] = day.split("-");
     const formatted = `${d}.${m}.${y}`;
-
     row.push(formatted);
-
+  
+    let totalForDay = 0;
+  
     intervals.forEach((_, index) => {
-      row.push(grouped[day][index]); // summed value
+      const val = grouped[day][index];
+      row.push(val);
+      totalForDay += val;
     });
-
-    worksheet.addRow(row);
+  
+    // Add TOTAL column
+    row.push(totalForDay);
+  
+    sheet.addRow(row);
   });
 
 
