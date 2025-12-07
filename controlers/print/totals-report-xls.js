@@ -51,7 +51,13 @@ let grandTotal = 0;
   const totalRow = ["TOTAL", ...intervalTotals, grandTotal];
   worksheet.addRow(totalRow);
 
-
+  for (let i = 0; i < intervals.length; i++) {
+    worksheet.getColumn(i + 1).width = 12; // +2 because col 1 is Date
+  }
+  
+  // Last column = Total
+  worksheet.getColumn(intervals.length + 2).width = 15;
+  
 
 
 
