@@ -151,7 +151,7 @@ module.exports.updateInventary = async (req, res) => {
   for(let i of invs){
     for(let ing of i.ingredients){
       if(ing.ing){
-        const gest = ing.ing.invGestiune.find(g => g.gestiune?.toString() === i.gestiune?.toString())
+        const gest = ing.ing.invGestiune?.find(g => g.gestiune?.toString() === i.gestiune?.toString())
         ing.lastPrice = ing.ing.price
         if(gest){
           ing.averagePrice = getAveragePrice(gest)
