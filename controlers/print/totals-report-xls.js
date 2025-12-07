@@ -18,6 +18,10 @@ async function createTotalsReportXcelBuffer(orders, salePoint, date){
   worksheet.addRow(header)
   const grouped = groupByDateAndHourSum(orders, intervals);
 
+
+  const intervalTotals = Array(intervals.length).fill(0);
+let grandTotal = 0;
+
   // ROWS
 
   Object.keys(grouped).forEach(day => {
