@@ -35,7 +35,8 @@ let grandTotal = 0;
   
     // Format date dd.MM.yyyy
     const [y, m, d] = day.split("-");
-    row.push(`${d}.${m}.${y}`);
+    const jsDate = new Date(Number(y), Number(m) - 1, Number(d));
+    row.push(jsDate);
   
     let totalForDay = 0;
   
