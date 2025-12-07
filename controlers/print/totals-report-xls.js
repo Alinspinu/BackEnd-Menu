@@ -19,7 +19,7 @@ async function createTotalsReportXcelBuffer(orders, salePoint, date){
   h.eachCell((cell) => {
     cell.font = {
         bold: true,
-        size: 13
+        size: 11
     }
   })
   const grouped = groupByDateAndHourSum(orders, intervals);
@@ -67,6 +67,13 @@ let grandTotal = 0;
   for (let i = 0; i < intervals.length; i++) {
     worksheet.getColumn(i + 1).width = 12; // +2 because col 1 is Date
   }
+
+  worksheet.getColumn(1).eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 11
+    }
+  })
   
   // Last column = Total
   worksheet.getColumn(intervals.length + 2).width = 15;
