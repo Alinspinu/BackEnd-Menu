@@ -79,7 +79,7 @@ let grandTotal = 0;
   // Last column = Total
   worksheet.getColumn(intervals.length + 2).width = 15;
   
-
+  worksheet.getColumn(1).numFmt = 'dd.mm.yyyy';
 
 
   const buffer = await workbook.xlsx.writeBuffer();
