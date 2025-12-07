@@ -61,7 +61,7 @@ module.exports.getOrder = async (req, res, next) => {
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
         // await modyfyOrdersProducts(orders)
         if(download && download.bool){
-            const date = `${formatedDateToShow(startTime).split('ora')[0]} - ${formatedDateToShow(endTime).split('ora')[0]}`
+            const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
             let buffer
             if(download.type === 'totals'){
                buffer = await createTotalsReportXcelBuffer(orders, salePoint, date)
@@ -110,25 +110,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'}).lean()
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point}).lean()
-        if(download && download.bool){
-            const date = `${formatedDateToShow(today).split('ora')[0]}`
-            let buffer
-            if(download.type === 'totals'){
-                
-
-            } else {
-                return res.status(404).json({message: 'Nu a fost selectat un tip de download'})
-            }
-    
-            // Set headers for file download
-            res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-            res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
-
-            // Send the buffer directly
-            res.send(Buffer.from(buffer));
-        } else {
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds,  message: 'ok'})
-        }
     }
     try{
     } catch (err){
