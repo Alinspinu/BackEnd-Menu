@@ -38,7 +38,7 @@ async function createTotalsReportXcelBuffer(orders, salePoint, date){
     // Add TOTAL column
     row.push(totalForDay);
   
-    sheet.addRow(row);
+    worksheet.addRow(row);
   });
 
 
