@@ -64,7 +64,7 @@ module.exports.getOrder = async (req, res, next) => {
             const date = `${formatedDateToShow(startTime).split('ora')[0]} - ${formatedDateToShow(endTime).split('ora')[0]}`
             let buffer
             if(download.type === 'totals'){
-               buffer = createTotalsReportXcelBuffer(orders, salePoint, date)
+               buffer = await createTotalsReportXcelBuffer(orders, salePoint, date)
 
             } else {
                 return res.status(404).json({message: 'Nu a fost selectat un tip de download'})
