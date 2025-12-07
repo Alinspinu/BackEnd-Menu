@@ -253,9 +253,9 @@ module.exports.getComaredInv = async (req, res) => {
           const compInv =  await ComparedInventary.findById(id).populate({path: 'gestiune', select: 'name'}).lean()
             res.status(200).json(compInv)
         } else {
-            const compareInv = await ComparedInventary.find({}).populate({path: 'gestiune', select: 'name'}).lean()
-            // const compareInv = await ComparedInventary.find({locatie: loc, salePoint: point}).populate({path: 'gestiune', select: 'name'}).lean()
-            await modifyCompare(compareInv)
+            // const compareInv = await ComparedInventary.find({}).populate({path: 'gestiune', select: 'name'}).lean()
+            // await modifyCompare(compareInv)
+            const compareInv = await ComparedInventary.find({locatie: loc, salePoint: point}).populate({path: 'gestiune', select: 'name'}).lean()
             res.status(200).json(compareInv)
         }
     } catch(error){
