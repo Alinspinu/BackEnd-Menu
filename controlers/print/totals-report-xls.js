@@ -14,8 +14,14 @@ async function createTotalsReportXcelBuffer(orders, salePoint, date){
   worksheet.addRow([`${salePoint.name}`], '')
   worksheet.addRow([])
   
-  const header = ["Date", ...intervals.map(i => `${i.start} - ${i.end}`, 'Total')];
-  worksheet.addRow(header)
+  const header = ["Date", ...intervals.map(i => `${i.start} - ${i.end}`), 'Total'];
+  const h = worksheet.addRow(header)
+  h.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+  })
   const grouped = groupByDateAndHourSum(orders, intervals);
 
 
@@ -49,7 +55,14 @@ let grandTotal = 0;
   
   // FINAL TOTAL ROW
   const totalRow = ["TOTAL", ...intervalTotals, grandTotal];
-  worksheet.addRow(totalRow);
+  const f  = worksheet.addRow(totalRow);
+
+  f.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+  })
 
   for (let i = 0; i < intervals.length; i++) {
     worksheet.getColumn(i + 1).width = 12; // +2 because col 1 is Date
