@@ -64,8 +64,8 @@ let grandTotal = 0;
     }
   })
 
-  for (let i = 0; i < intervals.length; i++) {
-    worksheet.getColumn(i + 1).width = 12; // +2 because col 1 is Date
+  for (let i = 1; i < intervals.length; i++) {
+    worksheet.getColumn(i).width = 12; // +2 because col 1 is Date
   }
 
   worksheet.getColumn(1).eachCell((cell) => {
