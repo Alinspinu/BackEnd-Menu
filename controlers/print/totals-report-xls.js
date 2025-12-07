@@ -88,9 +88,10 @@ let grandTotal = 0;
 
 function groupByDateAndHourSum(data, intervals) {
     const result = {};
-
   
     data.forEach(item => {
+       const total = round(item.payment.cash || 0 + item.payment.card || 0 + item.payment.online || 0  + item.payment.viva || 0 + item.payment.voucher || 0)
+
       const dx = new Date(item.createdAt);
       const d = new Date(dx.getTime() + 2 * 60 * 60 * 1000);
   
@@ -111,7 +112,7 @@ function groupByDateAndHourSum(data, intervals) {
   
         // Example: hour 08:30 belongs to interval 08–09
         if (hour >= startHour && hour < endHour) {
-          result[dayKey][index] += +item.total;  // SUM totals
+          result[dayKey][index] += total;  // SUM totals
         }
       });
     });
