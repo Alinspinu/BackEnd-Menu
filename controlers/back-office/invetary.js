@@ -154,7 +154,7 @@ module.exports.updateInventary = async (req, res) => {
         const gest = ing.ing.invGestiune?.find(g => g.gestiune?.toString() === i.gestiune?.toString())
         ing.lastPrice = ing.ing.price
         if(gest){
-          ing.averagePrice = getAveragePrice(gest)
+          ing.averagePrice = getAveragePrice(gest) || ing.ing.price
         } else {
           ing.averagePrice = ing.ing.price
         }
