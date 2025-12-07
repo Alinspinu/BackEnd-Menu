@@ -121,15 +121,15 @@ module.exports.updateInventary = async (req, res) => {
    try{
      const {inventaryId, loc, point} = req.query;
      if(inventaryId === "all"){
-       const inventaries = await Inventary.find()
-                                .populate({ path: 'ingredients.ing', select: 'price invGestiune' })
-                                .lean()
-            await updateInventaries(inventaries)
-            res.status(200).json([inventaries[0]])
-      //  const inventaries = await Inventary.find({locatie: loc, salePoint: point})
-      //                       .select('-ingredients')
-      //                       .populate({path: 'gestiune', select: 'name'})
-      //  res.status(200).json(inventaries)
+      //  const inventaries = await Inventary.find()
+      //                           .populate({ path: 'ingredients.ing', select: 'price invGestiune' })
+      //                           .lean()
+      //       await updateInventaries(inventaries)
+      //       res.status(200).json([inventaries[0]])
+       const inventaries = await Inventary.find({locatie: loc, salePoint: point})
+                            .select('-ingredients')
+                            .populate({path: 'gestiune', select: 'name'})
+       res.status(200).json(inventaries)
      } else {
        const inventary = await Inventary.findById(inventaryId)
                         .populate([
