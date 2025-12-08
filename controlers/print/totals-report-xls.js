@@ -93,7 +93,7 @@ function groupByDateAndHourSum(data, intervals) {
     data.forEach(item => {
        const total = round(item.payment.cash || 0 + item.payment.card || 0 + item.payment.online || 0  + item.payment.viva || 0 + item.payment.voucher || 0) - item.tips || 0
 
-      const dx = new Date(item.createdAt);
+      const dx = new Date(item.paymentDate);
       const d = new Date(dx.getTime() + 2 * 60 * 60 * 1000);
   
       // Convert date to key (YYYY-MM-DD)

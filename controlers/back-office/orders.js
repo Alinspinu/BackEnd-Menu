@@ -239,7 +239,7 @@ module.exports.getHavyOrders = async (req, res, next) => {
         if(start && end){
             const startTime = new Date(start).setUTCHours(0,0,0,0)
             const endTime = new Date(end).setUTCHours(23,59,59,9999)
-            const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, status: "done", invoice: false})
+            const orders = await Order.find({locatie: loc, salePoint: point, paymentDate: {$gte: startTime, $lt: endTime}, status: "done", invoice: false})
                                     .populate({
                                         path: 'products.ings.ing',
                                         select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog dept', 

@@ -31,7 +31,7 @@ module.exports.getGestReport = async(req, res) => {
     const nirs = await Nir.find({locatie: loc, salePoint: point, documentDate: {$gte: startDate, $lte: endDate }})
               .populate({path: 'suplier', select: 'name'})
               .populate({path: 'locatie', select: 'bussinessName' }).lean()
-    const orders = await Order.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lt: endDate}, status: 'done'}).lean() 
+    const orders = await Order.find({locatie: loc, salePoint: point, paymentDate: {$gte: startDate, $lt: endDate}, status: 'done'}).lean() 
     const invoices = await Invoice.find({locatie: loc, salePoint: point, createdAt: {$gte: startDate, $lte: endDate}})
               .populate({path:'products.productId', select: 'name departament sgrTax'})
               .lean()
@@ -513,7 +513,7 @@ module.exports.compareScriptic = async (req, res, next) => {
 
     const impSheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: eTime}, salePoint: point})
                               .populate({path: 'ings.ing', select: 'name um ings productIngredient price', populate: {path: 'ings.ing', select: 'name um price' }})
-    const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}, salePoint: point}).populate([
+    const orders = await Order.find({locatie: loc, paymentDate: {$gte: startTime, $lte: endTime}, status: 'done', salePoint: point}).populate([
       {
         path: 'products.ings.ing', 
         populate: {path: 'ings.ing'}

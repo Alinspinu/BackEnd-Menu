@@ -707,7 +707,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         let hours = []
         for(let bill of bills){
             if(bill.production) {
-                const hour = new Date(bill.createdAt).getHours()
+                const hour = new Date(bill.paymentDate).getHours()
                 const exsitingHour = hours.find(p => (p.hour === hour))
                 if(exsitingHour){
                     exsitingHour.total = round(exsitingHour.total + bill.total)
