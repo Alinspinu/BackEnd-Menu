@@ -34,7 +34,7 @@ const order = require('../../models/office/product/order');
 module.exports.getOrder = async (req, res, next) => {
     const {start, end, day, loc, point, download} = req.body
 
-
+    try{
     const salePoint = await SalePoint.findById(point).populate({path: 'locatie'})
 
     if(start && end){
@@ -65,16 +65,13 @@ module.exports.getOrder = async (req, res, next) => {
             let buffer
             if(download.type === 'totals'){
                buffer = await createTotalsReportXcelBuffer(orders, salePoint, date)
-
             } else {
                 return res.status(404).json({message: 'Nu a fost selectat un tip de download'})
             }
-    
-            // Set headers for file download
+
             res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
 
-            // Send the buffer directly
             res.send(Buffer.from(buffer));
         } else {
             res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds, message: 'ok'})
@@ -112,9 +109,10 @@ module.exports.getOrder = async (req, res, next) => {
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: today}, salePoint: point}).lean()
         res.status(200).json({orders: [...orders, ...openOrders], delProducts: delProds,  message: 'ok'})
     }
-    try{
+
     } catch (err){
         console.log(err)
+        res.status(500).json(err)
     }
 }
 
