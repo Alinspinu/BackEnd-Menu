@@ -59,7 +59,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         if(download && download.bool){
             const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
             let buffer
@@ -121,23 +121,25 @@ async function modyfyOrdersProducts(orders){
     let ordersToSave = []
 
     for(let o of orders){
-        let total = 0
-      for(let p of o.products){
-        total += (p.price *p.quantity - p.discount)
-      }
-      if(o.payment.online && o.payment.online !== o.total){
-        o.total = o.payment.online
-        ordersToSave.push(o)
-        console.log('order index ', o.index, 'order payment ', o.payment.online, ' calc total ', total, ' total tips ', o.tips)
+
+      const diference =( new Date(o.paymentDate).getTime() - new Date(o.updatedAt).getTime()) / 1000 / 60 / 60
+      if(diference > 12 ){
+
+        console.log('order index:', o.index);
+        console.log('order payment:', o.total);
+        console.log('payment method:', o.paymentMethod);
+        console.log('data creare:', formatedDateToShow(o.paymentDate));
+        console.log('ultimul update:', formatedDateToShow(o.updatedAt));
+        console.log('-------------------------');
       }
     }
 
-    const promises = ordersToSave.map(o => 
-         Order.findByIdAndUpdate(o._id, o, {new: true})
-    )
+    // const promises = ordersToSave.map(o => 
+    //      Order.findByIdAndUpdate(o._id, o, {new: true})
+    // )
 
-    await Promise.all(promises)
-    console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
+    // await Promise.all(promises)
+    // console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
 
 }
 
@@ -148,9 +150,9 @@ module.exports.testRaport = async (req, res) => {
     try{
         const today = new Date(2025, 0, 1).setUTCHours(0,0,0,0)
         const end = new Date(2025, 0, 1).setUTCHours(0,0,0,0)
-        const orders = await Order.find({ locatie: "655e2e7c5a3d53943c6b7c53" , createdAt: {$gte: today}, status: 'done'})
+        const orders = await Order.find({ locatie: "655e2e7c5a3d53943c6b7c53" , paymentDate: {$gte: today}, status: 'done'})
         for(let order of orders){
-            await createProductSaleReport(order.products, order.createdAt)
+            await createProductSaleReport(order.products, order.paymentDate)
          }
          res.status(200).json({message: 'All good in the hood'})
 
@@ -322,7 +324,7 @@ module.exports.getIceCreamOrders = async (req, res) => {
         const startTime = new Date(start).setUTCHours(0,0,0,0)
         const endTime = new Date(end).setUTCHours(23,59,59,9999)
     try{
-        const orders = await Order.find({products: {$elemMatch: {category: '6842a447c028051a2632b451'}}, createdAt: {$gte: startTime, $lt: endTime}, status: "done"})
+        const orders = await Order.find({products: {$elemMatch: {category: '6842a447c028051a2632b451'}}, paymentDate: {$gte: startTime, $lt: endTime}, status: "done"})
         .populate({
             path: 'products.ings.ing',
             select: 'name price uploadLog', 
@@ -359,7 +361,7 @@ module.exports.getOrderByUser = async (req, res, nex) => {
         const start = new Date(date).setHours(0,0,0,0)
         const end = new Date(date).setHours(23, 59, 59, 999)
         const user = await User.findById(userId)
-        const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', createdAt: {$gte: start, $lt: end},  salePoint: point })
+        const orders = await Order.find({locatie: user.locatie, 'employee.user': userId, status: 'done', paymentDate: {$gte: start, $lt: end},  salePoint: point })
         res.status(200).json(orders)
     } catch (err){
         console.log(err)
@@ -626,7 +628,7 @@ module.exports.getOrderDone = async (req, res, next) => {
     const loc = '655e2e7c5a3d53943c6b7c53'
     try{
         const today = new Date().setUTCHours(0,0,0,0)
-        const orders = await Order.find({locatie: loc, status: 'done', createdAt: {$gte: today}})
+        const orders = await Order.find({locatie: loc, status: 'done', paymentDate: {$gte: today}})
         res.json(orders)
     } catch(err){
         console.log(err)

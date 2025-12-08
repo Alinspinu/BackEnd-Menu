@@ -336,7 +336,7 @@ module.exports.compareScriptic = async (req, res) => {
         .populate({ path: 'billProduct.toppings.ing', select: 'name ings um', populate: { path: 'ings.ing', select: 'name um' } }).lean(),
       ImpSheet.find({ locatie: loc, date: { $gte: startTime, $lte: endTime }, salePoint: point })
         .populate({ path: 'ings.ing', select: 'name um ings productIngredient price', populate: { path: 'ings.ing', select: 'name um price' } }).lean(),
-      Order.find({ locatie: loc, createdAt: { $gte: startTime, $lte: endTime }, salePoint: point })
+      Order.find({ locatie: loc, paymentDate: { $gte: startTime, $lte: endTime }, salePoint: point , status: 'done'})
         .populate([
           { path: 'products.ings.ing',     populate: { path: 'ings.ing' } },
           { path: 'products.toppings.ing', populate: { path: 'ings.ing' } },

@@ -30,13 +30,83 @@ module.exports.addTransfer = async (req, res) => {
   const {transfer} = req.body
   try{
 
+    const newTr = new Transfer(transfer)
+    newTr.populate([
+      {path: 'gestiune.send', select: 'name'},
+      {path: 'gestiune.recive', select: 'name'}
+    ])
+    const savedTransfer = await newTr.save()
 
-
+    res.status(200).json({message: 'Fișa de transfer a vost savată cu succes!', transfer: savedTransfer})
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
   }
 
+}
+
+module.exports.editTransfer = async (req, res) => {
+    const {transfer} = req.body
+    try{
+
+      const updated = await Transfer.findByIdAndUpdate(transfer._id, transfer, {new: true})
+                      .populate([
+                        {path: 'gestiune.send', select: 'name'},
+                        {path: 'gestiune.recive', select: 'name'}
+                      ])
+      res.status(200).json({message: 'Fișsa de transfer a fost actualizată cu succes!', transfer: updated})
+
+    } catch(error){
+      console.log(error)
+      res.status(500).json(error)
+    }
+}
+
+
+module.exports.deleteTransfer = async (req, res) => {
+  const {id} = req.query
+  try{
+    const tr = await Transfer.findById(id)
+    if(tr.updated){
+      res.status(401).json({message: 'Ingredientele nu au fost transferate înapoi in gestiune! Transferă ingredientele pentru a putea șterge fișa de transfer.'})
+    } else {
+      await Transfer.findByIdAndDelete(id)
+      res.status(200).json({message: 'Fișa de transfer a fost ștearsă cu succes!'})
+    }
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
+module.exports.getTransfers = async (req, res) => {
+  const {loc, point} = req.query
+  try{
+
+    const transfers = await Transfer.find({locatie: loc, salePoint: point})
+                    .populate([
+                      {path: 'gestiune.send', select: 'name'},
+                      {path: 'gestiune.recive', select: 'name'}
+                    ])
+    res.status(200).json(transfers)
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+
+module.exports.unloadtransfer = async (req, res) => {
+  const {id} = req.body
+  try{
+
+    const transfer = await Transfer.findById(id)
+
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
 }
 
 

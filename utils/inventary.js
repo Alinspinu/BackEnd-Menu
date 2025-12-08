@@ -11,6 +11,9 @@ const norm = s => s?.trim().toLowerCase()
 
 const veggie = ['lapte vegetal', 'lapte mazare', 'lapte ovaz' ]
 
+
+const findProductionGest = (gests, id) => gests.some(g => !g.sale && g.gestiune.toString() === id);
+
 async function unloadIngs (ings, qtyProdus, gestiune) {
   try{
     for (const ing of ings) {
@@ -18,6 +21,10 @@ async function unloadIngs (ings, qtyProdus, gestiune) {
         if (!ingredientInv) {
             console.error(`Eorare! Ingredientul nu a fost găsit în baza de date. la descarcare de stoc`);
         } else {
+          let gestt = ingredientInv.gestiune?.toString()
+          if(gestiune){
+            gestt = gestiune.toString()
+          }
           if(ingredientInv.ings.length && ingredientInv.production.tehnic){
             ingredientInv.ings.forEach(obj => {
               obj.qty = round(obj.qty * ing.qty)
@@ -25,7 +32,7 @@ async function unloadIngs (ings, qtyProdus, gestiune) {
             await unloadIngs(ingredientInv.ings, qtyProdus) 
           } else {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
-            if(ingredientInv.production && !ingredientInv.production.tehnic && ingredientInv.productIngredient){
+            if(ingredientInv.production && !ingredientInv.production.tehnic && ingredientInv.productIngredient && !findProductionGest(ingredientInv.invGestiune, gestt)){
                 console.log('Am gasit ingredient compus cu gestiune...')
                   if(ingredientInv.qty <= cantFinal){
                     const diference = cantFinal - ingredientInv.qty
@@ -35,10 +42,16 @@ async function unloadIngs (ings, qtyProdus, gestiune) {
                         qty: ingredientInv.production.qty, 
                         uploadNoVat: calcRecipeTotal(ingredientInv.ings).price,
                         uploadPrice: calcRecipeTotal(ingredientInv.ings).priceNoVat,
-                        operation: {name: 'intrare', details: 'Intrare prin productie'}})
+                        operation: {name: 'intrare', details: 'Intrare prin productie'}
+                      }
+                    )
                     ingredientInv.qty = round(ingredientInv.production.qty - diference)
                     await unloadIngs(ingredientInv.ings, ingredientInv.production.qty) 
                   }
+            }
+
+            if(findProductionGest(ingredientInv.invGestiune)){
+
             }
 
 
@@ -72,10 +85,7 @@ async function unloadIngs (ings, qtyProdus, gestiune) {
 
 
             if(ingredientInv.invGestiune.length){
-              let gestt = ingredientInv.gestiune?.toString()
-              if(gestiune){
-                gestt = gestiune.toString()
-              }
+      
               const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === gestt)
               if(gestIndex !== -1){
                 const gest = ingredientInv.invGestiune[gestIndex];
@@ -190,6 +200,8 @@ function calcRecipeTotal(ings) {
 }
 
 
+
+
 async function uploadIngs (ings, qtyProdus, gestiune) {
   try{
     for (const ing of ings) {
@@ -197,6 +209,10 @@ async function uploadIngs (ings, qtyProdus, gestiune) {
         if (!ingredientInv) {
             console.error(`Eorare! Ingredientul nu a fost găsit în baza de date. la incarcare de stoc`);
           } else {
+            let gestt  = ingredientInv.gestiune?.toString()
+            if(gestiune){
+              gestt = gestiune.toStrimg()
+            }
             if(ingredientInv.ings.length && ingredientInv.production.tehnic){
               ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
               await uploadIngs(ingredientInv.ings, qtyProdus)
@@ -233,10 +249,6 @@ async function uploadIngs (ings, qtyProdus, gestiune) {
 
 
               if(ingredientInv.invGestiune.length){
-                let gestt  = ingredientInv.gestiune?.toString()
-                if(gestiune){
-                  gestt = gestiune.toStrimg()
-                }
                 const gestIndex = ingredientInv.invGestiune.findIndex(g => g.gestiune?.toString() === gestt)
                 if(gestIndex !== -1){
                   let gest = ingredientInv.invGestiune[gestIndex]
@@ -278,6 +290,34 @@ async function uploadIngs (ings, qtyProdus, gestiune) {
     }
   } catch(err){
     console.log('Eroare la incarcarea produselor in inventar', err)
+  }
+}
+
+
+
+async function gestTransfer(ings, sendGest, reciveGest){
+  try{
+    for (const ing of ings) {
+        const ingredientInv = await IngInv.findById(ing.ing).populate({path: 'ings.ing', select: 'price tva'}).exec();
+        if (!ingredientInv) {
+            console.error(`Eorare! Ingredientul nu a fost găsit în baza de date. la descarcare de stoc`);
+        } else {
+
+          const sGest = ingredientInv.invGestiune.find(g => g.gestiune.toString() === sendGest.toString())
+          if(!sGest){  
+            return console.error('NU A FOST GASITA PE INGREDIENT GESTIUNEA DIN CARE SE TRIMITE!')
+          }
+          const rGest = ingredientInv.invGestiune.find(g => g.gestiune.toString() === reciveGest.toString())
+          if(!rGest){  
+            return console.error('NU A FOST GASITA PE INGREDIENT GESTIUNEA DIN CARE PRIMESTE!')
+          }
+
+          
+
+        }
+    }
+  } catch(error){
+    console.log('Erorare la transferul intre gestiuni', error)
   }
 }
 

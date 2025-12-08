@@ -108,7 +108,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
 
 
     for(let o of orders){
-      const day = days.find(d => new Date(d.date).toDateString() === new Date(o.createdAt).toDateString())
+      const day = days.find(d => new Date(d.date).toDateString() === new Date(o.paymentDate).toDateString())
       if(day){
       if(o.tips && o.tips > 0){
         const existingTipsEntry = day.entries.find(e => e.description === 'Vanzare Bacsis' )
@@ -116,7 +116,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
           existingTipsEntry.value += o.tips
         } else {
           const entry = {
-            date: o.createdAt,
+            date: o.paymentDate,
             description: 'Vanzare Bacsis',
             nrDoc: o.dayCounter,
             value: o.tips,
@@ -141,7 +141,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
                   existinSGREntry.value += sgrTax
                 } else {
                   const entry = {
-                    date: o.createdAt,
+                    date: o.paymentDate,
                     description: 'Vanzare SGR',
                     nrDoc: o.dayCounter,
                     value: sgrTax,
@@ -173,7 +173,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
                         existingEntry.value += price
                       } else {
                         const entry = {
-                          date: o.createdAt,
+                          date: o.paymentDate,
                           description: 'Vanzare cu amanuntul',
                           nrDoc: o.dayCounter,
                           value: price,
@@ -184,7 +184,7 @@ async function createRG(start, end, nirs, ings, gest, orders, in0, in11, in21, d
                         day.entries.push(entry)
                       }
                     } else {
-                      console.log('ingredient gasit ca marfa cu alta gestiune decat bar ',  formatedDateToShow(o.createdAt), ' ', p.quantity, ' ',   p.name, ' ',  p.ings[0].gestiune)
+                      console.log('ingredient gasit ca marfa cu alta gestiune decat bar ',  formatedDateToShow(o.paymentDate), ' ', p.quantity, ' ',   p.name, ' ',  p.ings[0].gestiune)
                     }
                   } else {
                     console.log('ingredient fara gestiune', p.name)
