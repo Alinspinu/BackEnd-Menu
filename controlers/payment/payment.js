@@ -47,7 +47,7 @@ module.exports.getToken = async (req, res, next) => {
                 fullName: '',
                 phone: '',
                 countryCode: 'RO',
-            requestLang: 'ro-RO'
+                requestLang: 'ro-RO',
             },
             paymentTimeout: 300,
             preauth: false,
@@ -60,12 +60,6 @@ module.exports.getToken = async (req, res, next) => {
             disableWallet: true,
             sourceCode: code,
             merchantTrns: '',
-            tags: [
-
-            ],
-            cardTokens: [
-
-            ]
         };
         token = response.data.access_token;
         const urlPayment = 'https://api.vivapayments.com/checkout/v2/orders';
@@ -156,7 +150,7 @@ module.exports.getToken = async (req, res, next) => {
                 fullName: '',
                 phone: '',
                 countryCode: 'RO',
-            requestLang: 'ro-RO'
+                requestLang: 'ro-RO',
             },
             paymentTimeout: 300,
             preauth: false,
@@ -169,12 +163,6 @@ module.exports.getToken = async (req, res, next) => {
             disableWallet: true,
             sourceCode: code,
             merchantTrns: '',
-            tags: [
-
-            ],
-            cardTokens: [
-
-            ]
         };
         token = response.data.access_token;
         const urlPayment = 'https://api.vivapayments.com/checkout/v2/orders';

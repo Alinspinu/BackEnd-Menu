@@ -4,6 +4,7 @@ const ImpSheet = require('../../models/office/imp-sheet')
 const Report = require('../../models/office/report');
 const NirInvoice = require('../../models/office/nir-invoice')
 const Order = require('../../models/office/product/order')
+const Transfer = require('../../models/office/product/transfer')
 
 const Ingredient = require('../../models/office/inv-ingredient')
 
@@ -21,6 +22,22 @@ const {createNirsListXcelBuffer} = require('../print/nir-list')
 const {createSheetListXcelBuffer} = require('../print/fisa-dep-cons');
 const product = require('../../models/office/product/product');
 
+
+
+
+
+module.exports.addTransfer = async (req, res) => {
+  const {transfer} = req.body
+  try{
+
+
+
+  } catch(error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+
+}
 
 
 
