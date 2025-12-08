@@ -47,7 +47,7 @@ module.exports.getOrder = async (req, res, next) => {
             return res.status(200).json({message: 'Sunt peste 31 de zile'})
         }
 
-        const orders = await Order.find({locatie: loc, createdAt: {$gte: startTime, $lte: endTime}, status: 'done', salePoint: point, invoice: false})
+        const orders = await Order.find({locatie: loc, paymentDate: {$gte: startTime, $lte: endTime}, status: 'done', salePoint: point, invoice: false})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'})
@@ -81,7 +81,7 @@ module.exports.getOrder = async (req, res, next) => {
     if(day && !end && !start) {
         const start = new Date(day).setUTCHours(0,0,0,0)
         const end = new Date(day).setUTCHours(23,59,59,9999)
-        const orders = await Order.find({ locatie: loc , createdAt: {$gte: start, $lt: end}, status: 'done', salePoint: point, invoice: false})
+        const orders = await Order.find({ locatie: loc , paymentDate: {$gte: start, $lt: end}, status: 'done', salePoint: point, invoice: false})
                     .populate({path: 'masaRest', select: 'name index'})
                     .populate({path : 'products.gestiune', select: 'name'})
                     .populate({path : 'products.departament', select: 'name'}).lean()
@@ -96,7 +96,7 @@ module.exports.getOrder = async (req, res, next) => {
     }
     if(!day && !end && !start) {
         const today = new Date().setUTCHours(0,0,0,0)
-        const orders = await Order.find({ locatie: loc , createdAt: {$gte: today}, status: 'done', salePoint: point})
+        const orders = await Order.find({ locatie: loc , paymentDate: {$gte: today}, status: 'done', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path : 'products.gestiune', select: 'name'})
                         .populate({path : 'products.departament', select: 'name'})
