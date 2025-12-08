@@ -17,6 +17,10 @@ const orderTrueSchema = new Schema({
         type: String,
         index: true
     },
+    paymentDate: {
+        type: Date,
+        index: true
+    },
     name: {
         type: String,
         default: 'COMANDA'
@@ -304,12 +308,10 @@ const orderTrueSchema = new Schema({
     salePoint: {
         type: Schema.Types.ObjectId,
         ref: 'SalePoint'
-        }
-
+        },
 
 }, { timestamps: true, })
 
-orderTrueSchema.path('createdAt').immutable(false);
 
 orderTrueSchema.index({ createdAt: 1 })
 orderTrueSchema.index({ updatedAt: 1 })
