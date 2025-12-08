@@ -345,26 +345,26 @@ orderTrueSchema.pre("save", async function (next) {
     }
 });
 
-orderTrueSchema.post('save', async function (doc, next) {
-    try {
-        if(doc.soketId){
+// orderTrueSchema.post('save', async function (doc, next) {
+//     try {
+//         if(doc.soketId){
 
-            const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId, salePoint: doc.salePoint });
-            console.log('duplicate orders', duplicates.length)
-            if (duplicates.length > 1) {
+//             const duplicates = await mongoose.model('Order').find({ soketId: doc.soketId, salePoint: doc.salePoint });
+//             console.log('duplicate orders', duplicates.length)
+//             if (duplicates.length > 1) {
             
-              const idsToDelete = duplicates.slice(1).map(d => d._id);
-              await mongoose.model('Order').deleteMany({ _id: { $in: idsToDelete}, salePoint: doc.salePoint });
-              console.log(`Deleted ${idsToDelete.length} duplicate document(s) for soketId: ${doc.soketId}`);
-            }
-        }
-        next(); 
+//               const idsToDelete = duplicates.slice(1).map(d => d._id);
+//               await mongoose.model('Order').deleteMany({ _id: { $in: idsToDelete}, salePoint: doc.salePoint });
+//               console.log(`Deleted ${idsToDelete.length} duplicate document(s) for soketId: ${doc.soketId}`);
+//             }
+//         }
+//         next(); 
   
-    } catch (err) {
-      console.error('Error in post save hook:', err);
-      next(err); // Pass error to next middleware or error handler
-    }
-  });
+//     } catch (err) {
+//       console.error('Error in post save hook:', err);
+//       next(err); // Pass error to next middleware or error handler
+//     }
+//   });
 
 
 orderTrueSchema.pre('deleteOne', async function (next){

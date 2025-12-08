@@ -371,6 +371,7 @@ module.exports.printBill = async (req, res, next) => {
         }
 
         const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
+        console.log(savedBill.createdAt)
 
         await createProductSaleReport(savedBill.products, savedBill.updatedAt)
 
