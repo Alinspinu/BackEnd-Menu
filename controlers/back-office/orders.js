@@ -123,7 +123,7 @@ async function modyfyOrdersProducts(orders){
     for(let o of orders){
 
       const diference =( new Date(o.updatedAt).getTime() - new Date(o.paymentDate).getTime() ) / 1000 / 60 / 60
-      if(diference >12 ){
+      if(diference >12 && o.total !== 0 ){
 
         console.log('order index:', o.index);
         console.log('order payment:', o.total);
