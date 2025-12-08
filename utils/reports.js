@@ -520,7 +520,11 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     function calacProductRecipe(p){
         let total = 0
         for(let i of p.ings){
-            total += (+i.ing.tvaPrice * +i.qty)
+            if(i.ing){
+                total += (+i.ing.tvaPrice * +i.qty)
+            } else {
+                consoel.log(i)
+            }
         }
         return round(total * p.quantity)
     }

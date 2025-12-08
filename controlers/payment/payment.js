@@ -376,7 +376,7 @@ module.exports.printBill = async (req, res, next) => {
         console.log(savedBill.paymentDate)
 
         
-        if(bill.locatie !== '6899cbbb5defa52bb2c0bd19'){
+        // if(bill.locatie !== '6899cbbb5defa52bb2c0bd19'){
             await createProductSaleReport(savedBill.products, savedBill.updatedAt)
             savedBill.products.map(async (el) => {
                 if (el.toppings.length) {
@@ -389,7 +389,7 @@ module.exports.printBill = async (req, res, next) => {
 
               const billId = new mongoose.Types.ObjectId(bill._id);
               await Table.findOneAndUpdate({bills: billId, locatie: bill.locatie, salePoint: bill.salePoint}, {$pull: {bills: billId}}) 
-        }
+        // }
 
         socket.emit('billl', JSON.stringify({bill: savedBill}))
         if(savedBill){
