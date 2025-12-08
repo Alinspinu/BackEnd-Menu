@@ -523,7 +523,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             if(i.ing){
                 total += (+i.ing.tvaPrice * +i.qty)
             } else {
-                consoel.log(i)
+                console.log(i)
             }
         }
         return round(total * p.quantity)
