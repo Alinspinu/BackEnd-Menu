@@ -314,15 +314,15 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
 
 
-    // doc.fontSize(8)
+    doc.fontSize(8)
     ch.forEach((el, i) => {
       const name = el.name.replace(/\n/g, ' ') 
-      if(name.length > 35) {
-        doc.fontSize(8)
-      } else {
-        doc.fontSize(9)
+      // if(name.length > 35) {
+      //   doc.fontSize(8)
+      // } else {
+      //   doc.fontSize(9)
 
-      }
+      // }
       let newValue = y + heghtValue
         doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
         doc.text(`${name}`, 47, newValue, { width: 225, align: 'left' })
@@ -349,14 +349,14 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.fontSize(9)
         }
         heghtValue += rowHeigth
-        // if(name.length > 40){
-        //   heghtValue += 5
-        // }
+        if(name.length > 35){
+          heghtValue += 6
+        }
         if(name.length > 70){
-          heghtValue += 5
+          heghtValue += 6
         }
         if(name.length > 120){
-          heghtValue += 5
+          heghtValue += 6
         }
     })
     let pageWidth = doc.page.width;
