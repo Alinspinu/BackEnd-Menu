@@ -349,7 +349,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.fontSize(9)
         }
         heghtValue += rowHeigth
-        if(name.length > 35){
+        if(name.length > 40){
           heghtValue += 6
         }
         if(name.length > 70){
