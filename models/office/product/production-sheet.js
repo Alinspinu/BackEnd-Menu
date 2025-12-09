@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
-const transferSchema = new Schema({
+const productionSheetSchema = new Schema({
     date: Date,
 
     ingredients: [
@@ -19,19 +19,9 @@ const transferSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'User'
     },
-    updated: {
-        type: Boolean,
-        default: false
-    },
     gestiune: {
-        send: {
-            type: Schema.Types.ObjectId,
-            ref: 'Gestiune'
-        },
-        recive: {
-            type: Schema.Types.ObjectId,
-            ref: 'Gestiune'
-        }
+        type: Schema.Types.ObjectId,
+        ref: 'Gestiune'
     },
     locatie: {
         type: Schema.Types.ObjectId,
@@ -45,4 +35,4 @@ const transferSchema = new Schema({
         }
 })
 
-module.exports = mongoose.model('Transfer', transferSchema)
+module.exports = mongoose.model('ProductionSheet', productionSheetSchema)

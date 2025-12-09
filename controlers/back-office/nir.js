@@ -5,14 +5,14 @@ const Report = require('../../models/office/report');
 const NirInvoice = require('../../models/office/nir-invoice')
 const Order = require('../../models/office/product/order')
 const Transfer = require('../../models/office/product/transfer')
+const ProductionSheet = require('../../models/office/product/production-sheet')
 
-const Ingredient = require('../../models/office/inv-ingredient')
 
 const PDFDocument = require("pdfkit");
 
 const {createNirInvoice} = require('../print/nir-invoice')
 
-const {unloadIngs, uploadIngs} = require('../../utils/inventary')
+const {unloadIngs, uploadIngs, gestTransfer} = require('../../utils/inventary')
 
 const {createNir} = require('../print/nir')
 
@@ -20,9 +20,34 @@ const {round} = require('../../utils/functions')
 
 const {createNirsListXcelBuffer} = require('../print/nir-list')
 const {createSheetListXcelBuffer} = require('../print/fisa-dep-cons');
-const product = require('../../models/office/product/product');
 
 
+
+
+
+module.exports.addProductionSheet = async (req, res,) => {
+  const {sheet} = req.body
+
+  try{
+
+    const newSh = new ProductionSheet(sheet)
+    newSh.populate([{path: 'gestiune', select: 'name'}, {path: 'ingredients.ing'}])
+    const savedSh = await newSh.save()
+    for(let i of savedSh.ingredients){
+      await unloadIngs(i.ing.ings, i.qty , savedSh.gestiune._id)
+    }
+    await uploadIngs(savedSh.ingredients, 1, savedSh.gestiune._id)
+    res.status(200).json({message: 'Fișa de productie a fost salvată cu succes!', sheet: savedSh})
+
+  } catch(error){
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+module.exports.deleteProductionSheet = async (req, res) => {
+
+}
 
 
 
@@ -97,12 +122,20 @@ module.exports.getTransfers = async (req, res) => {
 }
 
 
-module.exports.unloadtransfer = async (req, res) => {
-  const {id} = req.body
+module.exports.makeTransfer = async (req, res) => {
+  const {id, reverse} = req.body
   try{
 
     const transfer = await Transfer.findById(id)
-
+    if(reverse){
+      transfer.updated = false
+      gestTransfer(transfer.ingredients, transfer.gestiune.recive, transfer.gestiune.send)
+    } else {
+      transfer.updated = true
+      gestTransfer(transfer.ingredients, transfer.gestiune.send, transfer.gestiune.recive)
+    }
+    const savedTr = await transfer.save()
+    res.status(200).json({message: 'Transferul a fost efectuat cu succes!', transfer: savedTr})
   } catch(error){
     console.log(error)
     res.status(500).json(error)

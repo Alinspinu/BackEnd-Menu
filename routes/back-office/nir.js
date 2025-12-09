@@ -42,6 +42,15 @@ router.route('/nir-invoice')
     .post(nirRoutes.seaveNirInvoice)
 
 // router.route('/fix').get(nirRoutes.fixBuleala)
+
+
+router.route('/transfer')
+    .get(nirRoutes.getTransfers)
+    .post(nirRoutes.addTransfer)
+    .put(nirRoutes.editTransfer)
+    .delete(nirRoutes.deleteTransfer)
+
+router.route('/make-tr').post(nirRoutes.makeTransfer)
     
 
 router.route('/sheet-period').get(nirRoutes.getSheetsByPeriod)

@@ -225,7 +225,7 @@ nirSchema.pre('save', async function (next){
         inventary.scripticValue = roundd(Number(inventary.scripticValue + el.total) || el.total)
         console.log('AM gasit un inventar inregistrat dupa data documentului de intrare')
         console.log('Cautare ingredient in inventar...')
-        const ing = inventary.ingredients.find(i => i.ing.toString() === el.ing.toString())
+        const ing = inventary.ingredients.find(i => i.ing?.toString() === el.ing?.toString())
         if(ing){
           console.log('Ingredient gasit ', ing.name)
           console.log('Cantitate ingredient ', ing.scriptic, ing.um)
@@ -324,7 +324,7 @@ nirSchema.pre(
             inventary.scripticValue = roundd(Number(inventary.scripticValue - el.total) || el.total)
             console.log('AM gasit un inventar inregistrat dupa data documentului de iesire')
             console.log('Cautare ingredient in inventar...')
-            const ing = inventary.ingredients.find(i => i.ing.toString() === el.ing.toString())
+            const ing = inventary.ingredients.find(i => i.ing?.toString() === el.ing?.toString())
             if(ing){
             console.log('Ingredient gasit ', ing.name)
             console.log('Cantitate ingredient ', ing.scriptic, ing.um)
