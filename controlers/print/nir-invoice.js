@@ -350,13 +350,13 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
         }
         heghtValue += rowHeigth
         if(name.length > 40){
-          heghtValue += 12
+          heghtValue += 5
         }
         if(name.length > 80){
-          heghtValue += 12
+          heghtValue += 5
         }
         if(name.length > 120){
-          heghtValue += 12
+          heghtValue += 5
         }
     })
     let pageWidth = doc.page.width;
