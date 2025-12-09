@@ -318,7 +318,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
     ch.forEach((el, i) => {
       const name = el.name.replace(/\n/g, ' ') 
       if(name.length > 35) {
-        doc.fontSize(7)
+        doc.fontSize(8)
       } else {
         doc.fontSize(9)
 
