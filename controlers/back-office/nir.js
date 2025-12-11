@@ -32,14 +32,18 @@ module.exports.addProductionSheet = async (req, res,) => {
   try{
 
     const newSh = new ProductionSheet(sheet)
-    newSh.populate([{path: 'gestiune', select: 'name'}, {path: 'ingredients.ing'}])
+
     const savedSh = await newSh.save()
-    console.log(savedSh)
-    for(let i of savedSh.ingredients){
-      await unloadIngs(i.ing.ings, i.qty , savedSh.gestiune._id)
+   const populated = await savedSh.populate([
+      { path: "gestiune", select: "name" },
+      { path: "ingredients.ing" }
+    ]);
+    console.log(populated)
+    for(let i of populated.ingredients){
+      await unloadIngs(i.ing.ings, i.qty , populated.gestiune._id)
     }
 
-    await uploadIngs(mapIngs(savedSh.ingredients), 1, savedSh.gestiune._id)
+    await uploadIngs(mapIngs(populated.ingredients), 1, populated.gestiune._id)
     res.status(200).json({message: 'Fișa de productie a fost salvată cu succes!', sheet: savedSh})
 
   } catch(error){
@@ -64,12 +68,12 @@ module.exports.deleteProductionSheet = async (req, res) => {
     const {id} = req.query
     try{
 
-      const sheet = await ProductionSheet.findById(id).populate({path: 'ingredients.ing'})
-      for(let i of sheet.ingredients){
-        console.log(i.ing)
-        await uploadIngs(i.ing.ings, i.qty , sheet.gestiune._id)
-      }
-      await unloadIngs(mapIngs(sheet.ingredients), 1, sheet.gestiune, true)
+      // const sheet = await ProductionSheet.findById(id).populate({path: 'ingredients.ing'})
+      // for(let i of sheet.ingredients){
+      //   console.log(i.ing)
+      //   await uploadIngs(i.ing.ings, i.qty , sheet.gestiune._id)
+      // }
+      // await unloadIngs(mapIngs(sheet.ingredients), 1, sheet.gestiune, true)
       await ProductionSheet.findByIdAndDelete(id)
       res.status(200).json({message: 'Fișa de productie a fost ștearsă cu succes și stocul a fost actualizat!'})
     } catch(error){
