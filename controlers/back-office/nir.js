@@ -81,7 +81,7 @@ module.exports.getProductionSheets = async (req, res) => {
   try{
     const sheets = await ProductionSheet.find({locatie: loc, salePoint: point})
                           .populate([
-                            {parh: 'gestiune', select: 'name'},
+                            {path: 'gestiune', select: 'name'},
                             {path: 'user', select: 'employee'}
                           ])
                           .lean()
