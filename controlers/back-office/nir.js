@@ -44,7 +44,7 @@ module.exports.addProductionSheet = async (req, res,) => {
     }
 
     await uploadIngs(mapIngs(populated.ingredients), 1, populated.gestiune._id)
-    res.status(200).json({message: 'Fișa de productie a fost salvată cu succes!', sheet: savedSh})
+    res.status(200).json({message: 'Fișa de productie a fost salvată cu succes!', sheet: populated})
 
   } catch(error){
     console.log(error)
