@@ -52,7 +52,7 @@ router.route('/transfer')
 
 router.route('/make-tr').post(nirRoutes.makeTransfer)
 
-router.route('/prodction-sheet')
+router.route('/production-sheet')
         .get(nirRoutes.getProductionSheets)
         .post(nirRoutes.addProductionSheet)
         .delete(nirRoutes.deleteProductionSheet)
