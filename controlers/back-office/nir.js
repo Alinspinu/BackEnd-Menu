@@ -37,7 +37,7 @@ module.exports.addProductionSheet = async (req, res,) => {
    const populated = await savedSh.populate([
       { path: "gestiune", select: "name" },
       { path: "ingredients.ing", populate: {path: 'ings.ing'} },
-      { path: "user", select: 'emloyee' }
+      { path: "user", select: 'employee' }
     ]);
     console.log(populated)
     for(let i of populated.ingredients){
@@ -89,7 +89,7 @@ module.exports.getProductionSheets = async (req, res) => {
                           .populate([
                             { path: "gestiune", select: "name" },
                             { path: "ingredients.ing", populate: {path: 'ings.ing'} },
-                            { path: "user", select: 'emloyee' }
+                            { path: "user", select: 'employee' }
                           ])
                           .lean()
       res.status(200).json(sheets)
