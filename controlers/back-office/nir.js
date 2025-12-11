@@ -12,7 +12,8 @@ const PDFDocument = require("pdfkit");
 
 const {createNirInvoice} = require('../print/nir-invoice')
 
-const {unloadIngs, uploadIngs, gestTransfer} = require('../../utils/inv/src/index')
+// const {unloadIngs, uploadIngs, gestTransfer} = require('../../utils/inv/src/index')
+const {unloadIngs, uploadIngs, gestTransfer} = require('../../utils/inventary')
 
 const {createNir} = require('../print/nir')
 
