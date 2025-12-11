@@ -36,13 +36,26 @@ module.exports.addProductionSheet = async (req, res,) => {
     for(let i of savedSh.ingredients){
       await unloadIngs(i.ing.ings, i.qty , savedSh.gestiune._id)
     }
-    await uploadIngs(savedSh.ingredients, 1, savedSh.gestiune._id)
+
+    await uploadIngs(mapIngs(savedSh.ingredients), 1, savedSh.gestiune._id)
     res.status(200).json({message: 'Fișa de productie a fost salvată cu succes!', sheet: savedSh})
 
   } catch(error){
     console.log(error)
     res.status(500).json(error)
   }
+}
+
+function mapIngs(ings) {
+  ings.map(i => {
+    return {
+      name: i.name,
+      qty: i.qty,
+      price: i.price,
+      ing: i.ing._id
+    }
+  })
+  return ings
 }
 
 module.exports.deleteProductionSheet = async (req, res) => {
@@ -53,7 +66,7 @@ module.exports.deleteProductionSheet = async (req, res) => {
       for(let i of sheet.ingredients){
         await uploadIngs(i.ing.ings, i.qty , savedSh.gestiune._id)
       }
-      await unloadIngs(sheet.ingredients, 1, savedSh.gestiune._id, true)
+      await unloadIngs(mapIngs(sheet.ingredients), 1, savedSh.gestiune._id, true)
       await ProductionSheet.findByIdAndDelete(id)
       res.status(200).json({message: 'Fișa de productie a fost ștearsă cu succes și stocul a fost actualizat!'})
     } catch(error){

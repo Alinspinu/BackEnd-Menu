@@ -12,15 +12,6 @@ const { unloadIngs } = require("./unload");
 async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
   try {
 
-    // for (const rec of ings) {
-    //   if (visited.has(rec.ing)) return;
-    // }
-  
-    // for (const rec of ings) {
-    //   visited.add(rec.ing);
-    // }
-
-
 
     for (const ing of ings) {
 
@@ -46,7 +37,6 @@ async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
         }));
 
         await uploadIngs(subings, qtyProdus, gestiuneOverride);
-        continue;
       }
 
       // ---------------------------------------
@@ -66,7 +56,6 @@ async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
         // Update FIFO entries
         if (gest.entries.length) {
           const oldestEntry = getOldestEntry(gest.entries);
-
           if (oldestEntry) {
             const idx = gest.entries.findIndex(e =>
               e._id?.toString() === oldestEntry._id?.toString()
@@ -80,7 +69,20 @@ async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
                 `${ingredientInv.name} incremented +${cantFinal}, store qty: ${gest.entries[idx].qty}`
               );
             }
-          }
+          } 
+        } else if(!gest.sale){
+          let name = ingredientInv.productIngredient ? 'Incarcare din producție' : 'Incarcare din intoarcere'
+          gest.entries.push({
+            qty: cantFinal,
+            inQty: cantFinal,
+            date: new Date(),
+            priceNoVat: ing.price || ingredientInv.price || 0,
+            priceWithVat:
+              ing.price
+                ? round(ing.price * (1 + (ingredientInv.tva || 0) / 100))
+                : ingredientInv.tvaPrice || 0,
+            supplierName: name
+          });
         }
 
         ingredientInv.invGestiune[gestIndex] = gest;

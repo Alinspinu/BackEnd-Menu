@@ -19,15 +19,6 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
   try {
 
 
-    // for (const rec of ings) {
-    //   if (visited.has(rec.ing)) return;
-    // }
-  
-    // for (const rec of ings) {
-    //   visited.add(rec.ing);
-    // }
-
-
 
     for (const ing of ings) {
       const ingredientInv = await getIngredient(ing.ing);
