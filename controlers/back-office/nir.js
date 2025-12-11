@@ -68,12 +68,11 @@ module.exports.deleteProductionSheet = async (req, res) => {
     const {id} = req.query
     try{
 
-      // const sheet = await ProductionSheet.findById(id).populate({path: 'ingredients.ing'})
-      // for(let i of sheet.ingredients){
-      //   console.log(i.ing)
-      //   await uploadIngs(i.ing.ings, i.qty , sheet.gestiune._id)
-      // }
-      // await unloadIngs(mapIngs(sheet.ingredients), 1, sheet.gestiune, true)
+      const sheet = await ProductionSheet.findById(id).populate({path: 'ingredients.ing'})
+      for(let i of sheet.ingredients){
+        await uploadIngs(i.ing.ings, i.qty , sheet.gestiune._id)
+      }
+      await unloadIngs(mapIngs(sheet.ingredients), 1, sheet.gestiune, true)
       await ProductionSheet.findByIdAndDelete(id)
       res.status(200).json({message: 'Fișa de productie a fost ștearsă cu succes și stocul a fost actualizat!'})
     } catch(error){
