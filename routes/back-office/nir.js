@@ -51,6 +51,11 @@ router.route('/transfer')
     .delete(nirRoutes.deleteTransfer)
 
 router.route('/make-tr').post(nirRoutes.makeTransfer)
+
+router.route('/prodction-sheet')
+        .get(nirRoutes.getProductionSheets)
+        .post(nirRoutes.addProductionSheet)
+        .delete(nirRoutes.deleteProductionSheet)
     
 
 router.route('/sheet-period').get(nirRoutes.getSheetsByPeriod)

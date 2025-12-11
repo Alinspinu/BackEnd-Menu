@@ -14,7 +14,7 @@ const veggie = ['lapte vegetal', 'lapte mazare', 'lapte ovaz' ]
 
 const findProductionGest = (gests, id) => gests.some(g => !g.sale && g.gestiune.toString() === id);
 
-async function unloadIngs (ings, qtyProdus, gestiune) {
+async function unloadIngs (ings, qtyProdus, gestiune, fix = false) {
   try{
     for (const ing of ings) {
         const ingredientInv = await IngInv.findById(ing.ing).populate({path: 'ings.ing', select: 'price tva'}).exec();
@@ -32,7 +32,7 @@ async function unloadIngs (ings, qtyProdus, gestiune) {
             await unloadIngs(ingredientInv.ings, qtyProdus) 
           } else {
             let cantFinal = parseFloat(ing.qty * qtyProdus);
-            if(ingredientInv.production && !ingredientInv.production.tehnic && ingredientInv.productIngredient && !findProductionGest(ingredientInv.invGestiune, gestt)){
+            if(!fix && ingredientInv.production && !ingredientInv.production.tehnic && ingredientInv.productIngredient && !findProductionGest(ingredientInv.invGestiune, gestt)){
                 console.log('Am gasit ingredient compus cu gestiune...')
                   if(ingredientInv.qty <= cantFinal){
                     const diference = cantFinal - ingredientInv.qty
@@ -47,39 +47,12 @@ async function unloadIngs (ings, qtyProdus, gestiune) {
                     )
                     ingredientInv.qty = round(ingredientInv.production.qty - diference)
                     await unloadIngs(ingredientInv.ings, ingredientInv.production.qty) 
+                  } else {
+                    ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
                   }
+            } else {
+              ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
             }
-
-
-
-            ingredientInv.qty  = round(ingredientInv.qty - cantFinal);
-            const inventary = await  Inventary
-                                .findOne({date: {$gte: new Date()}, gestiune: ing.gestiune})
-                                .sort({ date: 1 }); 
-              if(inventary){
-                const gest = ingredientInv.invGestiune.find(g => g.gestiune._id.toString() === inventary.gestiune.toString())
-                if(gest && gest.entries.length){        
-                  const lastEntry = gest.entries.reduce((oldest, current) => {
-                    return new Date(current.date).getTime() > new Date(oldest.date).getTime() ? current : oldest;
-                  });  
-                  inventary.scripticValue = round(Number(inventary.scripticValue) || 0 - (lastEntry.priceWithVat * cantFinal))
-                }
-                console.log('AM gasit un inventar inregistrat dupa data vanzarii')
-                console.log('Cautare ingredient in inventar...')
-                const ingI = inventary.ingredients.find(i => i.ing.toString() === ing.ing.toString())
-                if(ingI){
-                console.log('Ingredient gasit ', ingI.name)
-                console.log('Cantitate ingredient ', ingI.scriptic, ingI.um)
-                console.log('Cantitate de scazut ', cantFinal, ingI.um)
-                ingI.scriptic = round(ingI.scriptic - cantFinal)
-                console.log('Cantitate modificata ', ingI.scriptic)
-                await inventary.save()
-                console.log('Inventar modificat cu success!!')
-              } else {console.warn('Nu am gasit ingredientul in inventar ',  ing.ing.toString())}
-    
-              } 
-
-
 
             if(ingredientInv.invGestiune.length){
       
@@ -208,7 +181,7 @@ async function uploadIngs (ings, qtyProdus, gestiune) {
           } else {
             let gestt  = ingredientInv.gestiune?.toString()
             if(gestiune){
-              gestt = gestiune.toStrimg()
+              gestt = gestiune.toString()
             }
             if(ingredientInv.ings.length && ingredientInv.production.tehnic){
               ingredientInv.ings.forEach(obj => obj.qty = round(obj.qty * ing.qty))
@@ -218,31 +191,7 @@ async function uploadIngs (ings, qtyProdus, gestiune) {
               let cantFinal = parseFloat(ing.qty * qtyProdus);
               ingredientInv.qty  = round(ingredientInv.qty + cantFinal);
               
-              const inventary = await  Inventary
-                                .findOne({date: {$gte: new Date()}, gestiune: ing.gestiune})
-                                .sort({ date: 1 }); 
-                if(inventary){
-                  const gest = ingredientInv.invGestiune.find(g => g.gestiune._id.toString() === inventary.gestiune.toString())
-                  if(gest && gest.entries.length){        
-                    const lastEntry = gest.entries.reduce((oldest, current) => {
-                      return new Date(current.date).getTime() > new Date(oldest.date).getTime() ? current : oldest;
-                    });  
-                    inventary.scripticValue = round(Number(inventary.scripticValue) || 0 + (lastEntry.priceWithVat * cantFinal))
-                  }
-                  console.log('AM gasit un inventar inregistrat dupa data incarcarii')
-                  console.log('Cautare ingredient in inventar...')
-                  const ingI = inventary.ingredients.find(i => i.ing.toString() === ing.ing.toString())
-                  if(ingI){
-                  console.log('Ingredient gasit ', ingI.name)
-                  console.log('Cantitate ingredient ', ingI.scriptic, ingI.um)
-                  console.log('Cantitate de adaugat ', cantFinal, ingI.um)
-                  ingI.scriptic = round(ingI.scriptic + cantFinal)
-                  console.log('Cantitate modificata ', ingI.scriptic)
-                  await inventary.save()
-                  console.log('Inventar modificat cu success!!')
-                } else {console.warn('Nu am gasit ingredientul in inventar ',  ing.ing.toString())}
 
-                } 
 
 
               if(ingredientInv.invGestiune.length){
@@ -305,50 +254,6 @@ async function uploadIngs (ings, qtyProdus, gestiune) {
 }
 
 
-
-async function gestTransfer(ings, sendGest, reciveGest){
-  try{
-    for (const ing of ings) {
-        const ingredientInv = await IngInv.findById(ing.ing).exec();
-        if (!ingredientInv) {
-            console.error(`Eorare! Ingredientul nu a fost găsit în baza de date. la descarcare de stoc`);
-        } else {
-
-          const sGest = ingredientInv.invGestiune.find(g => g.gestiune.toString() === sendGest.toString())
-          if(!sGest){  
-             console.error('NU A FOST GASITA PE INGREDIENT GESTIUNEA DIN CARE SE TRIMITE!')
-          }
-          const rGest = ingredientInv.invGestiune.find(g => g.gestiune.toString() === reciveGest.toString())
-          if(!rGest){  
-             console.error('NU A FOST GASITA PE INGREDIENT GESTIUNEA DIN CARE PRIMESTE!')
-          }
-
-          if(rGest && sGest){            
-              sGest.qty -= ing.qty
-              rGest.qty += ing.qty
-              rGest.entries.push({
-                  qty: ing.qty,
-                  inQty: ing.qty ,
-                  date: new Date(),
-                  priceNoVat: ing.price,
-                  priceWithVat: round(ing.price * (1 + (ingredientInv.tva/100))),
-                  suplierNmae: 'Transfer din gestiunea ' + sGest.name,
-              })
-    
-              const ent = subtractFromEntries(sGest.entries)
-              sGest.entries = ent
-              
-              await IngInv.findByIdAndUpdate(ing.ing, ingredientInv, {new: false})
-          }
-        }
-    }
-  } catch(error){
-    console.log('Erorare la transferul intre gestiuni', error)
-  }
-}
-
-
-
 function subtractFromEntries(entries, cantFinal) {
   entries.sort((a, b) => new Date(a.date) - new Date(b.date));
   console.log('Cantitate ce trebuie scazuta din document', cantFinal)
@@ -390,6 +295,51 @@ function subtractFromEntries(entries, cantFinal) {
   }
 
   return entries;
+}
+
+
+
+
+
+async function gestTransfer(ings, sendGest, reciveGest){
+  try{
+    for (const ing of ings) {
+        const ingredientInv = await IngInv.findById(ing.ing).exec();
+        if (!ingredientInv) {
+            console.error(`Eorare! Ingredientul nu a fost găsit în baza de date. la descarcare de stoc`);
+        } else {
+
+          const sGest = ingredientInv.invGestiune.find(g => g.gestiune.toString() === sendGest.toString())
+          if(!sGest){  
+             console.error('NU A FOST GASITA PE INGREDIENT GESTIUNEA DIN CARE SE TRIMITE!')
+          }
+          const rGest = ingredientInv.invGestiune.find(g => g.gestiune.toString() === reciveGest.toString())
+          if(!rGest){  
+             console.error('NU A FOST GASITA PE INGREDIENT GESTIUNEA DIN CARE PRIMESTE!')
+          }
+
+          if(rGest && sGest){            
+              sGest.qty -= ing.qty
+              rGest.qty += ing.qty
+              rGest.entries.push({
+                  qty: ing.qty,
+                  inQty: ing.qty ,
+                  date: new Date(),
+                  priceNoVat: ing.price,
+                  priceWithVat: round(ing.price * (1 + (ingredientInv.tva/100))),
+                  suplierNmae: 'Transfer din gestiunea ' + sGest.name,
+              })
+    
+              const ent = subtractFromEntries(sGest.entries)
+              sGest.entries = ent
+              
+              await IngInv.findByIdAndUpdate(ing.ing, ingredientInv, {new: false})
+          }
+        }
+    }
+  } catch(error){
+    console.log('Erorare la transferul intre gestiuni', error)
+  }
 }
 
 
@@ -561,10 +511,63 @@ module.exports = {
 
 
 
+            // const inventary = await  Inventary
+            //                     .findOne({date: {$gte: new Date()}, gestiune: ing.gestiune})
+            //                     .sort({ date: 1 }); 
+            //   if(inventary){
+            //     const gest = ingredientInv.invGestiune.find(g => g.gestiune._id.toString() === inventary.gestiune.toString())
+            //     if(gest && gest.entries.length){        
+            //       const lastEntry = gest.entries.reduce((oldest, current) => {
+            //         return new Date(current.date).getTime() > new Date(oldest.date).getTime() ? current : oldest;
+            //       });  
+            //       inventary.scripticValue = round(Number(inventary.scripticValue) || 0 - (lastEntry.priceWithVat * cantFinal))
+            //     }
+            //     console.log('AM gasit un inventar inregistrat dupa data vanzarii')
+            //     console.log('Cautare ingredient in inventar...')
+            //     const ingI = inventary.ingredients.find(i => i.ing.toString() === ing.ing.toString())
+            //     if(ingI){
+            //     console.log('Ingredient gasit ', ingI.name)
+            //     console.log('Cantitate ingredient ', ingI.scriptic, ingI.um)
+            //     console.log('Cantitate de scazut ', cantFinal, ingI.um)
+            //     ingI.scriptic = round(ingI.scriptic - cantFinal)
+            //     console.log('Cantitate modificata ', ingI.scriptic)
+            //     await inventary.save()
+            //     console.log('Inventar modificat cu success!!')
+            //   } else {console.warn('Nu am gasit ingredientul in inventar ',  ing.ing.toString())}
+    
+            //   } 
 
 
 
 
+
+
+
+              // const inventary = await  Inventary
+              //                   .findOne({date: {$gte: new Date()}, gestiune: ing.gestiune})
+              //                   .sort({ date: 1 }); 
+              //   if(inventary){
+              //     const gest = ingredientInv.invGestiune.find(g => g.gestiune._id.toString() === inventary.gestiune.toString())
+              //     if(gest && gest.entries.length){        
+              //       const lastEntry = gest.entries.reduce((oldest, current) => {
+              //         return new Date(current.date).getTime() > new Date(oldest.date).getTime() ? current : oldest;
+              //       });  
+              //       inventary.scripticValue = round(Number(inventary.scripticValue) || 0 + (lastEntry.priceWithVat * cantFinal))
+              //     }
+              //     console.log('AM gasit un inventar inregistrat dupa data incarcarii')
+              //     console.log('Cautare ingredient in inventar...')
+              //     const ingI = inventary.ingredients.find(i => i.ing.toString() === ing.ing.toString())
+              //     if(ingI){
+              //     console.log('Ingredient gasit ', ingI.name)
+              //     console.log('Cantitate ingredient ', ingI.scriptic, ingI.um)
+              //     console.log('Cantitate de adaugat ', cantFinal, ingI.um)
+              //     ingI.scriptic = round(ingI.scriptic + cantFinal)
+              //     console.log('Cantitate modificata ', ingI.scriptic)
+              //     await inventary.save()
+              //     console.log('Inventar modificat cu success!!')
+              //   } else {console.warn('Nu am gasit ingredientul in inventar ',  ing.ing.toString())}
+
+              //   } 
 
 
 

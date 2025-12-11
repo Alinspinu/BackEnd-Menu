@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "test": "jest",
     "gcp-build": ""
   },
   "author": "Alin Spinu",
@@ -43,5 +44,8 @@
     "web-push": "^3.6.7",
     "xml2js": "^0.6.2",
     "xmlbuilder2": "^3.1.1"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0"
   }
 }
