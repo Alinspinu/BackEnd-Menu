@@ -36,7 +36,8 @@ module.exports.addProductionSheet = async (req, res,) => {
     const savedSh = await newSh.save()
    const populated = await savedSh.populate([
       { path: "gestiune", select: "name" },
-      { path: "ingredients.ing" }
+      { path: "ingredients.ing" },
+      { path: "user", select: 'emloyee' }
     ]);
     console.log(populated)
     for(let i of populated.ingredients){
