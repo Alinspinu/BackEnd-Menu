@@ -67,7 +67,7 @@ module.exports.deleteProductionSheet = async (req, res) => {
       for(let i of sheet.ingredients){
         await uploadIngs(i.ing.ings, i.qty , savedSh.gestiune._id)
       }
-      await unloadIngs(mapIngs(sheet.ingredients), 1, savedSh.gestiune._id, true)
+      await unloadIngs(mapIngs(sheet.ingredients), 1, sheet.gestiune._id, true)
       await ProductionSheet.findByIdAndDelete(id)
       res.status(200).json({message: 'Fișa de productie a fost ștearsă cu succes și stocul a fost actualizat!'})
     } catch(error){
