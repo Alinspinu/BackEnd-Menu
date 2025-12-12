@@ -182,7 +182,7 @@ if (Array.isArray(invoice.discount)) {
 
       // 3️⃣ Correct BT-106 (sum of original line net amounts)
       const lineNetAmount = invoice.products.reduce((sum, p) => {
-        return sum + round(p.netAmount); // BT-131 (LineExtensionAmount)
+        return sum + round(p.price); // BT-131 (LineExtensionAmount)
       }, 0);
 
       // 4️⃣ Correct BT-112 — TaxInclusiveAmount
