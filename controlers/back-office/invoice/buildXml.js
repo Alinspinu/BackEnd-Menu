@@ -187,7 +187,7 @@ if (Array.isArray(invoice.discount)) {
       // });
     
   
-    LegalMonetaryTotal
+  //  LegalMonetaryTotal
     const total = doc.ele('cac:LegalMonetaryTotal');
     total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId }).txt(round(invoice.taxExclusiveAmount)).up();
     total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId }).txt(invoice.taxExclusiveAmount).up();  
