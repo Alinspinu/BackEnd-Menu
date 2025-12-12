@@ -430,7 +430,7 @@ module.exports.printSheet = async (req, res) => {
     const {id} = req.body
 
     const sheet = await ImpSheet.findById(id)
-            .populate({path: 'user', select: 'name'})
+            .populate({path: 'user', select: 'employee'})
             .populate({path: 'salePoint', select: 'locatie name', populate: {path: 'locatie', select: 'bussinessName'}})
             .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice', populate: {path: 'ings.ing', select: 'um price name'}})
             .populate({path: 'ings.gestiune', select: 'name'})

@@ -12,7 +12,7 @@ async function createSheetListXcelBuffer(sheet){
   worksheet.addRow([`${sheet.salePoint.name}`], '')
   worksheet.addRow([])
   worksheet.addRow([])
-  const subTitle = [`Responsabil`, '', `${sheet.user.name}`]
+  const subTitle = [`Responsabil`, '', `${sheet.user.employee.fullName}`]
   worksheet.addRow(subTitle)
   const date = ['Data','', formatedDateToShow(sheet.date).split('ora')[0]]
   worksheet.addRow(date)
