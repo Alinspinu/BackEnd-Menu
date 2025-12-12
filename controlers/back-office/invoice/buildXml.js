@@ -144,16 +144,16 @@ function buildEFacturaHeaderXML(invoice, date) {
     // const taxTotal = doc.ele('cac:TaxTotal');
     // taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(invoice.vatAmount).up();
   
-    // invoice.vatGroups.forEach(r => {
-    //   let id =  r.rate === 0 ? 'Z': 'S'
-    //   const subtotal = taxTotal.ele('cac:TaxSubtotal');
-    //   subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(r.taxable).up();
-    //   subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(r.tax).up();
-    //   subtotal.ele('cac:TaxCategory')
-    //     .ele('cbc:ID').txt(id).up()
-    //     .ele('cbc:Percent').txt(r.rate).up()
-    //     .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
-    // })
+    invoice.vatGroups.forEach(r => {
+      let id =  r.rate === 0 ? 'Z': 'S'
+      const subtotal = taxTotal.ele('cac:TaxSubtotal');
+      subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(r.taxable).up();
+      subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(r.tax).up();
+      subtotal.ele('cac:TaxCategory')
+        .ele('cbc:ID').txt(id).up()
+        .ele('cbc:Percent').txt(r.rate).up()
+        .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+    })
 
 
           //------------------------------------------------------------------
