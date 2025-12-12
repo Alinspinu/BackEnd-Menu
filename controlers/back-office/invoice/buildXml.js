@@ -144,16 +144,16 @@ if (Array.isArray(invoice.discount)) {
     // const taxTotal = doc.ele('cac:TaxTotal');
     // taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(invoice.vatAmount).up();
   
-    invoice.vatGroups.forEach(r => {
-      let id =  r.rate === 0 ? 'Z': 'S'
-      const subtotal = taxTotal.ele('cac:TaxSubtotal');
-      subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(r.taxable).up();
-      subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(r.tax).up();
-      subtotal.ele('cac:TaxCategory')
-        .ele('cbc:ID').txt(id).up()
-        .ele('cbc:Percent').txt(r.rate).up()
-        .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
-    })
+    // invoice.vatGroups.forEach(r => {
+    //   let id =  r.rate === 0 ? 'Z': 'S'
+    //   const subtotal = taxTotal.ele('cac:TaxSubtotal');
+    //   subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(r.taxable).up();
+    //   subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(r.tax).up();
+    //   subtotal.ele('cac:TaxCategory')
+    //     .ele('cbc:ID').txt(id).up()
+    //     .ele('cbc:Percent').txt(r.rate).up()
+    //     .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+    // })
 
 
           //------------------------------------------------------------------
@@ -161,30 +161,30 @@ if (Array.isArray(invoice.discount)) {
       //------------------------------------------------------------------
       // We must subtract discount from taxable amounts in the rate group
 
-      // invoice.vatGroups.forEach(group => {
-      //   const rate = group.rate;
-      //   const id = rate === 0 ? 'Z' : 'S';
+      invoice.vatGroups.forEach(group => {
+        const rate = group.rate;
+        const id = rate === 0 ? 'Z' : 'S';
 
-      //   // ❗ apply discount only to same VAT rate group
-      //   const groupDiscount = invoice.discount
-      //     ?.filter(d => d.vat === rate)
-      //     .reduce((sum, d) => sum + d.value, 0) || 0;
+        // ❗ apply discount only to same VAT rate group
+        const groupDiscount = invoice.discount
+          ?.filter(d => d.vat === rate)
+          .reduce((sum, d) => sum + d.value, 0) || 0;
 
-      //   const taxableCorrected = round(group.taxable - groupDiscount);
-      //   const taxCorrected = round(taxableCorrected * (rate / 100));
+        const taxableCorrected = round(group.taxable - groupDiscount);
+        const taxCorrected = round(taxableCorrected * (rate / 100));
 
-      //   const subtotal = taxTotal.ele('cac:TaxSubtotal');
-      //   subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId })
-      //           .txt(taxableCorrected.toFixed(2));
+        const subtotal = taxTotal.ele('cac:TaxSubtotal');
+        subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId })
+                .txt(taxableCorrected.toFixed(2));
 
-      //   subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId })
-      //           .txt(taxCorrected.toFixed(2));
+        subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId })
+                .txt(taxCorrected.toFixed(2));
 
-      //   const cat = subtotal.ele('cac:TaxCategory');
-      //   cat.ele('cbc:ID').txt(id);
-      //   cat.ele('cbc:Percent').txt(rate.toString());
-      //   cat.ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
-      // });
+        const cat = subtotal.ele('cac:TaxCategory');
+        cat.ele('cbc:ID').txt(id);
+        cat.ele('cbc:Percent').txt(rate.toString());
+        cat.ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
+      });
     
   
   //  LegalMonetaryTotal
@@ -210,7 +210,7 @@ if (Array.isArray(invoice.discount)) {
 
       // ✔ BT-109
       total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId })
-          .txt(round(invoice.taxExclusiveAmount).toFixed(2));
+          .txt(round(invoice.taxExclusiveAmount- totalDiscount).toFixed(2));
 
       // ✔ BT-112 — TaxInclusive = TaxExclusive + VAT
       total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId })
