@@ -93,13 +93,13 @@ module.exports.uploadInvoiceToEFactura = async (req, res) => {
     const xml = invoice.invoice ? buildEFacturaHeaderXML(invoice) : buildEFacturaHeaderXML(invoice, invoice.issueDate)
     console.log(xml)
     let vatNumber = invoice.supplier.vatNumber.replace(/\D/g, '');
-    // const response = await uploadInvoice(xml, vatNumber, false, token)
-    // invoice.eFacturaId = response.eFacturaId
-    // invoice.eFacturaError = response.eFacturaError
-    // invoice.eFacturaStatus = response.eFacturaStatus
-    // const savedInvoice = await Invoice.findByIdAndUpdate(id, invoice, {new: true})
-    // res.status(200).json({message: response.message, invoice: savedInvoice})
-    res.status(200).json({message: ''})
+    const response = await uploadInvoice(xml, vatNumber, false, token)
+    invoice.eFacturaId = response.eFacturaId
+    invoice.eFacturaError = response.eFacturaError
+    invoice.eFacturaStatus = response.eFacturaStatus
+    const savedInvoice = await Invoice.findByIdAndUpdate(id, invoice, {new: true})
+    res.status(200).json({message: response.message, invoice: savedInvoice})
+    // res.status(200).json({message: ''})
   } catch(error){
     console.log(error)
     res.status(500).json(error)
