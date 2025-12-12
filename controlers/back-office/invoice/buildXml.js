@@ -96,42 +96,6 @@ function buildEFacturaHeaderXML(invoice, date) {
       });
     }
 
-    //------------------------------------------------------------------
-// 1) DOCUMENT LEVEL ALLOWANCES (DISCOUNTS)
-//------------------------------------------------------------------
-// let totalDiscount = 0;
-
-// if (Array.isArray(invoice.discount)) {
-//   invoice.discount.forEach(d => {
-
-//     const value = round(d.value);
-//     const base = round(d.baseAmount);
-//     const rate = d.precent;   // ← keep using your field "precent"
-
-//     totalDiscount += value;
-
-//     const ac = doc.ele('cac:AllowanceCharge');
-//     ac.ele('cbc:ChargeIndicator').txt('false');
-
-//     if (d.reasonCode != null)
-//       ac.ele('cbc:AllowanceChargeReasonCode').txt(d.reasonCode.toString());
-
-//     if (d.reason)
-//       ac.ele('cbc:AllowanceChargeReason').txt(d.reason);
-
-//     if (rate != null)
-//       ac.ele('cbc:MultiplierFactorNumeric').txt(rate.toString());
-
-//     ac.ele('cbc:Amount', { currencyID: invoice.currencyId }).txt(value.toFixed(2));
-//     ac.ele('cbc:BaseAmount', { currencyID: invoice.currencyId }).txt(base.toFixed(2));
-
-//     // VAT group
-//     const taxCategory = ac.ele('cac:TaxCategory');
-//     taxCategory.ele('cbc:ID').txt('S');   // assuming standard VAT
-//     taxCategory.ele('cbc:Percent').txt(d.vat.toString());
-//     taxCategory.ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
-//   });
-// }
 
       //------------------------------------------------------------------
     // 2) TAX TOTAL
@@ -156,89 +120,6 @@ function buildEFacturaHeaderXML(invoice, date) {
     })
 
 
-          //------------------------------------------------------------------
-      // 3) VAT GROUPS — FIX UBL BR-S-08
-      //------------------------------------------------------------------
-      // We must subtract discount from taxable amounts in the rate group
-
-      // 1️⃣ Recalculate corrected taxable per VAT group
-      // const correctedTaxExclusive = invoice.vatGroups.reduce((sum, g) => {
-      //   const discount = invoice.discount
-      //     ?.filter(d => d.vat === g.rate)
-      //     .reduce((s, d) => s + d.value, 0) || 0;
-
-      //   return sum + round(g.taxable - discount);
-      // }, 0);
-
-      // // 2️⃣ Recalculate corrected VAT total
-      // const correctedVatTotal = invoice.vatGroups.reduce((sum, g) => {
-      //   const discount = invoice.discount
-      //     ?.filter(d => d.vat === g.rate)
-      //     .reduce((s, d) => s + d.value, 0) || 0;
-
-      //   const taxableCorrected = round(g.taxable - discount);
-      //   return sum + round(taxableCorrected * g.rate / 100);
-      // }, 0);
-
-      // // 3️⃣ Correct BT-106 (sum of original line net amounts)
-      // const lineNetAmount = invoice.products.reduce((sum, p) => {
-      //   return sum + round(p.price); // BT-131 (LineExtensionAmount)
-      // }, 0);
-
-      // // 4️⃣ Correct BT-112 — TaxInclusiveAmount
-      // const correctedTaxInclusive = round(correctedTaxExclusive + correctedVatTotal);
-
-      // // 5️⃣ Correct BT-115 — PayableAmount = TaxInclusive - prepaid
-      // const payable = correctedTaxInclusive; // no prepaid
-
-      // // ---- XML OUTPUT ----
-      // const total = doc.ele('cac:LegalMonetaryTotal');
-
-      // total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId })
-      //     .txt(lineNetAmount.toFixed(2));
-
-      // total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId })
-      //     .txt(correctedTaxExclusive.toFixed(2));
-
-      // total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId })
-      //     .txt(correctedTaxInclusive.toFixed(2));
-
-      // if (invoice.discount?.length) {
-      //   const allowance = invoice.discount.reduce((s, d) => s + d.value, 0);
-      //   total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId })
-      //       .txt(allowance.toFixed(2));
-      // }
-
-      // total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt("0");
-
-      // total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId })
-      //     .txt(payable.toFixed(2));
-
-
-      // invoice.vatGroups.forEach(group => {
-      //   const rate = group.rate;
-      //   const id = rate === 0 ? 'Z' : 'S';
-
-      //   // ❗ apply discount only to same VAT rate group
-      //   const groupDiscount = invoice.discount
-      //     ?.filter(d => d.vat === rate)
-      //     .reduce((sum, d) => sum + d.value, 0) || 0;
-
-      //   const taxableCorrected = round(group.taxable - groupDiscount);
-      //   const taxCorrected = round(taxableCorrected * (rate / 100));
-
-      //   const subtotal = taxTotal.ele('cac:TaxSubtotal');
-      //   subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId })
-      //           .txt(taxableCorrected.toFixed(2));
-
-      //   subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId })
-      //           .txt(taxCorrected.toFixed(2));
-
-      //   const cat = subtotal.ele('cac:TaxCategory');
-      //   cat.ele('cbc:ID').txt(id);
-      //   cat.ele('cbc:Percent').txt(rate.toString());
-      //   cat.ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
-      // });
     
   
   //  LegalMonetaryTotal
@@ -252,37 +133,6 @@ function buildEFacturaHeaderXML(invoice, date) {
 
 
 
-    //------------------------------------------------------------------
-// 4) LEGAL MONETARY TOTALS — FIX BT VALUES
-//------------------------------------------------------------------
-
-      // const total = doc.ele('cac:LegalMonetaryTotal');
-
-      // // ✔ BT-106 — MUST BE SUM OF LINE AMOUNTS (no discount applied)
-      // total.ele('cbc:LineExtensionAmount', { currencyID: invoice.currencyId })
-      //     .txt(round(invoice.taxExclusiveAmount).toFixed(2));
-
-      // // ✔ BT-109
-      // total.ele('cbc:TaxExclusiveAmount', { currencyID: invoice.currencyId })
-      //     .txt(round(invoice.taxExclusiveAmount- totalDiscount).toFixed(2));
-
-      // // ✔ BT-112 — TaxInclusive = TaxExclusive + VAT
-      // total.ele('cbc:TaxInclusiveAmount', { currencyID: invoice.currencyId })
-      //     .txt(round(invoice.taxExclusiveAmount + invoice.vatAmount).toFixed(2));
-
-      // // ✔ BT-92 — Document level allowance
-      // if (totalDiscount !== 0) {
-      //   total.ele('cbc:AllowanceTotalAmount', { currencyID: invoice.currencyId })
-      //       .txt(round(totalDiscount).toFixed(2));
-      // }
-
-      // total.ele('cbc:PrepaidAmount', { currencyID: invoice.currencyId }).txt("0");
-
-      // // ✔ BT-115 — Payable = TaxExclusive + VAT - Allowances
-      // const payable = round(invoice.taxInclusiveAmount);
-
-      // total.ele('cbc:PayableAmount', { currencyID: invoice.currencyId })
-      //     .txt(payable.toFixed(2));
   
   
 
