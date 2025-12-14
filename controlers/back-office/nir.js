@@ -109,7 +109,9 @@ module.exports.addTransfer = async (req, res) => {
 
     const populated = await savedTransfer.populate([
       {path: 'gestiune.send', select: 'name'},
-      {path: 'gestiune.recive', select: 'name'}
+      {path: 'gestiune.recive', select: 'name'},
+      {path: 'user', select: 'employee'},
+      {path: 'ingredients.ing'}
     ])
 
     res.status(200).json({message: 'Fișa de transfer a vost savată cu succes!', transfer: populated})
@@ -127,7 +129,9 @@ module.exports.editTransfer = async (req, res) => {
       const updated = await Transfer.findByIdAndUpdate(transfer._id, transfer, {new: true})
                       .populate([
                         {path: 'gestiune.send', select: 'name'},
-                        {path: 'gestiune.recive', select: 'name'}
+                        {path: 'gestiune.recive', select: 'name'},
+                        {path: 'user', select: 'employee'},
+                        {path: 'ingredients.ing'}
                       ])
       res.status(200).json({message: 'Fișsa de transfer a fost actualizată cu succes!', transfer: updated})
 
@@ -163,6 +167,7 @@ module.exports.getTransfers = async (req, res) => {
                     .populate([
                       {path: 'gestiune.send', select: 'name'},
                       {path: 'gestiune.recive', select: 'name'},
+                      {path: 'user', select: 'employee'},
                       {path: 'ingredients.ing'}
                     ])
     res.status(200).json(transfers)
