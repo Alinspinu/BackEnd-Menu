@@ -39,7 +39,6 @@ module.exports.addProductionSheet = async (req, res,) => {
       { path: "ingredients.ing", populate: {path: 'ings.ing'} },
       { path: "user", select: 'employee' }
     ]);
-    console.log(populated)
     for(let i of populated.ingredients){
       await unloadIngs(i.ing.ings, i.qty , populated.gestiune._id)
     }
@@ -106,13 +105,14 @@ module.exports.addTransfer = async (req, res) => {
   try{
 
     const newTr = new Transfer(transfer)
-    newTr.populate([
+    const savedTransfer = await newTr.save()
+
+    const populated = await savedTransfer.populate([
       {path: 'gestiune.send', select: 'name'},
       {path: 'gestiune.recive', select: 'name'}
     ])
-    const savedTransfer = await newTr.save()
 
-    res.status(200).json({message: 'Fișa de transfer a vost savată cu succes!', transfer: savedTransfer})
+    res.status(200).json({message: 'Fișa de transfer a vost savată cu succes!', transfer: populated})
   } catch(error) {
     console.log(error)
     res.status(500).json(error)
