@@ -162,7 +162,8 @@ module.exports.getTransfers = async (req, res) => {
     const transfers = await Transfer.find({locatie: loc, salePoint: point})
                     .populate([
                       {path: 'gestiune.send', select: 'name'},
-                      {path: 'gestiune.recive', select: 'name'}
+                      {path: 'gestiune.recive', select: 'name'},
+                      {path: 'ingredients.ing'}
                     ])
     res.status(200).json(transfers)
   } catch(error){
