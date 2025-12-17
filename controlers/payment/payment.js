@@ -80,6 +80,9 @@ module.exports.getToken = async (req, res, next) => {
 
 module.exports.getTokenForPos = async (req, res, next) => {
     try {
+
+        const {amount, abort, sessionId} = req.query
+
         const clientId = process.env.VIVA_POS_CLIENT_ID;
         const clientSecret = process.env.VIVA_POS_SECRET;
         const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
@@ -91,16 +94,15 @@ module.exports.getTokenForPos = async (req, res, next) => {
         const data = qs.stringify({
             grant_type: "client_credentials",
           });
-        const total = parseInt(req.query.amount) * 100;
+        const total = parseInt(amount) * 100;
         const response = await axios.post(url, data, { headers });
         console.log('token', response.data)
 
 
         token = response.data.access_token;
 
-        if(req.query.abort === 'abort'){
-            const {session} = req.query
-            const urlPayment = `https://api.vivapayments.com/ecr/v1/sessions/${session}?cashRegisterId=TrueCampus1`;
+        if(abort === 'abort'){
+            const urlPayment = `https://api.vivapayments.com/ecr/v1/sessions/${sessionId}?cashRegisterId=TrueCampus1`;
             const response2 = await axios.delete(urlPayment, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,7 +113,7 @@ module.exports.getTokenForPos = async (req, res, next) => {
             res.status(200).json(response2.data);
         } else {
             const requestBody = {
-                sessionId: generateUUIDv4(),
+                sessionId: sessionId,
                 terminalId: "16405624",
                 cashRegisterId: "TrueCampus1",
                 amount: total,
