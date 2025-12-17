@@ -94,26 +94,41 @@ module.exports.getTokenForPos = async (req, res, next) => {
         const total = parseInt(req.query.amount) * 100;
         const response = await axios.post(url, data, { headers });
         console.log('token', response.data)
-        const requestBody = {
-            sessionId: generateUUIDv4(),
-            terminalId: "16405624",
-            cashRegisterId: "TrueCampus1",
-            amount: total,
-            currencyCode: "946",
-            merchantReference: "Produse delicioase",
-            tipAmount: 0,
-          }
+
 
         token = response.data.access_token;
-        const urlPayment = 'https://api.vivapayments.com/ecr/v1/transactions:sale';
-        const response2 = await axios.post(urlPayment, requestBody, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${response.data.access_token}`,
-            }
-        });
-        console.log('transaction', response2)
-        res.status(200).json(response2.data);
+
+        if(req.query.abort === 'abort'){
+            const {session} = req.query
+            const urlPayment = `https://api.vivapayments.com/ecr/v1/sessions/${session}?cashRegisterId=TrueCampus1`;
+            const response2 = await axios.delete(urlPayment, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${response.data.access_token}`,
+                }
+            });
+            console.log('transaction', response2.data)
+            res.status(200).json(response2.data);
+        } else {
+            const requestBody = {
+                sessionId: generateUUIDv4(),
+                terminalId: "16405624",
+                cashRegisterId: "TrueCampus1",
+                amount: total,
+                currencyCode: "946",
+                merchantReference: "Produse delicioase",
+                tipAmount: 0,
+              }
+            const urlPayment = 'https://api.vivapayments.com/ecr/v1/transactions:sale';
+            const response2 = await axios.post(urlPayment, requestBody, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${response.data.access_token}`,
+                }
+            });
+            console.log('transaction', response2.data)
+            res.status(200).json(response2.data);
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
