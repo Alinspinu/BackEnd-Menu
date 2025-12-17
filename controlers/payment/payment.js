@@ -96,7 +96,7 @@ module.exports.getTokenForPos = async (req, res, next) => {
         console.log('token', response.data)
         const requestBody = {
             sessionId: generateUUIDv4(),
-            terminalId: "16450555",
+            terminalId: "16405624",
             cashRegisterId: "TrueCampus1",
             amount: total,
             currencyCode: "946",
