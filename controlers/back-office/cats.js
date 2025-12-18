@@ -97,9 +97,12 @@ module.exports.addCat = async (req, res, next) => {
 }
 
 module.exports.editCategory = async (req, res, next) => {
-    const { categoryId, name, mainCat, order } = req.body
-    if (categoryId) {
-        const category = await Cat.findById(categoryId).populate({
+    // const { categoryId, name, mainCat, order } = req.body
+    const {cat} = req.body
+    try{
+
+
+        const category = await Cat.findByIdAndUpdate(cat._id, cat, {new: true}).populate({
             path: 'product',
             populate: [
                 { path: 'category' },
@@ -110,28 +113,45 @@ module.exports.editCategory = async (req, res, next) => {
 
                     }
                 }]
-        }).maxTimeMS(20000)
-        if (category) {
-            category.name = name;
-            category.mainCat = mainCat;
-            category.order = parseFloat(order)
-            if (req.file) {
-                const { filename, path } = req.file
-                await cloudinary.uploader.destroy(category.image.filename)
-                category.image.path = path
-                category.image.filename = filename
-                await category.save();
-                res.status(200).json({ message: `Categoria a fost modificată!`, category: category })
-            } else {
-                await category.save()
-                res.status(200).json({ message: `Categoria a fost modificată!`, category: category })
-            }
-        } else {
-            res.status(404).json({ message: 'Categoria nu a fost găsită în baza de date!' })
-        }
-    } else {
-        res.status(404).json({ message: 'Lipsă ID categoie!!' })
+        })
+       res.status(200).json({ message: `Categoria a fost modificată!`, category: category })
+    } catch(error){
+        console.log(error)
     }
+    // if (categoryId) {
+    //     const category = await Cat.findById(categoryId).populate({
+    //         path: 'product',
+    //         populate: [
+    //             { path: 'category' },
+    //             {
+    //                 path: 'subProducts',
+    //                 populate: {
+    //                     path: 'product',
+
+    //                 }
+    //             }]
+    //     }).maxTimeMS(20000)
+    //     if (category) {
+    //         category.name = name;
+    //         category.mainCat = mainCat;
+    //         category.order = parseFloat(order)
+    //         if (req.file) {
+    //             const { filename, path } = req.file
+    //             await cloudinary.uploader.destroy(category.image.filename)
+    //             category.image.path = path
+    //             category.image.filename = filename
+    //             await category.save();
+    //             res.status(200).json({ message: `Categoria a fost modificată!`, category: category })
+    //         } else {
+    //             await category.save()
+    //             res.status(200).json({ message: `Categoria a fost modificată!`, category: category })
+    //         }
+    //     } else {
+    //         res.status(404).json({ message: 'Categoria nu a fost găsită în baza de date!' })
+    //     }
+    // } else {
+    //     res.status(404).json({ message: 'Lipsă ID categoie!!' })
+    // }
 }
 
 
