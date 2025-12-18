@@ -94,7 +94,6 @@ module.exports.getTokenForPos = async (req, res, next) => {
         const data = qs.stringify({
             grant_type: "client_credentials",
           });
-        const total = parseInt(amount) * 100;
         const response = await axios.post(url, data, { headers });
         console.log('token', response.data)
 
@@ -112,6 +111,7 @@ module.exports.getTokenForPos = async (req, res, next) => {
             console.log('transaction', response2.data)
             res.status(200).json(response2.data);
         } else {
+            const total = parseInt(amount) * 100;
             const requestBody = {
                 sessionId: sessionId,
                 terminalId: "16405624",
