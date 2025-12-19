@@ -383,7 +383,7 @@ module.exports.login = async (req, res, next) => {
                             })
 
          if(users.length > 1 && !loc){
-            const locs = users.map(u =>{ return {name: u.locatie.name, id: u.locatie._id}})
+            const locs = users.map(u =>{ return {name: u.locatie?.name, id: u.locatie._id}})
             return res.status(200).json({message: 'Acest email este folosit în mai multe locații! Alege la ce locație vrei să te conectezi!', locs: locs, multiple: true})
          } 
          if(users.length === 1 || Array.isArray(loc)){
