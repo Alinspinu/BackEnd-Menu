@@ -215,7 +215,7 @@ module.exports.addImpSheet = async (req, res) => {
       await unloadIngs(savedSheet.ings, 1, savedSheet?.gestiune.toString())
 
       const dbSheet = await ImpSheet.findById(savedSheet._id)
-            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice'})
+            .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice invGestiune'})
             .populate({path: 'ings.gestiune', select: 'name'})
             .populate({path: 'user', select: 'employee.fullName'})
             .populate({path: 'gestiune'})
@@ -376,7 +376,7 @@ module.exports.getSheets = async (req, res) => {
         const {loc, point} = req.query
         const sheets = await ImpSheet.find({locatie: loc, salePoint: point})
         .sort({date: -1})
-        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
+        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice invGestiune'})
         .populate({path: 'ings.gestiune', select: 'name'})
         .populate({path: 'user', select: 'employee.fullName'})
         .populate({path: 'gestiune'})
@@ -420,7 +420,7 @@ module.exports.getSheetsByPeriod = async (req, res) => {
     const startTime = new Date(startDate).getTime()
     const endTime = new Date(endDate).getTime()
     const sheets = await ImpSheet.find({locatie: loc, date: {$gte: startTime, $lte: endTime}, salePoint: point}) 
-        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice'})
+        .populate({path: 'ings.ing', select: 'name price um tva tvaPrice invGestiune'})
         .populate({path: 'ings.gestiune', select: 'name'})
         .populate({path: 'user', select: 'employee.fullName'})
         .populate({path: 'gestiune'})
