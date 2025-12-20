@@ -92,7 +92,7 @@ function createOrderInvoice(order, customer, supplier, unload) {
     taxInclusiveAmount: order.total,
     payableAmount: order.total,
     eFacturaId: '',
-    eFacturaStatus: '',
+    eFacturaStatus: 'NEÎNCĂRCATĂ',
     eFacturaError: '',
     customer: customer._id,
     locatie: order.locatie,
