@@ -160,6 +160,18 @@ module.exports.editPosition = async (req, res) => {
     }
 }
 
+module.exports.editUserDiscount = async (req, res) => {
+    const {id, update} =  req.body
+    try{
+        const position  = await EmployeePosition.findByIdAndUpdate(id, update, {new: true})
+        const user = await User.findById(id).populate({path: 'employee.employeePosition'})
+        res.status(200).json({message: 'Utilizatorul a fost actualizat!', user: user})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 module.exports.updateUser = async (req, res, next) => {
     const formData = req.body
     const {id} = req.query

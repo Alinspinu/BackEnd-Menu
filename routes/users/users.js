@@ -16,6 +16,8 @@ router.route('/user')
     .post(users.sendUser)
     .put(users.editUser)
 
+router.route('/disc').post(users.editUserDiscount)
+
 router.route('/front-user').put(upload.single('image'), users.updateUser)
 
 router.route('/ed-user')
