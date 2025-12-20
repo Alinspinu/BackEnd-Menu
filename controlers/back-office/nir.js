@@ -363,12 +363,13 @@ module.exports.createSheetByOrder = async (req, res) => {
 function clacProduction(product){
   let total = 0
   for(let i of product.ings){
-    total += i.ing.price * i.qty * product.quantity
+    total += i.ing.price * i.qty 
   }
   for(let t of product.toppings){
-    total += t.ing.price * t.qty * product.quantity
+    total += t.ing.price * t.qty 
   }
-  return round(total)
+  const tot = total * product.quantity
+  return round(tot)
 }
 
 module.exports.getSheets = async (req, res) => {
