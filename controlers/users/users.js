@@ -163,7 +163,7 @@ module.exports.editPosition = async (req, res) => {
 module.exports.editUserDiscount = async (req, res) => {
     const {id, update} =  req.body
     try{
-        const position  = await EmployeePosition.findByIdAndUpdate(id, update, {new: true})
+        const position  = await User.findByIdAndUpdate(id, update, {new: true})
         const user = await User.findById(id).populate({path: 'employee.employeePosition'})
         res.status(200).json({message: 'Utilizatorul a fost actualizat!', user: user})
     } catch(error){
