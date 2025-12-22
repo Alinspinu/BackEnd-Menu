@@ -86,9 +86,10 @@ function parseInvoiceData(invoiceData, id) {
 
     const discountPerUnit = quantity > 0 ? +(discountTotal / quantity).toFixed(2) : 0;
     const discountPercent =
-      price > 0 ? +((discountPerUnit / (price + discountPerUnit)) * 100).toFixed(2) : 0;
+    price + discountPerUnit > 0
+      ? +((discountPerUnit / (price + discountPerUnit)) * 100).toFixed(2)
+      : 0;
 
-      console.log(itemData)
 
     return {
       name:`${itemData.Name?._ ?? itemData.Name ?? 'Unknown item'}`,
