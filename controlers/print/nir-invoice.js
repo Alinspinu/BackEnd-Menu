@@ -372,13 +372,13 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
           doc.text(`${round(el.discountTotal * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
           heghtValue += rowHeigth
-          if(name.length > 46){
+          if(name.length > 36){
             heghtValue += 6
           }
-          if(name.length > 50){
+          if(name.length > 55){
             heghtValue += 6
           }
-          if(name.length > 100){
+          if(name.length > 105){
             heghtValue += 6
           }
         }
