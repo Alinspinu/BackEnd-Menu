@@ -111,7 +111,7 @@ module.exports.getTokenForPos = async (req, res, next) => {
             console.log('transaction', response2.data)
             res.status(200).json(response2.data);
         } else {
-            const total = parseInt(amount) * 100;
+            const total = Number(amount) * 100;
             const requestBody = {
                 sessionId: sessionId,
                 terminalId: "16405624",
