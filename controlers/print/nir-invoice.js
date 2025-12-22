@@ -362,7 +362,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
         if(el.discountPerUnit > 0){
           index ++
-          let newValue = y + heghtValue + 8
+          let newValue = y + heghtValue
           doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
           doc.text(`Discount ${el.discountPercent} % ${name}`, 47, newValue, { width: 225, align: 'left' })
           doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
@@ -371,7 +371,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.text(`-${el.discountTotal}`, 424, newValue, { width: 58, align: "center" })
           doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
           doc.text(`${round(el.discountTotal * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
-          heghtValue += rowHeigth
+          heghtValue += rowHeigth + 6
           if(name.length > 25){
             heghtValue += 8
           }
