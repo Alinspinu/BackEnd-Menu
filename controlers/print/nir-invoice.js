@@ -370,7 +370,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
           doc.text(`-${el.discountTotal}`, 364, newValue, { width: 58, align: "center" })
           doc.text(`-${el.discountTotal}`, 424, newValue, { width: 58, align: "center" })
           doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
-          doc.text(`${round(e.discountTotal * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
+          doc.text(`${round(el.discountTotal * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
           heghtValue += rowHeigth
           if(name.length > 46){
             heghtValue += 6
