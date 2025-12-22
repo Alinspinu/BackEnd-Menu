@@ -95,7 +95,7 @@ function parseInvoiceData(invoiceData, id) {
       description: `${itemData.Description?._ ?? itemData.Description ?? ''}`,
       quantity,
       unitCode,
-      price: price - discountPerUnit,
+      price: price,
       totalNoVat,
       vatPrecent,
       discountPerUnit,
