@@ -362,7 +362,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
         if(el.discountPerUnit > 0){
           index ++
-          let newValue = y + heghtValue
+          let newValue = y + heghtValue + 8
           doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
           doc.text(`Discount ${el.discountPercent} % ${name}`, 47, newValue, { width: 225, align: 'left' })
           doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
