@@ -333,7 +333,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
         doc.text(`${round(el.totalNoVat + el.discountTotal)}`, 424, newValue, { width: 58, align: "center" })
         doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
         doc.text(`${round(((el.price + el.discountPerUnit) * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
-        if(value === el.totalNoVat){
+        if(value === el.totalNoVat && value > 0){
           doc.lineWidth(0.2);
           doc.strokeColor('red');
           doc.moveTo(26, newValue + rowHeigth -1).lineTo(272, newValue + rowHeigth -1).stroke();
