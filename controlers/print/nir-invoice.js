@@ -316,6 +316,7 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
 
     doc.fontSize(8)
     ch.forEach((el, i) => {
+      let priceNoVAT = round((el.totalNoVat / el.quantity) + el.discountPerUnit)
       const name = el.name.replace(/\n/g, ' ') 
       // if(name.length > 35) {
       //   doc.fontSize(8)
@@ -328,10 +329,10 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
         doc.text(`${name}`, 47, newValue, { width: 225, align: 'left' })
         doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
         doc.text(`${el.quantity}.00`, 304, newValue, { width: 58, align: "center" })
-        doc.text(`${round(el.totalNoVat/el.quantity)}`, 364, newValue, { width: 58, align: "center" })
-        doc.text(`${round(el.totalNoVat)}`, 424, newValue, { width: 58, align: "center" })
+        doc.text(`${round(priceNoVAT)}`, 364, newValue, { width: 58, align: "center" })
+        doc.text(`${round(el.totalNoVat + el.discountTotal)}`, 424, newValue, { width: 58, align: "center" })
         doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
-        doc.text(`${round((el.price * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
+        doc.text(`${round(((el.price + el.discountPerUnit) * el.quantity) * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
         if(value === el.totalNoVat){
           doc.lineWidth(0.2);
           doc.strokeColor('red');
@@ -357,6 +358,29 @@ function addIngredients(doc, ch, rowHeigth, y, page, headerHeight, rectHeigth, r
         }
         if(name.length > 120){
           heghtValue += 6
+        }
+
+        if(el.discountPerUnit > 0){
+          index ++
+          let newValue = y + heghtValue
+          doc.text(`${i + index}`, 26, newValue, { width: 17, align: "center" })
+          doc.text(`Discounr ${el.discountProcent} % ${name}`, 47, newValue, { width: 225, align: 'left' })
+          doc.text(`Buc`, 274, newValue, { width: 28, align: "center" })
+          doc.text(`1.00`, 304, newValue, { width: 58, align: "center" })
+          doc.text(`-${el.discountTotal}`, 364, newValue, { width: 58, align: "center" })
+          doc.text(`-${el.discountTotal}`, 424, newValue, { width: 58, align: "center" })
+          doc.text(`${el.vatPrecent}%`, 486, newValue, { width: 35, align: "left" })
+          doc.text(`${round(e.discountTotal * (el.vatPrecent / 100))}`, 498, newValue, { width: 60, align: "right" })
+          heghtValue += rowHeigth
+          if(name.length > 46){
+            heghtValue += 6
+          }
+          if(name.length > 60){
+            heghtValue += 6
+          }
+          if(name.length > 120){
+            heghtValue += 6
+          }
         }
     })
     let pageWidth = doc.page.width;
