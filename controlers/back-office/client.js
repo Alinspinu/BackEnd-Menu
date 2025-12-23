@@ -56,21 +56,23 @@ module.exports.getClient = async (req, res) => {
    function updateSuplierRecords(suplier){
     suplier.sold = 0
     const sortedRecords = suplier.records.sort((a,b)=>+new Date(a.date)-(+new Date(b.date)));
-    sortedRecords[0].sold = 0
-    // if(sortedRecords[0].typeOf === 'intrare'){
-    // } else {
-    //     sortedRecords[0].sold = -sortedRecords[0].document.amount
-    // }
-    sortedRecords.forEach(r => {
-            if(r.typeOf === 'intrare'){
-             suplier.sold = round( suplier.sold + r.document.amount)
-             r.sold = suplier.sold
-            } else {
-             suplier.sold = round( suplier.sold - r.document.amount)
-             r.sold = suplier.sold
-            }
-        })
-        suplier.record = sortedRecords
+    if(sortedRecords.length){
+        sortedRecords[0].sold = 0
+        // if(sortedRecords[0].typeOf === 'intrare'){
+        // } else {
+        //     sortedRecords[0].sold = -sortedRecords[0].document.amount
+        // }
+        sortedRecords.forEach(r => {
+                if(r.typeOf === 'intrare'){
+                 suplier.sold = round( suplier.sold + r.document.amount)
+                 r.sold = suplier.sold
+                } else {
+                 suplier.sold = round( suplier.sold - r.document.amount)
+                 r.sold = suplier.sold
+                }
+            })
+            suplier.record = sortedRecords
+    }
       return suplier
    }
 
