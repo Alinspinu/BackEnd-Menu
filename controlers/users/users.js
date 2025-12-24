@@ -293,6 +293,7 @@ module.exports.addAnafToken = async (req, res) => {
        if(!locatie){
         return res.status(404).json({message: 'Lipsa locatie'})
        }
+       console.log(token)
        const vDays = getJwtValidityInDays(token.refresh);
        res.status(200).json({message: 'saved', time: vDays})
     } catch (error) {
