@@ -36,8 +36,8 @@ doc.fontSize(10);
 doc.font('public/font/Montserrat-Regular.ttf')
 doc.text(`${invoice.supplier.vatNumber}`, 85, 50);
 doc.text(`${invoice.supplier.registration}`, 85, 64);
-doc.text(`${invoice.supplier.bank.split(',')[0]}`, 85, 72 +6)
-doc.text(`${invoice.supplier.iban}`, 85, 90 +3)
+doc.text(`${invoice.supplier.bank}`, 85, 72 +6)
+doc.text(`${invoice.supplier.iban.split(',')[0]}`, 85, 90 +3)
 
 //HEADER CLIENT
 //Nume client
