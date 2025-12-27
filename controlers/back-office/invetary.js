@@ -19,7 +19,7 @@ module.exports.createInventary = async (req, res, next) => {
     const {date, loc, point, gestiune} = req.body
     const invDate = new Date(date).setUTCHours(20,59,59,0)
     const ings = await Ingredient.find({locatie: loc, 'invGestiune.gestiune': gestiune, salePoint: point})
-                    .select('name  dept um invGestiune')
+                    .select('name  dept um invGestiune price')
                     .populate({path: 'dept', select:'name'})
                     .populate({path: 'invGestiune.gestiune', select: 'name'})
         
@@ -35,8 +35,8 @@ module.exports.createInventary = async (req, res, next) => {
                     name: i.name,
                     faptic: 0,
                     scriptic: gest.qty,
-                    lastPrice: round(i.price),
-                    averagePrice: round(getAveragePrice(gest)) || round(i.price),
+                    lastPrice: round(i.price) || 0,
+                    averagePrice: round(getAveragePrice(gest)) || round(i.price) || 0,
                     dep: i.dept.name,
                     um: i.um
                 }
