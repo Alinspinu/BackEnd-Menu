@@ -443,6 +443,7 @@ function addUserData (user, token) {
         checkIn: user.checkIn,
         orders: user.orders,
         cashBackProcent: user.cashBackProcent,
+        pageAccess: user.pageAccess
     };
     return sendData
 }
