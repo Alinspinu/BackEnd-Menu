@@ -49,6 +49,7 @@ function getRawEscPosBytes(data, products) {
 
 
     content += beep;
+    console.log(beep)
     content += lf+lf+lf+lf+lf+lf+lf+lf+lf+lf;
     content += reset
     content += cut 
