@@ -19,6 +19,7 @@ function getRawEscPosBytes(data, products) {
     const doubleW = '\x1D\x21\x01'
     const doubleH = '\x1D\x21\x10'
     const normalSize = '\x1D\x21\x00';
+    const beep = '\x1B\x28\x41\x04\x00\x30\x31\x03';
   
     let content = '';
     content += reset;
@@ -46,6 +47,8 @@ function getRawEscPosBytes(data, products) {
   
     content += center + '------------------END-------------------'
 
+
+    content += beep;
     content += lf+lf+lf+lf+lf+lf+lf+lf+lf+lf;
     content += reset
     content += cut 
