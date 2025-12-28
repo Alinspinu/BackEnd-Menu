@@ -48,26 +48,30 @@ function createSalaryReport(pontaj, mode, us){
         const day = new Date(d.date).getDate()
         if(day >= start && day <= end ){            
             for(let u of d.users){
+                if(u){
                 let tax = u.tax
                 let income = u.value
-                if(!u.employee?.employee?.salary.fix){  
-                    totalIncome += income
-                    totalTax += tax
-                    const existingUser = users.find(us => us.name === u.employee.employee.fullName)
-                    if(existingUser){
-                        existingUser.tax += tax
-                        existingUser.income += income
-                        existingUser.hours += u.hours
-                    } else {
-                        const us = {
-                            name: u.employee.employee.fullName,
-                            position: u.employeePosition.name,
-                            hours: u.hours,
-                            tax: tax,
-                            income: income
+                    if(!u.employee?.employee.salary.fix){  
+                        totalIncome += income
+                        totalTax += tax
+                        const existingUser = users.find(us => us.name === u.employee.employee.fullName)
+                        if(existingUser){
+                            existingUser.tax += tax
+                            existingUser.income += income
+                            existingUser.hours += u.hours
+                        } else {
+                            const us = {
+                                name: u.employee.employee.fullName,
+                                position: u.employeePosition.name,
+                                hours: u.hours,
+                                tax: tax,
+                                income: income
+                            }
+                            users.push(us)
                         }
-                        users.push(us)
                     }
+                } else{
+                    console.log(u)
                 }
             }
 
