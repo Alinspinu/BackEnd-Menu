@@ -50,7 +50,7 @@ function createSalaryReport(pontaj, mode, us){
             for(let u of d.users){
                 let tax = u.tax
                 let income = u.value
-                if(!u.employee.employee.salary.fix){  
+                if(!u.employee?.employee?.salary.fix){  
                     totalIncome += income
                     totalTax += tax
                     const existingUser = users.find(us => us.name === u.employee.employee.fullName)
