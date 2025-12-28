@@ -48,10 +48,10 @@ function createSalaryReport(pontaj, mode, us){
         const day = new Date(d.date).getDate()
         if(day >= start && day <= end ){            
             for(let u of d.users){
-                if(u){
-                    if(!u.employee){
-                        console.log('Angajat problema ',u)
-                    }
+                if(!u.employee){
+                    console.log('Angajat problema ',u)
+                }
+                if(u && u.employee){
                 let tax = u.tax
                 let income = u.value
                     if(!u.employee?.employee.salary.fix){  
@@ -74,7 +74,6 @@ function createSalaryReport(pontaj, mode, us){
                         }
                     }
                 } else{
-                    console.log(u)
                 }
             }
 
