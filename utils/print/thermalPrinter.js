@@ -72,6 +72,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   const doubleWH   = Buffer.from([0x1D, 0x21, 0x11]); // double width+height
   const doubleW = Buffer.from([0x1D, 0x21, 0x10]);
   const normalSize = Buffer.from([0x1D, 0x21, 0x00]);
+  const beep = '\x1B\x28\x41\x04\x00\x30\x31\x03';
 
   let parts = [];
 
@@ -212,7 +213,8 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   parts.push(center);
   parts.push(Buffer.from('MULTUMIM FRUMOS SI VA MAI ASTEPTAM! \n',  'ascii'))
 
-  parts.push(lf, lf, lf,lf, lf, cut);
+
+  parts.push(beep, lf, lf, lf,lf, lf, cut);
 
   return Buffer.concat(parts);
 }
