@@ -72,16 +72,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
   const doubleWH   = Buffer.from([0x1D, 0x21, 0x11]); // double width+height
   const doubleW = Buffer.from([0x1D, 0x21, 0x10]);
   const normalSize = Buffer.from([0x1D, 0x21, 0x00]);
-  const beep = Buffer.from([
-    0x1B, // ESC
-    0x28, // (
-    0x41, // A
-    0x04, // pL
-    0x00, // pH
-    0x30, // '0'
-    0x31, // '1'
-    0x03  // number of beeps
-  ]);
+  const beep = Buffer.from([0x07])
 
   let parts = [];
 
