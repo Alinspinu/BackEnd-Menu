@@ -49,12 +49,15 @@ function createSalaryReport(pontaj, mode, us){
         if(day >= start && day <= end ){            
             for(let u of d.users){
                 if(u){
+                    if(!u.employee){
+                        console.log('Angajat problema ',u)
+                    }
                 let tax = u.tax
                 let income = u.value
                     if(!u.employee?.employee.salary.fix){  
                         totalIncome += income
                         totalTax += tax
-                        const existingUser = users.find(us => us.name === u.employee.employee.fullName)
+                        const existingUser = users.find(us => us.name === u.employee?.employee.fullName)
                         if(existingUser){
                             existingUser.tax += tax
                             existingUser.income += income
