@@ -82,6 +82,11 @@ const UserTrueSchema = new Schema({
             type: Boolean,
             default: false
         },
+        pageAccess: [
+            {
+                name: String
+            }
+        ],
         active: {
             type: Boolean,
             index: true
