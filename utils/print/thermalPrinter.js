@@ -76,7 +76,7 @@ async function createBillForPrinter(order, logoUrl = ' ', qrUrl = ' ') {
     0x1B, // ESC
     0x42, // B
     0x01, // n = 1 beep
-    0x01  // t = shortest duration
+    0x03  // t = shortest duration
   ]);
 
   let parts = [];
