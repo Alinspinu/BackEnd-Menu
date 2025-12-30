@@ -85,9 +85,11 @@ const UserTrueSchema = new Schema({
         pageAccess: [
             {
                 name: String,
+                path: String,
                 pages: [
                     {
-                        name: String
+                        name: String,
+                        path: String
                     }
                 ]
             }
