@@ -380,9 +380,12 @@ module.exports.compareScriptic = async (req, res) => {
     }
 
     function processLeaf(map, w, mult = 1) {
-      if (!w?.ing?._id || !gestMatch(w)) return;
       if(w.ing.name === 'Apa Plata 0.5'){
         console.log('found ing')
+      }
+      if (!w?.ing?._id || !gestMatch(w)) return;
+      if(w.ing.name === 'Apa Plata 0.5'){
+        console.log('found ing after check')
       }
       const qty = r((w.qty || 0) * (mult || 1));
       if (qty) addTo(map, w.ing, qty);
