@@ -381,6 +381,9 @@ module.exports.compareScriptic = async (req, res) => {
 
     function processLeaf(map, w, mult = 1) {
       if (!w?.ing?._id || !gestMatch(w)) return;
+      if(w.ing.name === 'Apa Plata 0.5'){
+        console.log('found ing')
+      }
       const qty = r((w.qty || 0) * (mult || 1));
       if (qty) addTo(map, w.ing, qty);
     }
@@ -435,9 +438,9 @@ module.exports.compareScriptic = async (req, res) => {
           if(!w.ing){
             console.log('Lipsa ingredient',w)
           }
-          if(w.ing.name === 'Apa Plata 0.5'){
-            console.log(w.ing.name, w.qty)
-          }
+          // if(w.ing.name === 'Apa Plata 0.5'){
+          //   console.log(w.ing.name, w.qty)
+          // }
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
           if(scaled.ing?.name === 'Oua'){
             // console.log(scaled.gestiune)
