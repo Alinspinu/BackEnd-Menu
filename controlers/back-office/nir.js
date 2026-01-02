@@ -388,7 +388,7 @@ module.exports.getSheets = async (req, res) => {
           const bDate = new Date(b.date).getTime()
           return bDate - aDate
         })
-    await updateSheets(sheets)
+    // await updateSheets(sheets)
     res.status(200).json(sortedSheets)
     } catch(error){
       console.log(error)
