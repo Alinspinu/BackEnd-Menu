@@ -381,7 +381,7 @@ module.exports.compareScriptic = async (req, res) => {
 
     function processLeaf(map, w, mult = 1) {
       if(w.ing.name === 'Apa Plata 0.5'){
-        console.log('found ing')
+        console.log(w.gestiune)
       }
       if (!w?.ing?._id || !gestMatch(w)) return;
       if(w.ing.name === 'Apa Plata 0.5'){
