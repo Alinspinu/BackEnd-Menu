@@ -388,29 +388,69 @@ module.exports.getSheets = async (req, res) => {
           const bDate = new Date(b.date).getTime()
           return bDate - aDate
         })
-    // await updateSheets(sheets)
+    await updateSheets(sheets)
     res.status(200).json(sortedSheets)
     } catch(error){
       console.log(error)
     }
 }
 
-async function updateSheets(sheets){
-    const shhetsToUpdate = []
 
-    for(let s of sheets){
-      if(!s.gestiune){
-        s.gestiune = s.ings[0].gestiune
-        shhetsToUpdate.push(s)
+async function updateSheets(sheets) {
+  const sheetsToUpdate = []
+
+  for (const s of sheets) {
+    let modified = false
+
+    for (const i of s.ings) {
+      if (!i.gestiune) {
+        i.gestiune = s.gestiune
+        modified = true
       }
     }
-    const promises = shhetsToUpdate.map(o => 
-          ImpSheet.findByIdAndUpdate(o._id, o, {new: true})
-    )
 
-    await Promise.all(promises)
-    console.log('sheets verified:', sheets.length, '→ Updated:', promises.length);
+    if (modified) {
+      sheetsToUpdate.push(s)
+    }
+  }
+
+  const promises = sheetsToUpdate.map(s =>
+    ImpSheet.updateOne(
+      { _id: s._id },
+      { $set: { ings: s.ings } }
+    )
+  )
+
+  await Promise.all(promises)
+
+  console.log(
+    'Sheets verified:', sheets.length,
+    '→ Updated:', sheetsToUpdate.length
+  )
 }
+
+// async function updateSheets(sheets){
+//     const shhetsToUpdate = []
+
+//     for(let s of sheets){
+//       let check = false
+//         for(let i of s.ings){
+//           if(!i.gestiune){
+//             i.gestiune = s.gestiune
+//             check = true
+//           }
+//         }
+//         if(check){
+//           shhetsToUpdate.push(s)
+//         }
+//     }
+//     const promises = shhetsToUpdate.map(o => 
+//           ImpSheet.findByIdAndUpdate(o._id, o, {new: false})
+//     )
+
+//     await Promise.all(promises)
+//     console.log('sheets verified:', sheets.length, '→ Updated:', promises.length);
+// }
 
 
 

@@ -448,6 +448,9 @@ module.exports.compareScriptic = async (req, res) => {
           if(!w.ing){
             console.log('Lipsa ingredient',w)
           }
+          if(!w.gestiune){
+            console.log('Ingredient fara gestiune comenzi', w.ing.name)
+          }
           // if(w.ing.name === 'Apa Plata 0.5'){
           //   console.log(w.ing.name, w.qty)
           // }
