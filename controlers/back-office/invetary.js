@@ -389,6 +389,9 @@ module.exports.compareScriptic = async (req, res) => {
     function processComposite(map, w, mult = 1) {
       if (!w?.ing?.ings?.length) return;
       for (const sub of w.ing.ings) {
+        if(!sub.gestiune){
+          console.log('Ingredient fara gestiune compus', sub.ing.name)
+        }
         if (!sub?.ing?._id || !gestMatch(sub)) continue;
         const qty = r((sub.qty || 0) * (w.qty || 0) * (mult || 1));
         if (qty) addTo(map, sub.ing, qty);
@@ -400,7 +403,7 @@ module.exports.compareScriptic = async (req, res) => {
       for (const w of sheet.ings) {
         if (w?.ing?.productIngredient) processComposite(depMap, w, 1);
         if(!w.gestiune){
-          console.log('Ingredient fara gestiune', w.ing.name)
+          console.log('Ingredient fara gestiune fise de deprecieri', w.ing.name)
         }
          processLeaf(depMap, w, 1);
       }
@@ -410,8 +413,14 @@ module.exports.compareScriptic = async (req, res) => {
     for (const dp of delProds || []) {
       const bp = dp.billProduct; if (!bp) continue;
       for (const w of bp.ings || []) {
+          if(!w.gestiune){
+              console.log('Ingredient fara gestiune produse sterse', w.ing.name)
+        }
         if (w?.ing?.ings?.length) {
           for (const sub of w.ing.ings) {
+            if(!sub.gestiune){
+              console.log('Ingredient fara gestiune compus produse sterse', sub.ing.name)
+            }
             if (!sub?.ing?._id || !gestMatch(sub)) continue;
             const qty = r((sub.qty || 0) * (w.qty || 0));
             if (qty) addTo(depMap, sub.ing, qty);
