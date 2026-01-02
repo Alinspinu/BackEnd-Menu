@@ -145,7 +145,7 @@ module.exports.updateProducts = async (req, res) => {
                 console.log(p.name)
             }
         })
-    //   modifyProducts(products)
+     await modifyProducts(products)
       const sortedProducts = products.sort((a, b) => a.name.localeCompare(b.name))
       res.status(200).json(sortedProducts)
     } catch(error) {
@@ -156,30 +156,119 @@ module.exports.updateProducts = async (req, res) => {
 
 
 
-  function modifyProducts(products) {
-    const productPromises = products.map(p => {
-      const subPromises = p.subProducts.map(async s => {
-        let cost = 0;
-        for (let i of s.ings) {
-          const price = i.qty * i.ing.tvaPrice;
-          cost += price;
+
+  async function modifyProducts(products) {
+    const productsToUpdate = new Map()
+    const subProductsToUpdate = new Map()
+  
+    for (const p of products) {
+      let productModified = false
+  
+      for (const i of p.ings) {
+        if (!i.gestiune && i.ing?.invGestiune?.length) {
+          i.gestiune = i.ing.invGestiune[0].gestiune
+          productModified = true
+          console.log('Am gasit ingredient fara gestiune', i.ing.name)
+        }
+      }
+  
+      if (productModified) {
+        productsToUpdate.set(p._id.toString(), p)
+      }
+  
+      for (const s of p.subProducts || []) {
+        let subModified = false
+  
+        for (const i of s.ings) {
+          if (!i.gestiune && i.ing?.invGestiune?.length) {
+            i.gestiune = i.ing.invGestiune[0].gestiune
+            subModified = true
+            console.log('Am gasit subprodus fara gestiune', i.ing.name)
+          }
         }
   
-        // optionally update the subproduct
-        s.productionCost = round(cost);
+        if (subModified) {
+          subProductsToUpdate.set(s._id.toString(), s)
+        }
+      }
+    }
   
-        const savedP = await s.save();
-        console.log(`${savedP.name} a fost modificat cu success! ${savedP.productionCost}`);
-        return savedP;
-      });
+    const productPromises = [...productsToUpdate.values()].map(p =>
+      Product.findByIdAndUpdate(p._id, p, { new: false })
+    )
   
-      // Return a promise that resolves when *all* subproducts are saved
-      return Promise.all(subPromises);
-    });
+    const subPromises = [...subProductsToUpdate.values()].map(s =>
+      SubProduct.findByIdAndUpdate(s._id, s, { new: false })
+    )
   
-    // Return a promise that resolves when *all* products (and subproducts) are done
-    return Promise.all(productPromises);
+    await Promise.all([...productPromises, ...subPromises])
   }
+  
+
+
+
+//   async function modifyProducts(products) {
+
+//     const productPromises = []
+//     const subPromises = []
+
+//     for(let p of products){
+//         for(let i of p.ings){
+//             if(!i.gestiune){
+//                 i.gestiune = i.ing.invGestiune[0].gestiune
+//                 productPromises.push(p)
+//                 console.log('Am gasit ingredient fara gestiune', i.ing.name)
+//             }
+//         }
+//         if(p.subProducts.length){
+//             for(let s of p.subProducts){
+//                 for(let i of s.ings){
+//                     if(!i.gestiune){
+//                         console.log('Am gasit subprodus fara gestiune', i.ing.name)
+//                         i.gestiune = i.ing.invGestiune[0].gestiune
+//                         subPromises.push(s)
+//                     }
+//                 }
+//             }
+//         }
+//     }
+
+//     const pp = productPromises.map(p => 
+//         Product.findByIdAndUpdate(p._id, p, {new: false})
+//     )
+
+//     const sp = subPromises.map(s => 
+//         SubProduct.findByIdAndUpdate(s._id, s, {new: false})
+//     )
+  
+//     // Return a promise that resolves when *all* products (and subproducts) are done
+//     await Promise.all(pp);
+//     await Promise.all(sp);
+//   }
+
+//   function modifyProducts(products) {
+//     const productPromises = products.map(p => {
+//       const subPromises = p.subProducts.map(async s => {
+//         for (let i of s.ings) {
+//             if(!i.gestiune){
+
+//             }
+//         }
+  
+//         // optionally update the subproduct
+  
+//         const savedP = await s.save();
+//         console.log(`${savedP.name} a fost modificat cu success! ${savedP.productionCost}`);
+//         return savedP;
+//       });
+  
+//       // Return a promise that resolves when *all* subproducts are saved
+//       return Promise.all(subPromises);
+//     });
+  
+//     // Return a promise that resolves when *all* products (and subproducts) are done
+//     return Promise.all(productPromises);
+//   }
 
 
 
