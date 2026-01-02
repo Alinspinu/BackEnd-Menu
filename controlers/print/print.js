@@ -1824,7 +1824,9 @@ module.exports.printProductRecipes = async (req, res, next) => {
         .populate({path: 'locatie', select: 'bussinessName'})
         .populate({path: 'category', select: 'name'})
         .populate({path: 'subProducts', select: 'name price qty description ings', populate: {path: 'ings.ing', select: 'name price tvaPrice um'}})
-
+      if(!products.length){
+        return res.status(404).json({message: 'Nu au fost găsit nici un produs!'})
+      }
         const workbook = new exceljs.Workbook();
         const worksheet = workbook.addWorksheet('Produse');
         const docTitle =  [
