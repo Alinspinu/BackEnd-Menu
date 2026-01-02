@@ -348,6 +348,8 @@ module.exports.compareScriptic = async (req, res) => {
 
     let filtredInvoicese = []
 
+    console.log('comenzi', orders.length)
+
     for(let i of invoices){
       const date = new Date(i.issueDate)
       const start = startTime.getTime()
@@ -427,6 +429,9 @@ module.exports.compareScriptic = async (req, res) => {
     // === 5) orders -> consMap
     for (const order of orders || []) {
       for (const prod of order.products || []) {
+        if(prod.name === 'Apa - Plata'){
+          console.log(prod)
+        }
         const mult = r(prod.quantity || 1);
 
         for (const w of prod.ings || []) {
