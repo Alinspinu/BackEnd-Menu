@@ -429,19 +429,16 @@ module.exports.compareScriptic = async (req, res) => {
     // === 5) orders -> consMap
     for (const order of orders || []) {
       for (const prod of order.products || []) {
-        if(prod.name === 'Apa - Plata'){
-          console.log(prod)
-        }
         const mult = r(prod.quantity || 1);
 
         for (const w of prod.ings || []) {
           if(!w.ing){
             console.log('Lipsa ingredient',w)
           }
-          const scaled = { ...w, qty: r((w.qty || 0) * mult) };
-          if(scaled.ing.name === 'Apa Plata 0.5'){
-            console.log(scaled.ing)
+          if(w.ing.name === 'Apa Plata 0.5'){
+            console.log(w.ing.name, w.qty)
           }
+          const scaled = { ...w, qty: r((w.qty || 0) * mult) };
           if(scaled.ing?.name === 'Oua'){
             // console.log(scaled.gestiune)
           }
