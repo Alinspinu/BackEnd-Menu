@@ -446,7 +446,7 @@ module.exports.compareScriptic = async (req, res) => {
 
         for (const w of prod.ings || []) {
           if(!w.ing){
-            console.log('Lipsa ingredient',w)
+            console.log('Lipsa ingredient', prod.name)
           }
           if(!w.gestiune){
             console.log('Ingredient fara gestiune comenzi', w.ing.name)
