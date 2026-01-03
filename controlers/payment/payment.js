@@ -362,7 +362,7 @@ module.exports.printBill = async (req, res, next) => {
             const client = await User.findOne({email: email})
             if(client){
                 client.orders.push(bill)
-                client.cashBack = round((client.cashBack - bill.cashBack) + (bill.total * client.cashBackProcent / 100))
+                client.cashBack = round((client.cashBack - bill.cashBack) + (+bill.total * client.cashBackProcent / 100))
             }
             await client.save()
         }
@@ -373,24 +373,24 @@ module.exports.printBill = async (req, res, next) => {
               payment: bill.payment,
               paymentMethod: bill.paymentMethod,
               tips: bill.tips,
-              total: bill.total,
+              total: +bill.total,
               clientInfo: bill.clientInfo,
               paymentDate: new Date()
             }
           };
 
-        const digger = ['690c818c21500095430c613f', '655e2e7c5a3d53943c6b7c53']
-        if(!digger.includes(bill.locatie)){
-            const locatie = await Locatie.findById(bill.locatie)
-            if(locatie){
-                const bytes = await createBillForPrinter(bill, locatie.logoUrl || ' ', locatie.qrUrl)
-                if(bytes){
-                    socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
-                }
-            }
-        }
+        // const digger = ['690c818c21500095430c613f', '655e2e7c5a3d53943c6b7c53']
+        // if(!digger.includes(bill.locatie)){
+        //     const locatie = await Locatie.findById(bill.locatie)
+        //     if(locatie){
+        //         const bytes = await createBillForPrinter(bill, locatie.logoUrl || ' ', locatie.qrUrl)
+        //         if(bytes){
+        //             socket.emit('printThermal', JSON.stringify({bill: bytes.toString("base64"), server: mainServer}))
+        //         }
+        //     }
+        // }
 
-        const savedBill = await Order.findOneAndUpdate({soketId: bill.soketId}, update, {new: true})
+        const savedBill = await Order.findOneAndUpdate({_id: bill._id}, update, {new: true})
         console.log(savedBill.paymentDate)
 
         
