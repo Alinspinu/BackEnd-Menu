@@ -609,8 +609,8 @@ module.exports.addReservation = async(req, res)  => {
         const newReservation = new Reservation(reservation)
         const savedReservation = await newReservation.save()
         const ress = await Reservation.findById(savedReservation._id).populate({path: 'locatie'}).populate({path: 'salePoint'})
-        console.log(ress)
-        if(ress.email){
+        console.log(ress.client.email)
+        if(ress.client.email){
           await sendReservationEmail(ress)
         }
  
