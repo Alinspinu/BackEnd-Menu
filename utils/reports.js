@@ -969,35 +969,37 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
    
     for(const sheet of impSheets){
         for(let ing of sheet.ings){
-            if(ing.ing.productIngredient){
-                for(let ingg of ing.ing.ings){
-                    const index = depProducts.findIndex(i => i.name === ingg.ing.name)
-                    if(index !== -1){
-                        depProducts[index].qty = round(depProducts[index].qty + (ingg.qty * ing.qty))
-                        values.totalDep += (round(ingg.qty * ing.qty) * ingg.ing.tvaPrice)
-                    } else {
-                        const ingx = {
-                            qty: round(ingg.qty * ing.qty),
-                            cost: ingg.ing.tvaPrice,
-                            name: ingg.ing.name
+            if(ing.ing){
+                if(ing.ing.productIngredient){
+                    for(let ingg of ing.ing.ings){
+                        const index = depProducts.findIndex(i => i.name === ingg.ing.name)
+                        if(index !== -1){
+                            depProducts[index].qty = round(depProducts[index].qty + (ingg.qty * ing.qty))
+                            values.totalDep += (round(ingg.qty * ing.qty) * ingg.ing.tvaPrice)
+                        } else {
+                            const ingx = {
+                                qty: round(ingg.qty * ing.qty),
+                                cost: ingg.ing.tvaPrice,
+                                name: ingg.ing.name
+                            }
+                            depProducts.push(ingx)
+                            values.totalDep += round(ingx.cost * ingx.qty)
                         }
-                        depProducts.push(ingx)
-                        values.totalDep += round(ingx.cost * ingx.qty)
                     }
-                }
-            } else {
-                const index = depProducts.findIndex(i => i.name === ing.ing.name)
-                if(index !== -1){
-                    depProducts[index].qty = round(depProducts[index].qty + ing.qty)
-                    values.totalDep += (ing.qty * ing.ing.tvaPrice)
                 } else {
-                    const ingg = {
-                        qty: ing.qty,
-                        cost: ing.ing.tvaPrice,
-                        name: ing.ing.name
+                    const index = depProducts.findIndex(i => i.name === ing.ing.name)
+                    if(index !== -1){
+                        depProducts[index].qty = round(depProducts[index].qty + ing.qty)
+                        values.totalDep += (ing.qty * ing.ing.tvaPrice)
+                    } else {
+                        const ingg = {
+                            qty: ing.qty,
+                            cost: ing.ing.tvaPrice,
+                            name: ing.ing.name
+                        }
+                        depProducts.push(ingg)
+                        values.totalDep += round(ingg.cost * ingg.qty)
                     }
-                    depProducts.push(ingg)
-                    values.totalDep += round(ingg.cost * ingg.qty)
                 }
             }
         }
