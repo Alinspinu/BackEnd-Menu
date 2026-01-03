@@ -230,7 +230,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
     const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lt: entryEndTime}, tip: 'expense'}).lean()
     const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee').lean()
-    const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'}).lean()
+    // const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'}).lean()
     const dbUsers = await User.find({locatie: loc, client: false, 'employee.salePoint': point, 'employee.salary.inHeand': {$gte: 0} }).select('employee').populate({path: 'employee.employeePosition'}).lean()
     const allIngs = await Ingredient.find({locatie: loc, productIngredient: false, salePoint: point})
                     .select(['uploadLog', 'tvaPrice', 'dep', 'name', 'gestiune', 'dept', 'gest', 'invGestiune'])
@@ -982,7 +982,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                             name: ingg.ing.name
                         }
                         depProducts.push(ingx)
-                        values.totalDep += ingx.cost
+                        values.totalDep += round(ingx.cost * ingx.qty)
                     }
                 }
             } else {
@@ -997,77 +997,77 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         name: ing.ing.name
                     }
                     depProducts.push(ingg)
-                    values.totalDep += ingg.cost
+                    values.totalDep += round(ingg.cost * ingg.qty)
                 }
             }
         }
     }
 
 
-    for(const prod of delProds){
-        let cost = 0
-        for(const ing of prod.billProduct.ings){
-            if(ing.ing){
-                ingredients.forEach(ings => {
-                    if(ings.ing._id.toString() === ing.ing._id.toString()) {
-                        values.totalDep += (ing.qty * ings.ing.tvaPrice * prod.billProduct.quantity)
-                        cost = round(cost + (ing.qty * ings.ing.tvaPrice))
-                    }   
-                })
-            } else {
-                const existingProd = oldProd.find(obj => obj.name === prod.billProduct.name)
-                if(existingProd){
-                    existingProd.qty += 1
-                } else {
-                    oldProd.push({
-                        name: prod.billProduct.name,
-                        qty: 1
-                    })
-                }
-                break
-            }
-        }
-        if(cost > 0){
-            const existingProd = depProducts.find(p => p.name === prod.billProduct.name)
-            if(existingProd){
-                existingProd.qty += prod.billProduct.quantity
-            } else {
-                const prodd = {
-                    name: prod.billProduct.name,
-                    cost: cost,
-                    qty: prod.billProduct.quantity
-                }
-                depProducts.push(prodd)
-            }
-        }
-    }
+    // for(const prod of delProds){
+    //     let cost = 0
+    //     for(const ing of prod.billProduct.ings){
+    //         if(ing.ing){
+    //             ingredients.forEach(ings => {
+    //                 if(ings.ing._id.toString() === ing.ing._id.toString()) {
+    //                     values.totalDep += (ing.qty * ings.ing.tvaPrice * prod.billProduct.quantity)
+    //                     cost = round(cost + (ing.qty * ings.ing.tvaPrice))
+    //                 }   
+    //             })
+    //         } else {
+    //             const existingProd = oldProd.find(obj => obj.name === prod.billProduct.name)
+    //             if(existingProd){
+    //                 existingProd.qty += 1
+    //             } else {
+    //                 oldProd.push({
+    //                     name: prod.billProduct.name,
+    //                     qty: 1
+    //                 })
+    //             }
+    //             break
+    //         }
+    //     }
+    //     if(cost > 0){
+    //         const existingProd = depProducts.find(p => p.name === prod.billProduct.name)
+    //         if(existingProd){
+    //             existingProd.qty += prod.billProduct.quantity
+    //         } else {
+    //             const prodd = {
+    //                 name: prod.billProduct.name,
+    //                 cost: cost,
+    //                 qty: prod.billProduct.quantity
+    //             }
+    //             depProducts.push(prodd)
+    //         }
+    //     }
+    // }
 
-    for(const prod of oldProd){ 
-        let cost = 0
-        billProducts.forEach(product => {
-            if(product.name === prod.name){
-                for(const ing of product.ings){
-                    if(ing.ing){
-                        values.totalDep += (ing.qty * ing.ing.tvaPrice * prod.qty)
-                        cost = round(cost + (ing.qty * ing.ing.tvaPrice))
-                    }
-                }
-            }
-        })
-        if(cost > 0){
-            const existingProd = depProducts.find(p => p.name === prod.name)
-            if(existingProd){
-                existingProd.qty += prod.qty
-            } else {
-                const pro = {
-                    name: prod.name,
-                    cost: cost,
-                    qty: prod.qty
-                }
-                depProducts.push(pro)
-            }
-        }
-    }
+    // for(const prod of oldProd){ 
+    //     let cost = 0
+    //     billProducts.forEach(product => {
+    //         if(product.name === prod.name){
+    //             for(const ing of product.ings){
+    //                 if(ing.ing){
+    //                     values.totalDep += (ing.qty * ing.ing.tvaPrice * prod.qty)
+    //                     cost = round(cost + (ing.qty * ing.ing.tvaPrice))
+    //                 }
+    //             }
+    //         }
+    //     })
+    //     if(cost > 0){
+    //         const existingProd = depProducts.find(p => p.name === prod.name)
+    //         if(existingProd){
+    //             existingProd.qty += prod.qty
+    //         } else {
+    //             const pro = {
+    //                 name: prod.name,
+    //                 cost: cost,
+    //                 qty: prod.qty
+    //             }
+    //             depProducts.push(pro)
+    //         }
+    //     }
+    // }
 
     for(let g of productsGest){
         values.totalIncome += g.totalOut
