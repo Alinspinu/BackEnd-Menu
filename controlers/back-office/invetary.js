@@ -446,7 +446,7 @@ module.exports.compareScriptic = async (req, res) => {
 
         for (const w of prod.ings || []) {
           if(!w.ing){
-            console.log('Lipsa ingredient', prod.name)
+            console.log('Lipsa ingredient orders', prod.name, order.paymentDate.toString(), order.index)
           }
           if(!w.gestiune){
             console.log('Ingredient fara gestiune comenzi', w.ing.name)
@@ -490,7 +490,7 @@ module.exports.compareScriptic = async (req, res) => {
 
         for (const w of prod.ings || []) {
           if(!w.ing){
-            console.log('Lipsa ingredient',w)
+            console.log('Lipsa ingredient invoice', prod.name, invoice.issueDate, invoice.invoiceNumber)
           }
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
           if(scaled.ing?.name === 'Oua'){
