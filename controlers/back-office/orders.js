@@ -10,8 +10,10 @@ const SalePoint = require('../../models/utils/sale-point')
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
 const {generateSoketId, formatedDateToShow} = require('../../utils/functions')
 
-const {unloadIngs, uploadIngs, createProductSaleReport} = require('../../utils/inventary')
+const {createProductSaleReport} = require('../../utils/inventary')
 const {getIngredients, getBillProducts, createDayReport} = require('../../utils/reports')
+
+const {unloadIngs, uploadIngs} = require('../../utils/inv/src/index')
 
 const {createProductsReportXcelBuffer} = require('../print/products-reprot-xls')
 const {createTotalsReportXcelBuffer} = require('../print/totals-report-xls')

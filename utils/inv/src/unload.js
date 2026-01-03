@@ -23,7 +23,7 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
     for (const ing of ings) {
       const ingredientInv = await getIngredient(ing.ing);
       if (!ingredientInv) {
-        logger.error("Ingredient not found (unload):", ing.ing);
+        logger.error("Ingredient not found (unload):", ing);
         continue;
       }
 

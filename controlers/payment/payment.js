@@ -14,7 +14,9 @@ const Locatie = require('../../models/office/locatie')
 const qs = require("qs");
 
 const { round, sendToPrint, handleError } = require('../../utils/functions')
-const {unloadIngs, createProductSaleReport} = require('../../utils/inventary')
+const { createProductSaleReport} = require('../../utils/inventary')
+
+const {unloadIngs} = require('../../utils/inv/src/index')
 // const {unloadIngs} = require('../../utils/inv/src/index')
 
 const {createBillForPrinter} = require('../../utils/print/thermalPrinter')

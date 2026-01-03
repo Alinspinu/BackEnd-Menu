@@ -17,7 +17,8 @@ const {buildEFacturaHeaderXML} = require('./buildXml')
 const {createOrderInvoice} = require('./create-order-invoice')
 const {downloadZipFile, downloadZipFileCheck} = require('./download-zip')
 const {uploadInvoice, checkInvoiceStatus, chageValues} = require('./upload')
-const {unloadIngs, createProductSaleReport, uploadIngs} = require('../../../utils/inventary')
+const {createProductSaleReport} = require('../../../utils/inventary')
+const {unloadIngs, uploadIngs} = require('../../../utils/inv/src/index')
 
     
 
