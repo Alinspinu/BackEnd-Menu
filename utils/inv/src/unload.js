@@ -5,7 +5,8 @@ const { getIngredient, saveIngredient, getMilkIngredient } = require("./db");
 const { subtractFromEntries, getOldestEntry } = require("./entries");
 const { resolveGestiune, getGestiuneIndex, findProductionGest } = require("./gestiune");
 const { processIngredientProduction } = require("./production");
-const { uploadIngs } = require("./upload");
+const service = require('./service')
+// const { uploadIngs } = require("./upload");
 
 /**
  * UNLOAD INGREDIENTS
@@ -140,7 +141,8 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
 
         if (lapte) {
           const ingTo = { qty: ing.qty, ing: lapte._id };
-          await uploadIngs([ingTo], qtyProdus, gestiuneOverride);
+          // await uploadIngs([ingTo], qtyProdus, gestiuneOverride);
+          await service.uploadIngs([ingTo], qtyProdus, gestiuneOverride);
         }
       }
     }
@@ -149,4 +151,6 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
   }
 }
 
-module.exports ={unloadIngs}
+service.unloadIngs = unloadIngs
+
+module.exports = {unloadIngs}

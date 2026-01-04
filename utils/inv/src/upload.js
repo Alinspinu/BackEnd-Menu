@@ -4,7 +4,8 @@ const { round, isVeggieMilk } = require("./utils");
 const { getIngredient, saveIngredient, getMilkIngredient } = require("./db");
 const { addToEntries, getOldestEntry } = require("./entries");
 const { resolveGestiune, getGestiuneIndex } = require("./gestiune");
-const { unloadIngs } = require("./unload");
+const service = require('./service')
+// const { unloadIngs } = require("./unload");
 
 /**
  * UPLOAD INGREDIENTS (increase stock)
@@ -37,6 +38,7 @@ async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
         }));
 
         await uploadIngs(subings, qtyProdus, gestiuneOverride);
+        continue
       }
 
       // ---------------------------------------
@@ -104,7 +106,8 @@ async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
 
         if (lapte) {
           const ingTo = { qty: ing.qty, ing: lapte._id}
-          await unloadIngs([ingTo], qtyProdus, gestiuneOverride, false);
+          await service.unloadIngs([ingTo], qtyProdus, gestiuneOverride, false);
+          // await unloadIngs([ingTo], qtyProdus, gestiuneOverride, false);
         }
       }
     }
@@ -112,5 +115,7 @@ async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
     logger.error("Error uploading ingredients:", err);
   }
 }
+
+service.uploadIngs = uploadIngs
 
 module.exports = {uploadIngs};
