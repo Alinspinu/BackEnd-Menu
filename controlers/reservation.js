@@ -352,16 +352,27 @@ module.exports.createReservationShedule = async (req, res) => {
           const hourIds = [];
   
           // 4️⃣ CREATE HOURS
-          for (let hour = 0; hour < 24; hour++) {
-  
-            const start = new Date(yearNumber, month, day, hour, 0);
-            const end = new Date(yearNumber, month, day, hour + 1, 0);
-  
+          for (let slot = 0; slot < 48; slot++) {
+
+            const hour = Math.floor(slot / 2);
+            const minute = slot % 2 === 0 ? 0 : 30;
+          
+            const start = new Date(yearNumber, month, day, hour, minute);
+            const end = new Date(yearNumber, month, day, hour, minute + 30);
+          
+            const format = (h, m) =>
+              `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+          
+            const label = `${format(start.getHours(), start.getMinutes())} - ${format(
+              end.getHours(),
+              end.getMinutes()
+            )}`;
+          
             const hourDoc = await ResHour.create({
               salePoint: point,
               locatie: loc,
               shedule: schedule._id,
-              label: `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`,
+              label,
               availableTables: 0,
               bookedTables: 0,
               people: 0,
@@ -371,7 +382,7 @@ module.exports.createReservationShedule = async (req, res) => {
               end,
               reservations: []
             });
-  
+          
             hourIds.push(hourDoc._id);
           }
   
