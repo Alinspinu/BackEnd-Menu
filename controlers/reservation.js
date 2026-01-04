@@ -213,8 +213,6 @@ module.exports.getReservationSheduleById = async (req, res) => {
 
 module.exports.updateSheduleHours = async (req, res) => {
     const {hours, sheduleId} = req.body
-    console.log(hours)
-    console.log(sheduleId)
     try{
         const updates = []
         for(let h of hours){
@@ -236,7 +234,7 @@ module.exports.updateSheduleHours = async (req, res) => {
             shedule: newShedule,
             message: 'Programul a fost actualizat'
           });
-        })
+        // })
         .catch(error => {
           console.error(error);
           res.status(500).json(error);
@@ -248,11 +246,13 @@ module.exports.updateSheduleHours = async (req, res) => {
     }
 } 
 
+
+
 module.exports.updateReservationSheduleSettings = (req, res) => {
     const { shedule, day } = req.body;
   
     // collect all update promises
-    const updates = [];
+    // const updates = [];
   
     shedule.year.months.forEach(m => {
       m.days.forEach(d => {
@@ -352,16 +352,51 @@ module.exports.createReservationShedule = async (req, res) => {
           const hourIds = [];
   
           // 4️⃣ CREATE HOURS
-          for (let hour = 0; hour < 24; hour++) {
+          // for (let hour = 0; hour < 24; hour++) {
   
-            const start = new Date(yearNumber, month, day, hour, 0);
-            const end = new Date(yearNumber, month, day, hour + 1, 0);
+          //   const start = new Date(yearNumber, month, day, hour, 0);
+          //   const end = new Date(yearNumber, month, day, hour + 1, 0);
   
+          //   const hourDoc = await ResHour.create({
+          //     salePoint: point,
+          //     locatie: loc,
+          //     shedule: schedule._id,
+          //     label: `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`,
+          //     availableTables: 0,
+          //     bookedTables: 0,
+          //     people: 0,
+          //     full: false,
+          //     visible: true,
+          //     start,
+          //     end,
+          //     reservations: []
+          //   });
+  
+          //   hourIds.push(hourDoc._id);
+          // }
+
+          // 4️⃣ CREATE 30-MINUTE SLOTS
+          for (let slot = 0; slot < 48; slot++) {
+
+            const hour = Math.floor(slot / 2);
+            const minute = slot % 2 === 0 ? 0 : 30;
+
+            const start = new Date(yearNumber, month, day, hour, minute);
+            const end = new Date(yearNumber, month, day, hour, minute + 30);
+
+            const format = (h, m) =>
+              `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+
+            const label = `${format(start.getHours(), start.getMinutes())} - ${format(
+              end.getHours(),
+              end.getMinutes()
+            )}`;
+
             const hourDoc = await ResHour.create({
               salePoint: point,
               locatie: loc,
               shedule: schedule._id,
-              label: `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`,
+              label,
               availableTables: 0,
               bookedTables: 0,
               people: 0,
@@ -371,7 +406,7 @@ module.exports.createReservationShedule = async (req, res) => {
               end,
               reservations: []
             });
-  
+
             hourIds.push(hourDoc._id);
           }
   
@@ -402,86 +437,7 @@ module.exports.createReservationShedule = async (req, res) => {
 
 
 
-// module.exports.createReservationShedule = async (req, res) => {
-//     const {point, loc, year} = req.body
-//     try{
-//         const yearData = generateYearData(year);
 
-//         const schedule = new ReservationSchedule({
-//           salePoint: point,
-//           locatie: loc,
-//           year: yearData
-//         });
-      
-//         const savedShedule =  await schedule.save();
-
-//         res.status(200).json({shedule: savedShedule, message: `Calendarul de rezervări pentru anul ${year} a fost creat!`})
-//     } catch(error){
-//         console.log(error)
-//         res.status(500).json(error)
-//     }
-// }
-
-
-//   function generateYearData(yearNumber = 2025) {
-//     const yearDate = new Date(yearNumber, 0, 1);
-  
-//     const months = [];
-  
-//     for (let month = 0; month < 12; month++) {
-//       const monthDate = new Date(yearNumber, month, 1);
-//       const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
-  
-//       const days = [];
-  
-//       for (let day = 1; day <= daysInMonth; day++) {
-  
-//         // Create 24 hourly slots
-//         const hours = [];
-//         for (let hour = 0; hour < 24; hour++) {
-//           const start = new Date(yearNumber, month, day, hour, 0);
-//           const end = new Date(yearNumber, month, day, hour + 1, 0);
-  
-//           const label =
-//             `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`;
-  
-//           hours.push({
-//             label,
-//             avalableTables: 0,
-//             bookedTables: 0,
-//             people: 0,
-//             start,
-//             end,
-//             full: false,
-//             visible: true,
-//             reservations: []
-//           });
-//         }
-  
-//         days.push({
-//           dayOfTheMonth: day,
-//           date: new Date(yearNumber, month, day),
-//           bookedTables: 0,
-//           people: 0,
-//           hours
-//         });
-//       }
-  
-//       months.push({
-//         date: monthDate,
-//         bookedTables: 0,
-//         people: 0,
-//         days
-//       });
-//     }
-  
-//     return {
-//       date: yearDate,
-//       bookedTables: 0,
-//       people: 0,
-//       months
-//     };
-//   }
 
 
   module.exports.encriptURLObject = async (req, res) => {
@@ -610,12 +566,11 @@ module.exports.addReservation = async(req, res)  => {
         const savedReservation = await newReservation.save()
         const ress = await Reservation.findById(savedReservation._id).populate({path: 'locatie'}).populate({path: 'salePoint'})
         console.log(ress.client.email)
+        socket.emit('reservation', JSON.stringify(savedReservation))
+        res.status(200).json(savedReservation)
         if(ress.client.email){
           await sendReservationEmail(ress)
         }
- 
-        socket.emit('reservation', JSON.stringify(savedReservation))
-        res.status(200).json(savedReservation)
     } catch(error){
         console.log(error)
         res.status(200).json(error)
@@ -646,6 +601,7 @@ module.exports.updateReservation = async(req, res) => {
             if(oldkids > 1) kids = oldkids / 2
             let oldppl = reservation.guests
             if(oldppl > 5 && oldppl < 9) ppl = 8
+
             const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true})
             await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: - (oldppl + oldkids)}})
             await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: ppl + newkids}})
