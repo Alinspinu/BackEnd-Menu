@@ -44,7 +44,7 @@ function calcRecipeTotal(ings) {
 // Multiply sub-ingredient quantities for technical products
 function multiplyIngredientQuantities(ings, factor) {
   return ings.map(obj => ({
-    ...obj,
+    ...obj.toObject(),
     qty: round(obj.qty * factor)
   }));
 }
