@@ -9,7 +9,7 @@ async function getIngredient(id) {
       .populate({
         path: "ings.ing",
         select: "price tva"
-      })
+      }).lean()
   } catch (err) {
     logger.error("Error fetching ingredient:", id, err);
     throw err;
@@ -19,8 +19,22 @@ async function getIngredient(id) {
 // Save ingredient safely
 async function saveIngredient(ingredientInv) {
   try {
-    await ingredientInv.save();
-    return ingredientInv;
+
+    await IngInv.updateOne(
+      { _id: ingredientInv._id },
+      {
+        $set: {
+          qty: ingredientInv.qty,
+          uploadLog: ingredientInv.uploadLog,
+          invGestiune: ingredientInv.invGestiune,
+          price: ingredientInv.price,
+          tvaPrice: ingredientInv.tvaPrice,
+          transportPrice: ingredientInv.transportPrice
+        }
+      }
+    )
+    // await ingredientInv.save();
+    // return ingredientInv;
   } catch (err) {
     logger.error("Error saving ingredient:", ingredientInv.name, err);
     throw err;
