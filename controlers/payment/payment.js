@@ -97,9 +97,6 @@ module.exports.getTokenForPos = async (req, res, next) => {
             grant_type: "client_credentials",
           });
         const response = await axios.post(url, data, { headers });
-        console.log('token', response.data)
-
-
         token = response.data.access_token;
 
         if(abort === 'abort'){
@@ -110,7 +107,6 @@ module.exports.getTokenForPos = async (req, res, next) => {
                     Authorization: `Bearer ${response.data.access_token}`,
                 }
             });
-            console.log('transaction', response2.data)
             res.status(200).json(response2.data);
         } else {
             const total = Number(amount) * 100;
@@ -130,7 +126,6 @@ module.exports.getTokenForPos = async (req, res, next) => {
                     Authorization: `Bearer ${response.data.access_token}`,
                 }
             });
-            console.log('transaction', response2.data)
             res.status(200).json(response2.data);
         }
     } catch (error) {
