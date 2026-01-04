@@ -295,110 +295,110 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
 
 
 
-// module.exports.createReservationShedule = async (req, res) => {
-//     const { point, loc, year } = req.body;
+module.exports.createReservationShedule = async (req, res) => {
+    const { point, loc, year } = req.body;
   
-//     try {
-//       // 1️⃣ Create main schedule
-//       const schedule = await ReservationSchedule.create({
-//         salePoint: point,
-//         locatie: loc,
-//         year: {
-//           date: new Date(year, 0, 1),
-//           bookedTables: 0,
-//           people: 0,
-//           months: []
-//         }
-//       });
+    try {
+      // 1️⃣ Create main schedule
+      const schedule = await ReservationSchedule.create({
+        salePoint: point,
+        locatie: loc,
+        year: {
+          date: new Date(year, 0, 1),
+          bookedTables: 0,
+          people: 0,
+          months: []
+        }
+      });
   
-//       const yearNumber = parseInt(year);
+      const yearNumber = parseInt(year);
   
-//       // 2️⃣ CREATE MONTHS
-//       const monthIds = [];
+      // 2️⃣ CREATE MONTHS
+      const monthIds = [];
   
-//       for (let month = 0; month < 12; month++) {
+      for (let month = 0; month < 12; month++) {
   
-//         const monthDoc = await ResMonth.create({
-//           salePoint: point,
-//           locatie: loc,
-//           shedule: schedule._id,
-//           date: new Date(yearNumber, month, 1),
-//           bookedTables: 0,
-//           people: 0,
-//           days: []
-//         });
+        const monthDoc = await ResMonth.create({
+          salePoint: point,
+          locatie: loc,
+          shedule: schedule._id,
+          date: new Date(yearNumber, month, 1),
+          bookedTables: 0,
+          people: 0,
+          days: []
+        });
   
-//         monthIds.push(monthDoc._id);
+        monthIds.push(monthDoc._id);
   
-//         const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
-//         const dayIds = [];
+        const daysInMonth = new Date(yearNumber, month + 1, 0).getDate();
+        const dayIds = [];
   
-//         // 3️⃣ CREATE DAYS
-//         for (let day = 1; day <= daysInMonth; day++) {
+        // 3️⃣ CREATE DAYS
+        for (let day = 1; day <= daysInMonth; day++) {
   
-//           const dayDoc = await ResDays.create({
-//             salePoint: point,
-//             locatie: loc,
-//             shedule: schedule._id,
-//             label: day,
-//             date: new Date(yearNumber, month, day),
-//             bookedTables: 0,
-//             people: 0,
-//             hours: []
-//           });
+          const dayDoc = await ResDays.create({
+            salePoint: point,
+            locatie: loc,
+            shedule: schedule._id,
+            label: day,
+            date: new Date(yearNumber, month, day),
+            bookedTables: 0,
+            people: 0,
+            hours: []
+          });
   
-//           dayIds.push(dayDoc._id);
+          dayIds.push(dayDoc._id);
   
-//           const hourIds = [];
+          const hourIds = [];
   
-//           // 4️⃣ CREATE HOURS
-//           for (let hour = 0; hour < 24; hour++) {
+          // 4️⃣ CREATE HOURS
+          for (let hour = 0; hour < 24; hour++) {
   
-//             const start = new Date(yearNumber, month, day, hour, 0);
-//             const end = new Date(yearNumber, month, day, hour + 1, 0);
+            const start = new Date(yearNumber, month, day, hour, 0);
+            const end = new Date(yearNumber, month, day, hour + 1, 0);
   
-//             const hourDoc = await ResHour.create({
-//               salePoint: point,
-//               locatie: loc,
-//               shedule: schedule._id,
-//               label: `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`,
-//               availableTables: 0,
-//               bookedTables: 0,
-//               people: 0,
-//               full: false,
-//               visible: true,
-//               start,
-//               end,
-//               reservations: []
-//             });
+            const hourDoc = await ResHour.create({
+              salePoint: point,
+              locatie: loc,
+              shedule: schedule._id,
+              label: `${String(hour).padStart(2, "0")}:00 - ${String(hour + 1).padStart(2, "0")}:00`,
+              availableTables: 0,
+              bookedTables: 0,
+              people: 0,
+              full: false,
+              visible: true,
+              start,
+              end,
+              reservations: []
+            });
   
-//             hourIds.push(hourDoc._id);
-//           }
+            hourIds.push(hourDoc._id);
+          }
   
-//           // attach hour IDs to day
-//           dayDoc.hours = hourIds;
-//           await dayDoc.save();
-//         }
+          // attach hour IDs to day
+          dayDoc.hours = hourIds;
+          await dayDoc.save();
+        }
   
-//         // attach day IDs to month
-//         monthDoc.days = dayIds;
-//         await monthDoc.save();
-//       }
+        // attach day IDs to month
+        monthDoc.days = dayIds;
+        await monthDoc.save();
+      }
   
-//       // 5️⃣ attach month IDs to schedule
-//       schedule.year.months = monthIds;
-//       const savedSchedule = await schedule.save();
+      // 5️⃣ attach month IDs to schedule
+      schedule.year.months = monthIds;
+      const savedSchedule = await schedule.save();
   
-//       return res.status(200).json({
-//         shedule: savedSchedule,
-//         message: `Calendarul de rezervări pentru anul ${year} a fost creat!`
-//       });
+      return res.status(200).json({
+        shedule: savedSchedule,
+        message: `Calendarul de rezervări pentru anul ${year} a fost creat!`
+      });
   
-//     } catch (error) {
-//       console.error(error);
-//       return res.status(500).json({ message: "Server error", error });
-//     }
-//   };
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Server error", error });
+    }
+  };
 
 
 
