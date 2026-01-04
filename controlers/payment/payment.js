@@ -392,7 +392,7 @@ module.exports.printBill = async (req, res, next) => {
         //     }
         // }
 
-        const savedBill = await Order.findOneAndUpdate({_id: bill._id}, update, {new: true})
+        const savedBill = await Order.findOneAndUpdate({_id: bill._id}, update, {new: true}).lean()
         console.log(savedBill.paymentDate)
 
         

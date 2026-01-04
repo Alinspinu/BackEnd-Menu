@@ -10,7 +10,6 @@ async function getIngredient(id) {
         path: "ings.ing",
         select: "price tva"
       })
-      .exec();
   } catch (err) {
     logger.error("Error fetching ingredient:", id, err);
     throw err;
