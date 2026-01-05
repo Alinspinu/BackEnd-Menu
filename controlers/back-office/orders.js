@@ -62,7 +62,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         if(download && download.bool){
             const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
             let buffer
@@ -129,8 +129,8 @@ async function modyfyOrdersProducts(orders) {
       const updatedProducts = o.products.map(p => {
         if (
           p?.gestiune &&
-          p?.productId?.gestiune &&
-          p.gestiune._id.toString() !== p.productId.gestiune.toString()
+          p?.productId?.departament &&
+          p.departament._id.toString() !== p.productId.departament.toString()
         ) {
           console.log('Produs pe comanda cu gestiune diferita:', p.name);
   
@@ -138,8 +138,7 @@ async function modyfyOrdersProducts(orders) {
   
           return {
             ...p,
-            gestiune: p.productId.gestiune,
-            ings: p.productId.ings
+            departament: p.productId.departament,
           };
         }
   
