@@ -303,7 +303,7 @@ async function sendEmailSmtp(reservation){
     })
 
     const mailOptions = {
-        from: reservation.locatie.gmail.email,
+        from: 'office@flowmanager.ro',
         to: reservation.client.email,
         subject: reservation.status === 'canceled' ? 'Rezervare respinsă' : 'Rezervare acceptată',
         html: renderedTemplate
