@@ -51,8 +51,9 @@ module.exports.getOrder = async (req, res, next) => {
 
         const orders = await Order.find({locatie: loc, paymentDate: {$gte: startTime, $lte: endTime}, status: 'done', salePoint: point, invoice: false})
                         .populate({path: 'masaRest', select: 'name index'})
-                        .populate({path : 'products.gestiune', select: 'name'})
-                        .populate({path : 'products.departament', select: 'name'})
+                        .populate({path: 'products.gestiune', select: 'name'})
+                        .populate({path: 'products.departament', select: 'name'})
+                        .populate({path: 'products.productId'})
                         .lean()
                         // .populate({path: 'products.productId', select: 'name ings subProducts', populate: {path: 'subProducts', select: 'name ings'}}).lean()
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
@@ -61,7 +62,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         if(download && download.bool){
             const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
             let buffer
@@ -118,32 +119,82 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
-async function modyfyOrdersProducts(orders){
 
-    let ordersToSave = []
-
-    for(let o of orders){
-
-      const diference =( new Date(o.updatedAt).getTime() - new Date(o.paymentDate).getTime() ) / 1000 / 60 / 60
-      if(diference >12 && o.total !== 0 ){
-
-        console.log('order index:', o.index);
-        console.log('order payment:', o.total);
-        console.log('payment method:', o.paymentMethod);
-        console.log('data creare:', formatedDateToShow(o.paymentDate));
-        console.log('ultimul update:', formatedDateToShow(o.updatedAt));
-        console.log('-------------------------');
+async function modyfyOrdersProducts(orders) {
+    const updatePromises = [];
+  
+    for (const o of orders) {
+      let modified = false;
+  
+      const updatedProducts = o.products.map(p => {
+        if (
+          p?.gestiune &&
+          p?.productId?.gestiune &&
+          p.gestiune.toString() !== p.productId.gestiune.toString()
+        ) {
+          console.log('Produs pe comanda cu gestiune diferita:', p.name);
+  
+          modified = true;
+  
+          return {
+            ...p,
+            gestiune: p.productId.gestiune,
+            ings: p.productId.ings
+          };
+        }
+  
+        return p;
+      });
+  
+      if (modified) {
+        updatePromises.push(
+          Order.updateOne(
+            { _id: o._id },
+            { $set: { products: updatedProducts } }
+          )
+        );
       }
     }
+  
+    await Promise.all(updatePromises);
+  
+    console.log(
+      'Orders verified:', orders.length,
+      '→ Updated:', updatePromises.length
+    );
+  }
+  
 
-    // const promises = ordersToSave.map(o => 
-    //      Order.findByIdAndUpdate(o._id, o, {new: true})
-    // )
+// async function modyfyOrdersProducts(orders){
 
-    // await Promise.all(promises)
-    // console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
+//     let ordersToSave = []
 
-}
+
+
+//     for(let o of orders){
+//         let pushOrder = false
+//         for(p of o.products){
+//             if(p.gestiune._id.toString() !== p.productId.gestiune.toString()){
+//                 console.log('Produs Pe comanda cu gestiune diferita ', p.name)
+//                 p.gestiune._id = p.productId.gestiune
+//                 p.ings = p.productId.ings
+//                 pushOrder = true
+//             }
+//         }
+//         if(pushOrder){
+//             ordersToSave.push(o)
+//         }
+
+//     }
+
+//     const promises = ordersToSave.map(o => 
+//          Order.findByIdAndUpdate(o._id, o, {new: true})
+//     )
+
+//     await Promise.all(promises)
+//     console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
+
+// }
 
 
 
