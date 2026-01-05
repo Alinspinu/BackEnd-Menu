@@ -70,48 +70,48 @@ body{
             <tbody>
               <tr>
                 <td>Nume</td>
-                <td><%=reservation.client.name%></td>
+                <td class="font-weight-bold"><%=reservation.client.name%></td>
               </tr>
               <tr>
                 <td>Ziua</td>
-                <td><%=reservation.dateString%></td>
+                <td class="font-weight-bold"><%=reservation.dateString%></td>
               </tr>
               <tr>
                 <td>Sosire</td>
-                <td><%=reservation.start%></td>
+                <td class="font-weight-bold"><%=reservation.start%></td>
               </tr>
               <tr>
                 <td>Plecare</td>
-                <td><%=reservation.end%></td>
+                <td class="font-weight-bold"><%=reservation.end%></td>
               </tr>
               <tr>
                 <td>Ședere</td>
-                <td><%=reservation.period%> ore</td>
+                <td class="font-weight-bold"><%=reservation.period%> ore</td>
               </tr>
               <% if(reservation.kids > 0) {%>
               <tr>
                 <td>Adulți</td>
-                <td><%=reservation.guests%></td>
+                <td class="font-weight-bold"><%=reservation.guests%></td>
               </tr>
               <tr>
                 <td>Copii</td>
-                <td><%=reservation.kids%></td>
+                <td class="font-weight-bold"><%=reservation.kids%></td>
               </tr>
               <%} else {%>
                 <tr>
                   <td>Invitați</td>
-                  <td><%=reservation.guests%></td>
+                  <td class="font-weight-bold"><%=reservation.guests%></td>
                 </tr>
                 <%}%>
                 <tr>
                   <td>Detalii</td>
-                  <td><%=reservation.details || '-'%></td>
+                  <td class="font-weight-bold"><%=reservation.details || '-'%></td>
                 </tr>
             </tbody>
           </table>
         </div>
         <%}%>
-       <p>Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
+       <p class="mb-4">Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
 
     </div>
 
