@@ -55,49 +55,49 @@ body{
     <div class="text-center img-container col-lg-6 offset-lg-3">
        <img src="<%=logoUrl%>" alt="logo-image" class="img mb-4">
        <h1 class="mb-4">salut, <%=reservation.client.name%>!</h1>
-       <h2 class="mb-4">Rezervarea numarul <strong>#<%=reservation.index%></strong> a fost acceptată.</h2>
+       <h2 class="mb-4">Rezervarea cu numarul <strong><%=reservation.index%></strong> a fost acceptată.</h2>
         <h5 class="mb-4">Detaliile rezervării</h5>
         <% if(reservation.locatie.name === 'Flowmanager') {%>
         <div class="table-responsive">
           <table class="table table-bordered">
             <tbody>
               <tr>
-                <td>Nume</td>
-                <td><%=reservation.client.name%>/td>
+                <td class="p-1">Nume</td>
+                <td><%=reservation.client.name%><td>
               </tr>
               <tr>
-                <td>Ziua</td>
+                <td class="p-1">Ziua</td>
                 <td><%=reservation.dateString%></td>
               </tr>
               <tr>
-                <td>Ora de sosire</td>
+                <td class="p-1">Ora de sosire</td>
                 <td><%=reservation.start%></td>
               </tr>
               <tr>
-                <td>Ora de plecare</td>
+                <td class="p-1">Ora de plecare</td>
                 <td><%=reservation.end%></td>
               </tr>
               <tr>
-                <td>Perioada de ședere</td>
+                <td class="p-1">Perioada de ședere</td>
                 <td><%=reservation.period%></td>
               </tr>
               <% if(reservation.kids > 0) {%>
               <tr>
-                <td>Invitați Adulți</td>
+                <td class="p-1">Invitați Adulți</td>
                 <td><%=reservation.guests%></td>
               </tr>
               <tr>
-                <td>Invitați Copii</td>
+                <td class="p-1">Invitați Copii</td>
                 <td><%=reservation.kids%></td>
               </tr>
               <%} else {%>
                 <tr>
-                  <td>Invitați</td>
+                  <td class="p-1">Invitați</td>
                   <td><%=reservation.guests%></td>
                 </tr>
                 <%}%>
                 <tr>
-                  <td>Detalii</td>
+                  <td class="p-1">Detalii</td>
                   <td><%=reservation.details || '-'%></td>
                 </tr>
             </tbody>
