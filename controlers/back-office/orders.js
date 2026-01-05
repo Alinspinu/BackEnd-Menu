@@ -130,7 +130,7 @@ async function modyfyOrdersProducts(orders) {
         if (
           p?.gestiune &&
           p?.productId?.gestiune &&
-          p.gestiune.toString() !== p.productId.gestiune.toString()
+          p.gestiune._id.toString() !== p.productId.gestiune.toString()
         ) {
           console.log('Produs pe comanda cu gestiune diferita:', p.name);
   
