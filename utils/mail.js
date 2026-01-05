@@ -289,7 +289,7 @@ async function sendReservationEmail(reservation) {
 
 
 async function sendEmailSmtp(reservation){
-    let url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
+    let url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8'); 
     const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url});
 
