@@ -46,7 +46,7 @@ body{
     }
     .tbody td{
       padding: 2px;
-      font-size: 12px;
+      font-size: 10px;
     }
     .tbody{
       padding: 2px;
@@ -65,8 +65,8 @@ body{
        <h2 class="mb-4">Rezervarea cu numarul <strong><%=reservation.index%></strong> a fost acceptată.</h2>
         <h5 class="mb-4">Detaliile rezervării</h5>
         <% if(reservation.locatie.name === 'Flowmanager') {%>
-        <div class="table-responsive">
-          <table class="p-1 table table-bordered custom">
+        <div class="table-responsive p-0">
+          <table class="p-0 table table-bordered custom">
             <tbody>
               <tr>
                 <td>Nume</td>
@@ -77,24 +77,24 @@ body{
                 <td><%=reservation.dateString%></td>
               </tr>
               <tr>
-                <td>Ora de sosire</td>
+                <td>Sosire</td>
                 <td><%=reservation.start%></td>
               </tr>
               <tr>
-                <td>Ora de plecare</td>
+                <td>Plecare</td>
                 <td><%=reservation.end%></td>
               </tr>
               <tr>
-                <td>Perioada de ședere</td>
+                <td>Ședere</td>
                 <td><%=reservation.period%> ore</td>
               </tr>
               <% if(reservation.kids > 0) {%>
               <tr>
-                <td>Invitați Adulți</td>
+                <td>Adulți</td>
                 <td><%=reservation.guests%></td>
               </tr>
               <tr>
-                <td>Invitați Copii</td>
+                <td>Copii</td>
                 <td><%=reservation.kids%></td>
               </tr>
               <%} else {%>
