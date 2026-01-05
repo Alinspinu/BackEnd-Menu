@@ -304,7 +304,7 @@ async function sendEmailSmtp(reservation){
     })
 
     const mailOptions = {
-        from: 'office@flowmanager.ro',
+        from: '"FlowManager" <office@flowmanager.ro>',
         to: reservation.client.email,
         subject: reservation.status === 'canceled' ? 'Rezervare respinsă' : 'Rezervare acceptată',
         html: renderedTemplate
