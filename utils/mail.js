@@ -287,6 +287,7 @@ async function sendReservationEmail(reservation) {
           }
 };
 
+
 async function sendEmailSmtp(reservation){
     let url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8'); 
