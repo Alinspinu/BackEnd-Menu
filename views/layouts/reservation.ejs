@@ -59,7 +59,25 @@ body{
        <%if(reservation.status === 'canceled') {%>
        <p>Din păcate, pe <%=reservation.dateString%> avem deja toate locurile ocupate la <%=reservation.salePoint.name%>. <br>Te rugăm să alegi un alt interval sau o altă zi pentru rezervare. <br> Îți mulțumim pentru înțelegere!</p>
        <%} else {%>
-       <p>Rezervarea ta pentru <%=reservation.dateString%> a fost acceptată. <br> Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
+
+        <h3>Rezervarea numarul #<%=reservation.index%> a fost acceptată</h3>
+        <% if(reservation.locatie.name === 'Flowmanager') {%>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td>Telefon</td>
+                <td>0712345678</td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td>test@email.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <%}%>
+       <p>Rezervarea numarul #<%=reservation.index%> a fost acceptată. <br> Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
        <%}%>
     </div>
 

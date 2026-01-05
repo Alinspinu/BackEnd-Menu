@@ -9,7 +9,7 @@ const Locatie = require('../models/office/locatie')
 const Event = require('../models/office/event')
 
 
-const {sendReservationEmail, sendAdminMessage} = require('../utils/mail')
+const {sendReservationEmail, sendAdminMessage, sendEmailSmtp} = require('../utils/mail')
 
 
 
@@ -545,7 +545,11 @@ module.exports.addReservation = async(req, res)  => {
         socket.emit('reservation', JSON.stringify(savedReservation))
         res.status(200).json(savedReservation)
         if(ress.client.email){
-          await sendReservationEmail(ress)
+          if(ress.locatie._id.toString() === '694573cb726b6494457326fa'){
+            await sendEmailSmtp(ress)
+          } else {
+            await sendReservationEmail(ress)
+          }
         }
     } catch(error){
         console.log(error)

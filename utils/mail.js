@@ -287,6 +287,39 @@ async function sendReservationEmail(reservation) {
           }
 };
 
+async function sendEmailSmtp(reservation){
+    let url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
+    const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8'); 
+    const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url});
+
+    const transporter = nodemailer.createTransport({
+        host: "mail.flowmanager.ro",
+        port: 465,
+        secure: true, // SSL
+        auth: {
+          user: "office@flowmanager.ro",
+          pass: "MuhbGwP.V,K0bt%d"
+        }
+    })
+
+    const mailOptions = {
+        from: reservation.locatie.gmail.email,
+        to: reservation.client.email,
+        subject: reservation.status === 'canceled' ? 'Rezervare respinsă' : 'Rezervare acceptată',
+        html: renderedTemplate
+    };
+
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+        return { message: 'Email sent' };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { message: 'Error sending email' };
+    };
+
+}
+
 async function sendAdminMessage(data, adminEmail = 'office@truefinecoffee.ro') {
     const templateSource = fs.readFileSync('views/layouts/contact.ejs', 'utf-8');      
         const renderedTemplate = ejs.render(templateSource,{data: data});
@@ -335,6 +368,7 @@ module.exports = {
     sendEmployeeEmail,
     sendReservationEmail,
     sendAdminMessage,
+    sendEmailSmtp
   };
 
 
