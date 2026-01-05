@@ -16,11 +16,11 @@ body{
         padding: 8px !important;
        
     }
-    h1, h2, .code{
+    h1, h2, .code, h5{
       font-family: NoirProMed, Courier !important;
     }
 
-    p, .address{
+    p, .address, tbody, h5{
       font-family: NoirProRegular, Courier !important;
     }
     .address{
@@ -55,30 +55,57 @@ body{
     <div class="text-center img-container col-lg-6 offset-lg-3">
        <img src="<%=logoUrl%>" alt="logo-image" class="img mb-4">
        <h1 class="mb-4">salut, <%=reservation.client.name%>!</h1>
-       <h2 class="mb-4">Ne bucurăm că vrei să vii la <%=reservation.locatie.name%>.</h2>
-       <%if(reservation.status === 'canceled') {%>
-       <p>Din păcate, pe <%=reservation.dateString%> avem deja toate locurile ocupate la <%=reservation.salePoint.name%>. <br>Te rugăm să alegi un alt interval sau o altă zi pentru rezervare. <br> Îți mulțumim pentru înțelegere!</p>
-       <%} else {%>
-
-        <h3>Rezervarea numarul #<%=reservation.index%> a fost acceptată</h3>
+       <h2 class="mb-4">Rezervarea numarul <strong>#<%=reservation.index%></strong> a fost acceptată.</h2>
+        <h5 class="mb-4">Detaliile rezervării</h5>
         <% if(reservation.locatie.name === 'Flowmanager') {%>
         <div class="table-responsive">
           <table class="table table-bordered">
             <tbody>
               <tr>
-                <td>Telefon</td>
-                <td>0712345678</td>
+                <td>Nume</td>
+                <td><%=reservation.client.name%>/td>
               </tr>
               <tr>
-                <td>Email</td>
-                <td>test@email.com</td>
+                <td>Ziua</td>
+                <td><%=reservation.dateString%></td>
               </tr>
+              <tr>
+                <td>Ora de sosire</td>
+                <td><%=reservation.start%></td>
+              </tr>
+              <tr>
+                <td>Ora de plecare</td>
+                <td><%=reservation.end%></td>
+              </tr>
+              <tr>
+                <td>Perioada de ședere</td>
+                <td><%=reservation.period%></td>
+              </tr>
+              <% if(reservation.kids > 0) {%>
+              <tr>
+                <td>Invitați Adulți</td>
+                <td><%=reservation.guests%></td>
+              </tr>
+              <tr>
+                <td>Invitați Copii</td>
+                <td><%=reservation.kids%></td>
+              </tr>
+              <%} else {%>
+                <tr>
+                  <td>Invitați</td>
+                  <td><%=reservation.guests%></td>
+                </tr>
+                <%}%>
+                <tr>
+                  <td>Detalii</td>
+                  <td><%=reservation.details || '-'%></td>
+                </tr>
             </tbody>
           </table>
         </div>
         <%}%>
-       <p>Rezervarea numarul #<%=reservation.index%> a fost acceptată. <br> Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
-       <%}%>
+       <p>Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
+
     </div>
 
 </div>

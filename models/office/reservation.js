@@ -4,7 +4,6 @@ const Counter = require('../utils/counter')
 
 
 const reservationSchema = new Schema({
-
     locatie: {
         type: Schema.Types.ObjectId,
         ref: 'Locatie',
@@ -37,6 +36,9 @@ const reservationSchema = new Schema({
     dateString: String,
     guests: Number,
     kids: Number,
+    start: String,
+    end: String,
+    period: String,
     position: String,
     details: String,
     notified: {
