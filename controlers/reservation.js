@@ -298,7 +298,7 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
     const {loc, point, year} = req.query
     try{
        const y = new Date(year)
-        const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, temp: true, 'year.date': y})
+        const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, temp: false, 'year.date': y})
                     .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
 
         const sh = await updateReservationShedule(shedule)
