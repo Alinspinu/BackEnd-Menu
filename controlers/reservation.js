@@ -294,6 +294,23 @@ module.exports.updateReservationSheduleSettings = (req, res) => {
   };
 
 
+  module.exports.getTempReservationShedule = async (req, res) => {
+    const {loc, point, year} = req.query
+    try{
+       const y = new Date(year)
+        const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, temp: true, 'year.date': y})
+                    .populate({path: 'year.months', populate: {path: 'days', populate: {path: 'hours', populate: {path: 'reservations'}}}}).lean()
+
+        const sh = await updateReservationShedule(shedule)
+        res.status(200).json(sh)
+
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
 
 module.exports.createReservationShedule = async (req, res) => {
     const { point, loc, year } = req.body;
@@ -303,6 +320,7 @@ module.exports.createReservationShedule = async (req, res) => {
       const schedule = await ReservationSchedule.create({
         salePoint: point,
         locatie: loc,
+        temp: true,
         year: {
           date: new Date(year, 0, 1),
           bookedTables: 0,

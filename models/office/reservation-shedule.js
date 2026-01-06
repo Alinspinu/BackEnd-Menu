@@ -13,6 +13,10 @@ const reservationSheduleSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Locatie'
     },
+    temp: {
+        type: Boolean,
+        default: false
+    },
     year: {
         date: {
             type: Date,
@@ -116,6 +120,62 @@ const daySchema = new Schema(            {
 
 
 const hourSchema = new Schema({
+    salePoint:{
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+    },
+
+    locatie: {
+        type: Schema.Types.ObjectId,
+        ref: 'Locatie'
+    },
+    label: String,
+    avalableTables: {
+        type: Number,
+        default: 0
+    },
+    seats: {
+        type: Number,
+        default: 0
+    },
+    bookedTables:  {
+        type: Number,
+        default: 0
+    },
+    people:  {
+        type: Number,
+        default: 0
+    },
+    full: {
+       type: Boolean,
+       default: false   
+    },
+    start: {
+        type: Date,
+        required: true
+    }, 
+    end: {
+        type: Date,
+        requred: true
+    },
+    visible: {
+        type: Boolean
+    },
+
+    shedule: {
+        type: Schema.Types.ObjectId,
+        ref: 'ReservationSchedule'
+    },
+
+    reservations: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Reservation' 
+        }
+    ]
+})
+
+const quarterSchema = new Schema({
     salePoint:{
         type: Schema.Types.ObjectId,
         ref: 'SalePoint'
