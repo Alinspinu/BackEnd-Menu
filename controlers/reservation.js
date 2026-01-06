@@ -136,6 +136,7 @@ module.exports.deleteEvent = async (req, res) => {
 
 module.exports.getReservationShedule = async (req, res) => {
     const {loc, point, year} = req.query
+    console.log('hittt')
     try{
        const y = new Date(year)
         const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, temp: true, 'year.date': y})
@@ -144,6 +145,7 @@ module.exports.getReservationShedule = async (req, res) => {
         
 
         const sh = await updateReservationShedule(shedule)
+        console.log(sh.temp)
         res.status(200).json(sh)
 
     } catch(error){
