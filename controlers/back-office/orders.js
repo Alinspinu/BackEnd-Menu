@@ -53,7 +53,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path: 'products.gestiune', select: 'name'})
                         .populate({path: 'products.departament', select: 'name'})
-                        .populate({path: 'products.productId'})
+                        .populate({path: 'products.productId', select: '-saleLog'})
                         .lean()
                         // .populate({path: 'products.productId', select: 'name ings subProducts', populate: {path: 'subProducts', select: 'name ings'}}).lean()
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
