@@ -39,7 +39,7 @@
             a fost
             <strong>
               <%= reservation.status === 'canceled'
-                ? 'respinsă'
+                ? 'anulată'
                 : 'acceptată'
               %>
             </strong>.
@@ -107,7 +107,17 @@
               <td><strong><%= reservation.details || '-' %></strong></td>
             </tr>
           </table>
+          <%if(reservation.status === 'canceled'){%>
+            <p style="font-size:14px; margin-top:16px;">
+              <strong><%= reservation.salePoint.name %></strong>,<br/>
+              <em><%= reservation.salePoint.address %></em>
+            </p>
 
+            <p style="margin-top:12px;">
+              Vă așteptăm cu drag!
+            </p>
+
+          <%}else { %>
           <!-- LOCATION -->
           <p style="font-size:14px; margin-top:16px;">
             Ne găsești la
@@ -124,7 +134,7 @@
           <p style="margin-top:12px;">
             Vă așteptăm cu drag!
           </p>
-
+          <%}%>
         </td>
       </tr>
     </table>
