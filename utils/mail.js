@@ -270,7 +270,7 @@ async function sendReservationEmail(reservation) {
                   });
               
                   const mailOptions = {
-                      from: reservation.locatie.gmail.email,
+                      from: `"${reservation.salePoint.name}" <${reservation.locatie.gmail.email}>`,
                       to: reservation.client.email,
                       subject: reservation.status === 'canceled' ? 'Rezervare respinsă' : 'Rezervare acceptată',
                       html: renderedTemplate

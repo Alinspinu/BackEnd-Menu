@@ -1,123 +1,125 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-  <style>
-    @font-face {
-  font-family: 'NoirProRegular'; 
-  src: url('../../public/font/NoirPro-Regular.woff') format('truetype'); 
-}
-    @font-face {
-  font-family: 'NoirProMed'; 
-  src: url('../../public/font/NoirPro-Medium.woff') format('truetype'); 
-}
+  <body style="
+    margin:0;
+    padding:12px;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color:#ffffff;
+    color:#000000;
+  ">
 
-body{
-        padding: 8px !important;
-       
-    }
-    h1, h2, .code, h5{
-      font-family: NoirProMed, Courier !important;
-    }
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
 
-    .cont{
-      padding-bottom: 24px;
-    }
+          <!-- LOGO -->
+          <img
+            src="<%= logoUrl %>"
+            alt="logo"
+            width="120"
+            style="display:block; margin:16px auto;"
+          />
 
-    p, .address, tbody, h5{
-      font-family: NoirProRegular, Courier !important;
-    }
-    .address{
-      font-style: italic;
-    }
-    h1{
-        text-transform: uppercase;
-    }
-    h2{
-      font-size: 22px !important;
-    }
-    .img{
-        height: 120px;
-        width: 120px;
-    }
-    .img-container{
-        margin-top: 12px;
-    }
-    .code{
-      font-size: 46px;
-      font-weight: bold;
-      letter-spacing: 6px;
-    }
-    .tbody td{
-      padding: 2px;
-      font-size: 10px;
-    }
-    .tbody{
-      padding: 2px;
-    }
-  </style>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Info Reservation</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
-  <div class="container-fluid vh-100 cont">
-    <div class="text-center img-container col-lg-6 offset-lg-3">
-       <img src="<%=logoUrl%>" alt="logo-image" class="img mb-4">
-       <h1 class="mb-4">salut, <%=reservation.client.name%>!</h1>
-       <h2 class="mb-4">Rezervarea cu numarul <strong><%=reservation.index%></strong> a fost acceptată.</h2>
-        <h5 class="mb-4">Detaliile rezervării</h5>
-        <div class="table-responsive p-0">
-          <table class="p-0 table table-bordered custom">
-            <tbody>
-              <tr>
-                <td>Nume</td>
-                <td class="font-weight-bold"><%=reservation.client.name%></td>
-              </tr>
-              <tr>
-                <td>Ziua</td>
-                <td class="font-weight-bold"><%=reservation.dateString%></td>
-              </tr>
-              <tr>
-                <td>Sosire</td>
-                <td class="font-weight-bold"><%=reservation.start%></td>
-              </tr>
-              <tr>
-                <td>Plecare</td>
-                <td class="font-weight-bold"><%=reservation.end%></td>
-              </tr>
-              <tr>
-                <td>Ședere</td>
-                <td class="font-weight-bold"><%=reservation.period%> ore</td>
-              </tr>
-              <% if(reservation.kids > 0) {%>
+          <!-- GREETING -->
+          <h1 style="
+            margin:16px 0;
+            font-size:22px;
+            text-transform:uppercase;
+          ">
+            Salut, <%= reservation.client.name %>!
+          </h1>
+
+          <!-- STATUS -->
+          <p style="font-size:16px; margin-bottom:20px;">
+            Rezervarea cu numărul
+            <strong><%= reservation.index %></strong>
+            a fost
+            <strong>
+              <%= reservation.status === 'canceled'
+                ? 'respinsă'
+                : 'acceptată'
+              %>
+            </strong>.
+          </p>
+
+          <!-- DETAILS TITLE -->
+          <h3 style="margin:16px 0;">Detaliile rezervării</h3>
+
+          <!-- DETAILS TABLE -->
+          <table
+            width="100%"
+            cellpadding="6"
+            cellspacing="0"
+            border="1"
+            style="
+              border-collapse:collapse;
+              max-width:520px;
+              margin:0 auto 20px auto;
+              font-size:14px;
+            "
+          >
+            <tr>
+              <td>Nume</td>
+              <td><strong><%= reservation.client.name %></strong></td>
+            </tr>
+
+            <tr>
+              <td>Ziua</td>
+              <td><strong><%= reservation.dateString %></strong></td>
+            </tr>
+
+            <tr>
+              <td>Sosire</td>
+              <td><strong><%= reservation.start %></strong></td>
+            </tr>
+
+            <tr>
+              <td>Plecare</td>
+              <td><strong><%= reservation.end %></strong></td>
+            </tr>
+
+            <tr>
+              <td>Ședere</td>
+              <td><strong><%= reservation.period %> ore</strong></td>
+            </tr>
+
+            <% if (reservation.kids > 0) { %>
               <tr>
                 <td>Adulți</td>
-                <td class="font-weight-bold"><%=reservation.guests%></td>
+                <td><strong><%= reservation.guests %></strong></td>
               </tr>
               <tr>
                 <td>Copii</td>
-                <td class="font-weight-bold"><%=reservation.kids%></td>
+                <td><strong><%= reservation.kids %></strong></td>
               </tr>
-              <%} else {%>
-                <tr>
-                  <td>Invitați</td>
-                  <td class="font-weight-bold"><%=reservation.guests%></td>
-                </tr>
-                <%}%>
-                <tr>
-                  <td>Detalii</td>
-                  <td class="font-weight-bold"><%=reservation.details || '-'%></td>
-                </tr>
-            </tbody>
+            <% } else { %>
+              <tr>
+                <td>Invitați</td>
+                <td><strong><%= reservation.guests %></strong></td>
+              </tr>
+            <% } %>
+
+            <tr>
+              <td>Detalii</td>
+              <td><strong><%= reservation.details || '-' %></strong></td>
+            </tr>
           </table>
-        </div>
-       <p class="mb-4">Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
 
-    </div>
+          <!-- LOCATION -->
+          <p style="font-size:14px; margin-top:16px;">
+            Ne găsești la
+            <strong><%= reservation.salePoint.name %></strong>,<br/>
+            <em><%= reservation.salePoint.address %></em>
+          </p>
 
-</div>
+          <p style="margin-top:12px;">
+            Te așteptăm cu drag!
+          </p>
 
-</body>
+        </td>
+      </tr>
+    </table>
+
+  </body>
 </html>
