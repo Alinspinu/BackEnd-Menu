@@ -283,7 +283,7 @@ module.exports.registerNewEmployee = async (req, res) => {
 
 module.exports.registerIn = async (req, res) => {
     try{
-        const {name, password, confirmPassword, telephone, ciSerial, ciNumber, releaseId, address, releaseDate, userId, cnp, adminEmail} = req.body
+        const {name, password, confirmPassword, telephone, ciSerial, ciNumber, releaseId, address, releaseDate, userId, cnp, adminEmail='alin@flowmanager.ro'} = req.body
         if(userId && userId.length){
             if (password === confirmPassword) {
                 const hashedPassword = hashPassword(password);
@@ -541,7 +541,7 @@ module.exports.resetPassword = async (req, res, next) => {
                     discount: user.discount,
                 };
                 const data = {name: user.name, action: 'și-a resetat parola'}
-                await sendInfoAdminEmail(data, adminEmail, user.locatie.gmail)
+                await sendInfoAdminEmail(data, adminEmail, user.locatie.name)
                 res.status(200).json(userData);
             } else {
                 res.status(404).json({ message: 'User not found' });
