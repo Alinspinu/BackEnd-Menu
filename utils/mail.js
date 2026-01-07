@@ -295,18 +295,18 @@ async function sendEmailSmtp(reservation, cancel, user){
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8'); 
     const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url, cancelUrl: cancel});
 
-    // const transporter = nodemailer.createTransport({
-    //     host: host || "mail.flowmanager.ro",
-    //     port: 465,
-    //     secure: true, // SSL
-    //     auth: {
-    //       user: user || "office@flowmanager.ro",
-    //       pass: pass || "MuhbGwP.V,K0bt%d"
-    //     }
-    // })
+    const transporter = nodemailer.createTransport({
+        host: host || "mail.flowmanager.ro",
+        port: 465,
+        secure: true, // SSL
+        auth: {
+          user: user || "office@flowmanager.ro",
+          pass: pass || "MuhbGwP.V,K0bt%d"
+        }
+    })
 
     const mailOptions = {
-        from: `"${reservation.salePoint.name}" <${"no-reply@flowmanager.ro"}>`,
+        from: `"${reservation.salePoint.name}" <${"office@flowmanager.ro"}>`,
         to: reservation.client.email,
         subject: reservation.status === 'canceled' ? 'Rezervare Anulată' : 'Rezervare acceptată',
         html: renderedTemplate
