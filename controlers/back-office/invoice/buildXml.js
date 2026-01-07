@@ -45,11 +45,11 @@ function buildEFacturaHeaderXML(invoice, date) {
     suppAddr.ele('cbc:CountrySubentity').txt(invoice.supplier.address.coutrySubentity).up(); 
     suppAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.supplier.address.country).up().up();
 
-    if(isVatPayer){
+    // if(isVatPayer){
       supplierParty.ele('cac:PartyTaxScheme')
         .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
         .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
-    }
+    // }
 
 
     supplierParty.ele('cac:PartyLegalEntity')
@@ -74,11 +74,11 @@ function buildEFacturaHeaderXML(invoice, date) {
     custAddr.ele('cbc:CountrySubentity').txt(invoice.client.address.coutrySubentity).up(); // example
     custAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.client.address.country).up().up();
 
-    if(isVatPayerClient){
+    // if(isVatPayerClient){
       customerParty.ele('cac:PartyTaxScheme')
         .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
         .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
-    }
+    // }
 
     customerParty.ele('cac:PartyLegalEntity')
       .ele('cbc:RegistrationName').txt(invoice.client.name).up()
