@@ -287,7 +287,7 @@ async function sendReservationEmail(reservation) {
 };
 
 
-async function sendEmailSmtp(reservation, cancel){
+async function sendEmailSmtp(reservation, cancel, user){
     let url = ''
     if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
     if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
@@ -306,7 +306,7 @@ async function sendEmailSmtp(reservation, cancel){
     // })
 
     const mailOptions = {
-        from: `"${reservation.salePoint.name}" <${user || "office@flowmanager.ro"}>`,
+        from: `"${reservation.salePoint.name}" <${"no-reply@flowmanager.ro"}>`,
         to: reservation.client.email,
         subject: reservation.status === 'canceled' ? 'Rezervare Anulată' : 'Rezervare acceptată',
         html: renderedTemplate
