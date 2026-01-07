@@ -81,54 +81,50 @@ async  function sendBillToCustomer(buffer, email, gmail, text, pdf) {
 
 
 async function sendVerificationEmail(newUser) {
- 
+    let url = ''
+    if(newUser.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
+    if(newUser.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+    if(newUser.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
     const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
     const templateData = {
         otp: newUser.otp,
         name: newUser.name,
         locatie: newUser.locatie.name,
-        logoUrl: newUser.locatie.name === 'T ZERO' ? 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg' : 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+        logoUrl: url
     };
-    const renderedTemplate = ejs.render(templateSource, {data: templateData});
+    const renderedTemplate = ejs.render(templateSource, {data: templateData});    
+        const mailOptions = {
+            from: `"${newUser.locatie.name}" <${"no-reply@flowmanager.ro"}>`,
+            to: newUser.email, 
+            subject: 'Verificare Email',
+            html: renderedTemplate
+        };
     
-    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
-
-      if(appKey !== "0") {
-          const transporter = nodemailer.createTransport({
-              service: 'Gmail',
-              auth: {
-                  user: newUser.locatie.gmail.email,
-                  pass: appKey
-              }
-          });
-          const mailOptions = {
-              from: newUser.locatie.gmail.email,
-              to: newUser.email, 
-              subject: 'Verificare Email',
-              html: renderedTemplate
-          };
-      
-          try {
-              const info = await transporter.sendMail(mailOptions);
-              console.log('Email sent:', info.response);
-              return { message: 'Email sent' };
-          } catch (error) {
-              console.error('Error sending email:', error);
-              return { message: 'Error sending email' };
-          };
-      }
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent:', info.response);
+            return { message: 'Email sent' };
+        } catch (error) {
+            console.error('Error sending email:', error);
+            return { message: 'Error sending email' };
+        };
 
 };
 
 
 async function sendEmployeeEmail(newUser, baseUrlRedirect, message = 'Continuă înregistrarea') {
+    let url = ''
+    if(newUser.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
+    if(newUser.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+    if(newUser.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
     const token = jwt.sign({ userId: newUser._id, name: newUser.name, telephone: newUser.telephone, email: newUser.email, locatie: newUser.locatie}, process.env.AUTH_SECRET, { expiresIn: '24h' });
     const templateSource = fs.readFileSync( 'views/layouts/employee.ejs', 'utf-8');
     const templateData = {
         link: `${baseUrlRedirect}register?token=${token}`,
         name: newUser.name,
         message: message,
-        locatie: newUser.locatie.name
+        locatie: newUser.locatie.name,
+        logoUrl: url
     };
     const renderedTemplate = ejs.render(templateSource, templateData);    
         const mailOptions = {
