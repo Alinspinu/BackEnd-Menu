@@ -68,7 +68,6 @@ body{
        <h1 class="mb-4">salut, <%=reservation.client.name%>!</h1>
        <h2 class="mb-4">Rezervarea cu numarul <strong><%=reservation.index%></strong> a fost acceptată.</h2>
         <h5 class="mb-4">Detaliile rezervării</h5>
-        <% if(reservation.locatie.name === 'Flowmanager') {%>
         <div class="table-responsive p-0">
           <table class="p-0 table table-bordered custom">
             <tbody>
@@ -114,7 +113,6 @@ body{
             </tbody>
           </table>
         </div>
-        <%}%>
        <p class="mb-4">Ne găsești la <%=reservation.salePoint.name%>, pe <%=reservation.salePoint.address%>. <br> Te așteptăm cu drag!</p>
 
     </div>
