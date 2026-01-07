@@ -809,7 +809,7 @@ module.exports.createContact = async (req, res) => {
     try{
         const newMessage = new ContactMessage(message)
         const savedMessage = await newMessage.save()
-        const locatie = await Locatie.findById(message.locatie).populate({path: 'salePoint'})
+        const locatie = await Locatie.findById(message.locatie)
         const data = { mess: savedMessage, locatie: locatie}
         await sendAdminMessage(data, adminEmail)
         res.status(200).json({message: 'All good'})

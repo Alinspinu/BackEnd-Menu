@@ -318,7 +318,7 @@ async function sendAdminMessage(data, adminEmail = 'office@truefinecoffee.ro') {
     const renderedTemplate = ejs.render(templateSource,{data: data});
               
         const mailOptions = {
-            from: `"${data.locatie.salePoint[0].name}" <${"no-reply@flowmanager.ro"}>`,
+            from: `"${data.locatie.bussinessName}" <${"no-reply@flowmanager.ro"}>`,
             to: adminEmail,
             subject: 'Mesaj nou CONTACT',
             html: renderedTemplate
