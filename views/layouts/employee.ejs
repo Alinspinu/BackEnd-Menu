@@ -1,75 +1,83 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-  <style>
-    @font-face {
-  font-family: 'NoirProRegular'; 
-  src: url('../../public/font/NoirPro-Regular.woff') format('truetype'); 
-}
-
-    body {
-      font-family: NoirProRegular, sans-serif;
-    }
-    .container {
-      height: 100vh;
-      padding: 20px;
-      width: 100%;
-      background-color: #fff9f1;
-      position: absolute;
-    }
-    h1{
-        font-size: 1.3rem;
-    }
-    p{
-        margin: 5px 0 5px 0;
-        font-size: 0.9rem;
-    }
-
-    a{
-     text-decoration: none;
-     color: white;
-    }
-
-    .mesaj p {
-      font-size: 0.75rem;
-    }
-    .mesaj {
-      margin: 20px 0 10px 0;
-    }
-
-    .text{
-      font-size: 0.75rem;
-    }
-    
-    img{
-      height: 60vh;
-      margin-left: 70%;
-    }
-
-    .button{
-        width: fit-content;
-        margin: 10px 0 15px 0;
-        background-color: #8e522a;
-        padding: 8px 12px 8px 12px;
-    }
-    .button:active{
-        background-color: rgba(125, 92, 68, 0.6);
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Finalizează înregistrarea</title>
 </head>
-<body>
-  <div class="container">
-    <h1>Salut <%=name%>! Bine ai venit la <%=locatie%>, ne bucurăm că ne ești alături!</h1>
-    <div class="mesaj">
-      <p><%=message%></p>
-      <p>*Dacă nu știi despre ce este vorba, ignoră acest e-mail.</p>
+
+<body style="
+  margin:0;
+  padding:12px;
+  background:#ffffff;
+  font-family:Courier, monospace;
+">
+
+  <!-- CONTAINER -->
+  <div style="
+    max-width:600px;
+    margin:0 auto;
+    text-align:center;
+  ">
+
+    <!-- TITLU -->
+    <h1 style="
+      font-size:22px;
+      text-transform:uppercase;
+      margin:24px 0 16px;
+      font-weight:bold;
+    ">
+      Salut <%= name %>!
+    </h1>
+
+    <h2 style="
+      font-size:18px;
+      margin:0 0 24px;
+      font-weight:bold;
+    ">
+      Bine ai venit la <%= locatie %>, ne bucurăm că ne ești alături!
+    </h2>
+
+    <!-- MESAJ -->
+    <p style="
+      font-size:14px;
+      margin:0 0 16px;
+      line-height:1.5;
+    ">
+      <%= message %>
+    </p>
+
+    <p style="
+      font-size:12px;
+      margin:0 0 24px;
+      font-style:italic;
+    ">
+      * Dacă nu știi despre ce este vorba, ignoră acest e-mail.
+    </p>
+
+    <p style="
+      font-size:14px;
+      margin:0 0 24px;
+    ">
+      Te rugăm să-ți finalizezi înregistrarea apăsând butonul de mai jos.
+    </p>
+
+    <!-- BUTON -->
+    <div style="margin-bottom:32px;">
+      <a href="<%= link %>"
+         style="
+           display:inline-block;
+           background:#8e522a;
+           color:#ffffff;
+           padding:12px 20px;
+           text-decoration:none;
+           font-size:14px;
+           font-weight:bold;
+           border-radius:2px;
+         ">
+        FINALIZEAZĂ ÎNREGISTRAREA
+      </a>
     </div>
-    <p>Te rugăm să-ți finalizezi înregistrarea apăsând butonul de mai jos.</p>
-    <div class="button">
-        <a href="<%=link%>" style="color: #fff;">FINALIZEAZĂ ÎNREGISTRAREA</a>
-    </div>
-      <!-- <img src="https://res.cloudinary.com/dhetxk68c/image/upload/v1693141028/layout_qcd3qn.png" alt="logo"> -->
+
   </div>
 
 </body>
