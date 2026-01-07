@@ -278,7 +278,7 @@ async function sendReservationEmail(reservation) {
               
                   try {
                       const info = await transporter.sendMail(mailOptions);
-                      console.log('Email sent:', info.response);
+                      console.log('Email sent:', info);
                       return { message: 'Email sent' };
                   } catch (error) {
                       console.error('Error sending email:', error);
