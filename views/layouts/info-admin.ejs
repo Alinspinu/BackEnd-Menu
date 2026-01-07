@@ -1,41 +1,52 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-  <style>
-    body {
-      padding-right: 8px;
-    }
-    .container {
-      border-radius: 12px;
-      height: fit-content;
-      width: fit-content;
-      padding: 14px;
-      margin-right: 8px;
-      background-color: #c1ebfe;
-    }
-    h1{
-
-        font-size: 1.2rem;
-    }
-    .text{
-
-      font-size: 16px;
-      letter-spacing: 1.4;
-      line-height: 1.2;
-      padding-top: 12px;
-      margin-top: 14px;
-      margin-bottom: 14px;
-    }
-
-
-  </style>
+  <meta charset="UTF-8">
+  <title>Mesaj</title>
 </head>
-<body>
-  <div class="container">
-    <h1><%=data.name%></h1>
-    <span class="text"><%-data.prompt%></span>
-    <span class="text"><%-data.action%></span>
+
+<body style="
+  margin:0;
+  padding:12px;
+  background:#ffffff;
+  font-family:Courier, monospace;
+">
+
+  <!-- CONTAINER -->
+  <div style="
+    max-width:600px;
+    margin:0 auto;
+    text-align:center;
+  ">
+
+    <!-- TITLU -->
+    <h1 style="
+      font-size:20px;
+      margin:24px 0 16px;
+      font-weight:bold;
+    ">
+      <%= data.name %>
+    </h1>
+
+    <!-- MESAJ -->
+    <div style="
+      font-size:14px;
+      line-height:1.5;
+      margin:0 0 16px;
+    ">
+      <%- data.prompt %>
+    </div>
+
+    <!-- ACTIUNE -->
+    <div style="
+      font-size:14px;
+      line-height:1.5;
+      margin:0 0 24px;
+      font-weight:bold;
+    ">
+      <%- data.action %>
+    </div>
+
   </div>
 
 </body>
