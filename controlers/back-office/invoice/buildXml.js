@@ -4,6 +4,8 @@ const { create } = require('xmlbuilder2');
 
 
 function buildEFacturaHeaderXML(invoice, date) {
+  const isVatPayer = invoice.supplier.vat === 'VAT' ? true : false;
+  const isVatPayerClient = invoice.client.vat === 'VAT' ? true : false;
     const doc = create({ version: '1.0' })
       .ele('Invoice', {
         xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
@@ -42,9 +44,14 @@ function buildEFacturaHeaderXML(invoice, date) {
     suppAddr.ele('cbc:PostalZone').txt(invoice.supplier.address.postalCode).up(); 
     suppAddr.ele('cbc:CountrySubentity').txt(invoice.supplier.address.coutrySubentity).up(); 
     suppAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.supplier.address.country).up().up();
-    supplierParty.ele('cac:PartyTaxScheme')
-      .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
-      .ele('cac:TaxScheme').ele('cbc:ID').txt(invoice.supplier.vat ? 'VAT' : 'NO').up().up().up();
+
+    if(isVatPayer){
+      supplierParty.ele('cac:PartyTaxScheme')
+        .ele('cbc:CompanyID').txt(invoice.supplier.vatNumber).up()
+        .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+    }
+
+
     supplierParty.ele('cac:PartyLegalEntity')
       .ele('cbc:RegistrationName').txt(invoice.supplier.name).up()
       .ele('cbc:CompanyID').txt(invoice.supplier.registration).up().up();
@@ -54,6 +61,9 @@ function buildEFacturaHeaderXML(invoice, date) {
       if (invoice.supplier.contact.email)
         contact.ele('cbc:ElectronicMail').txt(invoice.supplier.contact.email).up();
   
+
+
+
     // Customer block
     const customerParty = doc.ele('cac:AccountingCustomerParty').ele('cac:Party');
     customerParty.ele('cac:PartyName').ele('cbc:Name').txt(invoice.client.name).up().up();
@@ -63,9 +73,13 @@ function buildEFacturaHeaderXML(invoice, date) {
     custAddr.ele('cbc:PostalZone').txt(invoice.client.address.postalCode).up(); // example
     custAddr.ele('cbc:CountrySubentity').txt(invoice.client.address.coutrySubentity).up(); // example
     custAddr.ele('cac:Country').ele('cbc:IdentificationCode').txt(invoice.client.address.country).up().up();
-    customerParty.ele('cac:PartyTaxScheme')
-      .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
-      .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+
+    if(isVatPayerClient){
+      customerParty.ele('cac:PartyTaxScheme')
+        .ele('cbc:CompanyID').txt(invoice.client.vatNumber).up()
+        .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
+    }
+
     customerParty.ele('cac:PartyLegalEntity')
       .ele('cbc:RegistrationName').txt(invoice.client.name).up()
       .ele('cbc:CompanyID').txt(invoice.client.registration).up().up();
@@ -102,7 +116,7 @@ function buildEFacturaHeaderXML(invoice, date) {
     //------------------------------------------------------------------
     const taxTotal = doc.ele('cac:TaxTotal');
     taxTotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId })
-            .txt(round(invoice.vatAmount).toFixed(2));
+            .txt(isVatPayer ? round(invoice.vatAmount).toFixed(2) : '0.00');
   
   
     // const taxTotal = doc.ele('cac:TaxTotal');
@@ -112,10 +126,10 @@ function buildEFacturaHeaderXML(invoice, date) {
       let id =  r.rate === 0 ? 'Z': 'S'
       const subtotal = taxTotal.ele('cac:TaxSubtotal');
       subtotal.ele('cbc:TaxableAmount', { currencyID: invoice.currencyId }).txt(r.taxable).up();
-      subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(r.tax).up();
+      subtotal.ele('cbc:TaxAmount', { currencyID: invoice.currencyId }).txt(isVatPayer ? r.tax : '0.00').up();
       subtotal.ele('cac:TaxCategory')
         .ele('cbc:ID').txt(id).up()
-        .ele('cbc:Percent').txt(r.rate).up()
+        .ele('cbc:Percent').txt(isVatPayer ? r.rate : 0).up()
         .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT').up().up().up();
     })
 
@@ -175,8 +189,8 @@ function buildEFacturaHeaderXML(invoice, date) {
       // ✅ normal taxable products
       } else {
         taxCategory
-          .ele('cbc:ID').txt('S').up()
-          .ele('cbc:Percent').txt(p.vatPrecent).up()
+          .ele('cbc:ID').txt(isVatPayer && p.vatPrecent > 0 ? 'S' : 'Z').up()
+          .ele('cbc:Percent').txt(isVatPayer ? p.vatPrecent : 0).up()
           .ele('cac:TaxScheme').ele('cbc:ID').txt('VAT');
       }
     
