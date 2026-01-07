@@ -175,12 +175,14 @@ async function  updateReservationShedule(shedule){
             if(h.reservations.length){
               let total = 0
               for(let r of h.reservations){
-                total += r.guests
-                if(r.kids === 1){
-                  total += 1
-                } 
-                if(r.kids > 1){
-                  total += r.kids/2
+                if(r.status !== 'canceled'){
+                  total += r.guests
+                  if(r.kids === 1){
+                    total += 1
+                  } 
+                  if(r.kids > 1){
+                    total += r.kids/2
+                  }
                 }
               }
               if(h.people !== total) {
