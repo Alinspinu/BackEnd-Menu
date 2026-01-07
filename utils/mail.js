@@ -40,42 +40,30 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
           };
 };
 
-async  function sendBillToCustomer(buffer, email, gmail, text, pdf) {
-
-    const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);
-
-          let content =  pdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-          let ext = pdf ? '.pdf' : '.xlsx'
-          const transporter = nodemailer.createTransport({
-              service: 'Gmail',
-              auth: {
-                  user: gmail.email,
-                  pass: appKey
-              }
-          });
-          const mailOptions = {
-              from: gmail.email,
-              to: email, 
-              subject: `${text}`,
-              text: `Gasiți ${text.toLowerCase()} dumneavoastră atașat.`,
-              attachments: [
-                {
-                  filename: `${text}${ext}`,
-                  content: buffer,
-                  contentType: content
-                }
-              ]
-             
-          };
-      
-          try {
-              const info = await transporter.sendMail(mailOptions);
-              console.log('Email sent:', info.response);
-              return { message: 'Email sent' };
-          } catch (error) {
-              console.error('Error sending email:', error);
-              return { message: 'Error sending email' };
-          };
+async function sendBillToCustomer(buffer, email, locatie, text, pdf) {
+    let content =  pdf ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    let ext = pdf ? '.pdf' : '.xlsx'
+    const mailOptions = {
+        from: `"${locatie}" <${"no-reply@flowmanager.ro"}>`,
+        to: email, 
+        subject: `${text}`,
+        text: `Gasiți ${text.toLowerCase()} dumneavoastră atașat.`,
+        attachments: [
+        {
+            filename: `${text}${ext}`,
+            content: buffer,
+            contentType: content
+        }
+        ]
+    };
+    try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+        return { message: 'Email sent' };
+    } catch (error) {
+        console.error('Error sending email:', error);
+        return { message: 'Error sending email' };
+    };
 };
 
 
