@@ -4,25 +4,25 @@ console.log(process.env.EMAIL_HOST)
 console.log(process.env.EMAIL_PASS)
 console.log(process.env.EMAIL_USER)
 
-// const transporter = nodemailer.createTransport({
-//   host: process.env.EMAIL_HOST,
-//   port: 465,
-//   secure: true,
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS
-//   }
-// });
+const transporter = nodemailer.createTransport({
+  host: "mail.flowmanager.ro",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "no-reply@flowmanager.ro",
+    pass: process.env.EMAIL_PASS
+  }
+});
 
-    const transporter = nodemailer.createTransport({
-        host: "mail.flowmanager.ro",
-        port: 465,
-        secure: true, // SSL
-        auth: {
-          user: "office@flowmanager.ro",
-          pass: "MuhbGwP.V,K0bt%d"
-        }
-    })
+    // const transporter = nodemailer.createTransport({
+    //     host: "mail.flowmanager.ro",
+    //     port: 465,
+    //     secure: true, // SSL
+    //     auth: {
+    //       user: "office@flowmanager.ro",
+    //       pass: "MuhbGwP.V,K0bt%d"
+    //     }
+    // })
 
 transporter.verify((err) => {
   if (err) {
