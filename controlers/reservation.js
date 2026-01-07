@@ -664,13 +664,19 @@ module.exports.cancelReservation = async(req, res) => {
         if(update){
           let oldppl = update.guests
           let oldkids = update.kids || 0
-          const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true}).populate({path: 'resHour', select: 'shedule'})
+          const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true})
+                      .populate({path: 'resHour', select: 'shedule'})
+                      .populate({path: 'locatie'})
+                      .populate({path: 'salePoint'})
           const sheduleId = updatedReservation.resHour[0].shedule.toString()
           const point = update.salePoint.toString()
           await ResHour.updateMany({reservations: id}, {$inc: {people: - (oldppl + oldkids)}})
           socket.emit('reservationShedule', JSON.stringify({id: sheduleId, point: point}))
           socket.emit('reservation', JSON.stringify(updatedReservation))
           res.status(200).json(updatedReservation)
+          if(updatedReservation.client.email){
+            await sendEmailSmtp(updatedReservation)
+          }
         } else {
           console.log( 'ERROR Missing data')
             res.status(404).json({message: 'ERROR Missing data'})
