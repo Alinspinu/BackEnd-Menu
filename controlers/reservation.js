@@ -644,9 +644,16 @@ module.exports.updateReservation = async(req, res) => {
             let oldppl = reservation.guests
             if(oldppl > 5 && oldppl < 9) ppl = 8
 
+            const oldRes = await Reservation.findById(id).select('status')
             const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true})
-            await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: - (oldppl + oldkids)}})
-            await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: ppl + newkids}})
+            if(oldRes.status !== 'canceled' && update.status === 'canceled'){
+              await ResHour.updateMany({reservations: id}, {$inc: {people: - (oldppl + oldkids)}})
+            } else if(oldRes.status === 'canceled' && update.status !== 'canceled') {
+              await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$inc: {people: ppl + newkids}})
+            }else {
+              await ResHour.updateMany({reservations: id}, {$pull: {reservations: id}, $inc: {people: - (oldppl + oldkids)}})
+              await ResHour.updateMany({_id: { $in: hours.map(h => h._id) }}, {$push: {reservations: id}, $inc: {people: ppl + newkids}})
+            }
             socket.emit('reservationShedule', JSON.stringify({id: hours[0].shedule, point: hours[0].salePoint}))
             socket.emit('reservation', JSON.stringify(updatedReservation))
             res.status(200).json(updatedReservation)
