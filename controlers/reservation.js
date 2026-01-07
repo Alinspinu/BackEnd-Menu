@@ -658,6 +658,29 @@ module.exports.updateReservation = async(req, res) => {
     }
 }
 
+module.exports.cancelReservation = async(req, res) => {
+    const {update, id} = req.body
+    try{
+        if(update){
+          let oldppl = update.guests
+          let oldkids = update.kids || 0
+          const updatedReservation = await Reservation.findByIdAndUpdate(id, update, {new: true}).populate({path: 'resHour', select: 'shedule'})
+          const sheduleId = updatedReservation.resHour[0].shedule.toString()
+          const point = update.salePoint.toString()
+          await ResHour.updateMany({reservations: id}, {$inc: {people: - (oldppl + oldkids)}})
+          socket.emit('reservationShedule', JSON.stringify({id: sheduleId, point: point}))
+          socket.emit('reservation', JSON.stringify(updatedReservation))
+          res.status(200).json(updatedReservation)
+        } else {
+          console.log( 'ERROR Missing data')
+            res.status(404).json({message: 'ERROR Missing data'})
+        }
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 
 
 
@@ -688,23 +711,28 @@ module.exports.deleteReservation = async (req, res) => {
 
       console.log('oameni de zcazut ', ppl+kids)
 
-      if(reservation.eventId?.length){
-        updates.push(
-          Event.findByIdAndUpdate(reservation.eventId, {$inc: {people: -(ppl+kids), $pull: {reservations: id}}})
-        )
-      }
-  
-      for (const h of reservation.resHour) {
-        sheduleId = h.shedule;
-  
-        updates.push(
-          ResHour.findByIdAndUpdate(
-            h._id,
-            { $inc: { people: -(ppl + kids) }, $set: { full: false } },
-            { new: false }
+
+      if(reservation.status !== 'canceled'){
+        if(reservation.eventId?.length){
+          updates.push(
+            Event.findByIdAndUpdate(reservation.eventId, {$inc: {people: -(ppl+kids), $pull: {reservations: id}}})
           )
-        );
+        }
       }
+    
+        for (const h of reservation.resHour) {
+          sheduleId = h.shedule;
+          if(reservation.status !== 'canceled'){
+          updates.push(
+            ResHour.findByIdAndUpdate(
+              h._id,
+              { $inc: { people: -(ppl + kids) }, $set: { full: false } },
+              { new: false }
+            )
+          );
+        }
+        }
+   
   
       return Promise.all(updates)
         .then(() => Reservation.findByIdAndDelete(id))

@@ -21,6 +21,8 @@ router.route('/event')
 
 router.route('/event-one').get(authApi, resControlers.getEventById)
 
+router.route('/cancel-from-client').put(resControlers.cancelReservation)
+
 router.route('/id', authApi).get(resControlers.getReservationById)
 router.route('/update', authApi).post(resControlers.modifyReservationStatus)
 
