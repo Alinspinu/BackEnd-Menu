@@ -287,7 +287,7 @@ async function sendReservationEmail(reservation) {
 };
 
 
-async function sendEmailSmtp(reservation, cancel, user){
+async function sendEmailSmtp(reservation, cancel, user, host, pass){
     let url = ''
     if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
     if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
