@@ -180,34 +180,22 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
         logoUrl: url
     };
     const renderedTemplate = ejs.render(templateSource, {data: templateData});
-
-    const appKey = decryptData(newUser.locatie.gmail.app.key,newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
-
-      if(appKey !== "0") {
-              const transporter = nodemailer.createTransport({
-                  service: 'Gmail',
-                  auth: {
-                      user: newUser.locatie.gmail.email,
-                      pass: appKey
-                  }
-              });
-          
-              const mailOptions = {
-                  from: newUser.locatie.gmail.email,
-                  to: newUser.email,
-                  subject: 'Resetare Parola',
-                  html: renderedTemplate
-              };
-          
-              try {
-                  const info = await transporter.sendMail(mailOptions);
-                  console.log('Email sent:', info.response);
-                  return { message: 'Email sent' };
-              } catch (error) {
-                  console.error('Error sending email:', error);
-                  return { message: 'Error sending email' };
-              };
-      }
+    
+        const mailOptions = {
+            from: `"${newUser.locatie.name}" <${"no-reply@flowmanager.ro"}>`,
+            to: newUser.email,
+            subject: 'Resetare Parola',
+            html: renderedTemplate
+        };
+    
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent:', info.response);
+            return { message: 'Email sent' };
+        } catch (error) {
+            console.error('Error sending email:', error);
+            return { message: 'Error sending email' };
+        };
 
 };
 

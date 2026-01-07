@@ -662,10 +662,12 @@ module.exports.setOrderTime = async (req, res, next) => {
                     .populate({path: 'salePoint'});
 
             const adminEmail = order.locatie.name === 'T ZERO' ? 'office@t-zero.ro' : `office@truefinecoffee.ro`
+            let emails = [adminEmail]
 
         if (order.clientInfo.name !== 'Neînregistrat'){
-            sendMailToCustomer(order, [adminEmail, `${order.clientInfo.email}`])
+            emails.push(order.clientInfo.email)
         }
+        await sendMailToCustomer(order, emails)
         socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime, masa: order.masa, toGo: order.toGo}))
         console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
         res.status(200).json({ message: 'time set', order: order });
