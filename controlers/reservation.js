@@ -588,7 +588,8 @@ function createCancelUrl(resId){
   const dataToEncript = JSON.stringify({id: resId})
   const encriptedData = encryptObject(dataToEncript)
 
-  const url = `https://front.flowmanager.ro/cancel?data=${encriptedData}`
+  const url = `http://localhost:8101/cancel?data=${encriptedData}`
+  // const url = `https://front.flowmanager.ro/cancel?data=${encriptedData}`
   return url
 }
 
