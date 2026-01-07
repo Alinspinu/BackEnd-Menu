@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: "no-reply@flowmanager.ro",
-    pass: process.env.EMAIL_PASS
+    pass: "X,@OinUqjH}sS#}3"
   }
 });
 
