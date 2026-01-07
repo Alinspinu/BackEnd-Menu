@@ -249,13 +249,13 @@ async function sendMailToCustomer(data, emails) {
           }
 };
 
-async function sendReservationEmail(reservation) {
+async function sendReservationEmail(reservation, cancel) {
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8');      
             let url = ''
             if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
             if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
             if(reservation.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
-        const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url});
+            const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url, cancelUrl: cancel});
     
         const appKey = decryptData(reservation.locatie.gmail.app.key, reservation.locatie.gmail.app.secret, reservation.locatie.gmail.app.iv);
     
