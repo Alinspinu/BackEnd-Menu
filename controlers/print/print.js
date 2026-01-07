@@ -1411,7 +1411,7 @@ module.exports.factura = async (req, res, next) => {
   doc.on("end", async () => {
     const pdfBuffer = Buffer.concat(buffers);
     if (mode) {
-      const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.name, 'Factura');
+      const message = await sendBillToCustomer(pdfBuffer, email, invoice.locatie.name, 'Factura', true);
       res.status(200).json(message);
     } else {
       res.type("application/pdf");
