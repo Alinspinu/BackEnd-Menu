@@ -14,6 +14,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+
     // const transporter = nodemailer.createTransport({
     //     host: "mail.flowmanager.ro",
     //     port: 465,
