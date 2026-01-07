@@ -130,35 +130,22 @@ async function sendEmployeeEmail(newUser, baseUrlRedirect, message = 'Continuă 
         message: message,
         locatie: newUser.locatie.name
     };
-    const renderedTemplate = ejs.render(templateSource, templateData);
+    const renderedTemplate = ejs.render(templateSource, templateData);    
+        const mailOptions = {
+            from:`"${newUser.locatie.name}" <${"no-reply@flowmanager.ro"}>`,
+            to: newUser.email, 
+            subject: 'Bine ai venit',
+            html: renderedTemplate
+        };
     
-    const appKey = decryptData(newUser.locatie.gmail.app.key, newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
-    // const appKey = decryptData('277f0c1e6a48ff27ab8bdcbeaa3917e914d4d1d5988c814127aa3ca3c9d94556', 'DX7droMGD0FBGUdLCY2yl/WdmA9qaqDy1AogHom2Bqg=', '694c0d5cb9f5190b1a768025b232c94b');
-
-      if(appKey !== "0") {
-          const transporter = nodemailer.createTransport({
-              service: 'Gmail',
-              auth: {
-                  user: newUser.locatie.gmail.email,
-                  pass: appKey
-              }
-          });
-          const mailOptions = {
-              from: newUser.locatie.gmail.email,
-              to: newUser.email, // Assuming the email is present in the newUser object
-              subject: 'Bine ai venit',
-              html: renderedTemplate
-          };
-      
-          try {
-              const info = await transporter.sendMail(mailOptions);
-              console.log('Email sent:', info.response);
-              return { message: 'Email sent' };
-          } catch (error) {
-              console.error('Error sending email:', error);
-              return { message: 'Error sending email' };
-          };
-      }
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent:', info.response);
+            return { message: 'Email sent' };
+        } catch (error) {
+            console.error('Error sending email:', error);
+            return { message: 'Error sending email' };
+        };
 
 };
 
