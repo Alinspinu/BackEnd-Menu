@@ -10,7 +10,7 @@ const redirectUri = 'https://flowmanager.ro/anaf-callback'
 
 
 const { comparePasswords, hashPassword, round, generateSoketId } = require('../../utils/functions')
-const { sendCompleteRegistrationEmail, sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, sendEmployeeEmail } = require('../../utils/mail')
+const { sendInfoAdminEmail,   sendResetEmail, sendVerificationEmail, sendEmployeeEmail } = require('../../utils/mail')
 const {generateMood, horoscop} = require('../../controlers/gbt')
 
 
@@ -299,9 +299,8 @@ module.exports.registerIn = async (req, res) => {
                 user.employee.releaseDate = releaseDate || new Date();
                 user.employee.address = address || '';
                 await user.save()
-                // const data = {name: user.name, action: 's-a inregistrat'}
-                // const gmail = {app: user.locatie.gmail.app, email: user.locatie.gmail.email} 
-                // await sendInfoAdminEmail(data, adminEmail ,gmail)
+                const data = {name:`${user.name}`, action: 's-a inregistrat', promt: '*angajat'}
+                await sendInfoAdminEmail(data, adminEmail , user.locatie.name)
                 res.status(200).json({ message: "Datele au fost actualizate.", user: user});
             } else {
                 return res.status(401).json({ message: "Passwords don't match!" });
@@ -517,7 +516,7 @@ module.exports.sendEmailResetPassword = async (req, res, next) => {
 }
 
 module.exports.resetPassword = async (req, res, next) => {
-    const { token, password, confirmPassword, adminEmail = 'alin@truefinecoffee.ro'} = req.body;
+    const { token, password, confirmPassword, adminEmail = 'alin@flowmanager.ro'} = req.body;
     try {
         const userId = jwt.decode(token, process.env.AUTH_SECRET);
         if (userId) {

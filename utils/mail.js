@@ -6,7 +6,7 @@ const transporter = require("./transporter");
 const {decryptData} =require ('./functions')
 
 
-async  function sendInfoAdminEmail(data, adminEmail, gmail) {
+async  function sendInfoAdminEmail(data, adminEmail, locatie) {
     const templateSource = fs.readFileSync('views/layouts/info-admin.ejs', 'utf-8');
     const templateData = {
         name: data.name,
@@ -14,30 +14,20 @@ async  function sendInfoAdminEmail(data, adminEmail, gmail) {
         prompt: data.prompt ? data.prompt : ''
     };
     const renderedTemplate = ejs.render(templateSource, {data: templateData});
-    const appKey = decryptData(gmail.app.key, gmail.app.secret, gmail.app.iv);
-
-          const transporter = nodemailer.createTransport({
-              service: 'Gmail',
-              auth: {
-                  user: gmail.email,
-                  pass: appKey
-              }
-          });
-          const mailOptions = {
-              from: gmail.email,
-              to: adminEmail, // Assuming the email is present in the newUser object
-              subject: 'Info',
-              html: renderedTemplate
-          };
-      
-          try {
-              const info = await transporter.sendMail(mailOptions);
-              console.log('Email sent:', info.response);
-              return { message: 'Email sent' };
-          } catch (error) {
-              console.error('Error sending email:', error);
-              return { message: 'Error sending email' };
-          };
+        const mailOptions = {
+            from:  `"${locatie}" <${"no-reply@flowmanager.ro"}>`,
+            to: adminEmail, // Assuming the email is present in the newUser object
+            subject: 'Info Admin',
+            html: renderedTemplate
+        };
+        try {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Email sent:', info.response);
+            return { message: 'Email sent' };
+        } catch (error) {
+            console.error('Error sending email:', error);
+            return { message: 'Error sending email' };
+        };
 };
 
 async function sendBillToCustomer(buffer, email, locatie, text, pdf) {
