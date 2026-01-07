@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const ejs = require('ejs');
 const jwt = require('jsonwebtoken');
+const transporter = require("./transporter");
 const {decryptData} =require ('./functions')
 
 
@@ -122,7 +123,6 @@ async function sendVerificationEmail(newUser) {
 
 async function sendEmployeeEmail(newUser, baseUrlRedirect, message = 'Continuă înregistrarea') {
     const token = jwt.sign({ userId: newUser._id, name: newUser.name, telephone: newUser.telephone, email: newUser.email, locatie: newUser.locatie}, process.env.AUTH_SECRET, { expiresIn: '24h' });
-    console.log(newUser.locatie)
     const templateSource = fs.readFileSync( 'views/layouts/employee.ejs', 'utf-8');
     const templateData = {
         link: `${baseUrlRedirect}register?token=${token}`,
@@ -287,7 +287,7 @@ async function sendReservationEmail(reservation) {
 };
 
 
-async function sendEmailSmtp(reservation, cancel, host,  user, pass){
+async function sendEmailSmtp(reservation, cancel){
     let url = ''
     if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
     if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
@@ -295,15 +295,15 @@ async function sendEmailSmtp(reservation, cancel, host,  user, pass){
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8'); 
     const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url, cancelUrl: cancel});
 
-    const transporter = nodemailer.createTransport({
-        host: host || "mail.flowmanager.ro",
-        port: 465,
-        secure: true, // SSL
-        auth: {
-          user: user || "office@flowmanager.ro",
-          pass: pass || "MuhbGwP.V,K0bt%d"
-        }
-    })
+    // const transporter = nodemailer.createTransport({
+    //     host: host || "mail.flowmanager.ro",
+    //     port: 465,
+    //     secure: true, // SSL
+    //     auth: {
+    //       user: user || "office@flowmanager.ro",
+    //       pass: pass || "MuhbGwP.V,K0bt%d"
+    //     }
+    // })
 
     const mailOptions = {
         from: `"${reservation.salePoint.name}" <${user || "office@flowmanager.ro"}>`,
