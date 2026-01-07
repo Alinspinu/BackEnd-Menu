@@ -288,23 +288,26 @@ async function sendReservationEmail(reservation) {
 };
 
 
-async function sendEmailSmtp(reservation){
-    let url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
+async function sendEmailSmtp(reservation, host,  user, pass){
+    let url = ''
+    if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
+    if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
+    if(reservation.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8'); 
     const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url});
 
     const transporter = nodemailer.createTransport({
-        host: "mail.flowmanager.ro",
+        host: host || "mail.flowmanager.ro",
         port: 465,
         secure: true, // SSL
         auth: {
-          user: "office@flowmanager.ro",
-          pass: "MuhbGwP.V,K0bt%d"
+          user: user || "office@flowmanager.ro",
+          pass: pass || "MuhbGwP.V,K0bt%d"
         }
     })
 
     const mailOptions = {
-        from: '"FlowManager" <office@flowmanager.ro>',
+        from: `"${reservation.salePoint.name}" <${user}>`,
         to: reservation.client.email,
         subject: reservation.status === 'canceled' ? 'Rezervare respinsă' : 'Rezervare acceptată',
         html: renderedTemplate
