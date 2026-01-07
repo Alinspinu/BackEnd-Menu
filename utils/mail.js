@@ -219,75 +219,28 @@ async function sendMailToCustomer(data, emails) {
             if(data.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
             if(data.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'  
         const renderedTemplate = ejs.render(templateSource,{data: data, url: url});
-    
-        const appKey = decryptData(data.locatie.gmail.app.key, data.locatie.gmail.app.secret, data.locatie.gmail.app.iv);
-    
-          if(appKey !== "0") {
-                  const transporter = nodemailer.createTransport({
-                      service: 'Gmail',
-                      auth: {
-                          user: data.locatie.gmail.email,
-                          pass: appKey
-                      }
-                  });
               
-                  const mailOptions = {
-                      from: data.locatie.gmail.email,
-                      to: emails,
-                      subject: 'Multumim pentru comandă',
-                      html: renderedTemplate
-                  };
-              
-                  try {
-                      const info = await transporter.sendMail(mailOptions);
-                      console.log('Email sent:', info.response);
-                      return { message: 'Email sent' };
-                  } catch (error) {
-                      console.error('Error sending email:', error);
-                      return { message: 'Error sending email' };
-                  };
-          }
-};
-
-async function sendReservationEmail(reservation, cancel) {
-    const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8');      
-            let url = ''
-            if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
-            if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
-            if(reservation.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
-            const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url, cancelUrl: cancel});
-    
-        const appKey = decryptData(reservation.locatie.gmail.app.key, reservation.locatie.gmail.app.secret, reservation.locatie.gmail.app.iv);
-    
-          if(appKey !== "0") {
-                  const transporter = nodemailer.createTransport({
-                      service: 'Gmail',
-                      auth: {
-                          user: reservation.locatie.gmail.email,
-                          pass: appKey
-                      }
-                  });
-              
-                  const mailOptions = {
-                      from: `"${reservation.salePoint.name}" <${reservation.locatie.gmail.email}>`,
-                      to: reservation.client.email,
-                      subject: reservation.status === 'canceled' ? 'Rezervare respinsă' : 'Rezervare acceptată',
-                      html: renderedTemplate
-                  };
-              
-                  try {
-                      const info = await transporter.sendMail(mailOptions);
-                      console.log('Email sent:', info);
-                      return { message: 'Email sent' };
-                  } catch (error) {
-                      console.error('Error sending email:', error);
-                      return { message: 'Error sending email' };
-                  };
-          }
+            const mailOptions = {
+                from:`"${data.salePoint.name}" <${"no-reply@flowmanager.ro"}>`,
+                to: emails,
+                subject: 'Multumim pentru comandă',
+                html: renderedTemplate
+            };
+        
+            try {
+                const info = await transporter.sendMail(mailOptions);
+                console.log('Email sent:', info.response);
+                return { message: 'Email sent' };
+            } catch (error) {
+                console.error('Error sending email:', error);
+                return { message: 'Error sending email' };
+            };
 };
 
 
-async function sendEmailSmtp(reservation, cancel, user, host, pass){
+
+
+async function sendEmailSmtp(reservation, cancel){
     let url = ''
     if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
     if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
@@ -348,7 +301,6 @@ module.exports = {
     // sendMailToCake,
     sendMailToCustomer,
     sendEmployeeEmail,
-    sendReservationEmail,
     sendAdminMessage,
     sendEmailSmtp
   };

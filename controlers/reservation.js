@@ -9,7 +9,7 @@ const Locatie = require('../models/office/locatie')
 const Event = require('../models/office/event')
 
 
-const {sendReservationEmail, sendAdminMessage, sendEmailSmtp} = require('../utils/mail')
+const {sendAdminMessage, sendEmailSmtp} = require('../utils/mail')
 
 
 
@@ -541,7 +541,7 @@ module.exports.modifyReservationStatus = async(req, res) => {
     const {reservation} = req.body
     try{
         const updatedReservation = await Reservation.findByIdAndUpdate(reservation._id, reservation, {new: true}).populate({path: 'locatie'}).populate({path: 'salePoint'})
-        await sendReservationEmail(updatedReservation)
+        await sendEmailSmtp(updatedReservation, createCancelUrl(updatedReservation._id.toString()))
         res.status(200).json(updatedReservation)
     } catch(error) {
         res.status(500).json(error)
