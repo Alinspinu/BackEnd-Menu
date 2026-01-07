@@ -465,6 +465,24 @@ module.exports.createReservationShedule = async (req, res) => {
     // return "iv:encrypted" format
     return iv.toString("hex") + ":" + encrypted.toString("hex");
   }
+
+
+
+  function encryptObject(obj) {
+    const iv = crypto.randomBytes(16); // random IV for security
+  
+    const cipher = crypto.createCipheriv(
+      ALGO,
+      Buffer.from(SECRET),
+      iv
+    );
+  
+    const json = JSON.stringify(obj);
+    const encrypted = Buffer.concat([cipher.update(json), cipher.final()]);
+  
+    // return "iv:encrypted" format
+    return iv.toString("hex") + ":" + encrypted.toString("hex");
+  }
   
 
 
@@ -551,6 +569,29 @@ module.exports.getReservations = async(req, res) => {
     }
 }
 
+
+module.exports.createCancelURLObject = async (req, res) => {
+  const {point, loc, resId} = req.body
+  try{
+      const dataToEncript = JSON.stringify({point, loc, resId})
+      const encriptedData = encryptObject(dataToEncript)
+
+      const url = `https://front.flowmanager.ro/cancel?data=${encriptedData}`
+      res.status(200).json({url: url})
+  } catch(error){
+      console.log(error)
+      res.status(500).json(error)
+  }
+}
+
+function createCancelUrl(resId){
+  const dataToEncript = JSON.stringify({id: resId})
+  const encriptedData = encryptObject(dataToEncript)
+
+  const url = `https://front.flowmanager.ro/cancel?data=${encriptedData}`
+  return url
+}
+
 module.exports.addReservation = async(req, res)  => {
     const {reservation, email} = req.body
     try{
@@ -565,17 +606,15 @@ module.exports.addReservation = async(req, res)  => {
         socket.emit('reservation', JSON.stringify(savedReservation))
         res.status(200).json(savedReservation)
         if(ress.client.email){
-          await sendEmailSmtp(ress)
-          // if(ress.locatie._id.toString() === '694573cb726b6494457326fa'){
-          // } else {
-          //   await sendReservationEmail(ress)
-          // }
+          await sendEmailSmtp(ress, createCancelUrl(ress._id.toString()))
         }
     } catch(error){
         console.log(error)
         res.status(200).json(error)
     }
 }
+
+
 
 module.exports.getReservationById = async(req, res) => {
     const {id} = req.query

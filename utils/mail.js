@@ -184,7 +184,6 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
     const appKey = decryptData(newUser.locatie.gmail.app.key,newUser.locatie.gmail.app.secret, newUser.locatie.gmail.app.iv);
 
       if(appKey !== "0") {
-        console.log(newUser.locatie.gmail.email)
               const transporter = nodemailer.createTransport({
                   service: 'Gmail',
                   auth: {
@@ -288,13 +287,13 @@ async function sendReservationEmail(reservation) {
 };
 
 
-async function sendEmailSmtp(reservation, host,  user, pass){
+async function sendEmailSmtp(reservation, cancel, host,  user, pass){
     let url = ''
     if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
     if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
     if(reservation.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8'); 
-    const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url});
+    const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url, cancelUrl: cancel});
 
     const transporter = nodemailer.createTransport({
         host: host || "mail.flowmanager.ro",

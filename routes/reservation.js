@@ -39,6 +39,7 @@ router.route('/shedules')
 router.route('/shedule-id').get(resControlers.getReservationSheduleById)
 
 router.route('/encript-url').post(resControlers.encriptURLObject)
+router.route('/encript-cancel').post(resControlers.createCancelURLObject)
 
 
 
