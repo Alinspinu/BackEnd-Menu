@@ -136,7 +136,6 @@ module.exports.deleteEvent = async (req, res) => {
 
 module.exports.getReservationShedule = async (req, res) => {
     const {loc, point, year} = req.query
-    console.log('hittt')
     try{
        const y = new Date(year)
         const shedule = await ReservationSchedule.findOne({locatie: loc, salePoint: point, temp: true, 'year.date': y})
@@ -810,7 +809,7 @@ module.exports.createContact = async (req, res) => {
     try{
         const newMessage = new ContactMessage(message)
         const savedMessage = await newMessage.save()
-        const locatie = await Locatie.findById(message.locatie)
+        const locatie = await Locatie.findById(message.locatie).populate({path: 'salePoint'})
         const data = { mess: savedMessage, locatie: locatie}
         await sendAdminMessage(data, adminEmail)
         res.status(200).json({message: 'All good'})
