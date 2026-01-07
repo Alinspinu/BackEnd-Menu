@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const ejs = require('ejs');
 const jwt = require('jsonwebtoken');
-const transporter = require("./transporter");
+// const transporter = require("./transporter");
 const {decryptData} =require ('./functions')
 
 
