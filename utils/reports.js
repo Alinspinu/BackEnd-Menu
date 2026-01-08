@@ -142,7 +142,7 @@ async function getBillProducts(orders, filter) {
                 }
             }
             if(total !== bill.total){
-                console.log(' Bill total ', bill.total, 'product total ', total)
+                // console.log(' Bill total ', bill.total, 'product total ', total)
             }   
         }
 
@@ -327,7 +327,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                             )
                             
                         } else {
-                            console.log('ingredient fara departament', ing.dept, ing.name)
+                            // console.log('ingredient fara departament', ing.dept, ing.name)
                         }
                                  
                 } 
@@ -342,7 +342,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
             if(i.ing){
                 total += (+i.ing.tvaPrice * +i.qty)
             } else {
-                console.log(i)
+                // console.log(i)
             }
         }
         return round(total * p.quantity)
@@ -419,7 +419,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         }
                     }
             } else{
-                console.log('produs fara gestiune', p.name, p.productId)
+                // console.log('produs fara gestiune', p.name, p.productId)
             }
 
         } 
@@ -492,10 +492,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         }
                     }
             } else {
-                console.log('produs fara gestiune', prod.name)
+                // console.log('produs fara gestiune', prod.name)
             }
         } else {
-            console.log('produs fara prodictId', prod.name)
+            // console.log('produs fara prodictId', prod.name)
         }
 
     }
@@ -515,11 +515,11 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         if(de){
                            de.totalIn += e.price
                         } else {
-                            console.log('gestiune name ', g.name, 'spend dep ', d.name,  'entry name ', e.name)
+                            // console.log('gestiune name ', g.name, 'spend dep ', d.name,  'entry name ', e.name)
                         }
                     } else {
-                        console.log('entry gestiune ', e.gestiune, 'entry name ', e.name)
-                        console.log('product gestiune ', g.id, 'gestiune name ', g.name)
+                        // console.log('entry gestiune ', e.gestiune, 'entry name ', e.name)
+                        // console.log('product gestiune ', g.id, 'gestiune name ', g.name)
                     }
                 }
         }
