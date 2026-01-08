@@ -230,8 +230,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     const entryEndTime = endTime - (3*60*60*1000)
     const invoices = await Invoice.find({locatie: loc, salePoint: point, unload: true, createdAt: {$gte: startTime, $lt: endTime}})
                             .populate({path: 'products.ings.ing', select: 'name tva tvaPrice price dept'})
-                            .populate({path: 'products.gestiune', select: 'name'})
-                            .populate({path: 'products.departament', select: 'name'}).lean()
+                            .populate({path: 'products.productId', select: 'gestiune departament', populate: [{path: 'gestiune', select: 'name'}, {path: 'departament', select: 'name'}]})
+                            .lean()
     const entries = await Entry.find({locatie: loc, salePoint: point, typeOf: 'Altele', date: {$gte: startTime, $lt: entryEndTime}, tip: 'expense'}).lean()
     const pontaj = await Pontaj.findOne({locatie: loc, salePoint: point, month: pontMonth}).populate('days.users.employee').lean()
     // const delProds = await DelProd.find({locatie: loc, salePoint: point, createdAt: {$gte: startTime, $lt: endTime}, reason: 'dep'}).populate({path: 'billProduct.ings.ing', select: 'name'}).lean()
@@ -357,7 +357,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         console.log('produse factura ', i.products.length)
         for(let p of i.products){
             values.totalIngredients += calacProductRecipe(p)
-            const g = productsGest.find(pg => pg.name === p.gestiune?.name)
+            const g = productsGest.find(pg => pg.name === p.productId.gestiune.name)
             if(g){
                 const price = p.total
                 totall += price
@@ -368,15 +368,15 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     existingProduct.price = round(existingProduct.price + price)
                     existingProduct.totalRecipe = round(existingProduct.totalRecipe + totalRecipe)
                     g.totalOut += price
-                    const existingDep= g.dep.find(d => (d.name === p.departament.name))
+                    const existingDep= g.dep.find(d => (d.name === p.productId.departament.name))
                     if(existingDep){
                         existingDep.totalRecipes += totalRecipe
                         existingDep.totalOut = existingDep.totalOut + round(price)
                     } else {
                         g.dep.push(
                             {
-                                name: p.departament.name,
-                                depId: p.ings.length  && p.ings[0].ing.dept ? p.ings[0].ing.dept.toString() : p.departament._id.toString(),
+                                name: p.productId.departament.name,
+                                depId: p.ings.length  && p.ings[0].ing.dept ? p.ings[0].ing.dept.toString() : p.productId.departament._id.toString(),
                                 totalOut: price,
                                 totalIn: 0,
                                 totalInvIn: 0,
@@ -388,24 +388,24 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                     } else {
                       const product = {
                             name: p.name,
-                            dep: p.departament.name,
-                            depId: p.departament._id,
+                            dep: p.productId.departament.name,
+                            depId: p.productId.departament._id,
                             qty: p.quantity,
                             price: price,
                             totalRecipe: totalRecipe
                         }
                         g.totalOut += price
                         g.products.push(product)
-                        const existingDep = g.dep.find(p => (p.name === p.departament.name))
+                        const existingDep = g.dep.find(p => (p.name === p.productId.departament.name))
                         if(existingDep) {
                             existingDep.totalRecipes += totalRecipe
                             existingDep.totalOut += price
                         } else {
                             g.dep.push(
                                 {
-                                    name: p.departament.name,
+                                    name: p.productId.departament.name,
                                     totalOut: price,
-                                    depId: p.ings.length && p.ings[0].ing.dept ? p.ings[0].ing.dept.toString() : p.departament._id.toString(),
+                                    depId: p.ings.length && p.ings[0].ing.dept ? p.ings[0].ing.dept.toString() : p.productId.departament._id.toString(),
                                     totalIn: 0,
                                     totalInvIn: 0,
                                     totalInvOut: 0,
