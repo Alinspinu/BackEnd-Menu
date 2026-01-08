@@ -219,12 +219,11 @@ async function createSheetsListXcelBuffer(sheets, period){
   sh.addRow([`${sheet.salePoint.name}`], '')
   sh.addRow([])
   sh.addRow([])
-    const shDate = ['Perioada','', period]
-  sh.addRow(shDate)
+  const shDate = sh.addRow(['Perioada','', '', period])
   sh.addRow([])
   sh.addRow([])
   sh.addRow([])
-  const hd = sh.addRow(['Nr',`Produs`, 'Cantitate',  'Cost (f tva)',])
+  const hd = sh.addRow(['Nr',`Produs`, 'Cantitate',  'Cost (f tva)'])
   let pTotal = 0
   sheet.products.forEach((p, i) => {
     pTotal += p.cost
@@ -268,7 +267,8 @@ async function createSheetsListXcelBuffer(sheets, period){
   sh.mergeCells(ftn, 1, ftn, 3); 
   sh.mergeCells(spn, 1, spn, 4); 
 
-
+  sh.mergeCells('A5', 'B5')
+  sh.mergeCells('C5', 'D5')
   sh.mergeCells('A1:B1');
   sh.mergeCells('C1:D1');
   sh.mergeCells('A2:D2');
@@ -276,7 +276,7 @@ async function createSheetsListXcelBuffer(sheets, period){
   sh.getColumn(1).width = 4;
   sh.getColumn(2).width = 40; 
   sh.getColumn(3).width = 15; 
-  sh.getColumn(4).width = 18; 
+  sh.getColumn(4).width = 20; 
 
 
 
