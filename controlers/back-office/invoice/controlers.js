@@ -149,7 +149,7 @@ module.exports.getInvoices = async (req, res) => {
     // for(let i of invoices){
     //     await Invoice.findByIdAndUpdate(i._id, i)
     // }
-    await nodifyInvoiceProducts(invoices)
+    // await nodifyInvoiceProducts(invoices)
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)
