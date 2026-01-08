@@ -224,7 +224,7 @@ async function createSheetsListXcelBuffer(sheets, period){
   sh.addRow([])
   sh.addRow([])
   sh.addRow([])
-  const hd = worksheet.addRow(['Nr',`Produs`, 'Cantitate',  'Cost (f tva)',])
+  const hd = sh.addRow(['Nr',`Produs`, 'Cantitate',  'Cost (f tva)',])
   let pTotal = 0
   sheet.products.forEach((p, i) => {
     pTotal += p.cost
