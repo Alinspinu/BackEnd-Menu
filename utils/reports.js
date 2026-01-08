@@ -356,7 +356,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     for(let i of invoices){
         console.log('produse factura ', i.products.length)
         for(let p of i.products){
-            if(p.productId?.toString() === "64c3bc7fbae1d3ed496dd925"){
+            if(p.name === "Croissant cu Scrob, Trufe și Ciuperci"){
                 console.log(p.name, p.quantity, ' - ', i.issueDate)
                 console.log(typeof(p.quantity))
               }
@@ -432,6 +432,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     for(let prod of billProducts){ 
         values.totalIngredients += calacProductRecipe(prod)
         if(prod.productId){
+            if(prod.name === "Croissant cu Scrob, Trufe și Ciuperci"){
+                console.log(prod.name, p.quantity, ' - ')
+                console.log(typeof(prod.quantity))
+              }
             if(prod.productId.gestiune){
                 const g = productsGest.find(pg => pg.name === prod.productId.gestiune.name)
                 if(g){
