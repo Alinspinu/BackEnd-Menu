@@ -277,7 +277,7 @@ async function createSheetsListXcelBuffer(sheets, period){
   let pTotal = 0
   sheet.products.forEach((p, i) => {
     pTotal += p.cost
-    const r = sh.addRow([`${i+1}`,`${p.name}`,p.qty, round(p.cost)])
+    const r = sh.addRow([`${i+1}`,`${p.name}`,p.qty])
   })
 
   const sp =  sh.addRow([])
