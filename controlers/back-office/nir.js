@@ -521,7 +521,7 @@ module.exports.printSheets = async (req, res) => {
     res.send(Buffer.from(buffer));
 
   } catch(error){
-    consolr.log(error)
+    console.log(error)
     res.status(200).json(error)
   }
 } 
