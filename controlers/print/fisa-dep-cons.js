@@ -103,6 +103,71 @@ async function createSheetListXcelBuffer(sheet){
   worksheet.getColumn(8).width = 12; 
 
 
+  const sh = workbook.addWorksheet(`Produse  ${sheet.consumption ? 'consumate' : 'depreciate'}`);
+  const shTitle =  [
+    `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum (produse)' : 'deprecieri (produse)'}`]
+  sh.addRow(shTitle)
+  sh.addRow([`${sheet.salePoint.name}`], '')
+  sh.addRow([])
+  sh.addRow([])
+  const shDate = sh.addRow(['Perioada','', period, ''])
+  sh.addRow([])
+  const hd = sh.addRow(['Nr',`Produs`, 'Cantitate',  'Cost (f tva)'])
+  let pTotal = 0
+  sheet.products.forEach((p, i) => {
+    pTotal += p.cost
+    const r = sh.addRow([`${i+1}`,`${p.name}`,p.qty, round(p.cost)])
+  })
+
+  const sp =  sh.addRow([])
+  const ft =  sh.addRow(['Total',``,'', round(pTotal)])
+  const ftn = ft.number
+  const spn = sp.number
+
+
+
+  ft.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+  })
+
+  hd.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 12
+    }
+  })
+
+  sh.getRow(5).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+  })
+  sh.getRow(1).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 15
+    }
+  })
+
+  sh.mergeCells(ftn, 1, ftn, 3); 
+  sh.mergeCells(spn, 1, spn, 4); 
+
+  sh.mergeCells('A5', 'B5')
+  sh.mergeCells('C5', 'D5')
+  sh.mergeCells('A1:B1');
+  sh.mergeCells('C1:D1');
+  sh.mergeCells('A2:D2');
+  sh.mergeCells('A3:D4');
+  sh.getColumn(1).width = 4;
+  sh.getColumn(2).width = 40; 
+  sh.getColumn(3).width = 15; 
+  sh.getColumn(4).width = 20; 
+
+
 
 
 
@@ -275,10 +340,6 @@ async function createSheetsListXcelBuffer(sheets, period){
   sh.getColumn(2).width = 40; 
   sh.getColumn(3).width = 15; 
   sh.getColumn(4).width = 20; 
-
-
-
-
 
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;
