@@ -64,7 +64,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modifyOrdersProducts(orders)
         if(download && download.bool){
             const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
             let buffer
@@ -121,6 +121,55 @@ module.exports.getOrder = async (req, res, next) => {
     }
 }
 
+async function modifyOrdersProducts(orders) {
+    const updatePromises = [];
+  
+    for (const o of orders) {
+      let shouldUpdate = false;
+  
+      const updatedProducts = o.products.map(p => {
+        if (
+          p.departament?._id?.toString() !==
+          p.productId?.departament?.toString()
+        ) {
+          console.log(
+            "Produs pe comanda cu departament diferit:",
+            p.name
+          );
+  
+          shouldUpdate = true;
+  
+          return {
+            ...p,
+            departament: {
+              ...p.departament,
+              _id: p.productId.departament
+            }
+          };
+        }
+  
+        return p;
+      });
+  
+      if (shouldUpdate) {
+        updatePromises.push(
+          Order.updateOne(
+            { _id: o._id },
+            { $set: { products: updatedProducts } }
+          )
+        );
+      }
+    }
+  
+    await Promise.all(updatePromises);
+  
+    console.log(
+      "Orders verified:", orders.length,
+      "→ Updated:", updatePromises.length
+    );
+  }
+  
+
 
 // async function modifyOrdersProducts(orders) {
 //     const updatePromises = [];
@@ -173,33 +222,33 @@ module.exports.getOrder = async (req, res, next) => {
   
   
 
-async function modyfyOrdersProducts(orders){
+// async function modyfyOrdersProducts(orders){
 
-    let ordersToSave = []
+//     let ordersToSave = []
 
-    for(let o of orders){
-        let pushOrder = false
-        for(p of o.products){
-            if(p.departament._id.toString() !== p.productId.departament.toString()){
-                console.log('Produs Pe comanda cu departament diferit ', p.name)
-                p.departament._id = p.productId.departament
-                pushOrder = true
-            }
-        }
-        if(pushOrder){
-            ordersToSave.push(o)
-        }
+//     for(let o of orders){
+//         let pushOrder = false
+//         for(p of o.products){
+//             if(p.departament._id.toString() !== p.productId.departament.toString()){
+//                 console.log('Produs Pe comanda cu departament diferit ', p.name)
+//                 p.departament._id = p.productId.departament
+//                 pushOrder = true
+//             }
+//         }
+//         if(pushOrder){
+//             ordersToSave.push(o)
+//         }
 
-    }
+//     }
 
-    const promises = ordersToSave.map(o => 
-         Order.findByIdAndUpdate(o._id, o, {new: true})
-    )
+//     const promises = ordersToSave.map(o => 
+//          Order.findByIdAndUpdate(o._id, o, {new: true})
+//     )
 
-    await Promise.all(promises)
-    console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
+//     await Promise.all(promises)
+//     console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
 
-}
+// }
 
 
 
