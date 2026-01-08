@@ -368,7 +368,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 const totalRecipe = calacProductRecipe(p)
                 const existingProduct = g.products.find(p => p.name === p.name)
                 if(existingProduct){
-                    existingProduct.qty = +existingProduct.qty + +p.quantity
+                    existingProduct.qty = existingProduct.qty + p.quantity
                     existingProduct.price = round(existingProduct.price + price)
                     existingProduct.totalRecipe = round(existingProduct.totalRecipe + totalRecipe)
                     g.totalOut += price
@@ -895,6 +895,12 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
     for(let g of productsGest){
         values.totalIncome += g.totalOut
+        for(let p of g.products){
+            if(p.name === "Croissant cu Scrob, Trufe și Ciuperci"){
+                console.log('final de raport', p.name, p.quantity, ' - ')
+                console.log(typeof(p.quantity))
+              }
+        }
     }
 
 
