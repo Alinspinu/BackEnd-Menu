@@ -6,6 +6,7 @@ const Ingredient = require('../../models/office/inv-ingredient')
 const Product = require('../../models/office/product/product')
 const Counter = require('../../models/utils/counter')
 const SalePoint = require('../../models/utils/sale-point')
+const SubProduct = require('../../models/office/product/sub-product')
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
 const {generateSoketId, formatedDateToShow} = require('../../utils/functions')
@@ -27,6 +28,7 @@ const socket = io('https://flowmanager.ro', {
     })
 // const socket = io("https://socket.flowmanager.ro")
 const order = require('../../models/office/product/order');
+const subProduct = require('../../models/office/product/sub-product');
 // const socket = io("http://localhost:8090")
 
 
@@ -53,8 +55,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path: 'products.gestiune', select: 'name'})
                         .populate({path: 'products.departament', select: 'name'})
-                        .populate({path: 'products.productId', select: 'ings'})
-                        .populate({path: 'products.subId', select: 'ings'})
+                        .populate({path: 'products.productId', select: 'ings subProducts', populate: {path: 'subProducts', select: 'ings name'}})
                         .lean()
                         // .populate({path: 'products.productId', select: 'name ings subProducts', populate: {path: 'subProducts', select: 'name ings'}}).lean()
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
@@ -63,7 +64,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modifyOrdersProducts(orders)
         if(download && download.bool){
             const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
             let buffer
@@ -121,36 +122,55 @@ module.exports.getOrder = async (req, res, next) => {
 }
 
 
-async function modyfyOrdersProducts(orders) {
+async function modifyOrdersProducts(orders) {
     const updatePromises = [];
   
     for (const o of orders) {
+      let match = false;
   
       const updatedProducts = o.products.map(p => {
-          return {
-            ...p,
-            ings: p.productId.ings,
-          };
+        if (
+          p.productId &&
+          p.productId._id.toString() === "66904a1104d3e92996f90ff6"
+        ) {
+         console.log("gasit produs", p.name);
+          const sub = p.productId.subProducts.find(
+            s => s._id.toString() === p.subProductId
+          );
   
+          if (sub) {
+            console.log("gasit subProdus", sub.name);
+  
+            match = true;
+  
+            return {
+              ...p,
+              ings: sub.ings
+            };
+          }
+        }
+  
+        return p;
       });
   
-
+      if (match) {
         updatePromises.push(
           Order.updateOne(
             { _id: o._id },
             { $set: { products: updatedProducts } }
           )
         );
-      
+      }
     }
   
     await Promise.all(updatePromises);
   
     console.log(
-      'Orders verified:', orders.length,
-      '→ Updated:', updatePromises.length
+      "Orders verified:", orders.length,
+      "→ Updated:", updatePromises.length
     );
   }
+  
   
 
 // async function modyfyOrdersProducts(orders){
