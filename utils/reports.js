@@ -394,7 +394,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                             name: p.name,
                             dep: p.productId.departament.name,
                             depId: p.productId.departament._id,
-                            qty: p.quantity,
+                            qty: +p.quantity,
                             price: price,
                             totalRecipe: totalRecipe
                         }
@@ -419,7 +419,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         }
                     }
             } else{
-                // console.log('produs fara gestiune', p.name, p.productId)
+                console.log('produs fara gestiune', p.name, p.productId)
             }
 
         } 
