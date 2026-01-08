@@ -35,6 +35,8 @@ router.route('/sheet')
     .delete(nirRoutes.deleteSheet)
     .put(nirRoutes.printSheet)
 
+router.route('/sheets').put(nirRoutes.printSheets)
+
  router.route('/order-sheet').post(nirRoutes.createSheetByOrder)
 
 router.route('/nir-invoice')
@@ -43,6 +45,10 @@ router.route('/nir-invoice')
 
 // router.route('/fix').get(nirRoutes.fixBuleala)
 
+router.route('/production-sheet')
+        .get(nirRoutes.getProductionSheets)
+        .post(nirRoutes.addProductionSheet)
+        .delete(nirRoutes.deleteProductionSheet)
 
 router.route('/transfer')
     .get(nirRoutes.getTransfers)
@@ -52,10 +58,6 @@ router.route('/transfer')
 
 router.route('/make-tr').post(nirRoutes.makeTransfer)
 
-router.route('/production-sheet')
-        .get(nirRoutes.getProductionSheets)
-        .post(nirRoutes.addProductionSheet)
-        .delete(nirRoutes.deleteProductionSheet)
     
 
 router.route('/sheet-period').get(nirRoutes.getSheetsByPeriod)
