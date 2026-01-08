@@ -228,7 +228,7 @@ async function createSheetsListXcelBuffer(sheets, period){
   let pTotal = 0
   sheet.products.forEach((p, i) => {
     pTotal += p.cost
-    const r = sh.addRow([`${i+1}`,`${p.name}`,`${p.qty}`, `${round(p.cost)}`])
+    const r = sh.addRow([`${i+1}`,`${p.name}`,p.qty, round(p.cost)])
   })
 
   const sp =  sh.addRow([])
@@ -274,7 +274,7 @@ async function createSheetsListXcelBuffer(sheets, period){
   sh.mergeCells('A2:H2');
   sh.mergeCells('A3:H4');
   sh.getColumn(1).width = 4;
-  sh.getColumn(2).width = 20; 
+  sh.getColumn(2).width = 25; 
   sh.getColumn(3).width = 8; 
   sh.getColumn(4).width = 12; 
 
