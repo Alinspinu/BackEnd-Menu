@@ -144,26 +144,64 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
 module.exports.getInvoices = async (req, res) => {
   const {loc} = req.query
   try{
-    const invoices = await Invoice.find({locatie: loc}).lean()
-
-
-
-    for(let i of invoices){
-      for(let p of i.products){
-        if(p.productId?.toString() === "64c3bc7fbae1d3ed496dd925"){
-          console.log(p.name, p.quantity, ' - ', i.issueDate)
-          console.log(typeof(p.quantity))
-        }
-      }
-
-    }
-
+    const invoices = await Invoice.find({locatie: loc}).populate({path: 'products.productId', select: 'subProducts', select: 'name ings'}).lean()
+    await modifyInvoiceProducts(invoices)
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)
     console.log(error)
   }
 }
+
+
+async function modifyInvoiceProducts(invoices) {
+    const updatePromises = [];
+  
+    for (const i of invoices) {
+      let match = false;
+  
+      const updatedProducts = i.products.map(p => {
+        if (
+          p.productId &&
+          p.productId._id.toString() === "66904a1104d3e92996f90ff6"
+        ) {
+         console.log("gasit produs", p.name);
+          const sub = p.productId.subProducts.find(
+            s => s.name.trim() === p.name.split('-')[1].trim()
+          );
+  
+          if (sub) {
+            console.log("gasit subProdus", sub.name);
+  
+            match = true;
+  
+            return {
+              ...p,
+              ings: sub.ings
+            };
+          }
+        }
+  
+        return p;
+      });
+  
+      if (match) {
+        updatePromises.push(
+          Invoice.updateOne(
+            { _id: i._id },
+            { $set: { products: updatedProducts } }
+          )
+        );
+      }
+    }
+  
+    await Promise.all(updatePromises);
+  
+    console.log(
+      "Orders verified:", invoices.length,
+      "→ Updated:", updatePromises.length
+    );
+  }
 
 
 async function nodifyInvoiceProducts(invoices){
