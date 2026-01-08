@@ -503,7 +503,7 @@ module.exports.printSheets = async (req, res) => {
   const {start, end, loc, point, consumption} = req.body
   try{
     const startDate = new Date(start).setHours(0,0,0,0)
-    const endDate = new Date(end).setHours(23,59,59,9999)
+    const endDate = new Date(end).setHours(21,59,59,9999)
     const sheets = await ImpSheet.find({locatie: loc, salePoint: point, consumption: consumption, date: {$gte: startDate, $lt: endDate}})
         .populate({path: 'user', select: 'employee'})
         .populate({path: 'salePoint', select: 'locatie name', populate: {path: 'locatie', select: 'bussinessName'}})
