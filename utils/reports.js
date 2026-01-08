@@ -433,7 +433,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         values.totalIngredients += calacProductRecipe(prod)
         if(prod.productId){
             if(prod.name === "Croissant cu Scrob, Trufe și Ciuperci"){
-                console.log(prod.name, p.quantity, ' - ')
+                console.log(prod.name, prod.quantity, ' - ')
                 console.log(typeof(prod.quantity))
               }
             if(prod.productId.gestiune){
