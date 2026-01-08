@@ -146,10 +146,17 @@ module.exports.getInvoices = async (req, res) => {
   try{
     const invoices = await Invoice.find({locatie: loc}).lean()
 
-    // for(let i of invoices){
-    //     await Invoice.findByIdAndUpdate(i._id, i)
-    // }
-    // await nodifyInvoiceProducts(invoices)
+
+
+    for(let i of invoices){
+      for(let p of i.products){
+        if(p.productId.toString() === "64c3bc7fbae1d3ed496dd925"){
+          console.log(p.name, p.qty)
+        }
+      }
+
+    }
+
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)
