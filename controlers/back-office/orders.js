@@ -55,8 +55,8 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path: 'products.gestiune', select: 'name'})
                         .populate({path: 'products.departament', select: 'name'})
+                        .populate({path: 'products.productId', select: 'name departament'})
                         .lean()
-                        // .populate({path: 'products.productId', select: 'ings subProducts', populate: {path: 'subProducts', select: 'ings name'}})
                         // .populate({path: 'products.productId', select: 'name ings subProducts', populate: {path: 'subProducts', select: 'name ings'}}).lean()
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
                         .populate({path: 'masaRest', select: 'name index'})
@@ -64,7 +64,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modifyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         if(download && download.bool){
             const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
             let buffer
@@ -122,87 +122,84 @@ module.exports.getOrder = async (req, res, next) => {
 }
 
 
-async function modifyOrdersProducts(orders) {
-    const updatePromises = [];
+// async function modifyOrdersProducts(orders) {
+//     const updatePromises = [];
   
-    for (const o of orders) {
-      let match = false;
+//     for (const o of orders) {
+//       let match = false;
   
-      const updatedProducts = o.products.map(p => {
-        if (
-          p.productId &&
-          p.productId._id.toString() === "66904a1104d3e92996f90ff6"
-        ) {
-         console.log("gasit produs", p.name);
-          const sub = p.productId.subProducts.find(
-            s => s._id.toString() === p.subProductId
-          );
+//       const updatedProducts = o.products.map(p => {
+//         if (
+//           p.productId &&
+//           p.productId._id.toString() === "66904a1104d3e92996f90ff6"
+//         ) {
+//          console.log("gasit produs", p.name);
+//           const sub = p.productId.subProducts.find(
+//             s => s._id.toString() === p.subProductId
+//           );
   
-          if (sub) {
-            console.log("gasit subProdus", sub.name);
+//           if (sub) {
+//             console.log("gasit subProdus", sub.name);
   
-            match = true;
+//             match = true;
   
-            return {
-              ...p,
-              ings: sub.ings
-            };
-          }
-        }
-  
-        return p;
-      });
-  
-      if (match) {
-        updatePromises.push(
-          Order.updateOne(
-            { _id: o._id },
-            { $set: { products: updatedProducts } }
-          )
-        );
-      }
-    }
-  
-    await Promise.all(updatePromises);
-  
-    console.log(
-      "Orders verified:", orders.length,
-      "→ Updated:", updatePromises.length
-    );
-  }
-  
-  
-
-// async function modyfyOrdersProducts(orders){
-
-//     let ordersToSave = []
-
-
-
-//     for(let o of orders){
-//         let pushOrder = false
-//         for(p of o.products){
-//             if(p.gestiune._id.toString() !== p.productId.gestiune.toString()){
-//                 console.log('Produs Pe comanda cu gestiune diferita ', p.name)
-//                 p.gestiune._id = p.productId.gestiune
-//                 p.ings = p.productId.ings
-//                 pushOrder = true
-//             }
+//             return {
+//               ...p,
+//               ings: sub.ings
+//             };
+//           }
 //         }
-//         if(pushOrder){
-//             ordersToSave.push(o)
-//         }
-
+  
+//         return p;
+//       });
+  
+//       if (match) {
+//         updatePromises.push(
+//           Order.updateOne(
+//             { _id: o._id },
+//             { $set: { products: updatedProducts } }
+//           )
+//         );
+//       }
 //     }
+  
+//     await Promise.all(updatePromises);
+  
+//     console.log(
+//       "Orders verified:", orders.length,
+//       "→ Updated:", updatePromises.length
+//     );
+//   }
+  
+  
 
-//     const promises = ordersToSave.map(o => 
-//          Order.findByIdAndUpdate(o._id, o, {new: true})
-//     )
+async function modyfyOrdersProducts(orders){
 
-//     await Promise.all(promises)
-//     console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
+    let ordersToSave = []
 
-// }
+    for(let o of orders){
+        let pushOrder = false
+        for(p of o.products){
+            if(p.departament._id.toString() !== p.productId.departament.toString()){
+                console.log('Produs Pe comanda cu departament diferit ', p.name)
+                p.departament._id = p.productId.departament
+                pushOrder = true
+            }
+        }
+        if(pushOrder){
+            ordersToSave.push(o)
+        }
+
+    }
+
+    const promises = ordersToSave.map(o => 
+         Order.findByIdAndUpdate(o._id, o, {new: true})
+    )
+
+    await Promise.all(promises)
+    console.log('orders verified:', orders.length, '→ Updated:', ordersToSave.length);
+
+}
 
 
 
