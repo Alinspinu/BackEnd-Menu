@@ -150,7 +150,7 @@ module.exports.getInvoices = async (req, res) => {
 
     for(let i of invoices){
       for(let p of i.products){
-        if(p.productId.toString() === "64c3bc7fbae1d3ed496dd925"){
+        if(p.productId?.toString() === "64c3bc7fbae1d3ed496dd925"){
           console.log(p.name, p.qty)
         }
       }
