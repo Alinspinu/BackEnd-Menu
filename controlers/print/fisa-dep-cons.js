@@ -219,9 +219,7 @@ async function createSheetsListXcelBuffer(sheets, period){
   sh.addRow([`${sheet.salePoint.name}`], '')
   sh.addRow([])
   sh.addRow([])
-  const shDate = sh.addRow(['Perioada','', '', period])
-  sh.addRow([])
-  sh.addRow([])
+  const shDate = sh.addRow(['Perioada','', period, ''])
   sh.addRow([])
   const hd = sh.addRow(['Nr',`Produs`, 'Cantitate',  'Cost (f tva)'])
   let pTotal = 0
