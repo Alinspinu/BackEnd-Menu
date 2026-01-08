@@ -116,15 +116,16 @@ async function createSheetListXcelBuffer(sheet){
 async function createSheetsListXcelBuffer(sheets, period){
   const sheet = mergeSheets(sheets)
   const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet(`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}`);
+  const worksheet = workbook.addWorksheet(`Ingrediente  ${sheet.consumption ? 'consumate' : 'depreciate'}`);
   const docTitle =  [
-      `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum' : 'deprecieri'}`]
+      `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum (ingrediente)' : 'deprecieri (ingrediente)'}`]
   worksheet.addRow(docTitle)
   worksheet.addRow([`${sheet.salePoint.name}`], '')
   worksheet.addRow([])
   worksheet.addRow([])
   const date = ['Perioada','', period]
   worksheet.addRow(date)
+  worksheet.addRow([])
   worksheet.addRow([])
   worksheet.addRow([])
   const head = worksheet.addRow(['Nr',`Ingredient`, 'Tip',  'Gestiune', 'UM', 'Cantitate', 'Pret (f Tva)',  'Total (f Tva)'])
@@ -210,6 +211,76 @@ async function createSheetsListXcelBuffer(sheets, period){
   worksheet.getColumn(6).width = 12; 
   worksheet.getColumn(7).width = 12; 
   worksheet.getColumn(8).width = 12; 
+
+  const sh = workbook.addWorksheet(`Produse  ${sheet.consumption ? 'consumate' : 'depreciate'}`);
+  const shTitle =  [
+    `${sheet.salePoint.locatie.bussinessName}`,'',`Fisa de  ${sheet.consumption ? 'consum (produse)' : 'deprecieri (produse)'}`]
+  sh.addRow(shTitle)
+  sh.addRow([`${sheet.salePoint.name}`], '')
+  sh.addRow([])
+  sh.addRow([])
+    const shDate = ['Perioada','', period]
+  sh.addRow(shDate)
+  sh.addRow([])
+  sh.addRow([])
+  sh.addRow([])
+  const hd = worksheet.addRow(['Nr',`Produs`, 'Cantitate',  'Cost (f tva)',])
+  let pTotal = 0
+  sheet.products.forEach((p, i) => {
+    pTotal += p.cost
+    const r = sh.addRow([`${i+1}`,`${p.name}`,`${p.qty}`, `${round(p.cost)}`])
+  })
+
+  const sp =  sh.addRow([])
+  const ft =  sh.addRow(['Total',``,'', round(pTotal)])
+  const ftn = ft.number
+  const spn = sp.number
+
+
+
+  ft.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+  })
+
+  hd.eachCell((cell) => {
+    cell.font = {
+        bold: true,
+        size: 12
+    }
+  })
+
+  sh.getRow(5).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 13
+    }
+  })
+  sh.getRow(1).eachCell((cell)=>{
+    cell.font = {
+        bold: true,
+        size: 15
+    }
+  })
+
+  sh.mergeCells(ftn, 1, ftn, 3); 
+  sh.mergeCells(spn, 1, spn, 4); 
+
+
+  sh.mergeCells('A1:B1');
+  sh.mergeCells('C1:H1');
+  sh.mergeCells('A2:H2');
+  sh.mergeCells('A3:H4');
+  sh.getColumn(1).width = 4;
+  sh.getColumn(2).width = 20; 
+  sh.getColumn(3).width = 8; 
+  sh.getColumn(4).width = 12; 
+
+
+
+
 
   const buffer = await workbook.xlsx.writeBuffer();
   return buffer;
