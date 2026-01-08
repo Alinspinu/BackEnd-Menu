@@ -17,10 +17,10 @@ const {unloadIngs, uploadIngs, gestTransfer} = require('../../utils/inv/src/inde
 
 const {createNir} = require('../print/nir')
 
-const {round} = require('../../utils/functions')
+const {round, formatedDateToShow} = require('../../utils/functions')
 
 const {createNirsListXcelBuffer} = require('../print/nir-list')
-const {createSheetListXcelBuffer} = require('../print/fisa-dep-cons');
+const {createSheetListXcelBuffer, createSheetsListXcelBuffer} = require('../print/fisa-dep-cons');
 
 
 
@@ -496,6 +496,35 @@ module.exports.printSheet = async (req, res) => {
   }
 }
 
+
+
+module.exports.printSheets = async (req, res) => {
+
+  const {start, end, loc, point, consumption} = req.body
+  try{
+    const startDate = new Date(start).setHours(0,0,0,0)
+    const endDate = new Date(end).setHours(23,59,59,9999)
+    const sheets = await ImpSheet.find({locatie: loc, salePoint: point, consumption: consumption, date: {$gte: startDate, $lt: endDate}})
+        .populate({path: 'user', select: 'employee'})
+        .populate({path: 'salePoint', select: 'locatie name', populate: {path: 'locatie', select: 'bussinessName'}})
+        .populate({path: 'ings.ing', select: 'productIngredient ings name price um tva tvaPrice', populate: {path: 'ings.ing', select: 'um price name'}})
+        .populate({path: 'ings.gestiune', select: 'name'})
+        .populate({path: 'gestiune'})
+    const period = `${formatedDateToShow(startDate).split('ora')[0]} -- ${formatedDateToShow(endDate).split('ora')[0]}`
+    const buffer = await createSheetsListXcelBuffer(sheets, period);
+
+    // Set headers for file download
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
+
+    // Send the buffer directly
+    res.send(Buffer.from(buffer));
+
+  } catch(error){
+    consol.log(error)
+    res.status(200).json(error)
+  }
+} 
 
 module.exports.saveNir = async( req, res, next) => {
     const {nir} = req.body;
