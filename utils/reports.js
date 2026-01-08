@@ -897,8 +897,8 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         values.totalIncome += g.totalOut
         for(let p of g.products){
             if(p.name === "Croissant cu Scrob, Trufe și Ciuperci"){
-                console.log('final de raport', p.name, p.quantity, ' - ')
-                console.log(typeof(p.quantity))
+                console.log('final de raport', p.name, p.qty, ' - ')
+                console.log(typeof(p.qty))
               }
         }
     }
