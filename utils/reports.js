@@ -357,7 +357,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
         console.log('produse factura ', i.products.length)
         for(let p of i.products){
             values.totalIngredients += calacProductRecipe(p)
-            const g = productsGest.find(pg => pg.name === p.productId.gestiune?.name)
+            const g = productsGest.find(pg => pg.name === p.productId?.gestiune?.name)
             if(g){
                 const price = p.total
                 totall += price
