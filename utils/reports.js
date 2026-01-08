@@ -400,7 +400,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                         }
                         g.totalOut += price
                         g.products.push(product)
-                        const existingDep = g.dep.find(p => (p.name === p.productId.departament.name))
+                        const existingDep = g.dep.find(gp => (gp.name === p.productId.departament.name))
                         if(existingDep) {
                             existingDep.totalRecipes += totalRecipe
                             existingDep.totalOut += price
