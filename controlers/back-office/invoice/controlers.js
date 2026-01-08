@@ -5,6 +5,8 @@ const Invoice = require('../../../models/office/invoice')
 const Order = require('../../../models/office/product/order')
 const Client = require('../../../models/office/client')
 const Locatie = require('../../../models/office/locatie')
+const Product = require('../../../models/office/product/product')
+const SubProduct = require('../../../models/office/product/sub-product')
 
 const io = require('socket.io-client')
 const socket = io('https://flowmanager.ro', {
@@ -142,16 +144,42 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
 module.exports.getInvoices = async (req, res) => {
   const {loc} = req.query
   try{
-    const invoices = await Invoice.find({locatie: loc})
+    const invoices = await Invoice.find({locatie: loc}).lean()
 
     // for(let i of invoices){
     //     await Invoice.findByIdAndUpdate(i._id, i)
     // }
+    await nodifyInvoiceProducts(invoices)
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)
     console.log(error)
   }
+}
+
+
+async function nodifyInvoiceProducts(invoices){
+    for(let i of invoices){
+      for(let p of i.products){
+        if(p.productId){
+          const product = await Product.findById(p.productId).lean()
+          if(product){
+            p.gestiune = product.gestiune
+            p.departament = product.departament
+          } else {
+            const subProduct = await SubProduct.findById(p.productId).select('product').populate({path: 'product'})
+            if(subProduct){
+              p.gestiune = subProduct.product.gestiune
+              p.departament = subProduct.product.departament
+              p.productId = subProduct.product._id
+            } else {
+              console.log('Produs gasit fara produs si sub produs ', p.name, p.productId)
+            }
+          }
+        } 
+      }
+      await Invoice.findByIdAndUpdate(i._id, {products: i.products}, {new: false})
+    }
 }
 
 module.exports.getInvoicesByClient = async (req, res) => {
