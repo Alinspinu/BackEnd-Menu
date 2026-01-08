@@ -356,6 +356,10 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
     for(let i of invoices){
         console.log('produse factura ', i.products.length)
         for(let p of i.products){
+            if(p.productId?.toString() === "64c3bc7fbae1d3ed496dd925"){
+                console.log(p.name, p.quantity, ' - ', i.issueDate)
+                console.log(typeof(p.quantity))
+              }
             values.totalIngredients += calacProductRecipe(p)
             const g = productsGest.find(pg => pg.name === p.productId?.gestiune?.name)
             if(g){
@@ -364,7 +368,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 const totalRecipe = calacProductRecipe(p)
                 const existingProduct = g.products.find(p => p.name === p.name)
                 if(existingProduct){
-                    existingProduct.qty = existingProduct.qty + +p.quantity
+                    existingProduct.qty = +existingProduct.qty + +p.quantity
                     existingProduct.price = round(existingProduct.price + price)
                     existingProduct.totalRecipe = round(existingProduct.totalRecipe + totalRecipe)
                     g.totalOut += price
