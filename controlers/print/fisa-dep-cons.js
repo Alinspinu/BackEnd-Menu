@@ -110,7 +110,7 @@ async function createSheetListXcelBuffer(sheet){
   sh.addRow([`${sheet.salePoint.name}`], '')
   sh.addRow([])
   sh.addRow([])
-  const shDate = sh.addRow(['Perioada','', period, ''])
+  const shDate =['Data','', formatedDateToShow(sheet.date).split('ora')[0]]
   sh.addRow([])
   const hd = sh.addRow(['Nr',`Produs`, 'Cantitate',  'Cost (f tva)'])
   let pTotal = 0
