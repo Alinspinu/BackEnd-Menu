@@ -228,7 +228,7 @@ function mergeSheets(sheets){
   }
     for(let s of sheets){
       for(let i of s.ings){
-        const existingIng = sheet.ings.find(shi => shi.ing._id.toString() === i.ing._id.toString())
+        const existingIng = sheet.ings.find(shi => shi.ing._id.toString() === i.ing?._id.toString())
         if(existingIng){
           existingIng.qty += i.qty
         } else {
