@@ -345,6 +345,9 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 // console.log(i)
             }
         }
+        if(p.name === 'Cheesecake- Biscoff' || p.name === 'Cheesecake - Biscoff'){
+            console.log('Total ', total, 'product qty ', p.quantity)
+        }
         return round(total * p.quantity)
     }
  
