@@ -129,6 +129,7 @@ async function modifyOrdersProducts(orders) {
   
       const updatedProducts = o.products.map(p => {
         if (
+          p.productId &&
           p.departament?._id?.toString() !==
           p.productId?.departament?.toString()
         ) {
