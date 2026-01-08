@@ -53,7 +53,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path: 'masaRest', select: 'name index'})
                         .populate({path: 'products.gestiune', select: 'name'})
                         .populate({path: 'products.departament', select: 'name'})
-                        .populate({path: 'products.productId', select: '-saleLog'})
+                        .populate({path: 'products.productId', select: 'ings'})
                         .lean()
                         // .populate({path: 'products.productId', select: 'name ings subProducts', populate: {path: 'subProducts', select: 'name ings'}}).lean()
         const openOrders = await Order.find({ locatie: loc, status: 'open', salePoint: point})
@@ -62,7 +62,7 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        // await modyfyOrdersProducts(orders)
+        await modyfyOrdersProducts(orders)
         if(download && download.bool){
             const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
             let buffer
@@ -124,35 +124,23 @@ async function modyfyOrdersProducts(orders) {
     const updatePromises = [];
   
     for (const o of orders) {
-      let modified = false;
   
       const updatedProducts = o.products.map(p => {
-        if (
-          p?.gestiune &&
-          p?.productId?.departament &&
-          p.departament._id.toString() !== p.productId.departament.toString()
-        ) {
-          console.log('Produs pe comanda cu gestiune diferita:', p.name);
-  
-          modified = true;
-  
           return {
             ...p,
-            departament: p.productId.departament,
+            ings: p.productId.ings,
           };
-        }
   
-        return p;
       });
   
-      if (modified) {
+
         updatePromises.push(
           Order.updateOne(
             { _id: o._id },
             { $set: { products: updatedProducts } }
           )
         );
-      }
+      
     }
   
     await Promise.all(updatePromises);
