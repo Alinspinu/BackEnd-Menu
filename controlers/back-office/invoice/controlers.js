@@ -144,8 +144,8 @@ module.exports.uploadCreditNoteToEFactura = async (req, res) => {
 module.exports.getInvoices = async (req, res) => {
   const {loc} = req.query
   try{
-    const invoices = await Invoice.find({locatie: loc}).populate({path: 'products.productId', select: 'subProducts', select: 'name ings'}).lean()
-    // await modifyInvoiceProducts(invoices)
+    const invoices = await Invoice.find({locatie: loc}).populate({path: 'products.productId', select: 'subProducts', populate: {path: 'subProducts', select: 'name ings'}}).lean()
+    await modifyInvoiceProducts(invoices)
     res.status(200).json(invoices)
   } catch(error) {
     res.status(500).json(error)
@@ -207,11 +207,10 @@ async function modifyInvoiceProducts(invoices) {
 async function nodifyInvoiceProducts(invoices){
     for(let i of invoices){
       for(let p of i.products){
-        if(p.productId){
-          const product = await Product.findById(p.productId).lean()
+        if(p.productId && p.productId._id.toString() === "66904a1104d3e92996f90ff6"){
+          const product = await Product.findById(p.productId).populate({path: 'subProducts', select: 'name ings'}).lean()
           if(product){
-            p.gestiune = product.gestiune
-            p.departament = product.departament
+
           } else {
             const subProduct = await SubProduct.findById(p.productId).select('product').populate({path: 'product'})
             if(subProduct){
