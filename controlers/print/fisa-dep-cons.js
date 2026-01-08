@@ -270,11 +270,11 @@ async function createSheetsListXcelBuffer(sheets, period){
 
 
   sh.mergeCells('A1:B1');
-  sh.mergeCells('C1:H1');
-  sh.mergeCells('A2:H2');
-  sh.mergeCells('A3:H4');
+  sh.mergeCells('C1:F1');
+  sh.mergeCells('A2:F2');
+  sh.mergeCells('A3:F4');
   sh.getColumn(1).width = 4;
-  sh.getColumn(2).width = 25; 
+  sh.getColumn(2).width = 40; 
   sh.getColumn(3).width = 8; 
   sh.getColumn(4).width = 12; 
 
