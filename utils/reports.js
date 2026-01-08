@@ -366,7 +366,7 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
                 const price = p.total
                 totall += price
                 const totalRecipe = calacProductRecipe(p)
-                const existingProduct = g.products.find(p => p.name === p.name)
+                const existingProduct = g.products.find(gp => gp.name === p.name)
                 if(existingProduct){
                     existingProduct.qty = existingProduct.qty + p.quantity
                     existingProduct.price = round(existingProduct.price + price)
