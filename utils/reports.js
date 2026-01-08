@@ -352,78 +352,78 @@ async function createDayReport(billProducts, ingredients, loc, bills, dat, point
 
     //CALC SALES
 
-    console.log('facturi ', invoices.length)
-    for(let i of invoices){
-        console.log('produse factura ', i.products.length)
-        for(let p of i.products){
-            if(p.name === "Croissant cu Scrob, Trufe și Ciuperci"){
-                console.log(p.name, p.quantity, ' - ', i.issueDate)
-                console.log(typeof(p.quantity))
-              }
-            values.totalIngredients += calacProductRecipe(p)
-            const g = productsGest.find(pg => pg.name === p.productId?.gestiune?.name)
-            if(g){
-                const price = p.total
-                totall += price
-                const totalRecipe = calacProductRecipe(p)
-                const existingProduct = g.products.find(p => p.name === p.name)
-                if(existingProduct){
-                    existingProduct.qty = existingProduct.qty + p.quantity
-                    existingProduct.price = round(existingProduct.price + price)
-                    existingProduct.totalRecipe = round(existingProduct.totalRecipe + totalRecipe)
-                    g.totalOut += price
-                    const existingDep= g.dep.find(d => (d.name === p.productId.departament.name))
-                    if(existingDep){
-                        existingDep.totalRecipes += totalRecipe
-                        existingDep.totalOut = existingDep.totalOut + round(price)
-                    } else {
-                        g.dep.push(
-                            {
-                                name: p.productId.departament.name,
-                                depId: p.ings.length  && p.ings[0].ing.dept ? p.ings[0].ing.dept.toString() : p.productId.departament._id.toString(),
-                                totalOut: price,
-                                totalIn: 0,
-                                totalInvIn: 0,
-                                totalInvOut: 0,
-                                totalRecipes: totalRecipe,
-                            }
-                            )
-                        }
-                    } else {
-                      const product = {
-                            name: p.name,
-                            dep: p.productId.departament.name,
-                            depId: p.productId.departament._id,
-                            qty: +p.quantity,
-                            price: price,
-                            totalRecipe: totalRecipe
-                        }
-                        g.totalOut += price
-                        g.products.push(product)
-                        const existingDep = g.dep.find(p => (p.name === p.productId.departament.name))
-                        if(existingDep) {
-                            existingDep.totalRecipes += totalRecipe
-                            existingDep.totalOut += price
-                        } else {
-                            g.dep.push(
-                                {
-                                    name: p.productId.departament.name,
-                                    totalOut: price,
-                                    depId: p.ings.length && p.ings[0].ing.dept ? p.ings[0].ing.dept.toString() : p.productId.departament._id.toString(),
-                                    totalIn: 0,
-                                    totalInvIn: 0,
-                                    totalInvOut: 0,
-                                    totalRecipes: totalRecipe,
-                                }
-                            )
-                        }
-                    }
-            } else{
-                console.log('produs fara gestiune', p.name, p.productId)
-            }
+    // console.log('facturi ', invoices.length)
+    // for(let i of invoices){
+    //     console.log('produse factura ', i.products.length)
+    //     for(let p of i.products){
+    //         if(p.name === "Croissant cu Scrob, Trufe și Ciuperci"){
+    //             console.log(p.name, p.quantity, ' - ', i.issueDate)
+    //             console.log(typeof(p.quantity))
+    //           }
+    //         values.totalIngredients += calacProductRecipe(p)
+    //         const g = productsGest.find(pg => pg.name === p.productId?.gestiune?.name)
+    //         if(g){
+    //             const price = p.total
+    //             totall += price
+    //             const totalRecipe = calacProductRecipe(p)
+    //             const existingProduct = g.products.find(p => p.name === p.name)
+    //             if(existingProduct){
+    //                 existingProduct.qty = existingProduct.qty + p.quantity
+    //                 existingProduct.price = round(existingProduct.price + price)
+    //                 existingProduct.totalRecipe = round(existingProduct.totalRecipe + totalRecipe)
+    //                 g.totalOut += price
+    //                 const existingDep= g.dep.find(d => (d.name === p.productId.departament.name))
+    //                 if(existingDep){
+    //                     existingDep.totalRecipes += totalRecipe
+    //                     existingDep.totalOut = existingDep.totalOut + round(price)
+    //                 } else {
+    //                     g.dep.push(
+    //                         {
+    //                             name: p.productId.departament.name,
+    //                             depId: p.ings.length  && p.ings[0].ing.dept ? p.ings[0].ing.dept.toString() : p.productId.departament._id.toString(),
+    //                             totalOut: price,
+    //                             totalIn: 0,
+    //                             totalInvIn: 0,
+    //                             totalInvOut: 0,
+    //                             totalRecipes: totalRecipe,
+    //                         }
+    //                         )
+    //                     }
+    //                 } else {
+    //                   const product = {
+    //                         name: p.name,
+    //                         dep: p.productId.departament.name,
+    //                         depId: p.productId.departament._id,
+    //                         qty: +p.quantity,
+    //                         price: price,
+    //                         totalRecipe: totalRecipe
+    //                     }
+    //                     g.totalOut += price
+    //                     g.products.push(product)
+    //                     const existingDep = g.dep.find(p => (p.name === p.productId.departament.name))
+    //                     if(existingDep) {
+    //                         existingDep.totalRecipes += totalRecipe
+    //                         existingDep.totalOut += price
+    //                     } else {
+    //                         g.dep.push(
+    //                             {
+    //                                 name: p.productId.departament.name,
+    //                                 totalOut: price,
+    //                                 depId: p.ings.length && p.ings[0].ing.dept ? p.ings[0].ing.dept.toString() : p.productId.departament._id.toString(),
+    //                                 totalIn: 0,
+    //                                 totalInvIn: 0,
+    //                                 totalInvOut: 0,
+    //                                 totalRecipes: totalRecipe,
+    //                             }
+    //                         )
+    //                     }
+    //                 }
+    //         } else{
+    //             console.log('produs fara gestiune', p.name, p.productId)
+    //         }
 
-        } 
-    }
+    //     } 
+    // }
     
 
     
