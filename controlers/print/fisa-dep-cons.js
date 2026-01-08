@@ -228,11 +228,13 @@ function mergeSheets(sheets){
   }
     for(let s of sheets){
       for(let i of s.ings){
-        const existingIng = sheet.ings.find(shi => shi.ing._id.toString() === i.ing?._id.toString())
-        if(existingIng){
-          existingIng.qty += i.qty
-        } else {
-          sheet.ings.push(i)
+        if(i.ing){
+          const existingIng = sheet.ings.find(shi => shi.ing._id.toString() === i.ing._id.toString())
+          if(existingIng){
+            existingIng.qty += i.qty
+          } else {
+            sheet.ings.push(i)
+          }
         }
       }
       for(let p of s.products){
