@@ -4,8 +4,8 @@ const { create } = require('xmlbuilder2');
 
 
 function buildEFacturaHeaderXML(invoice, date) {
-  const isVatPayer = invoice.supplier.vat === 'VAT' ? true : false;
-  const isVatPayerClient = invoice.client.vat === 'VAT' ? true : false;
+  const isVatPayer = invoice.supplier.vat === 'YES' ? true : false;
+  const isVatPayerClient = invoice.client.vat === 'YES' ? true : false;
     const doc = create({ version: '1.0' })
       .ele('Invoice', {
         xmlns: 'urn:oasis:names:specification:ubl:schema:xsd:Invoice-2',
