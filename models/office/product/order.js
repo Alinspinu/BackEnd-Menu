@@ -37,6 +37,20 @@ const orderTrueSchema = new Schema({
         type: Boolean,
         default: false
     },
+    typeOfOrder:{
+        selected: {
+            type: Boolean,
+            default: false
+        },
+        pickUp: {
+            type: Boolean,
+            default: false,
+        },
+        toStay: {
+            type: Boolean,
+            default: false
+        }
+    },
     productCount: {
         type: Number,
         required: true
