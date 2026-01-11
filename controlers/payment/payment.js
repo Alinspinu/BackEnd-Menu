@@ -41,6 +41,7 @@ module.exports.getToken = async (req, res, next) => {
             Authorization: `Basic ${credentials}`
         };
         const total = Number(req.query.total) * 100;
+        console.log(total)
         const response = await axios.post(url, 'grant_type=client_credentials', { headers });
         const requestBody = {
             amount: total,
