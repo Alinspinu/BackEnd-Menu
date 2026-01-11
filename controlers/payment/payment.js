@@ -40,7 +40,7 @@ module.exports.getToken = async (req, res, next) => {
             'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: `Basic ${credentials}`
         };
-        const total = parseInt(req.query.total) * 100;
+        const total = Number(req.query.total) * 100;
         const response = await axios.post(url, 'grant_type=client_credentials', { headers });
         const requestBody = {
             amount: total,
