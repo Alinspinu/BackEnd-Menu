@@ -87,7 +87,6 @@ module.exports.sendUserCashback = async (req, res, next) => {
     try{
         const {id} = req.query
         const user = await User.findById(id).select('cashBack')
-        consoel.log(user)
         if(user){
             res.status(200).json({message: 'User found', cashBack: user.cashBack})
         } else{
