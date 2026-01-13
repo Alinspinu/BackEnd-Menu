@@ -107,7 +107,7 @@ module.exports.deleteTable = async (req, res, next) => {
 
 module.exports.getArea = async (req, res) => {
     const {loc, point} =  req.query
-    consoel.log(loc, point)
+    console.log(loc, point)
     try{
         const areas = await Area.find({locatie: loc, salePoint: point})
                     .populate({path: 'tables', 
