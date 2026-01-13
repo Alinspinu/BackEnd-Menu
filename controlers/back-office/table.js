@@ -3,7 +3,6 @@ const {Table, Area} = require('../../models/utils/table')
 const Order = require('../../models/office/product/order')
 const User = require('../../models/users/user')
 const salePoint = require('../../models/utils/sale-point')
-const { createReadStream } = require('fs')
 
 module.exports.sendTables = async (req, res, next) => {
     const {loc, point} = req.query
@@ -32,7 +31,7 @@ async function createAreaForTables(tables = [], point, loc) {
       throw new Error('Tables array is required');
     }
 
-    const check = Area.findOne({locatie: loc, salePoint: point})
+    const check = await Area.findOne({locatie: loc, salePoint: point})
     if(check){
         console.log('Zona deja creata')
         return null
