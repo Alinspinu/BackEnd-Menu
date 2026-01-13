@@ -523,9 +523,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
     const {bill, mode, mainServer, secondaryServer} = req.body;
     const parsedBill = JSON.parse(bill)
     const {index, billId} = req.query;
-    // const table = await Table.findOne({index: index, locatie: parsedBill.locatie, salePoint: parsedBill.salePoint})
     const table = await Table.findById(parsedBill.masaRest)
-    console.log(table)
     try{
         if(billId === "new"){
             delete parsedBill._id
@@ -862,7 +860,7 @@ module.exports.deleteOrder = async (req, res) => {
 
 module.exports.deleteOrders = async (req, res, next) => {
     try {
-        const { data } = req.body;
+        const { data, tableId } = req.body;
 
         if (data && data.length) {
             const orderIds = data.map(obj => obj.id);
@@ -875,7 +873,7 @@ module.exports.deleteOrders = async (req, res, next) => {
                 const deletePromises = orders.map(order => {
                     if (!data.stopSend) {
                         setTimeout(() => {
-                            socket.emit('tableBillId', JSON.stringify({ number: order.masa, id: order.soketId }));
+                            socket.emit('tableBillId', JSON.stringify({ number: order.masa, id: order.soketId, orderId: order._id, tableId: tableId || ''}));
                         }, 500);
                     }
 
