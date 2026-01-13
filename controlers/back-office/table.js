@@ -1,8 +1,5 @@
  
 const {Table, Area} = require('../../models/utils/table')
-const Order = require('../../models/office/product/order')
-const User = require('../../models/users/user')
-const salePoint = require('../../models/utils/sale-point')
 
 module.exports.sendTables = async (req, res, next) => {
     const {loc, point} = req.query
@@ -107,7 +104,6 @@ module.exports.deleteTable = async (req, res, next) => {
 
 module.exports.getArea = async (req, res) => {
     const {loc, point} =  req.query
-    console.log(loc, point)
     try{
         const areas = await Area.find({locatie: loc, salePoint: point})
                     .populate({path: 'tables', 
@@ -118,7 +114,6 @@ module.exports.getArea = async (req, res) => {
                             populate: {path: 'masaRest', select: 'index'}
                         }
                     })
-    console.log(areas)
      res.status(200).json(areas)
     } catch(error){
         console.log(error)
@@ -147,7 +142,7 @@ module.exports.createArea = async (req, res) => {
       const newArea = await Area.create({
         name,
         locatie: loc,
-        point,
+        salePoint: point,
         tables: []
       });
   

@@ -357,7 +357,7 @@ module.exports.printBill = async (req, res, next) => {
            socket.emit('printBill', JSON.stringify({bill: bill, serverKey: mainServer.key, address: mainServer.fiscalPrinter.driverAddress}))
         } 
         if(email && email.length){
-            const client = await User.findOne({email: email})
+            const client = await User.findOne({email: email, locatie: bill.locatie})
             if(client){
                 client.orders.push(bill)
                 client.cashBack = round((client.cashBack - bill.cashBack) + (+bill.total * client.cashBackProcent / 100))
