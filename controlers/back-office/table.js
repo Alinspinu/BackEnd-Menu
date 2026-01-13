@@ -54,6 +54,76 @@ async function createAreaForTables(tables = [], point, loc) {
     return area;
   }
 
+module.exports.addTable = async (req, res, next) => {
+    const {loc, point} = req.query
+    const { name, area } = req.body;
+    try{
+        const table = new Table()
+        table.locatie = loc
+        table.salePoint = point
+        if(area) {
+            table.area = area
+            await Area.findByIdAndUpdate(area, {$push: {tables: table._id}})
+        }
+        if(name){
+            table.name = name
+        }
+        const newTable =  await table.save()
+        res.status(200).json({message: 'Masa a fost creată!', table: newTable})
+    } catch(error) {
+        console.log(error)
+        res.status(500).json({message: error})
+    }
+}
+
+module.exports.editTable = async (req, res, next) => {
+    try{
+        const {name, tableId} = req.body;
+        if(tableId){
+            const newTable =  await Table.findOneAndUpdate({_id: tableId}, {name: name}, {new: true})
+            res.status(200).json({message: `Masa numarul ${newTable.index} a fost modificată cu success!`, table: newTable})
+        }
+    }catch(err) {
+        console.log(err);
+        res.status(500).json({message: err})
+    }
+}
+
+
+module.exports.deleteTable = async (req, res, next) => {
+    try{
+        const {tableId} = req.query;
+        const table = await Table.findOne({_id: tableId})
+        await Area.findByIdAndUpdate(table.area, {$pull: {tables: table._id}})
+        const message = table.name ? table.name : table.index
+        await table.deleteOne()
+        res.status(200).json({message: `Masa ${message} a fost ștearsă cu succes!`})
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err})
+    }
+}
+
+
+module.exports.getArea = async (req, res) => {
+    const {loc, point} =  req.body
+    try{
+        const areas = await Area.find({locatie: loc, salePoint: point})
+                    .populate({path: 'tables', 
+                        populate: {
+                            path: 'bills', 
+                            model: "Order", 
+                            match: {status: "open", locatie: loc, salePoint: point}, 
+                            populate: {path: 'masaRest', select: 'index'}
+                        }
+                    })
+    
+     res.status(200).json(areas)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
 
 
 module.exports.createArea = async (req, res) => {
@@ -111,49 +181,40 @@ module.exports.createArea = async (req, res) => {
       });
     }
   };
-  
 
-module.exports.addTable = async (req, res, next) => {
-    const {loc, point} = req.query
-    const { name } = req.body;
+
+  module.exports.editArea = async (req, res) => {
+    const {area} = req.body
     try{
-        const table = new Table()
-        table.locatie = loc
-        table.salePoint = point
-        if(name){
-            table.name = name
-        }
-        const newTable =  await table.save()
-        res.status(200).json({message: 'Masa a fost creată!', table: newTable})
-    } catch(error) {
+        const editedArea = await Area.findByIdAndUpdate(area._id, area, {new: true})
+                    .populate({path: 'tables', 
+                        populate: {
+                            path: 'bills', 
+                            model: "Order", 
+                            match: {status: "open", locatie: loc, salePoint: point}, 
+                            populate: {path: 'masaRest', select: 'index'}
+                        }
+                    })
+         res.status(200).json(editedArea)
+    } catch(error){
         console.log(error)
-        res.status(500).json({message: error})
+        res.status(500).json(error)
     }
 }
 
-module.exports.editTable = async (req, res, next) => {
+module.exports.deleteArea = async (req, res) => {
+    const {id} = req.body
     try{
-        const {name, tableId} = req.body;
-        if(tableId){
-            const newTable =  await Table.findOneAndUpdate({_id: tableId}, {name: name}, {new: true})
-            res.status(200).json({message: `Masa numarul ${newTable.index} a fost modificată cu success!`, table: newTable})
+
+        const area = await Area.findById(id)
+        if(area.tables.length){
+            return res.status(401).json({message: 'Trebuie să ștergi totate mese din zona înainte de a sterge zona.'})
         }
-    }catch(err) {
-        console.log(err);
-        res.status(500).json({message: err})
-    }
-}
 
-
-module.exports.deletTable = async (req, res, next) => {
-    try{
-        const {tableId} = req.query;
-        const table = await Table.findOne({_id: tableId})
-        const message = table.name ? table.name : table.index
-        await table.deleteOne()
-        res.status(200).json({message: `Masa ${message} a fost ștearsă cu succes!`})
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({message: err})
+        await area.deleteOne()
+        res.status(200).json({message: 'Zona a fost ștearsă cu succes!'})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
     }
 }
