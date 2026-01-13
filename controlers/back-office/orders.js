@@ -525,7 +525,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
     const {index, billId} = req.query;
     // const table = await Table.findOne({index: index, locatie: parsedBill.locatie, salePoint: parsedBill.salePoint})
     const table = await Table.findById(parsedBill.masaRest)
-    console.log(table)
     try{
         if(billId === "new"){
             delete parsedBill._id
