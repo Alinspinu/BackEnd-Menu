@@ -21,7 +21,30 @@ const tableSchema = new Schema({
     salePoint: {
       type: Schema.Types.ObjectId,
       ref: 'SalePoint'
+    },
+    area: {
+      type: Schema.Types.ObjectId,
+      ref: 'Area'
     }    
+})
+
+
+const areaSchema = new Schema({
+      name: String,
+      locatie: {
+            type: Schema.Types.ObjectId,
+            ref: 'Locatie'
+      },
+      salePoint: {
+        type: Schema.Types.ObjectId,
+        ref: 'SalePoint'
+      },
+      tables: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Table"
+        }
+    ],
 })
 
 tableSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
@@ -30,7 +53,7 @@ tableSchema.pre('deleteOne', { document: true, query: false }, async function (n
   
     // Recalculate indexes for remaining documents
     try {
-      const documentsToUpdate = await this.constructor.find({ index: { $gt: deletedIndex } , locatie: this.locatie});
+      const documentsToUpdate = await this.constructor.find({ index: { $gt: deletedIndex } , locatie: this.locatie, salePoint: this.salePoint, area: this.area});
       for (const doc of documentsToUpdate) {
         doc.index -= 1;
         await doc.save();
@@ -53,7 +76,7 @@ tableSchema.pre('deleteOne', { document: true, query: false }, async function (n
   
     try {
       // Find the highest index in the collection
-      const highestIndex = await this.constructor.findOne({locatie: this.locatie, salePoint: this.salePoint}).sort({ index: -1 }).select('index');
+      const highestIndex = await this.constructor.findOne({locatie: this.locatie, salePoint: this.salePoint, area: this.area}).sort({ index: -1 }).select('index');
   
       // Set the index for the new document
       this.index = highestIndex ? highestIndex.index + 1 : 1;
@@ -63,8 +86,12 @@ tableSchema.pre('deleteOne', { document: true, query: false }, async function (n
     }
   
     next();
-  });
+});
 
+const Table =  mongoose.model('Table', tableSchema)
+const Area = mongoose.model('Area', areaSchema)
 
-
-module.exports = mongoose.model('Table', tableSchema)
+module.exports = {
+  Table,
+  Area
+}

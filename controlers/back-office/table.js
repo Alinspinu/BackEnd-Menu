@@ -1,8 +1,9 @@
-
-const Table = require('../../models/utils/table')
+ 
+const {Table, Area} = require('../../models/utils/table')
 const Order = require('../../models/office/product/order')
 const User = require('../../models/users/user')
 const salePoint = require('../../models/utils/sale-point')
+const { createReadStream } = require('fs')
 
 module.exports.sendTables = async (req, res, next) => {
     const {loc, point} = req.query
@@ -12,7 +13,11 @@ module.exports.sendTables = async (req, res, next) => {
             model: "Order", 
             match: {status: "open", locatie: loc, salePoint: point}, 
             populate: {path: 'masaRest', select: 'index'}
-        })
+        }).lean()
+       const area = await createAreaForTables(sortedTables, point, loc)
+       if(area){
+        console.log('Zona creată cu succes! locatie ', loc, ' point ', point)
+       }
         const sortedTables = tables.sort((a,b) => a.index - b.index)
         res.status(200).json(sortedTables)
     } catch(err){
@@ -22,6 +27,92 @@ module.exports.sendTables = async (req, res, next) => {
 }
 
 
+async function createAreaForTables(tables = [], point, loc) {
+    if (!Array.isArray(tables) || tables.length === 0) {
+      throw new Error('Tables array is required');
+    }
+
+    const check = Area.findOne({locatie: loc, salePoint: point})
+    if(check){
+        console.log('Zona deja creata')
+        return null
+    }
+  
+    // Create & save area first
+    const area = await Area.create({
+      locatie: loc,
+      salePoint: point,
+      name: 'Principal',
+      tables: tables.map(t => t._id)
+    });
+  
+    // Update all tables in ONE query
+    await Table.updateMany(
+      { _id: { $in: tables.map(t => t._id) } },
+      { $set: { area: area._id } }
+    );
+  
+    return area;
+  }
+
+
+
+module.exports.createArea = async (req, res) => {
+    try {
+      const {
+        loc,
+        point,
+        name,
+        tablesNumber = 0
+      } = req.body;
+  
+      // Basic validation
+      if (!loc || !point || !name) {
+        return res.status(400).json({
+          message: 'Loacatia, Punctul de lucru și Numele sunt obligatorii'
+        });
+      }
+  
+      // Create area first
+      const newArea = await Area.create({
+        name,
+        locatie: loc,
+        point,
+        tables: []
+      });
+  
+      // Create tables if needed
+      if (tablesNumber > 0) {
+        const tables = Array.from({ length: tablesNumber }).map(() => ({
+          locatie: loc,
+          salePoint: point,
+          area: newArea._id
+        }));
+  
+        const createdTables = await Table.insertMany(tables);
+  
+        newArea.tables = createdTables.map(t => t._id);
+        await newArea.save();
+      }
+  
+      // Populate tables
+      const populatedArea = await Area.findById(newArea._id)
+        .populate('tables');
+  
+      return res.status(201).json({
+        message: 'Zona a fost creată cu succes!',
+        area: populatedArea
+      });
+  
+    } catch (error) {
+      console.error('createArea error:', error);
+      res.status(500).json({
+        message: 'Eroare la crearea zonei',
+        error: error.message
+      });
+    }
+  };
+  
 
 module.exports.addTable = async (req, res, next) => {
     const {loc, point} = req.query

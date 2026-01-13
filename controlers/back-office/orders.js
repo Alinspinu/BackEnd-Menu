@@ -1,5 +1,5 @@
 const Order = require('../../models/office/product/order');
-const Table = require('../../models/utils/table')
+const {Table} = require('../../models/utils/table')
 const User = require ('../../models/users/user')
 const DelProd = require('../../models/office/product/deletetProduct')
 const Ingredient = require('../../models/office/inv-ingredient')
