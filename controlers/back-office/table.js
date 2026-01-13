@@ -14,11 +14,11 @@ module.exports.sendTables = async (req, res, next) => {
             match: {status: "open", locatie: loc, salePoint: point}, 
             populate: {path: 'masaRest', select: 'index'}
         }).lean()
+        const sortedTables = tables.sort((a,b) => a.index - b.index)
        const area = await createAreaForTables(sortedTables, point, loc)
        if(area){
         console.log('Zona creată cu succes! locatie ', loc, ' point ', point)
        }
-        const sortedTables = tables.sort((a,b) => a.index - b.index)
         res.status(200).json(sortedTables)
     } catch(err){
         console.log(err)
