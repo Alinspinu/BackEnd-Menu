@@ -1,6 +1,6 @@
 const Suplier = require('../../models/office/suplier')
 const Locatie = require('../../models/office/locatie')
-const Table = require('../../models/utils/table')
+const {Table} = require('../../models/utils/table')
 const SalePoint = require('../../models/utils/sale-point')
 const { round } = require('../../utils/functions')
 
