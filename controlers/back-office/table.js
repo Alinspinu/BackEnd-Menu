@@ -106,7 +106,8 @@ module.exports.deleteTable = async (req, res, next) => {
 
 
 module.exports.getArea = async (req, res) => {
-    const {loc, point} =  req.body
+    const {loc, point} =  req.query
+    consoel.log(loc, point)
     try{
         const areas = await Area.find({locatie: loc, salePoint: point})
                     .populate({path: 'tables', 
@@ -117,7 +118,7 @@ module.exports.getArea = async (req, res) => {
                             populate: {path: 'masaRest', select: 'index'}
                         }
                     })
-    
+    console.log(areas)
      res.status(200).json(areas)
     } catch(error){
         console.log(error)
