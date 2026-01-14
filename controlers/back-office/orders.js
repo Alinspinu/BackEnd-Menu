@@ -180,7 +180,7 @@ async function modifyOrdersProducts(orders) {
   
       const updatedProducts = o.products.map(p => {
         if (
-          p.productId && p.subProductId && !p.ings.length
+          p.productId && !p.ings.length
         ) {
          console.log("gasit produs", p.name);
           const sub = p.productId.subProducts.find(
