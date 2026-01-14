@@ -180,23 +180,26 @@ async function modifyOrdersProducts(orders) {
   
       const updatedProducts = o.products.map(p => {
         if (
-          p.productId && !p.ings.length
+          p.productId && !p.ings.length && !p.subProductId
         ) {
          console.log("gasit produs", p.name);
-          const sub = p.productId.subProducts.find(
-            s => s._id.toString() === p.subProductId
-          );
+        //   const sub = p.productId.subProducts.find(
+        //     s => s._id.toString() === p.subProductId
+        //   );
   
-          if (sub) {
-            console.log("gasit subProdus", sub.name);
+        //   if (sub) {
+        //     console.log("gasit subProdus", sub.name);
   
             match = true;
+
   
             return {
               ...p,
-              ings: sub.ings
+              ings: p.productId.ings
             };
-          }
+        //   }
+
+
         }
   
         return p;
