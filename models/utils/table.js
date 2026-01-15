@@ -39,6 +39,10 @@ const areaSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'SalePoint'
       },
+      clients: {
+        type: Boolean,
+        default: false
+      },
       tables: [
         {
             type: Schema.Types.ObjectId,

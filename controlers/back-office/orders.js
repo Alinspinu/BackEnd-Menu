@@ -1,5 +1,5 @@
 const Order = require('../../models/office/product/order');
-const {Table} = require('../../models/utils/table')
+const {Table, Area} = require('../../models/utils/table')
 const User = require ('../../models/users/user')
 const DelProd = require('../../models/office/product/deletetProduct')
 const Ingredient = require('../../models/office/inv-ingredient')
@@ -589,49 +589,128 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 }
 
 
-
-
-module.exports.registerDeletedOrderProducts = async (req, res, next) => {
-    const {product} = req.body
-    const { ['_id']:_, ...newProduct } = product;
-    const delProd = new DelProd(newProduct)
-    delProd.employee.name = product.employee.fullName
-    const savedProd = await delProd.save()
-    socket.emit('delProduct', JSON.stringify(savedProd))
-    res.status(200).json({message: 'The product was registred as deleted!'})
-}
-
-
-
-module.exports.uploadIngs = async (req, res, next) => {
-    try{
-        const {ings, quantity, gestiune} = req.body;
-        if(ings && quantity){
-        await  uploadIngs(ings, quantity, gestiune)
-        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
-        }else {
-            res.status(404).json({message: 'Lipsa date'})
+module.exports.saveOrderFromClient = async (req, res) => {
+    try {
+      const { order } = req.body;
+  
+      const bill = typeof order === 'string' ? JSON.parse(order) : order;
+      bill.socketId = generateSoketId(16);
+  
+      let table = null;
+  
+      // PICKUP
+      if (bill.typeOfOrder?.pickUp) {
+        table = await Table.findOne({
+          locatie: bill.locatie,
+          salePoint: bill.salePoint,
+          name: 'Comenzi Online'
+        });
+  
+        if (!table) {
+          return res.status(404).json({ message: 'Masa pentru comenzi online nu a fost găsită' });
         }
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({message: err.message})
+  
+        bill.masa = table.index;
+      }
+  
+      // TO STAY
+      if (bill.typeOfOrder?.toStay) {
+        const area = await Area.findOne({
+          locatie: bill.locatie,
+          salePoint: bill.salePoint,
+          clients: true
+        })
+          .select('tables')
+          .populate({ path: 'tables', select: 'index' });
+  
+        if (!area) {
+          return res.status(404).json({ message: 'Zona nu a fost găsită' });
+        }
+  
+        table = area.tables.find(t => t.index === bill.masa);
+        
+        if(!table){
+            table = area.tables[area.tables.length - 1]
+        }
+      }
+  
+      bill.masaRest = table;
+      delete bill._id
+      const newBill = new Order(bill)
+      const savedBill = await newBill.save() 
+  
+      let orderCode = null;
+      if (savedBill.payOnline) {
+        orderCode = await getOrderCode(savedBill);
+      }
+      socket.emit('billl', JSON.stringify({bill: savedBill}))
+
+      return res.status(200).json({
+        message: 'Comanda a fost procesată',
+        savedBill,
+        orderCode
+      });
+  
+    } catch (error) {
+      console.error('saveOrderFromClient error:', error);
+      res.status(500).json({ message: 'Eroare server', error: error.message });
     }
+  };
+  
+
+async function getOrderCode(order) {
+
+    try{
+        const clientId = process.env.VIVA_CLIENT_ID_PRODUCTION;
+        const clientSecret = process.env.VIVA_CLIENT_SECRET_PRODUCTION;
+        const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+        const url = 'https://accounts.vivapayments.com/connect/token';
+        const headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Authorization: `Basic ${credentials}`
+        };
+        const tot = Number(order.total) * 100;
+        const response = await axios.post(url, 'grant_type=client_credentials', { headers });
+        const requestBody = {
+            amount: tot,
+            customerTrns: 'Produse Delicioase',
+            customer: {
+                email: '',
+                fullName: '',
+                phone: '',
+                countryCode: 'RO',
+                requestLang: 'ro-RO',
+            },
+            paymentTimeout: 300,
+            preauth: false,
+            allowRecurring: false,
+            maxInstallments: 12,
+            paymentNotification: true,
+            tipAmount: 0,
+            disableExactAmount: false,
+            disableCash: true,
+            disableWallet: true,
+            sourceCode: '1180',
+            merchantTrns: order._id,
+        };
+        token = response.data.access_token;
+        const urlPayment = 'https://api.vivapayments.com/checkout/v2/orders';
+        const response2 = await axios.post(urlPayment, requestBody, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${response.data.access_token}`,
+            }
+        });
+    
+        return response2.data
+
+    } catch(error){
+        console.log(error)
+        throw new Error(error)
+    }
+
 }
 
-module.exports.unloadIngs = async (req, res, next) => {
-    try{
-        const {ings, quantity, gestiune} = req.body;
-        if(ings && quantity){
-        await  unloadIngs(ings, quantity, gestiune)
-        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
-        } else {
-            res.status(404).json({message: 'Lipsa date'})
-        }
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({message: err.message})
-    }
-}
 
 
 module.exports.saveOrder = async (req, res, next) => {
@@ -679,6 +758,52 @@ module.exports.saveOrder = async (req, res, next) => {
     } catch (err) {
         console.log('Error', err);
         res.status(404).json({ message: err.message });
+    }
+}
+
+
+
+
+
+module.exports.registerDeletedOrderProducts = async (req, res, next) => {
+    const {product} = req.body
+    const { ['_id']:_, ...newProduct } = product;
+    const delProd = new DelProd(newProduct)
+    delProd.employee.name = product.employee.fullName
+    const savedProd = await delProd.save()
+    socket.emit('delProduct', JSON.stringify(savedProd))
+    res.status(200).json({message: 'The product was registred as deleted!'})
+}
+
+
+
+module.exports.uploadIngs = async (req, res, next) => {
+    try{
+        const {ings, quantity, gestiune} = req.body;
+        if(ings && quantity){
+        await  uploadIngs(ings, quantity, gestiune)
+        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
+        }else {
+            res.status(404).json({message: 'Lipsa date'})
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
+    }
+}
+
+module.exports.unloadIngs = async (req, res, next) => {
+    try{
+        const {ings, quantity, gestiune} = req.body;
+        if(ings && quantity){
+        await  unloadIngs(ings, quantity, gestiune)
+        res.status(200).json({message: 'Success, stocul a fost actualizat!'})
+        } else {
+            res.status(404).json({message: 'Lipsa date'})
+        }
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({message: err.message})
     }
 }
 
