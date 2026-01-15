@@ -647,7 +647,7 @@ module.exports.saveOrderFromClient = async (req, res) => {
 
       return res.status(200).json({
         message: 'Comanda a fost procesată',
-        savedBill,
+        bill: savedBill,
         orderCode
       });
   
