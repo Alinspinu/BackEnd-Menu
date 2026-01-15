@@ -647,7 +647,7 @@ module.exports.saveOrderFromClient = async (req, res) => {
         orderCode = await getOrderCode(savedBill);
       } else {
         orderToken = encodeUserID(savedBill._id)
-        consoel.log(orderToken)
+        console.log(orderToken)
       }
 
       socket.emit('billl', JSON.stringify({bill: savedBill}))
