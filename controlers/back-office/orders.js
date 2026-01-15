@@ -7,6 +7,7 @@ const Product = require('../../models/office/product/product')
 const Counter = require('../../models/utils/counter')
 const SalePoint = require('../../models/utils/sale-point')
 const SubProduct = require('../../models/office/product/sub-product')
+const jwt = require('jsonwebtoken');
 
 const {sendMailToCake, sendInfoAdminEmail, sendMailToCustomer} = require('../../utils/mail');
 const {generateSoketId, formatedDateToShow} = require('../../utils/functions')
@@ -640,15 +641,20 @@ module.exports.saveOrderFromClient = async (req, res) => {
       const savedBill = await newBill.save() 
   
       let orderCode = null;
+      let orderToken = null;
       if (savedBill.payOnline) {
         orderCode = await getOrderCode(savedBill);
+      } else {
+        orderToken = encodeUserID(savedBill._id)
       }
+
       socket.emit('billl', JSON.stringify({bill: savedBill}))
 
       return res.status(200).json({
         message: 'Comanda a fost procesată',
         bill: savedBill,
-        orderCode
+        orderCode,
+        orderToken
       });
   
     } catch (error) {
@@ -656,6 +662,32 @@ module.exports.saveOrderFromClient = async (req, res) => {
       res.status(500).json({ message: 'Eroare server', error: error.message });
     }
   };
+
+ 
+async function encodeUserID(xx4){
+    const payload = {
+        xx4,
+        createdAt: Date.now()
+      };
+      const token = jwt.sign(payload, process.env.AUTH_SECRET, { expiresIn: '10m' });
+      return token
+}
+
+// module.exports.encodeUserID = async (req, res) => {
+//     const {xx4} = req.query
+//     try{
+//         const payload = {
+//             xx4,
+//             createdAt: Date.now()
+//           };
+//           const token = jwt.sign(payload, process.env.AUTH_SECRET, { expiresIn: '10m' });
+//           res.status(200).json(token)
+
+//     } catch(error) {
+//         console.log(error)
+//         res.status(500).json(error)
+//     }
+// }
   
 
 async function getOrderCode(order) {
