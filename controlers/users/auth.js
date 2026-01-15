@@ -32,6 +32,7 @@ module.exports.encodeUserID = async (req, res) => {
 
 module.exports.decodeUserToken = async (req, res) => {
     const {token} = req.body
+    consoel.log(token)
     if (!token) return res.status(400).json({ error: 'Missing token' });
     try{
         const decoded = jwt.verify(token, process.env.AUTH_SECRET);
