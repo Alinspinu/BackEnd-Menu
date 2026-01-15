@@ -18,6 +18,10 @@ const printServerSchema = new Schema({
         type: String, 
         required: true
     },
+    online: {
+        type: Boolean,
+        default: false
+    },
     status: {
         type: Boolean,
         default: true, 

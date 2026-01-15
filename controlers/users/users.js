@@ -584,6 +584,7 @@ module.exports.getServers = async (req, res) => {
 module.exports.editPrintServer = async (req, res) => {
     const {server} = req.body
     try{
+        await PrintServer.updateMany({locatie: server.locatie, salePoint: server.salePoint}, {$set: {online: false}})
         const updatedServer = await PrintServer.findByIdAndUpdate(server._id, server, {new: true})
         const updated = await PrintServer.findById(updatedServer._id)
                 .populate({path: 'fiscalPrinter.section'})

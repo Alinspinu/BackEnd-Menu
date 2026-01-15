@@ -37,6 +37,20 @@ const subProduct = require('../../models/office/product/sub-product');
 
 //************************SEND ORDERS********************** */
 
+
+module.exports.updateOrderFromClinet = async (req, res) => {
+    const {id, online} = req.body
+    try{
+
+        const order = await Order.findByIdAndUpdate(id, update, {new: true})
+
+        res.status(200).json({bill: order, message: 'Comanda a fost actualizată cu succes!'})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 module.exports.getOrder = async (req, res, next) => {
     const {start, end, day, loc, point, download} = req.body
 
