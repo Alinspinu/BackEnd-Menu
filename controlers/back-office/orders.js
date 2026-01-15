@@ -735,7 +735,7 @@ async function getOrderCode(order) {
             }
         });
     
-        return response2.data
+        return response2.data.orderCode
 
     } catch(error){
         console.log(error)
