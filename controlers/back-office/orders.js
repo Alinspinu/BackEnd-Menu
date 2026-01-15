@@ -646,7 +646,7 @@ module.exports.saveOrderFromClient = async (req, res) => {
       if (savedBill.payOnline) {
         orderCode = await getOrderCode(savedBill);
       } else {
-        orderToken = encodeUserID(savedBill._id)
+        orderToken = await encodeUserID(savedBill._id)
         console.log(orderToken)
       }
 
