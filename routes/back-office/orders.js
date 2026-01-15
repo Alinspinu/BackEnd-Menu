@@ -21,7 +21,7 @@ router.route('/move').post(orderRoutes.changeBillTable)
 
 router.route('/client').get(orderRoutes.getClientOrders)
 
-router.route('/save-order-client').post(orderRoutes.saveOrderFromClient)
+// router.route('/save-order-client').post(orderRoutes.saveOrderFromClient)
 
 router.route('/get-time').get(orderRoutes.sendOrderTime);
 router.route('/bill', authApi)
