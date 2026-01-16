@@ -674,7 +674,7 @@ module.exports.saveOrderFromClient = async (req, res) => {
       const { order } = req.body;
   
       const bill = typeof order === 'string' ? JSON.parse(order) : order;
-      bill.socketId = generateSoketId(16);
+      bill.soketId = generateSoketId(16);
   
       let table = null;
   
