@@ -279,7 +279,7 @@ module.exports.testRaport = async (req, res) => {
 module.exports.getClientOrders = async (req, res) => {
     const {userId} = req.query
     try{
-        const orders = await Order.find({user: userId})
+        const orders = await Order.find({'clientInfo.user': userId})
         res.status(200).json(orders)
     } catch(error){
         res.status(500).json(error)
@@ -579,7 +579,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 parsedBill.user = parsedBill.clientInfo._id
                 parsedBill.clientInfo.userId = parsedBill.user
             }
-            const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId}, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index name'});
+            const bill = await Order.findByIdAndUpdate(parsedBill._id, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index name'});
             if(bill){
                 res.status(200).json({bill: bill})
             } else {
