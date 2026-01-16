@@ -7,6 +7,7 @@ const Product = require('../../models/office/product/product')
 const Counter = require('../../models/utils/counter')
 const SalePoint = require('../../models/utils/sale-point')
 const SubProduct = require('../../models/office/product/sub-product')
+const PrintServer = require('../../models/utils/print-server')
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 
@@ -37,19 +38,6 @@ const subProduct = require('../../models/office/product/sub-product');
 
 //************************SEND ORDERS********************** */
 
-
-module.exports.updateOrderFromClinet = async (req, res) => {
-    const {id, online} = req.body
-    try{
-
-        const order = await Order.findByIdAndUpdate(id, update, {new: true})
-
-        res.status(200).json({bill: order, message: 'Comanda a fost actualizată cu succes!'})
-    } catch(error){
-        console.log(error)
-        res.status(500).json(error)
-    }
-}
 
 module.exports.getOrder = async (req, res, next) => {
     const {start, end, day, loc, point, download} = req.body
@@ -605,6 +593,82 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 }
 
 
+
+module.exports.updateOrderFromClient = async (req, res) => {
+    const { id, online } = req.body;
+  
+    try {
+      if (!id) {
+        return res.status(400).json({ message: 'Order ID is required' });
+      }
+  
+      const order = await Order.findById(id).lean();
+  
+      if (!order) {
+        return res.status(404).json({ message: 'Comanda nu a fost găsită' });
+      }
+  
+      let updatedOrder = order;
+  
+      // ✅ ONLY ONLINE PAYMENT → PRINT + UPDATE PRODUCTS
+      if (online === true) {
+  
+        // 1️⃣ PRINT (snapshot)
+        const mainServer = await PrintServer.findOne({
+          locatie: order.locatie,
+          salePoint: order.salePoint,
+          online: true
+        });
+  
+        if (mainServer) {
+          socket.emit(
+            'printOrder',
+            JSON.stringify({
+              bill: order,
+              serverKey: mainServer.key,
+              secondaryServer: null,
+              mainServer
+            })
+          );
+        }
+  
+        // 2️⃣ RESET sentToPrint ONLY HERE
+        const updatedProducts = order.products.map(p => ({
+          ...p,
+          sentToPrint: false
+        }));
+  
+        // 3️⃣ UPDATE ORDER
+        updatedOrder = await Order.findByIdAndUpdate(
+          id,
+          {
+            $set: {
+              products: updatedProducts,
+              paymentMethod: 'online',
+              'payment.online': order.total
+            }
+          },
+          { new: true }
+        );
+      }
+  
+      // ❌ NO ONLINE PAYMENT → NO PRODUCT CHANGES
+      return res.status(200).json({
+        bill: updatedOrder,
+        message: 'Comanda a fost actualizată cu succes!'
+      });
+  
+    } catch (error) {
+      console.error('updateOrderFromClient error:', error);
+      res.status(500).json({
+        message: 'Eroare la actualizarea comenzii',
+        error: error.message
+      });
+    }
+  };
+  
+
+
 module.exports.saveOrderFromClient = async (req, res) => {
     try {
       const { order } = req.body;
@@ -625,7 +689,6 @@ module.exports.saveOrderFromClient = async (req, res) => {
         if (!table) {
           return res.status(404).json({ message: 'Masa pentru comenzi online nu a fost găsită' });
         }
-  
         bill.masa = table.index;
       }
   
@@ -654,6 +717,10 @@ module.exports.saveOrderFromClient = async (req, res) => {
       delete bill._id
       const newBill = new Order(bill)
       const savedBill = await newBill.save() 
+
+      if(table){
+        await Table.findByIdAndUpdate(table._id, {$push: {bills: savedBill._id}})
+      }
   
       let orderCode = null;
       let orderToken = null;
@@ -664,7 +731,14 @@ module.exports.saveOrderFromClient = async (req, res) => {
         console.log(orderToken)
       }
 
-      socket.emit('billl', JSON.stringify({bill: savedBill}))
+
+      
+      if(bill.typeOfOrder?.pickUp){
+        socket.emit('orderId', JSON.stringify(savedBill))
+      } 
+      if(bill.typeOfOrder?.toStay){
+          socket.emit('billl', JSON.stringify({bill: savedBill}))
+      }
 
       return res.status(200).json({
         message: 'Comanda a fost procesată',
@@ -899,7 +973,7 @@ module.exports.setOrderTime = async (req, res, next) => {
             emails.push(order.clientInfo.email)
         }
         await sendMailToCustomer(order, emails)
-        socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime, masa: order.masa, toGo: order.toGo}))
+        socket.emit('orderTime', JSON.stringify({id: order._id, time: order.completetime}))
         console.log(` Success! Order ${orderId} - the complete time was set to ${time} and pending to false!`)
         res.status(200).json({ message: 'time set', order: order });
     } catch (error) {
