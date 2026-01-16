@@ -279,7 +279,7 @@ module.exports.testRaport = async (req, res) => {
 module.exports.getClientOrders = async (req, res) => {
     const {userId} = req.query
     try{
-        const orders = await Order.find({'clientInfo.user': userId})
+        const orders = await Order.find({'clientInfo.userId': userId})
         res.status(200).json(orders)
     } catch(error){
         res.status(500).json(error)
