@@ -579,7 +579,7 @@ module.exports.saveOrEditBill = async (req, res, next) => {
                 parsedBill.user = parsedBill.clientInfo._id
                 parsedBill.clientInfo.userId = parsedBill.user
             }
-            const bill = await Order.findByIdAndUpdate(parsedBill._id, parsedBill, {new: true}).populate({path: 'masaRest', select: 'index name'});
+            const bill = await Order.findOneAndUpdate({soketId: parsedBill.soketId} , parsedBill, {new: true}).populate({path: 'masaRest', select: 'index name'});
             if(bill){
                 res.status(200).json({bill: bill})
             } else {
