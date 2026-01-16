@@ -29,56 +29,56 @@ const socket = io('https://flowmanager.ro', {
     })
 // const socket = io("https://socket.flowmanager.ro")
 
-module.exports.getToken = async (req, res, next) => {
-    const {code} = req.query
-    try {
-        const clientId = process.env.VIVA_CLIENT_ID_PRODUCTION;
-        const clientSecret = process.env.VIVA_CLIENT_SECRET_PRODUCTION;
-        const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-        const url = 'https://accounts.vivapayments.com/connect/token';
-        const headers = {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Authorization: `Basic ${credentials}`
-        };
-        const total = Number(req.query.total) * 100;
-        console.log(total)
-        const response = await axios.post(url, 'grant_type=client_credentials', { headers });
-        const requestBody = {
-            amount: total,
-            customerTrns: 'Produse Delicioase',
-            customer: {
-                email: '',
-                fullName: '',
-                phone: '',
-                countryCode: 'RO',
-                requestLang: 'ro-RO',
-            },
-            paymentTimeout: 300,
-            preauth: false,
-            allowRecurring: false,
-            maxInstallments: 12,
-            paymentNotification: true,
-            tipAmount: 0,
-            disableExactAmount: false,
-            disableCash: true,
-            disableWallet: true,
-            sourceCode: code,
-            merchantTrns: '',
-        };
-        token = response.data.access_token;
-        const urlPayment = 'https://api.vivapayments.com/checkout/v2/orders';
-        const response2 = await axios.post(urlPayment, requestBody, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${response.data.access_token}`,
-            }
-        });
-        res.status(200).json(response2.data);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-}
+// module.exports.getToken = async (req, res, next) => {
+//     const {code} = req.query
+//     try {
+//         const clientId = process.env.VIVA_CLIENT_ID_PRODUCTION;
+//         const clientSecret = process.env.VIVA_CLIENT_SECRET_PRODUCTION;
+//         const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+//         const url = 'https://accounts.vivapayments.com/connect/token';
+//         const headers = {
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//             Authorization: `Basic ${credentials}`
+//         };
+//         const total = Number(req.query.total) * 100;
+//         console.log(total)
+//         const response = await axios.post(url, 'grant_type=client_credentials', { headers });
+//         const requestBody = {
+//             amount: total,
+//             customerTrns: 'Produse Delicioase',
+//             customer: {
+//                 email: '',
+//                 fullName: '',
+//                 phone: '',
+//                 countryCode: 'RO',
+//                 requestLang: 'ro-RO',
+//             },
+//             paymentTimeout: 300,
+//             preauth: false,
+//             allowRecurring: false,
+//             maxInstallments: 12,
+//             paymentNotification: true,
+//             tipAmount: 0,
+//             disableExactAmount: false,
+//             disableCash: true,
+//             disableWallet: true,
+//             sourceCode: code,
+//             merchantTrns: '',
+//         };
+//         token = response.data.access_token;
+//         const urlPayment = 'https://api.vivapayments.com/checkout/v2/orders';
+//         const response2 = await axios.post(urlPayment, requestBody, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 Authorization: `Bearer ${response.data.access_token}`,
+//             }
+//         });
+//         res.status(200).json(response2.data);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Internal Server Error' });
+//     }
+// }
 
 
 module.exports.getTokenForPos = async (req, res, next) => {
@@ -376,7 +376,6 @@ module.exports.printBill = async (req, res, next) => {
               paymentDate: new Date()
             }
           };
-
         // const digger = ['690c818c21500095430c613f', '655e2e7c5a3d53943c6b7c53']
         // if(!digger.includes(bill.locatie)){
         //     const locatie = await Locatie.findById(bill.locatie)
@@ -391,6 +390,8 @@ module.exports.printBill = async (req, res, next) => {
         const savedBill = await Order.findOneAndUpdate({_id: bill._id}, update, {new: true}).lean()
         console.log(savedBill.paymentDate)
 
+        console.log('status before update', bill.status, bill._id)
+        console.log('status after update', savedBill.status, savedBill._id)
         
         // if(bill.locatie !== '6899cbbb5defa52bb2c0bd19'){
             await createProductSaleReport(savedBill.products, savedBill.updatedAt)
