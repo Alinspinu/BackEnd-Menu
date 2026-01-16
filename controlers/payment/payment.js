@@ -390,8 +390,8 @@ module.exports.printBill = async (req, res, next) => {
         const savedBill = await Order.findOneAndUpdate({_id: bill._id}, update, {new: true}).lean()
         console.log(savedBill.paymentDate)
 
-        console.log('status before update', bill.status, bill._id)
-        console.log('status after update', savedBill.status, savedBill._id)
+        console.log('status before update', bill.status, bill._id, bill.socketId)
+        console.log('status after update', savedBill.status, savedBill._id, bill.socketId)
         
         // if(bill.locatie !== '6899cbbb5defa52bb2c0bd19'){
             await createProductSaleReport(savedBill.products, savedBill.updatedAt)
