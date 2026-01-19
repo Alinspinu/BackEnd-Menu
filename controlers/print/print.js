@@ -369,7 +369,7 @@ function groupOrdersForCharts(orders) {
   const map = {};
 
   orders.forEach(o => {
-    const d = new Date(o.cratedAt);
+    const d = new Date(o.createdAt);
 
     // ⏰ adjust server time (+2 hours)
     d.setHours(d.getHours() + 2);
