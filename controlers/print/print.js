@@ -341,7 +341,7 @@ function groupOrdersForCharts(orders) {
   const map = {};
 
   orders.forEach(o => {
-    const d = new Date(o.paymentDate);
+    const d = new Date(o.createdAt);
 
     // add +2 hours
     d.setHours(d.getHours() + 1);
