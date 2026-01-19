@@ -344,7 +344,7 @@ function groupOrdersForCharts(orders) {
     const d = new Date(o.paymentDate);
 
     // ⏰ add +2 hours
-    d.setHours(d.getHours() + 2);
+    d.setHours(d.getHours() + 1);
 
     const day = d.toISOString().slice(0, 10);
     const hour = d.getHours();
