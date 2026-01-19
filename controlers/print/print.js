@@ -342,6 +342,10 @@ function groupOrdersForCharts(orders) {
 
   orders.forEach(o => {
     const d = new Date(o.paymentDate);
+
+    // ⏰ add +2 hours
+    d.setHours(d.getHours() + 2);
+
     const day = d.toISOString().slice(0, 10);
     const hour = d.getHours();
 
@@ -354,7 +358,10 @@ function groupOrdersForCharts(orders) {
     day,
     hours: Object.entries(hours)
       .sort(([a], [b]) => a - b)
-      .map(([hour, total]) => ({ hour: Number(hour), total }))
+      .map(([hour, total]) => ({
+        hour: Number(hour),
+        total
+      }))
   }));
 }
 
