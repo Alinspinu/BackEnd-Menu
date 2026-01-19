@@ -1,4 +1,4 @@
-import ExcelJS from 'exceljs';
+const ExcelJS = require("exceljs");
 
 
 export async function exportOrdersToExcel(groupedData) {
@@ -24,7 +24,6 @@ export async function exportOrdersToExcel(groupedData) {
         total: hourEntry.total
       });
     });
-    
   });
 
   // Optional formatting
@@ -37,6 +36,3 @@ export async function exportOrdersToExcel(groupedData) {
   return buffer;
 
 }
-
-
-module.exports = {exportOrdersToExcel}
