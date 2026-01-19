@@ -1,7 +1,7 @@
 const ExcelJS = require("exceljs");
 
 
-export async function exportOrdersToExcel(groupedData) {
+ async function exportOrdersToExcel(groupedData) {
   const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Monthly Sales');
 
@@ -24,6 +24,8 @@ export async function exportOrdersToExcel(groupedData) {
         total: hourEntry.total
       });
     });
+    sheet.addRow({});
+
   });
 
   // Optional formatting
@@ -36,3 +38,6 @@ export async function exportOrdersToExcel(groupedData) {
   return buffer;
 
 }
+
+
+module.exports = {exportOrdersToExcel}
