@@ -337,32 +337,67 @@ module.exports.printHorsSales = async (req, res) => {
 
 
 
+// function groupOrdersForCharts(orders) {
+//   const map = {};
+
+//   orders.forEach(o => {
+//     const d = new Date(o.createdAt);
+
+//     // add +2 hours
+//     d.setHours(d.getHours() + 2);
+
+//     const day = d.toLocaleDateString('en-CA'); // YYYY-MM-DD (local)
+//     const hour = d.getHours(); // local hour
+
+//     map[day] ??= {};
+//     map[day][hour] ??= 0;
+//     map[day][hour] += o.total;
+//   });
+
+//   return Object.entries(map).map(([day, hours]) => ({
+//     day,
+//     hours: Object.entries(hours)
+//       .sort(([a], [b]) => a - b)
+//       .map(([hour, total]) => ({
+//         hour: Number(hour),
+//         total
+//       }))
+//   }));
+// }
+
 function groupOrdersForCharts(orders) {
   const map = {};
 
   orders.forEach(o => {
-    const d = new Date(o.createdAt);
+    const d = new Date(o.cratedAt);
 
-    // add +2 hours
+    // ⏰ adjust server time (+2 hours)
     d.setHours(d.getHours() + 2);
 
+    const dayOfWeek = d.getDay();
+
+    // ✅ keep ONLY Saturday (6) & Sunday (0)
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) return;
+
     const day = d.toLocaleDateString('en-CA'); // YYYY-MM-DD (local)
-    const hour = d.getHours(); // local hour
+    const hour = d.getHours();
 
     map[day] ??= {};
     map[day][hour] ??= 0;
     map[day][hour] += o.total;
   });
 
-  return Object.entries(map).map(([day, hours]) => ({
-    day,
-    hours: Object.entries(hours)
-      .sort(([a], [b]) => a - b)
-      .map(([hour, total]) => ({
-        hour: Number(hour),
-        total
-      }))
-  }));
+  return Object.entries(map)
+    .sort(([a], [b]) => new Date(a) - new Date(b))
+    .map(([day, hours]) => ({
+      day,
+      hours: Object.entries(hours)
+        .sort(([a], [b]) => a - b)
+        .map(([hour, total]) => ({
+          hour: Number(hour),
+          total
+        }))
+    }));
 }
 
 
