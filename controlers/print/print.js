@@ -18,6 +18,7 @@ const {createRecipt} = require('./recipt')
 const {createInfoice} =require('./invoice')
 const {createNir} = require('./nir');
 const {createSupliersSolds} = require('./supliers-solds')
+const {exportOrdersToExcel} = require('./printHours')
 const dep = require('../../models/office/product/dep');
 
 const PDFDocument = require("pdfkit");
@@ -303,6 +304,58 @@ module.exports.printNir = async (req, res, next) => {
         console.log(err)
         res.status(500).json({message: "Error", err})
     }
+}
+
+
+
+module.exports.printHorsSales = async (req, res) => {
+
+    const {loc, start, end, point} = req.body
+    try{
+        const startTime = new Date(start).setUTCHours(0,0,0,0)
+        const endTime = new Date(end).setUTCHours(23, 59, 59, 9999)
+        const orders = await Order.find({locatie: loc, paymentDate: {$gte: startTime, $lte: endTime}, status: 'done', salePoint: point, invoice: false})
+
+        const data = groupOrdersForCharts(orders)
+        if(data){
+          const buffer = await exportOrdersToExcel(data)
+  
+          res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+          res.setHeader("Content-Disposition", 'attachment; filename="report.xlsx"');
+      
+          // Send the buffer directly
+          res.send(Buffer.from(buffer));
+        } else {
+          throw new Error('Error')
+        }
+
+    } catch(error){
+      console.log(err)
+      res.status(500).json({message: "Error", err})
+    }
+}
+
+
+
+function groupOrdersForCharts(orders) {
+  const map = {};
+
+  orders.forEach(o => {
+    const d = new Date(o.paymentDate);
+    const day = d.toISOString().slice(0, 10);
+    const hour = d.getHours();
+
+    map[day] ??= {};
+    map[day][hour] ??= 0;
+    map[day][hour] += o.total;
+  });
+
+  return Object.entries(map).map(([day, hours]) => ({
+    day,
+    hours: Object.entries(hours)
+      .sort(([a], [b]) => a - b)
+      .map(([hour, total]) => ({ hour: Number(hour), total }))
+  }));
 }
 
 

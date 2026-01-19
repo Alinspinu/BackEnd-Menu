@@ -68,8 +68,8 @@ module.exports.getOrder = async (req, res, next) => {
                         .populate({path : 'products.departament', select: 'name'}).lean()
                         // .populate({path: 'products.productId', select: 'departament'})
         const delProds = await DelProd.find({locatie: loc, createdAt: {$gte: startTime, $lt: endTime}, salePoint: point}).lean()
-        const result = groupOrdersForCharts(orders);
-        console.log(result);
+        // const result = groupOrdersForCharts(orders);
+        // console.log(result);
         // await modifyOrdersProducts(orders)
         if(download && download.bool){
             const date = `${formatedDateToShow(start).split('ora')[0]} - ${formatedDateToShow(end).split('ora')[0]}`
@@ -129,26 +129,7 @@ module.exports.getOrder = async (req, res, next) => {
 
 
 
-function groupOrdersForCharts(orders) {
-    const map = {};
-  
-    orders.forEach(o => {
-      const d = new Date(o.paymentDate);
-      const day = d.toISOString().slice(0, 10);
-      const hour = d.getHours();
-  
-      map[day] ??= {};
-      map[day][hour] ??= 0;
-      map[day][hour] += o.total;
-    });
-  
-    return Object.entries(map).map(([day, hours]) => ({
-      day,
-      hours: Object.entries(hours)
-        .sort(([a], [b]) => a - b)
-        .map(([hour, total]) => ({ hour: Number(hour), total }))
-    }));
-  }
+
 
 
 // async function modifyOrdersProducts(orders) {
