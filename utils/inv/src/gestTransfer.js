@@ -69,7 +69,7 @@ async function gestTransfer(ings, sendGest, receiveGest) {
           ing.price
             ? round(ing.price * (1 + (ingredientInv.tva || 0) / 100))
             : ingredientInv.tvaPrice || 0,
-        supplierName: `Transfer din gestiunea ${sendGest}`
+        supplierName: `Transfer din gestiunea ${sGest.name}`
       });
 
       ingredientInv.invGestiune[sIndex] = sGest;
@@ -81,7 +81,7 @@ async function gestTransfer(ings, sendGest, receiveGest) {
       await saveIngredient(ingredientInv);
 
       logger.success(
-        `Transfer: ${qty} din ${sendGest} → ${receiveGest} pentru ${ingredientInv.name}`
+        `Transfer: ${qty} din ${sGest.name} → ${rGest.name} pentru ${ingredientInv.name}`
       );
     }
   } catch (err) {
