@@ -24,7 +24,7 @@ export async function exportOrdersToExcel(groupedData) {
         total: hourEntry.total
       });
     });
-    sheet.addRow({});
+    
   });
 
   // Optional formatting
