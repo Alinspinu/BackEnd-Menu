@@ -21,7 +21,7 @@ const ExcelJS = require("exceljs");
       sheet.addRow({
         day: dayEntry.day,
         hour: `${hourEntry.hour}:00`,
-        total: hourEntry.total
+        total: +hourEntry.total
       });
     });
     sheet.addRow({});
