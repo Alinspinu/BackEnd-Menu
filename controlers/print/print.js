@@ -344,7 +344,7 @@ function groupOrdersForCharts(orders) {
     const d = new Date(o.createdAt);
 
     // add +2 hours
-    d.setHours(d.getHours() + 1);
+    d.setHours(d.getHours() + 2);
 
     const day = d.toLocaleDateString('en-CA'); // YYYY-MM-DD (local)
     const hour = d.getHours(); // local hour
