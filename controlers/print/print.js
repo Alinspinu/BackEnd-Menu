@@ -343,11 +343,11 @@ function groupOrdersForCharts(orders) {
   orders.forEach(o => {
     const d = new Date(o.paymentDate);
 
-    // ⏰ add +2 hours
+    // add +2 hours
     d.setHours(d.getHours() + 1);
 
-    const day = d.toISOString().slice(0, 10);
-    const hour = d.getHours();
+    const day = d.toLocaleDateString('en-CA'); // YYYY-MM-DD (local)
+    const hour = d.getHours(); // local hour
 
     map[day] ??= {};
     map[day][hour] ??= 0;
@@ -364,6 +364,7 @@ function groupOrdersForCharts(orders) {
       }))
   }));
 }
+
 
 
 
