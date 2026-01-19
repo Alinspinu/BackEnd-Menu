@@ -24,6 +24,7 @@ export async function exportOrdersToExcel(groupedData) {
         total: hourEntry.total
       });
     });
+    sheet.addRow({});
   });
 
   // Optional formatting
@@ -36,3 +37,6 @@ export async function exportOrdersToExcel(groupedData) {
   return buffer;
 
 }
+
+
+module.exports = {exportOrdersToExcel}
