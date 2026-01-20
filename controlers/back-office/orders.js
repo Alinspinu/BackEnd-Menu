@@ -604,7 +604,6 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 module.exports.updateOrderFromClient = async (req, res) => {
     const { id, online } = req.body;
 
-    console.log('orderID ', id)
   
     try {
       if (!id) {
@@ -619,7 +618,6 @@ module.exports.updateOrderFromClient = async (req, res) => {
   
       let updatedOrder = order;
   
-      console.log('online', online)
       // ✅ ONLY ONLINE PAYMENT → PRINT + UPDATE PRODUCTS
       if (online === true) {
   
@@ -629,7 +627,6 @@ module.exports.updateOrderFromClient = async (req, res) => {
           salePoint: order.salePoint,
           online: true
         }).populate({path: 'fiscalPrinter.section'}).populate({path: 'thermalPrinters.section'});
-        console.log('server', mainServer)
         if (mainServer) {
           socket.emit(
             'printOrder',
@@ -661,9 +658,10 @@ module.exports.updateOrderFromClient = async (req, res) => {
           },
           { new: true }
         );
+        socket.emit('billl', JSON.stringify({bill: updatedOrder, secondaryServer: null}))
+
       }
 
-      console.log(updatedOrder.products)
   
       // ❌ NO ONLINE PAYMENT → NO PRODUCT CHANGES
       return res.status(200).json({
