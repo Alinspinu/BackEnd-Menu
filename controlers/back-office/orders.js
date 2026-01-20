@@ -611,7 +611,7 @@ module.exports.updateOrderFromClient = async (req, res) => {
         return res.status(400).json({ message: 'Order ID is required' });
       }
   
-      const order = await Order.findById(id).lean();
+      const order = await Order.findById(id).populate({path: 'masaRest', select: 'index name'}).lean();
   
       if (!order) {
         return res.status(404).json({ message: 'Comanda nu a fost găsită' });
@@ -662,6 +662,8 @@ module.exports.updateOrderFromClient = async (req, res) => {
           { new: true }
         );
       }
+
+      console.log(updatedOrder.products)
   
       // ❌ NO ONLINE PAYMENT → NO PRODUCT CHANGES
       return res.status(200).json({
