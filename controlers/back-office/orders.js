@@ -726,7 +726,7 @@ module.exports.saveOrderFromClient = async (req, res) => {
   
       bill.masaRest = table;
       delete bill._id
-      delete bill.employee
+      delete bill.employee.user
       const newBill = new Order(bill)
       const savedBill = await newBill.save() 
 
