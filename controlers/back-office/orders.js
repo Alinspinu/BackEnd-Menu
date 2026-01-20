@@ -617,6 +617,7 @@ module.exports.updateOrderFromClient = async (req, res) => {
   
       let updatedOrder = order;
   
+      console.log('online', online)
       // ✅ ONLY ONLINE PAYMENT → PRINT + UPDATE PRODUCTS
       if (online === true) {
   
@@ -626,7 +627,7 @@ module.exports.updateOrderFromClient = async (req, res) => {
           salePoint: order.salePoint,
           online: true
         });
-  
+        console.log('server', mainServer)
         if (mainServer) {
           socket.emit(
             'printOrder',
@@ -644,7 +645,8 @@ module.exports.updateOrderFromClient = async (req, res) => {
           ...p,
           sentToPrint: false
         }));
-  
+        
+        console.log('products', updatedProducts)
         // 3️⃣ UPDATE ORDER
         updatedOrder = await Order.findByIdAndUpdate(
           id,
