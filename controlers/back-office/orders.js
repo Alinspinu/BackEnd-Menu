@@ -603,6 +603,8 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 
 module.exports.updateOrderFromClient = async (req, res) => {
     const { id, online } = req.body;
+
+    console.log('orderID ', id)
   
     try {
       if (!id) {
