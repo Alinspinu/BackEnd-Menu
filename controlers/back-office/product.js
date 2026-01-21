@@ -95,6 +95,7 @@ module.exports.updateProducts = async (req, res) => {
     const products = await Product.find(
         { locatie: loc, salePoint: point }
     )
+        .select('-saleLog')
         .populate({ path: 'category', select: 'name image order mainCat' })
         .populate({
         path: 'subProducts',
