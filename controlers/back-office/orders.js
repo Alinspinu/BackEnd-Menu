@@ -619,7 +619,7 @@ module.exports.updateOrderFromClient = async (req, res) => {
       let updatedOrder = order;
   
       // ✅ ONLY ONLINE PAYMENT → PRINT + UPDATE PRODUCTS
-      if (online === true) {
+      if (online === true || order.total === 0) {
   
         // 1️⃣ PRINT (snapshot)
         const mainServer = await PrintServer.findOne({
@@ -736,11 +736,10 @@ module.exports.saveOrderFromClient = async (req, res) => {
   
       let orderCode = null;
       let orderToken = null;
-      if (savedBill.payOnline) {
+      if (savedBill.payOnline && savedBill.total > 0) {
         orderCode = await getOrderCode(savedBill);
       } else {
         orderToken = await encodeUserID(savedBill._id)
-        console.log(orderToken)
       }
 
 
