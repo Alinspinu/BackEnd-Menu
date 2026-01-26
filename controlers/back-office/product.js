@@ -780,7 +780,7 @@ module.exports.updateSubProduct = async (req, res) => {
                 .populate({ path: 'ings.gestiune', select: 'name' })
                 .lean();  
         socket.emit('product-update', JSON.stringify({product: updatedproduct}))
-        res.status(200).json({message: 'Sub-produsul a fost actualizat cu success', product: subProduct})
+        res.status(200).json({message: 'Sub-produsul a fost actualizat cu success', product: updatedproduct})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
