@@ -722,7 +722,7 @@ module.exports.updateProduct = async (req, res) => {
                 })
                 .populate({ path: 'ings.gestiune', select: 'name' })
                 .lean();  
-                console.log('update controler ', updatedproduct.invisible)
+                console.log('update controler ', updatedproduct)
         socket.emit('product-updated', JSON.stringify({product: updatedproduct}))
         res.status(200).json({message: 'Produsul a fost actualizat cu success', product: updatedproduct})
     } catch(error){
