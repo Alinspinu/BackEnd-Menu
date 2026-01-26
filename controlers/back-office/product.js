@@ -9,6 +9,12 @@ const Gestiune = require('../../models/office/product/gestiune')
 const mongoose = require('mongoose')
 const cloudinary = require('cloudinary').v2;
 
+const io = require('socket.io-client');
+const socket = io('https://flowmanager.ro', {
+      path: '/socket.io/',
+      transports: ['websocket']
+    })
+
 const {checkTopping, round, normalizeText} = require('../../utils/functions')
 
 
@@ -93,7 +99,7 @@ module.exports.updateProducts = async (req, res) => {
       const {loc, point} = req.body
   
     const products = await Product.find(
-        { locatie: loc, salePoint: point }
+        { locatie: loc, salePoint: point }  
     )
         .select('-saleLog')
         .populate({ path: 'category', select: 'name image order mainCat' })
@@ -663,6 +669,125 @@ module.exports.changeStatus = async (req, res, next) => {
         res.status(500).json(err.message)
     }
 }
+
+module.exports.updateProduct = async (req, res) => {
+    const {update, id} = req.body
+    try{
+
+        const updatedproduct = await Product.findByIdAndUpdate(id, update, {new: true})
+                .select('-saleLog')
+                .populate({ path: 'category', select: 'name' })
+                .populate({
+                path: 'subProducts',
+                populate: [
+                    {
+                    path: 'ings.ing',
+                    select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                    populate: innerIngPopulate
+                    },
+                    { path: 'ings.gestiune', select: 'name' }
+                ]
+                })
+                .populate({
+                path: 'toppings',
+                select: 'qty name ing price um gestiune',
+                populate: [
+                    {
+                    path: 'ing',
+                    select: 'name tvaPrice um ings productIngredient gestiune qty',
+                    populate: {
+                        path: 'ings',
+                        select: 'qty ing gestiune',
+                        populate: [
+                            {
+                                path: 'ing',
+                                select: 'name tvaPrice qty um'
+                            },
+                            {
+                                path: 'gestiune',
+                                select: 'name'
+                            }
+                        ]
+                    }
+                    },
+                    { path: 'gestiune', select: 'name' }
+                ]
+                })
+                .populate({
+                path: 'ings.ing',
+                select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty',
+                populate: innerIngPopulate
+                })
+                .populate({ path: 'ings.gestiune', select: 'name' })
+                .lean();  
+        socket.emit('product-update', JSON.stringify({product: updatedproduct}))
+        res.status(200).json({message: 'Produsul a fost actualizat cu success', product: updatedproduct})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+module.exports.updateSubProduct = async (req, res) => {
+    const {update, id} = req.body
+    try{
+
+        const subProduct = await SubProduct.findByIdAndUpdate(id, update, {new: true})
+        const updatedproduct = await Product.findById(subProduct.product)
+                .select('-saleLog')
+                .populate({ path: 'category', select: 'name' })
+                .populate({
+                path: 'subProducts',
+                populate: [
+                    {
+                    path: 'ings.ing',
+                    select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                    populate: innerIngPopulate
+                    },
+                    { path: 'ings.gestiune', select: 'name' }
+                ]
+                })
+                .populate({
+                path: 'toppings',
+                select: 'qty name ing price um gestiune',
+                populate: [
+                    {
+                    path: 'ing',
+                    select: 'name tvaPrice um ings productIngredient gestiune qty',
+                    populate: {
+                        path: 'ings',
+                        select: 'qty ing gestiune',
+                        populate: [
+                            {
+                                path: 'ing',
+                                select: 'name tvaPrice qty um'
+                            },
+                            {
+                                path: 'gestiune',
+                                select: 'name'
+                            }
+                        ]
+                    }
+                    },
+                    { path: 'gestiune', select: 'name' }
+                ]
+                })
+                .populate({
+                path: 'ings.ing',
+                select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty',
+                populate: innerIngPopulate
+                })
+                .populate({ path: 'ings.gestiune', select: 'name' })
+                .lean();  
+        socket.emit('product-update', JSON.stringify({product: updatedproduct}))
+        res.status(200).json({message: 'Sub-produsul a fost actualizat cu success', product: subProduct})
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
+
 
 
 

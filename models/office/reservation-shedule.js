@@ -161,7 +161,7 @@ const hourSchema = new Schema({
     visible: {
         type: Boolean
     },
-
+    
     shedule: {
         type: Schema.Types.ObjectId,
         ref: 'ReservationSchedule'

@@ -32,6 +32,10 @@ router.route('/disc-prod', authApi).post(productRoutes.setDiscountProd)
 
 router.route('/up').get(productRoutes.updateProducts)
 
+router.route('/update-status', authApi)
+        .post(productRoutes.updateProduct)
+        .put(productRoutes.updateSubProduct)
+
 router.route('/status').get(productRoutes.checkProductStatus)
 
 // router.route('/change-vat').get(productRoutes.changeVat)
