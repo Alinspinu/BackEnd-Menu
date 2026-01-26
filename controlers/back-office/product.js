@@ -676,7 +676,7 @@ module.exports.updateProduct = async (req, res) => {
 
         console.log(update)
 
-        const updatedproduct = await Product.findByIdAndUpdate(id, update, {new: true})
+        const updatedproduct = await Product.findByIdAndUpdate(id, {$set: update}, {new: true})
                 .select('-saleLog')
                 .populate({ path: 'category', select: 'name' })
                 .populate({
