@@ -129,9 +129,6 @@ module.exports.getOrder = async (req, res, next) => {
 
 
 
-
-
-
 // async function modifyOrdersProducts(orders) {
 //     const updatePromises = [];
   
@@ -352,9 +349,6 @@ module.exports.calcDep = async (req, res, next) => {
 
 
 
-  
-
-
 module.exports.getHavyOrders = async (req, res, next) => {
     try{
         const {start, end, day, loc, filter, report, point, download} = req.body
@@ -552,13 +546,27 @@ module.exports.saveOrEditBill = async (req, res, next) => {
             const savedBill = await newBill.save();
             const ord = await Order.findById(savedBill._id).populate({path: 'masaRest', select: 'index name'})
             if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: ord, serverKey: mainServer.key, secondaryServer: secondaryServer, mainServer: mainServer}))   
-                
-            savedBill.products.forEach(el => {
-                if(el.sentToPrint){
-                    el.sentToPrint = false
-                    console.log("new",el.sentToPrint)
+            
+            for(let p of savedBill.products){
+                if(p.sentToPrint){
+                    p.sentToPrint = false
+                    if(p.subProductId){
+                      await updateSubProductStock(p.subProductId, p.quantity)
+                    }
+                    const product = await updateProductStock(p.productId, p.quantity)
+                    if(product) socket.emit('product-updated', JSON.stringify({product: product}))
+
                 }
-            })
+            }
+
+
+            // savedBill.products.forEach(el => {
+            //     if(el.sentToPrint){
+            //         el.sentToPrint = false
+
+            //         console.log("new",el.sentToPrint)
+            //     }
+            // })
             
             table.bills.push(savedBill);
             await table.save();
@@ -572,12 +580,26 @@ module.exports.saveOrEditBill = async (req, res, next) => {
 
            if(mode && mainServer) socket.emit('printOrder', JSON.stringify({bill: parsedBill, serverKey: mainServer.key, secondaryServer: secondaryServer, mainServer: mainServer}))  
             let productsToPrint = false
-            parsedBill.products.forEach(el => {
-                if(el.sentToPrint){
+
+           for(let p of parsedBill.products){
+                if(p.sentToPrint){
+                    p.sentToPrint = false
                     productsToPrint = true
-                    el.sentToPrint = false
+                    if(!parsedBill.client){
+                        if(p.subProductId.length){
+                            await updateSubProductStock(p.subProductId, p.quantity)
+                        }
+                        const product = await updateProductStock(p.productId, p.quantity)
+                        if(product) socket.emit('product-updated', JSON.stringify({product: product}))
+                    }
                 }
-            })
+           }
+            // parsedBill.products.forEach(el => {
+            //     if(el.sentToPrint){
+            //         productsToPrint = true
+            //         el.sentToPrint = false
+            //     }
+            // })
             if(productsToPrint){
                 socket.emit('billl', JSON.stringify({bill: parsedBill, secondaryServer: secondaryServer}))
             }
@@ -596,6 +618,71 @@ module.exports.saveOrEditBill = async (req, res, next) => {
     } catch(err){
         console.log(err)
         res.status(500).json({message: 'Something went wrong', err: err.message})
+    }
+}
+
+
+async function updateProductStock(id, qty){
+
+    const product = await Product.findOneAndUpdate({_id: id, 'stock.active': true}, {$inc: {'stock.value': -qty}}, {new: true})
+                    .select('-saleLog')
+                    .populate({ path: 'category', select: 'name' })
+                    .populate({
+                    path: 'subProducts',
+                    populate: [
+                        {
+                        path: 'ings.ing',
+                        select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                        populate: innerIngPopulate
+                        },
+                        { path: 'ings.gestiune', select: 'name' }
+                    ]
+                    })
+                    .populate({
+                    path: 'toppings',
+                    select: 'qty name ing price um gestiune',
+                    populate: [
+                        {
+                        path: 'ing',
+                        select: 'name tvaPrice um ings productIngredient gestiune qty',
+                        populate: {
+                            path: 'ings',
+                            select: 'qty ing gestiune',
+                            populate: [
+                                {
+                                    path: 'ing',
+                                    select: 'name tvaPrice qty um'
+                                },
+                                {
+                                    path: 'gestiune',
+                                    select: 'name'
+                                }
+                            ]
+                        }
+                        },
+                        { path: 'gestiune', select: 'name' }
+                    ]
+                    })
+                    .populate({
+                    path: 'ings.ing',
+                    select: 'gestiune name locatie price sellPrice tvaPrice tva um productIngredient ings qty',
+                    populate: innerIngPopulate
+                    })
+                    .populate({ path: 'ings.gestiune', select: 'name' })
+                    .lean();  
+        if(product){
+            console.log('PRODUS ', product.name, 'cantitate de scazut ', qty, 'cantitate finala ', product.stock.value)
+            return product
+        } else {
+            return null
+        }
+}
+
+
+async function updateSubProductStock(id, qty){
+    const product = await SubProduct.findOneAndUpdate({_id: id, 'stock.active': true}, {$inc: {'stock.value': -qty}}, {new: true})
+    if(product){
+        console.log('SUB PRODUS ', product.name, 'cantitate de scazut ', qty, 'cantitate finala ', product.stock.value)
     }
 }
 
@@ -729,6 +816,18 @@ module.exports.saveOrderFromClient = async (req, res) => {
       delete bill.employee.user
       const newBill = new Order(bill)
       const savedBill = await newBill.save() 
+
+      for(let p of savedBill.products){
+        if(p.sentToPrint){
+            p.sentToPrint = false
+            if(p.subProductId.length){
+              await updateSubProductStock(p.subProductId, p.quantity)
+            }
+            const product = await updateProductStock(p.productId, p.quantity)
+            if(product) socket.emit('product-updated', JSON.stringify({product: product}))
+
+        }
+    }
 
       if(table){
         await Table.findByIdAndUpdate(table._id, {$push: {bills: savedBill._id}})
