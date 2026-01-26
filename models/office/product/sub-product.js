@@ -35,7 +35,10 @@ const subProductSchema = new Schema({
     printOut:{
         type: Boolean,
     },
-    invisible: Boolean,
+    invisible:{
+        type: Boolean,
+        default: false
+    },
     stock: {
         active: {
             type: Boolean,

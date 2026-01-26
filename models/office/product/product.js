@@ -60,6 +60,21 @@ const productTrueSchema = new Schema({
     preOrder: Boolean,
     preOrderPrice: Number,
     productionCost: Number,
+
+    invisible:{
+        type: Boolean,
+        default: false
+    },
+    stock: {
+        active: {
+            type: Boolean,
+            default: false
+        },
+        value: {
+            type: Number,
+            default: 0,
+        }
+    },
     paring: [
         {
             type: Schema.Types.ObjectId,
