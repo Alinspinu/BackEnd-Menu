@@ -99,7 +99,7 @@ module.exports.updateProducts = async (req, res) => {
       const {loc, point} = req.body
   
     const products = await Product.find(
-        { locatie: loc, salePoint: point }  
+        { locatie: loc, salePoint: point, invisible: false }  
     )
         .select('-saleLog')
         .populate({ path: 'category', select: 'name image order mainCat' })
