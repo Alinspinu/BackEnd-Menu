@@ -35,6 +35,16 @@ const subProduct = require('../../models/office/product/sub-product');
 // const socket = io("http://localhost:8090")
 
 
+const innerIngPopulate = [
+    {
+        path: 'ings.ing',
+        select: 'name tvaPrice qty um'
+    },
+    {
+        path: 'ings.gestiune',
+        select: 'name'
+    }
+]
 
 //************************SEND ORDERS********************** */
 
