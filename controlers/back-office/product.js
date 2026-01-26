@@ -674,6 +674,8 @@ module.exports.updateProduct = async (req, res) => {
     const {update, id} = req.body
     try{
 
+        console.log(update)
+
         const updatedproduct = await Product.findByIdAndUpdate(id, update, {new: true})
                 .select('-saleLog')
                 .populate({ path: 'category', select: 'name' })
@@ -720,6 +722,7 @@ module.exports.updateProduct = async (req, res) => {
                 })
                 .populate({ path: 'ings.gestiune', select: 'name' })
                 .lean();  
+                console.log('update controler ', updatedproduct.invisible)
         socket.emit('product-updated', JSON.stringify({product: updatedproduct}))
         res.status(200).json({message: 'Produsul a fost actualizat cu success', product: updatedproduct})
     } catch(error){
