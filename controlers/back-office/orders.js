@@ -790,7 +790,7 @@ module.exports.checkCartProducts = async (req, res) => {
             if(p.subProductId.length){
                 const sub = await SubProduct.findOne({_id: p.subProductId, available: true}).select('stock available')
                 if(sub){
-                   if(sub.stock.active && sub.stock.value < 2){
+                   if(sub.stock.active && sub.stock.value - p.quantity < 2){
                      status = false
                      message += ' ' + p.name + ' nu mai este pe stoc!'
                      productNames.push(p.name)
@@ -803,7 +803,7 @@ module.exports.checkCartProducts = async (req, res) => {
             } else {
                 const prod = await Product.findOne({_id: p.productId, available: true}).select('stock available')
                 if(prod){
-                    if(prod.stock.active && prod.stock.value < 2){
+                    if(prod.stock.active && prod.stock.value - p.quantity < 2){
                         status = false
                         message += ' ' + p.name + ' nu mai este pe stoc!'
                         productNames.push(p.name)
