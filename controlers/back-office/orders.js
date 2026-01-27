@@ -792,12 +792,12 @@ module.exports.checkCartProducts = async (req, res) => {
                 if(sub){
                    if(sub.stock.active && sub.stock.value - p.quantity < 1){
                      status = false
-                     message += ' ' + p.name + ' nu mai este pe stoc!'
+                     message += ' ' + p.name + ' cantitate insuficienta în stoc ' + sub.stock.value -1 + " buc!"
                      productNames.push(p.name)
                    } 
                 } else {
                     status = false
-                    message += ' ' + p.name + ' nu mai este pe stoc!'
+                    message += ' ' + p.name + ' nu mai este disponibil!'
                     productNames.push(p.name)
                 }
             } else {
@@ -805,20 +805,20 @@ module.exports.checkCartProducts = async (req, res) => {
                 if(prod){
                     if(prod.stock.active && prod.stock.value - p.quantity < 1){
                         status = false
-                        message += ' ' + p.name + ' nu mai este pe stoc!'
+                        message +=  ' ' + p.name + ' cantitate insuficienta în stoc ' + prod.stock.value -1 + " buc!"
                         productNames.push(p.name)
                       } 
 
                 } else {
                     status = false
-                    message += ' ' + p.name + ' nu mai este pe stoc!'
+                    message += ' ' + p.name + ' nu mai este disponibil!'
                     productNames.push(p.name)
                 }
             }
         }
 
         if(!status){
-           message += ' Ne cerem scuze, produsele lipsă au fost vândute în timpul efectuării comenzii, prin urmare ele au fost șterse din coș!'
+           message += ' Ne cerem scuze dar produsele lipsă au fost vândute sau dezactivate în timpul efectuării comenzii, prin urmare ele au fost șterse din coș!'
         } 
         res.status(200).json({status, message, productNames})
 
