@@ -777,6 +777,58 @@ module.exports.updateOrderFromClient = async (req, res) => {
   
 
 
+module.exports.checkCartProducts = async (req, res) => {
+    try{
+        const { order } = req.body;
+  
+        const bill = typeof order === 'string' ? JSON.parse(order) : order;
+
+        let message = ''
+        let status = true
+        let productNames = []
+        for(let p of bill.products){
+            if(p.subProductId.length){
+                const sub = await SubProduct.findOne({_id: p.subProductId, available: true}).select('stock available')
+                if(sub){
+                   if(sub.stock.active && sub.stock.value < 2){
+                     status = false
+                     message += ' ' + p.name + ' nu mai este pe stoc!'
+                     productNames.push(p.name)
+                   } 
+                } else {
+                    status = false
+                    message += ' ' + p.name + ' nu mai este pe stoc!'
+                    productNames.push(p.name)
+                }
+            } else {
+                const prod = await Product.findOne({_id: p.productId, available: true}).select('stock available')
+                if(prod){
+                    if(prod.stock.active && prod.stock.value < 2){
+                        status = false
+                        message += ' ' + p.name + ' nu mai este pe stoc!'
+                        productNames.push(p.name)
+                      } 
+
+                } else {
+                    status = false
+                    message += ' ' + p.name + ' nu mai este pe stoc!'
+                    productNames.push(p.name)
+                }
+            }
+        }
+
+        if(!status){
+           message += ' Ne cerem scuze, produsele lipsă au fost vândute în timpul efectuării comenzii, prin urmare ele au fost șterse din coș!'
+        } 
+        res.status(200).json({status, message, productNames})
+
+    } catch(error){
+        console.error('checkCartProducts: error:', error);
+        res.status(500).json({ message: 'Eroare server', error: error.message });
+    }
+}
+
+
 module.exports.saveOrderFromClient = async (req, res) => {
     try {
       const { order } = req.body;
