@@ -792,7 +792,7 @@ module.exports.checkCartProducts = async (req, res) => {
                 if(sub){
                    if(sub.stock.active && sub.stock.value - p.quantity < 1){
                      status = false
-                     message += ' ' + p.name + ' cantitate insuficienta în stoc ' + `${sub.stock.value - 1 } buc!`
+                     message += ' ' + p.name + ' nu are cantitate insuficienta în stoc ' + `${sub.stock.value - 1 } buc!`
                      productNames.push(p.name)
                    } 
                 } else {
@@ -805,7 +805,7 @@ module.exports.checkCartProducts = async (req, res) => {
                 if(prod){
                     if(prod.stock.active && prod.stock.value - p.quantity < 1){
                         status = false
-                        message +=  ' ' + p.name + ' cantitate insuficienta în stoc ' + `${prod.stock.value - 1 } buc!`
+                        message +=  ' ' + p.name + ' nu are cantitate insuficienta în stoc ' + `${prod.stock.value - 1 } buc!`
                         productNames.push(p.name)
                       } 
 
@@ -881,7 +881,6 @@ module.exports.saveOrderFromClient = async (req, res) => {
 
       for(let p of savedBill.products){
         if(p.sentToPrint){
-            p.sentToPrint = false
             if(p.subProductId.length){
               await updateSubProductStock(p.subProductId, p.quantity)
             }
