@@ -507,6 +507,7 @@ module.exports.editProduct = async (req, res, next) => {
                     })
                     .populate({ path: 'ings.gestiune', select: 'name' })
                     .lean();   
+                socket.emit('product-updated', JSON.stringify({product: newProduct}))
             res.status(200).json({ message: `Produst ${oldProduct.name} a fost modificat cu success!`, product: newProduct })
           
     } catch( error){
