@@ -50,8 +50,9 @@ module.exports.updateIngStatus = async (req, res) => {
   console.log('products', promises)
   console.log('sub-products', subPromises)
   console.log('status', status)
-    const products = await Product.find({invisible: false, locatie: ingredient.locatie, salePoint: ingredient.salePoint, available: status}).select('name').lean()
-    const subProducts = await SubProduct.find({invisible: false, locatie: ingredient.locatie, salePoint: ingredient.salePoint, available: status}).select('name').lean()
+  console.log('composite', composite)
+    const products = await Product.find({'ings.ing': ingredient._id}).select('name').lean()
+    const subProducts = await SubProduct.find({'ings.ing': ingredient._id}).select('name').lean()
 
     const dataToSend = {
       status,
