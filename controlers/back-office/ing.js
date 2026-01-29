@@ -54,7 +54,8 @@ module.exports.updateIngStatus = async (req, res) => {
       status,
       products,
       subProducts,
-      composite
+      composite,
+      point: ingredient.salePoint
     }
 
     console.log(dataToSend)
@@ -64,9 +65,9 @@ module.exports.updateIngStatus = async (req, res) => {
     const compName = composite.map(p => p.name).join(', ')  
 
 
-    const actionText = status ? 'Activate' : 'Dezactivate';
+    const actionText = status ? 'ACTIVATE' : 'DEZACTIVATE';
     const names = [prodName, subName, compName].filter(Boolean).join(', ');
-    const message = names ? `${names} au fost ${actionText}` : `Au fost ${actionText}`;
+    const message = names ? `${names} au fost ${actionText}` : `Au fost ${actionText} cu success!`;
     
     socket.emit('update-from-ingredient', JSON.stringify(dataToSend))
     return res.status(200).json({ message, ing: ingredient });
