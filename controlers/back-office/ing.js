@@ -48,7 +48,7 @@ module.exports.updateIngStatus = async (req, res) => {
   const subPromises =  await SubProduct.updateMany({'ings.ing': ingredient._id}, {$set: {available: status}})
 
     const products = await Product.find({'ings.ing': ingredient._id}).select('name').lean()
-    const subProducts = await SubProduct.find({'ings.ing': ingredient._id}).select('name').lean()
+    const subProducts = await SubProduct.find({'ings.ing': ingredient._id}).select('name product').lean()
 
     const dataToSend = {
       status,
