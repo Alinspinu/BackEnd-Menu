@@ -44,8 +44,11 @@ module.exports.updateIngStatus = async (req, res) => {
         await SubProduct.updateMany({'ings.ing': comp._id}, {$set: {available: status}})
       }
     }
-    await Product.updateMany({'ings.ing': ingredient._id, invisible: false}, {$set: {available: status}})
-    await SubProduct.updateMany({'ings.ing': ingredient._id}, {$set: {available: status}})
+  const promises =  await Product.updateMany({'ings.ing': ingredient._id, invisible: false}, {$set: {available: status}})
+  const subPromises =  await SubProduct.updateMany({'ings.ing': ingredient._id}, {$set: {available: status}})
+
+  console.log('products', promises)
+  console.log('sub-products', subPromises)
     const products = await Product.find({locatie: ingredient.locatie, salePoint: ingredient.salePoint, available: status}).select('name').lean()
     const subProducts = await SubProduct.find({locatie: ingredient.locatie, salePoint: ingredient.salePoint, available: status}).select('name').lean()
 
