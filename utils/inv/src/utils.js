@@ -14,7 +14,7 @@ function round(num) {
 }
 
 // Ingredients that trigger milk substitution
-const VEGGIE_LIST = ["lapte vegetal", "lapte mazare", "lapte ovaz"];
+const VEGGIE_LIST = ["lapte vegetal", "lapte mazare", "lapte ovaz", 'lapte vegetal de mazare', 'lapte vegetal de ovaz', 'lapte vegetal de cocos'];
 
 // Check if ingredient is a veggie milk
 function isVeggieMilk(name) {
