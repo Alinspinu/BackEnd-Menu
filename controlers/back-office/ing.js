@@ -47,10 +47,6 @@ module.exports.updateIngStatus = async (req, res) => {
   const promises =  await Product.updateMany({'ings.ing': ingredient._id, invisible: false}, {$set: {available: status}})
   const subPromises =  await SubProduct.updateMany({'ings.ing': ingredient._id}, {$set: {available: status}})
 
-  console.log('products', promises)
-  console.log('sub-products', subPromises)
-  console.log('status', status)
-  console.log('composite', composite)
     const products = await Product.find({'ings.ing': ingredient._id}).select('name').lean()
     const subProducts = await SubProduct.find({'ings.ing': ingredient._id}).select('name').lean()
 
@@ -60,6 +56,8 @@ module.exports.updateIngStatus = async (req, res) => {
       subProducts,
       composite
     }
+
+    console.log(dataToSend)
 
     const prodName = products.map(p => p.name).join(', ')  
     const subName = subProducts.map(p => p.name).join(', ')  
