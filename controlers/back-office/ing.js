@@ -14,6 +14,64 @@ const Nir = require('../../models/office/nir')
 const  {createRG} = require('../../utils/reports/gestiune')
 const {createExcelBuffer} = require('../print/gestiune-xls')
 
+const io = require('socket.io-client');
+const socket = io('https://flowmanager.ro', {
+      path: '/socket.io/',
+      transports: ['websocket']
+    })
+
+
+
+
+
+
+
+
+module.exports.updateIngStatus = async (req, res) => {
+  const {id, status} = req.body
+  try{
+
+    const  ingredient = await Ingredient.findByIdAndUpdate(id, {$set: {status: status}}, {new: true})
+    if(!ingredient){
+      return res.status(404).json('Ingredientu nu a fost găsit in baza de date.')
+    }
+
+    await Ingredient.updateMany({productIngredient: true, 'ings.ing': ingredient._id}, {$set: {status: status}})
+    const composite = await Ingredient.find({'ings.ing': ingredient._id, productIngredient: true}).select('name').lean()
+    if(composite.length){
+      for(let comp of composite){
+        await Product.updateMany({'ings.ing': comp._id, invisible: false}, {$set: {available: status}})
+        await SubProduct.updateMany({'ings.ing': comp._id}, {$set: {available: status}})
+      }
+    }
+    await Product.updateMany({'ings.ing': ingredient._id, invisible: false}, {$set: {available: status}})
+    await SubProduct.updateMany({'ings.ing': ingredient._id}, {$set: {available: status}})
+    const products = await Product.find({locatie: ingredient.locatie, salePoint: ingredient.salePoint, available: status}).select('name').lean()
+    const subProducts = await SubProduct.find({locatie: ingredient.locatie, salePoint: ingredient.salePoint, available: status}).select('name').lean()
+
+    const dataToSend = {
+      status,
+      products,
+      subProducts,
+      composite
+    }
+
+    const prodName = products.map(p => p.name).join(', ')  
+    const subName = subProducts.map(p => p.name).join(', ')  
+    const compName = composite.map(p => p.name).join(', ')  
+
+
+    const actionText = status ? 'Activate' : 'Dezactivate';
+    const names = [prodName, subName, compName].filter(Boolean).join(', ');
+    const message = names ? `${names} au fost ${actionText}` : `Au fost ${actionText}`;
+    
+    socket.emit('update-from-ingredient', JSON.stringify(dataToSend))
+    return res.status(200).json({ message, ing: ingredient });
+  } catch(error){
+    console.log(error)
+  }
+}
+
 
 
 
