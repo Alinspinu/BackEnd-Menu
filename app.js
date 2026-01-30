@@ -24,7 +24,6 @@ const nutritionRoutes = require('./routes/nutrition');
 const registerRoutes = require('./routes/back-office/cash-register');
 const tableRoutes = require('./routes/back-office/table');
 const usersRoutes = require('./routes/users/users');
-
 const suplierRoutes = require('./routes/back-office/suplier')
 const nirRoutes = require('./routes/back-office/nir')
 const productRoutes = require('./routes/back-office/product')
@@ -41,6 +40,7 @@ const invoiceRoutes = require('./routes/back-office/invoice.js')
 const gbtRoutes = require('./routes/gbt.js')
 const reservationRoutes = require('./routes/reservation.js')
 const testRoutes = require('./routes/tst.js')
+const orderSheetRoutes = require('./routes/back-office/order-sheet.js')
 const clientsRoutes = require('./routes/back-office/client.js')
 const vivaWebhooks = require('./routes/viva-wbhooks.js') 
 const infoCuiRoutes = require('./routes/back-office/info-cui.js')
@@ -105,6 +105,7 @@ app.use('/nutrition', nutritionRoutes);
 app.use('/register', authApi, registerRoutes);
 app.use('/table', authApi, tableRoutes);
 app.use('/users', authApi, usersRoutes);
+app.use('/order-sheet', authApi, orderSheetRoutes);
 app.use('/notification', notifRoutes)
 app.use("/top", toppingRoutes);
 app.use('/suplier', authApi, suplierRoutes);
