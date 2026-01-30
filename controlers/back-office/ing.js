@@ -55,7 +55,8 @@ module.exports.updateIngStatus = async (req, res) => {
       products,
       subProducts,
       composite,
-      point: ingredient.salePoint
+      point: ingredient.salePoint,
+      ingredient_id: ingredient._id
     }
 
     console.log(dataToSend)
