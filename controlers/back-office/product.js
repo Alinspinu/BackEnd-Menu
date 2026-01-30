@@ -108,7 +108,7 @@ module.exports.updateProducts = async (req, res) => {
         populate: [
             {
             path: 'ings.ing',
-            select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient invGestiune qty',
+            select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient status invGestiune qty',
             populate: innerIngPopulate
             },
             { path: 'ings.gestiune', select: 'name' }
@@ -120,7 +120,7 @@ module.exports.updateProducts = async (req, res) => {
         populate: [
             {
             path: 'ing',
-            select: 'name tvaPrice um ings productIngredient invGestiune gestiune qty',
+            select: 'name tvaPrice um ings productIngredient status invGestiune gestiune qty',
             populate: {
                 path: 'ings',
                 select: 'qty ing gestiune',
@@ -141,7 +141,7 @@ module.exports.updateProducts = async (req, res) => {
         })
         .populate({
         path: 'ings.ing',
-        select: 'gestiune name locatie price sellPrice tvaPrice tva invGestiune um productIngredient ings qty',
+        select: 'gestiune name locatie price sellPrice tvaPrice tva invGestiune um status productIngredient ings qty',
         populate: innerIngPopulate
         })
         .populate({ path: 'ings.gestiune', select: 'name' })
@@ -288,7 +288,7 @@ module.exports.updateProducts = async (req, res) => {
             populate: [
                 {
                 path: 'ings.ing',
-                select: 'gestiune name locatie price sellPrice tvaPrice tva um ings productIngredient qty',
+                select: 'gestiune name locatie price sellPrice tvaPrice tva um status ings productIngredient qty',
                 populate: innerIngPopulate
                 },
                 { path: 'ings.gestiune', select: 'name' }
@@ -300,7 +300,7 @@ module.exports.updateProducts = async (req, res) => {
             populate: [
                 {
                 path: 'ing',
-                select: 'name tvaPrice um ings productIngredient gestiune qty',
+                select: 'name tvaPrice um ings productIngredient status gestiune qty',
                 populate: {
                     path: 'ings',
                     select: 'qty ing gestiune',
@@ -398,7 +398,7 @@ module.exports.addProd = async (req, res, next) => {
             populate: [
                 {
                 path: 'ing',
-                select: 'name tvaPrice um ings productIngredient gestiune qty',
+                select: 'name tvaPrice um ings productIngredient status gestiune qty',
                 populate: {
                     path: 'ings',
                     select: 'qty ing gestiune',
@@ -481,7 +481,7 @@ module.exports.editProduct = async (req, res, next) => {
                     populate: [
                         {
                         path: 'ing',
-                        select: 'name tvaPrice um ings productIngredient gestiune qty',
+                        select: 'name tvaPrice um ings productIngredient status gestiune qty',
                         populate: {
                             path: 'ings',
                             select: 'qty ing gestiune',
@@ -697,7 +697,7 @@ module.exports.updateProduct = async (req, res) => {
                 populate: [
                     {
                     path: 'ing',
-                    select: 'name tvaPrice um ings productIngredient gestiune qty',
+                    select: 'name tvaPrice um ings status productIngredient gestiune qty',
                     populate: {
                         path: 'ings',
                         select: 'qty ing gestiune',
@@ -757,7 +757,7 @@ module.exports.updateSubProduct = async (req, res) => {
                 populate: [
                     {
                     path: 'ing',
-                    select: 'name tvaPrice um ings productIngredient gestiune qty',
+                    select: 'name tvaPrice um ings status productIngredient gestiune qty',
                     populate: {
                         path: 'ings',
                         select: 'qty ing gestiune',
