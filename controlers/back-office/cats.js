@@ -23,6 +23,9 @@ module.exports.sendCats = async (req, res, next) => {
                             },
                             {
                                 path: 'ings.gestiune', select: 'name'
+                            },
+                            {
+                                path: 'toppings.ing', select: 'status'
                             }
                     ]
                 },
@@ -37,6 +40,9 @@ module.exports.sendCats = async (req, res, next) => {
                 },
                 {
                     path: 'toppings.gestiune', select: 'name'
+                },
+                {
+                    path: 'toppings.ing', select: 'status'
                 }
             ]
         })
