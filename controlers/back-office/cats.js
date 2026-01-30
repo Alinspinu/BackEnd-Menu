@@ -24,9 +24,6 @@ module.exports.sendCats = async (req, res, next) => {
                             {
                                 path: 'ings.gestiune', select: 'name'
                             },
-                            {
-                                path: 'toppings.ing', select: 'status'
-                            }
                     ]
                 },
                 { 
