@@ -35,7 +35,7 @@ const orderSheetSchema = new Schema({
                 user: String
             }
         ],
-        
+
 
         products: [
             {
@@ -55,20 +55,10 @@ const orderSheetSchema = new Schema({
 
                 },
                 details: String,
-                identification: {
-                    suplier: {
-                        product: {
-                            type: Schema.Types.ObjectId,
-                            ref: 'Product'
-                        }
-                    },
-                    customer: {
-                        ing: {
-                            type: Schema.Types.ObjectId,
-                            ref: 'IngredientInv'
-                        }
-                    }
-                }
+                ing: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'IngredientInv'
+                },
             }
         ],
         comment: String,

@@ -48,7 +48,7 @@ module.exports.getSheet = async (req, res) => {
                         {path: 'suplier.locatie', select: 'name bussinessName'},
                         {path: 'suplier.salePoint', select: 'name address'},
                     ]).lean()
-            return res.status(200).josn(sheets)
+            return res.status(200).json(sheets)
         } 
         if(id){
           const sheet = await OrderSheet.findById(id)
