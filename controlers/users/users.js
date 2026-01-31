@@ -569,6 +569,17 @@ module.exports.deleteSalePoint = async (req, res) => {
     }
 }
 
+module.exports.getSalePoint = async (req, res) => {
+    const {id} = req.query
+    try{
+        const point = await SalePoint.findById(id)
+        res.status(200).json(point)
+    } catch(error){
+        console.log(error)
+        res.status(500).json(error)
+    }
+}
+
 module.exports.getSalePoints = async (req, res) => {
     try{
         const {loc} = req.query

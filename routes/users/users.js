@@ -59,6 +59,8 @@ router.route('/sale-point')
     .put(users.editSalePoint)
     .delete(users.deleteSalePoint)
 
+router.route('/point').get(users.getSalePoint)
+
  
 
 router.route('/server')

@@ -42,7 +42,6 @@ module.exports.getSheet = async (req, res) => {
             const query = customer ? {'customer.locatie': loc, 'customer.salePoint': point} : {'suplier.locatie': loc, 'suplier.salePoint': point}
             const sheets = await OrderSheet.find(query)
                     .populate([
-                        {path: 'customer.locatie', select: 'name bussinessName'},
                         {path: 'customer.salePoint', select: 'name address'},
                         {path: 'customer.user', select: 'name'},
                         {path: 'suplier.locatie', select: 'name bussinessName'},
@@ -53,7 +52,6 @@ module.exports.getSheet = async (req, res) => {
         if(id){
           const sheet = await OrderSheet.findById(id)
                     .populate([
-                        {path: 'customer.locatie', select: 'name bussinessName'},
                         {path: 'customer.salePoint', select: 'name address'},
                         {path: 'customer.user', select: 'name'},
                         {path: 'suplier.locatie', select: 'name bussinessName'},
