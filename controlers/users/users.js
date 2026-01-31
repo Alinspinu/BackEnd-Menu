@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 const qs = require('qs');
 const axios = require('axios')
 const EmployeePosition = require('../../models/users/position')
+const Product = require('../../models/office/product/product')
+const Category = require('../../models/office/product/cat')
 
 
 const { sendEmployeeEmail } = require('../../utils/mail')
@@ -305,6 +307,7 @@ module.exports.addAnafToken = async (req, res) => {
 module.exports.getRefreshTokenValability = async (req, res) => {
     const {id} = req.query
     try{
+        await updateImagePathsFromMapping()
         const loc = await Locatie.findById(id).populate({path: 'anafToken', select: 'token'})
         if(!loc){
          return res.status(404).json({message: 'Lipsa locatie'})
@@ -319,6 +322,44 @@ module.exports.getRefreshTokenValability = async (req, res) => {
         res.status(500).json(error)
     }
 }
+
+
+const fs = require("fs/promises");
+
+
+async function updateImagePathsFromMapping(mappingFile = "./mapping.json") {
+    const raw = await fs.readFile(mappingFile, "utf8");
+    const mapping = JSON.parse(raw);
+  
+    let updated = 0;
+    let notFound = 0;
+    let skipped = 0;
+  
+    for (const m of mapping) {
+      if (!m?.ok || !m.filename || !m.new_path) {
+        skipped++;
+        continue;
+      }
+  
+      const doc = await Product.findOneAndUpdate(
+        { "image.filename": m.filename },
+        { $set: { "image.$[img].path": m.new_path } },
+        {
+          // new: true, // optional if you want the updated doc returned
+          arrayFilters: [{ "img.filename": m.filename }],
+        }
+      );
+  
+      if (res) updated++;
+      else notFound++;
+    }
+  
+    console.log({ updated, notFound, skipped });
+  }
+
+
+
+
 
 module.exports.refreshToken = async (req, res) => {
     const {id} = req.body
