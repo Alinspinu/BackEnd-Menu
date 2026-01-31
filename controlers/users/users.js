@@ -352,7 +352,7 @@ async function updateImagePathsFromMapping() {
         }
       );
   
-      if (res) updated++;
+      if (doc) updated++;
       else notFound++;
     }
   
