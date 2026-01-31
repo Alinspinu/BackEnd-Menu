@@ -67,7 +67,7 @@ function createOrderInvoice(order, customer, supplier, unload) {
         unitCode: 'H87',
         price: priceNoVat,
         vatPrecent: p.tva,
-        total: +p.total-p.discount - (sgrTax * p.quantity), 
+        total: round(+p.total-p.discount - (sgrTax * p.quantity)), 
         totalNoVat: round(priceNoVat * p.quantity),
         productId: p._id,
         subProductId: p.subProductId,
@@ -122,10 +122,10 @@ function createOrderInvoice(order, customer, supplier, unload) {
       name: 'Bacsis',
       quantity: 1,
       unitCode: 'H87',
-      price: order.tips,
+      price: round(order.tips),
       vatPrecent: 0,
-      total: order.tips, 
-      totalNoVat: order.tips,
+      total: round(order.tips), 
+      totalNoVat: round(order.tips),
       ings: []
     }
     invoice.products.push(tipsProduct)
