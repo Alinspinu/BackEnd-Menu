@@ -325,10 +325,12 @@ module.exports.getRefreshTokenValability = async (req, res) => {
 
 
 const fs = require("fs/promises");
+const path = require("path");
 
 
-async function updateImagePathsFromMapping(mappingFile = "./mapping.json") {
-    const raw = await fs.readFile(mappingFile, "utf8");
+async function updateImagePathsFromMapping() {
+    const mappingPath = path.join(__dirname, "mapping.json")
+    const raw = await fs.readFile(mappingPath, "utf8");
     const mapping = JSON.parse(raw);
   
     let updated = 0;
