@@ -306,7 +306,7 @@ module.exports.addAnafToken = async (req, res) => {
 module.exports.getRefreshTokenValability = async (req, res) => {
     const {id} = req.query
     try{
-        await updateImagePathsFromMapping()
+        // await updateImagePathsFromMapping()
         const loc = await Locatie.findById(id).populate({path: 'anafToken', select: 'token'})
         if(!loc){
          return res.status(404).json({message: 'Lipsa locatie'})
