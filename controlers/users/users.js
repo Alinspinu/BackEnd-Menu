@@ -295,7 +295,6 @@ module.exports.addAnafToken = async (req, res) => {
        if(!locatie){
         return res.status(404).json({message: 'Lipsa locatie'})
        }
-       console.log(token)
        const vDays = getJwtValidityInDays(token.refresh);
        res.status(200).json({message: 'saved', time: vDays})
     } catch (error) {
@@ -307,7 +306,7 @@ module.exports.addAnafToken = async (req, res) => {
 module.exports.getRefreshTokenValability = async (req, res) => {
     const {id} = req.query
     try{
-        // await updateImagePathsFromMapping()
+        await updateImagePathsFromMapping()
         const loc = await Locatie.findById(id).populate({path: 'anafToken', select: 'token'})
         if(!loc){
          return res.status(404).json({message: 'Lipsa locatie'})
@@ -343,13 +342,9 @@ async function updateImagePathsFromMapping() {
         continue;
       }
   
-      const doc = await Product.findOneAndUpdate(
+      const doc = await Category.findOneAndUpdate(
         { "image.filename": m.filename },
-        { $set: { "image.$[img].path": m.new_path } },
-        {
-          // new: true, // optional if you want the updated doc returned
-          arrayFilters: [{ "img.filename": m.filename }],
-        }
+        { $set: { "image.path": m.new_path } },
       );
   
       if (doc) updated++;
