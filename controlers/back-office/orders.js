@@ -834,8 +834,7 @@ module.exports.saveOrderFromClient = async (req, res) => {
       const { order } = req.body;
   
       const bill = typeof order === 'string' ? JSON.parse(order) : order;
-      bill.soketId = generateSoketId(16);
-  
+
       let table = null;
   
       // PICKUP
@@ -872,12 +871,23 @@ module.exports.saveOrderFromClient = async (req, res) => {
             table = area.tables[area.tables.length - 1]
         }
       }
+
+      let savedBill
   
-      bill.masaRest = table;
-      delete bill._id
-      delete bill.employee.user
-      const newBill = new Order(bill)
-      const savedBill = await newBill.save() 
+      if(bill._id === 'new'){
+          bill.soketId = generateSoketId(16);
+          bill.masaRest = table;
+          delete bill._id
+          delete bill.employee.user
+          const newBill = new Order(bill)
+          savedBill = await newBill.save() 
+    
+          if(table){
+            await Table.findByIdAndUpdate(table._id, {$push: {bills: savedBill._id}})
+          }
+      } else {
+        savedBill = bill
+      }
 
       for(let p of savedBill.products){
         if(p.sentToPrint){
@@ -888,12 +898,8 @@ module.exports.saveOrderFromClient = async (req, res) => {
             if(product) socket.emit('product-updated', JSON.stringify({product: product}))
 
         }
-    }
+     }
 
-      if(table){
-        await Table.findByIdAndUpdate(table._id, {$push: {bills: savedBill._id}})
-      }
-  
       let orderCode = null;
       let orderToken = null;
       if (savedBill.payOnline && savedBill.total > 0) {
