@@ -1000,7 +1000,7 @@ async function getOrderCode(order) {
                 Authorization: `Bearer ${response.data.access_token}`,
             }
         });
-    
+        console.log(response.data)
         return response2.data.orderCode
 
     } catch(error){
