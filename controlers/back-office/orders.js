@@ -872,18 +872,22 @@ module.exports.saveOrderFromClient = async (req, res) => {
         }
       }
 
+      let savedBill
   
+      if(bill._id === 'new'){
           bill.soketId = generateSoketId(16);
           bill.masaRest = table;
           delete bill._id
           delete bill.employee.user
           const newBill = new Order(bill)
-          const savedBill = await newBill.save() 
+          savedBill = await newBill.save() 
     
           if(table){
             await Table.findByIdAndUpdate(table._id, {$push: {bills: savedBill._id}})
           }
-  
+      } else {
+        savedBill = bill
+      }
 
       for(let p of savedBill.products){
         if(p.sentToPrint){
