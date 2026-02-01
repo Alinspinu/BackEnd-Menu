@@ -886,7 +886,7 @@ module.exports.saveOrderFromClient = async (req, res) => {
             await Table.findByIdAndUpdate(table._id, {$push: {bills: savedBill._id}})
           }
       } else {
-        savedBill = bill
+        savedBill = await Order.findByIdAndUpdate(bill._id, bill, {new: true})
       }
 
       for(let p of savedBill.products){
