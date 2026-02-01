@@ -41,6 +41,7 @@ const orderSheetSchema = new Schema({
             {
                 name: String,
                 quantity: Number,
+                um: String,
                 status: {
                     sent: {
                         value: Boolean,
