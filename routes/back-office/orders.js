@@ -27,6 +27,8 @@ router.route('/save-order-client')
 
 router.route('/check-cart').post(orderRoutes.checkCartProducts)
 
+router.route('/update-order').post(orderRoutes.updateOrder)
+
 
 router.route('/get-time').get(orderRoutes.sendOrderTime);
 router.route('/bill', authApi)

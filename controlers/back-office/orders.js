@@ -697,6 +697,19 @@ async function updateSubProductStock(id, qty){
 }
 
 
+module.exports.updateOrder = async (req, res) => {
+    const {id, update} = req.body
+
+    try{
+        const updatedOrder = await Order.findByIdAndUpdate(id, {$set: update}, {new: true})
+        res.status(200).json({message: 'Comanda a fost actualizată', order: updatedOrder})
+    } catch(error){
+        res.status(200).json(error)
+        console.log(error)
+    }
+}
+
+
 
 module.exports.updateOrderFromClient = async (req, res) => {
     const { id, online } = req.body;
