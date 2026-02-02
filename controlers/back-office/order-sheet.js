@@ -22,7 +22,7 @@ module.exports.addOrder = async (req, res) => {
                     {path: 'suplier.salePoint', select: 'name address'},
                 ]).lean()
         // socket.emit('order-sheet', savedSheet._id.toString())
-        res.status(200).js0n({message: 'Fișa de comnadă a fost salvată cu success!', sheet: populatedSheet})
+        res.status(200).json({message: 'Fișa de comnadă a fost salvată cu success!', sheet: populatedSheet})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
