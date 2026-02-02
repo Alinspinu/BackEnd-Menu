@@ -14,8 +14,15 @@ module.exports.addOrder = async (req, res) => {
     try{
         const newSheet = new OrderSheet(sheet)
         const savedSheet = await newSheet.save()
-        socket.emit('order-sheet', savedSheet._id.toString())
-        res.status(200).josn({message: 'Fișa de comnadă a fost salvată cu success!'})
+        const populatedSheet = await OrderSheet.findById(savedSheet._id)
+                .populate([
+                    {path: 'customer.salePoint', select: 'name address'},
+                    {path: 'customer.user', select: 'name'},
+                    {path: 'suplier.locatie', select: 'name bussinessName'},
+                    {path: 'suplier.salePoint', select: 'name address'},
+                ]).lean()
+        // socket.emit('order-sheet', savedSheet._id.toString())
+        res.status(200).josn({message: 'Fișa de comnadă a fost salvată cu success!', sheet: populatedSheet})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
@@ -26,8 +33,14 @@ module.exports.updateSheet = async (req, res) => {
     const {sheet} = req.body
     try{
         const updatedSheet = await OrderSheet.findByIdAndUpdate(sheet._id, sheet, {new: true})
-        socket.emit('order-sheet', updatedSheet._id.toString())
-        res.status(200).json({message: 'Fișa a fost actualizată cu succes!'})
+                    .populate([
+                        {path: 'customer.salePoint', select: 'name address'},
+                        {path: 'customer.user', select: 'name'},
+                        {path: 'suplier.locatie', select: 'name bussinessName'},
+                        {path: 'suplier.salePoint', select: 'name address'},
+                    ]).lean()
+        // socket.emit('order-sheet', updatedSheet._id.toString())
+        res.status(200).json({message: 'Fișa a fost actualizată cu succes!', sheet: updatedSheet})
     } catch(error){
         console.log(error)
         res.status(500).json(error)
