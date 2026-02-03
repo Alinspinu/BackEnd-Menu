@@ -29,6 +29,11 @@ const orderSheetSchema = new Schema({
             }
         },
 
+        notification: {
+            sent: Boolean,
+            recived: Boolean
+        },
+
         updates: [
             {
                 time: Date,

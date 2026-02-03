@@ -50,7 +50,6 @@ module.exports.updateSheet = async (req, res) => {
 
 module.exports.getSheet = async (req, res) => {
     const {id, loc, point, customer} = req.query
-    console.log(customer)
     try{
         if(loc && point){
             const query = customer === 'true' ? {'customer.locatie': loc, 'customer.salePoint': point} : {'suplier.locatie': loc, 'suplier.salePoint': point}
