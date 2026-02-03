@@ -53,7 +53,7 @@ module.exports.getSheet = async (req, res) => {
     console.log(customer)
     try{
         if(loc && point){
-            const query = customer === true ? {'customer.locatie': loc, 'customer.salePoint': point} : {'suplier.locatie': loc, 'suplier.salePoint': point}
+            const query = customer === 'true' ? {'customer.locatie': loc, 'customer.salePoint': point} : {'suplier.locatie': loc, 'suplier.salePoint': point}
             const sheets = await OrderSheet.find(query)
                     .populate([
                         {path: 'customer.salePoint', select: 'name address'},
