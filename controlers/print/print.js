@@ -420,7 +420,7 @@ function groupOrdersForCharts(orders) {
           if(filter && filter.dep.length){
             filterTo.dept = filter.dep
           }
-          // filterTo.gestiune = 'bucatarie'
+          filterTo.status = true
           // filterTo.ings = { $eq: [] }
           // filter.dep = 'marfa'
 

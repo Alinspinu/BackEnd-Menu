@@ -18,7 +18,7 @@ module.exports.createInventary = async (req, res, next) => {
   try{
     const {date, loc, point, gestiune} = req.body
     const invDate = new Date(date).setUTCHours(20,59,59,0)
-    const ings = await Ingredient.find({locatie: loc, 'invGestiune.gestiune': gestiune, salePoint: point})
+    const ings = await Ingredient.find({locatie: loc, 'invGestiune.gestiune': gestiune, salePoint: point, status: true})
                     .select('name  dept um invGestiune price')
                     .populate({path: 'dept', select:'name'})
                     .populate({path: 'invGestiune.gestiune', select: 'name'})
