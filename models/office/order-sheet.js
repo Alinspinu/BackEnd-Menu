@@ -1,9 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Counter = require('../utils/counter')
 
 
 
 const orderSheetSchema = new Schema({
+
+        index: {
+            type: Number,
+            index: true
+        },
         suplier: {
             locatie: {
                 type: Schema.Types.ObjectId,
@@ -72,5 +78,37 @@ const orderSheetSchema = new Schema({
         orderDate: Date,
 
 })
+
+
+orderSheetSchema.pre('save', async function (next) {
+    try {
+      if (!this.isNew) {
+        return next();
+      }
+  
+      const counter = await Counter.findOneAndUpdate(
+        {
+          locatie: this.customer.locatie,
+          model: "OrderSheet",
+          salePoint: this.customer.salePoint
+        },
+        {
+          $inc: { value: 1 }
+        },
+        {
+          upsert: true,
+          new: true,
+          setDefaultsOnInsert: true
+        }
+      );
+  
+      this.index = counter.value;
+  
+      next();
+    } catch (err) {
+      console.error('Eroare rezervare pre-save hook:', err);
+      next(err);
+    }
+  });
 
 module.exports = mongoose.model('OrderSheet', orderSheetSchema)
