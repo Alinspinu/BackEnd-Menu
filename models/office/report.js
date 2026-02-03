@@ -290,6 +290,7 @@ const reportSchema = new Schema({
             // procentOut: Number,
             id: String,
             name: String,
+            discount: Number,
             dep: [
                 {
                     name: String,
@@ -298,6 +299,7 @@ const reportSchema = new Schema({
                     totalIn: Number,
                     totalOut: Number,
                     totalRecipes: Number,
+                    discount: Number,
                     depId: {
                         type: Schema.Types.ObjectId,
                         ref: 'Dep'
@@ -317,6 +319,7 @@ const reportSchema = new Schema({
                     },
                     price: Number,
                     totalRecipe: Number,
+                    discount: Number,
                 }
             ],
             entries: [
