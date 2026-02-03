@@ -24,6 +24,12 @@ module.exports.createInventary = async (req, res, next) => {
                     .populate({path: 'invGestiune.gestiune', select: 'name'})
         
         let scripticValue = 0
+
+        for(let i of ings){
+          if(i.name === 'Kofiti indian tonic'){
+            console.log(i)
+          }
+        }
         const mapIngredients =  ings.map(i => {
             const gest = i.invGestiune.find(g => g.gestiune._id.toString() === gestiune)
             if(gest){          
