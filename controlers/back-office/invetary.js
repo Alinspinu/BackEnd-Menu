@@ -24,7 +24,7 @@ module.exports.createInventary = async (req, res, next) => {
                     .populate({path: 'invGestiune.gestiune', select: 'name'})
         
         let scripticValue = 0
-
+      console.log('HIT INVENTARY FUNCTON')
         for(let i of ings){
           if(i.name === 'Kofiti indian tonic'){
             console.log(i)
