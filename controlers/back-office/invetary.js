@@ -241,8 +241,8 @@ module.exports.updateInventary = async (req, res) => {
     })
 
     await Promise.all(promises)
-
-    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!'})
+   const savedInv =  await Inventary.findByIdAndUpdate(id, {$set: {updated: true}})
+    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: savedInv})
    } catch(err){
      console.log(err)
      res.status(500).json(err)
