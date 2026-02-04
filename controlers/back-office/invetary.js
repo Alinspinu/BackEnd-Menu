@@ -215,7 +215,8 @@ module.exports.updateInventary = async (req, res) => {
             const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
             if(ingGest){
                 // ingGest.qty = dbIng.qty + i.faptic
-                ingGest.qty = round(ingGest.qty - (i.scriptic - i.faptic))
+                const diference = i.scriptic - ingGest.qty
+                ingGest.qty = round(i.faptic - diference)
                 if(ingGest.entries.length){
                     const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
                     ingGest.entries = entries
@@ -447,7 +448,7 @@ module.exports.compareScriptic = async (req, res) => {
     }
     // === 5) orders -> consMap
     for (const order of orders || []) {
-      for (const prod of order.products || []) {
+      for (const prod of order.products || []) { 
         const mult = r(prod.quantity || 1);
 
         for (const w of prod.ings || []) {
