@@ -463,7 +463,7 @@ module.exports.compareScriptic = async (req, res) => {
           // }
           const scaled = { ...w, qty: r((w.qty || 0) * mult) };
           if(scaled.ing?.name === 'Oua'){
-            // console.log(scaled.gestiune)
+            console.log('Oua ', scaled.qty)
           }
           // console.log(w)
           if (scaled?.ing?.ings?.length) {
