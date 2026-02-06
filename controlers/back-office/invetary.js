@@ -205,7 +205,7 @@ module.exports.updateInventary = async (req, res) => {
 
 const {getBillProducts} = require('../../utils/reports')
 const Nir = require('../../models/office/nir')
-const Invoice = require('../../models/office/invoice')
+
 
 const   filter = {
   inreg: true,
