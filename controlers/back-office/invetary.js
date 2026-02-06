@@ -276,7 +276,7 @@ const   filter = {
             if(ingGest){
               const qtySaled = await getSaleQty(i.ing, products)
               const nirsQty = await getNirQty(i.ing, nirs)
-              const invoiceQty = await getSalesFromInvoices(ing.ing, invoices, inventary.date)
+              const invoiceQty = await getSalesFromInvoices(i.ing, invoices, inventary.date)
                 ingGest.qty = round((i.faptic + nirsQty) - (qtySaled + invoiceQty))
                 if(ingGest.entries.length){
                     const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
