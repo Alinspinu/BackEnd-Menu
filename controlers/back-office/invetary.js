@@ -266,53 +266,52 @@ const   filter = {
     console.log('comenzi', orders.length)
     console.log('produse', products.length)
     console.log('nirs', nirs.length)
-    console.log('nirs', invoices.length)
+    console.log('facturi', invoices.length)
     
 
-    for( let ing of inventary.ingredients){
-      const invoiceQty = await getSalesFromInvoices(ing.ing, invoices, inventary.date)
-      // console.log(ing.name, ' Cantitate vanduta ', qty)
-      console.log(ing.name, ' Cantitate vanduata din facturi', invoiceQty)
-    }
+    // for( let ing of inventary.ingredients){
+    //   const invoiceQty = await getSalesFromInvoices(ing.ing, invoices, inventary.date)
+    //   // console.log(ing.name, ' Cantitate vanduta ', qty)
+    //   console.log(ing.name, ' Cantitate vanduata din facturi', invoiceQty)
+    // }
 
-  //   const promises = inventary.ingredients.map(async (i) => {
-  //       const dbIng = await Ingredient.findById(i.ing)
-  //       if(dbIng){
-  //           const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
-  //           if(ingGest){
-  //             const qtySaled = await getSaleQty(i.ing, products)
-  //             const nirsQty = await getNirQty(i.ing, nirs)
-  //               // ingGest.qty = dbIng.qty + i.faptic
-  //               // const diference = i.scriptic - ingGest.qty
-  //               ingGest.qty = round(i.faptic + nirsQty - qtySaled)
-  //               if(ingGest.entries.length){
-  //                   const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
-  //                   ingGest.entries = entries
-  //               } else {
-  //                   const entry = {
-  //                       qty: ingGest.qty,
-  //                       date: inventary.date,
-  //                       priceNoVat: i.averagePrice,
-  //                       priceWithVat: round(i.averagePrice * (1 + dbIng.tva / 100)),
-  //                       inQty: i.faptic,
-  //                       suplierName: 'Intrare din inventar'
-  //                   }
-  //                   ingGest.entries.push(entry)
-  //               }
-  //           }
-  //           dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
-  //           // dbIng.qty = round(dbIng.qty + i.faptic)
-  //        return dbIng.save().then(i => {
-  //           console.log(`Ingredientul ${i.name} a fost actulizat cu succees!`)
-  //           console.log('Cantitate totala ', i.qty)
-  //        })
-  //       }
-  //   })
+    const promises = inventary.ingredients.map(async (i) => {
+        const dbIng = await Ingredient.findById(i.ing)
+        if(dbIng){
+            const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
+            if(ingGest){
+              const qtySaled = await getSaleQty(i.ing, products)
+              const nirsQty = await getNirQty(i.ing, nirs)
+              const invoiceQty = await getSalesFromInvoices(ing.ing, invoices, inventary.date)
+                ingGest.qty = round((i.faptic + nirsQty) - (qtySaled + invoiceQty))
+                if(ingGest.entries.length){
+                    const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
+                    ingGest.entries = entries
+                } else {
+                    const entry = {
+                        qty: ingGest.qty,
+                        date: inventary.date,
+                        priceNoVat: i.averagePrice,
+                        priceWithVat: round(i.averagePrice * (1 + dbIng.tva / 100)),
+                        inQty: i.faptic,
+                        suplierName: 'Intrare din inventar'
+                    }
+                    ingGest.entries.push(entry)
+                }
+            }
+            dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
+            // dbIng.qty = round(dbIng.qty + i.faptic)
+         return dbIng.save().then(i => {
+            console.log(`Ingredientul ${i.name} a fost actulizat cu succees!`)
+            console.log('Cantitate totala ', i.qty)
+         })
+        }
+    })
 
-  //   await Promise.all(promises)
-  //  const savedInv =  await Inventary.findByIdAndUpdate(id, {$set: {updated: true}})
-  //   res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: savedInv})
-    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: inventary})
+    await Promise.all(promises)
+   const savedInv =  await Inventary.findByIdAndUpdate(id, {$set: {updated: true}})
+    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: savedInv})
+    // res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: inventary})
    } catch(err){
      console.log(err)
      res.status(500).json(err)
