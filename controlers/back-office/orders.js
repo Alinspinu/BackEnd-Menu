@@ -736,8 +736,10 @@ module.exports.updateOrderFromClient = async (req, res) => {
           locatie: order.locatie,
           salePoint: order.salePoint,
           online: true
-        }).populate({path: 'fiscalPrinter.section'}).populate({path: 'thermalPrinters.section'});
+        }).populate({path: 'fiscalPrinter.section'}).populate({path: 'thermalPrinters.section'})
+          .populate({});
         if (mainServer) {
+            console.log(mainServer)
           socket.emit(
             'printOrder',
             JSON.stringify({
