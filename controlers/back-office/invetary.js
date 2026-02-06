@@ -205,6 +205,7 @@ module.exports.updateInventary = async (req, res) => {
 
 const {getBillProducts} = require('../../utils/reports')
 const Nir = require('../../models/office/nir')
+const Invoice = require('../../models/office/invoice')
 
 const   filter = {
   inreg: true,
@@ -220,6 +221,7 @@ const   filter = {
 
     const inventary = await Inventary.findById(id)
     const inventaryDate = new Date(inventary.date)
+    const invoices = await Invoice.find({createdAt: {$gte: inventaryDate}, locatie: inventary.locatie, salePoint: inventary.salePoint, invoiceCode: '380'}).lean()
     const nirs = await Nir.find({documentDate: {$gte: inventaryDate},  locatie: inventary.locatie, salePoint: inventary.salePoint}).lean()
     const orders = await Order.find({paymentDate: {$gte: inventaryDate}, locatie: inventary.locatie, salePoint: inventary.salePoint, status: 'done'})
                           .populate({
@@ -264,58 +266,81 @@ const   filter = {
     console.log('comenzi', orders.length)
     console.log('produse', products.length)
     console.log('nirs', nirs.length)
+    console.log('nirs', invoices.length)
     
 
-    // for( let ing of inventary.ingredients){
-    //   const qty = await getSaleQty(ing.ing, products)
-    //   const inQty = await getNirQty(ing.ing, nirs)
-    //   // console.log(ing.name, ' Cantitate vanduta ', qty)
-    //   console.log(ing.name, ' Cantitate intrata ', inQty)
-    // }
+    for( let ing of inventary.ingredients){
+      const invoiceQty = await getSalesFromInvoices(ing.ing, invoices, inventary.date)
+      // console.log(ing.name, ' Cantitate vanduta ', qty)
+      console.log(ing.name, ' Cantitate vanduata din facturi', invoiceQty)
+    }
 
-    const promises = inventary.ingredients.map(async (i) => {
-        const dbIng = await Ingredient.findById(i.ing)
-        if(dbIng){
-            const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
-            if(ingGest){
-              const qtySaled = await getSaleQty(i.ing, products)
-              const nirsQty = await getNirQty(i.ing, nirs)
-                // ingGest.qty = dbIng.qty + i.faptic
-                // const diference = i.scriptic - ingGest.qty
-                ingGest.qty = round(i.faptic + nirsQty - qtySaled)
-                if(ingGest.entries.length){
-                    const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
-                    ingGest.entries = entries
-                } else {
-                    const entry = {
-                        qty: ingGest.qty,
-                        date: inventary.date,
-                        priceNoVat: i.averagePrice,
-                        priceWithVat: round(i.averagePrice * (1 + dbIng.tva / 100)),
-                        inQty: i.faptic,
-                        suplierName: 'Intrare din inventar'
-                    }
-                    ingGest.entries.push(entry)
-                }
-            }
-            dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
-            // dbIng.qty = round(dbIng.qty + i.faptic)
-         return dbIng.save().then(i => {
-            console.log(`Ingredientul ${i.name} a fost actulizat cu succees!`)
-            console.log('Cantitate totala ', i.qty)
-         })
-        }
-    })
+  //   const promises = inventary.ingredients.map(async (i) => {
+  //       const dbIng = await Ingredient.findById(i.ing)
+  //       if(dbIng){
+  //           const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
+  //           if(ingGest){
+  //             const qtySaled = await getSaleQty(i.ing, products)
+  //             const nirsQty = await getNirQty(i.ing, nirs)
+  //               // ingGest.qty = dbIng.qty + i.faptic
+  //               // const diference = i.scriptic - ingGest.qty
+  //               ingGest.qty = round(i.faptic + nirsQty - qtySaled)
+  //               if(ingGest.entries.length){
+  //                   const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
+  //                   ingGest.entries = entries
+  //               } else {
+  //                   const entry = {
+  //                       qty: ingGest.qty,
+  //                       date: inventary.date,
+  //                       priceNoVat: i.averagePrice,
+  //                       priceWithVat: round(i.averagePrice * (1 + dbIng.tva / 100)),
+  //                       inQty: i.faptic,
+  //                       suplierName: 'Intrare din inventar'
+  //                   }
+  //                   ingGest.entries.push(entry)
+  //               }
+  //           }
+  //           dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
+  //           // dbIng.qty = round(dbIng.qty + i.faptic)
+  //        return dbIng.save().then(i => {
+  //           console.log(`Ingredientul ${i.name} a fost actulizat cu succees!`)
+  //           console.log('Cantitate totala ', i.qty)
+  //        })
+  //       }
+  //   })
 
-    await Promise.all(promises)
-   const savedInv =  await Inventary.findByIdAndUpdate(id, {$set: {updated: true}})
-    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: savedInv})
-    // res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: inventary})
+  //   await Promise.all(promises)
+  //  const savedInv =  await Inventary.findByIdAndUpdate(id, {$set: {updated: true}})
+  //   res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: savedInv})
+    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: inventary})
    } catch(err){
      console.log(err)
      res.status(500).json(err)
    }
  }
+
+
+async function getSalesFromInvoices(ing_id, invoices, date){
+  let qty = 0
+  for(let invoice of invoices){
+    console.log('data factura', invoice.issueDate)
+    console.log('data inventar', date)
+    const invoiceDate = new Date(invoice.issueDate).getTime()
+    const inventaryDate = new Date(date).getTime()
+    if(invoiceDate >= inventaryDate){
+      for(let p of invoice.products){
+        for(let i of p.ings){
+          if(ing_id.toString() === i.ing.toString()){
+            qty += i.qty
+          }
+        }
+      }
+    } else {
+      console.log('factura cu data de creare mai mare decat data inventarului ', invoice.issueDate)
+    }
+  }
+  return round(qty)
+}
 
 
 async function getNirQty(ing_id, nirs){
