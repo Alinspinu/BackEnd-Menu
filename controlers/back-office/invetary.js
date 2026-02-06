@@ -316,7 +316,7 @@ const   filter = {
   let qty = 0
     for(let p of saleProducts){
       for(let i of p.ingr){
-        if(i.ing._id === ing_id){
+        if(i.ing._id.toString() === ing_id.toString()){
           qty += (i.qty * p.quantity)
         }
       }
