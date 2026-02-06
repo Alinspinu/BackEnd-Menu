@@ -257,10 +257,16 @@ const   filter = {
                                 }
                             }).lean({virtuals: false})   
     
-    const products = await getBillProducts(orders, filter)
+    const data = await getBillProducts(orders, filter)
+    const products = data.allProd
     console.log('comenzi', orders.length)
-    console.log('produse', products.allProd.length)
-    console.log(products.allProd[29])
+    console.log('produse', products.length)
+    
+
+    for( let ing of inventary.ingredients){
+      const qty = await getSaleQty(ing.ing, products)
+      console.log(ing.name, ' Cantitate vanduta ', qty)
+    }
 
   //   const promises = inventary.ingredients.map(async (i) => {
   //       const dbIng = await Ingredient.findById(i.ing)
@@ -302,6 +308,21 @@ const   filter = {
      console.log(err)
      res.status(500).json(err)
    }
+ }
+
+
+
+ async function getSaleQty(ing_id, saleProducts){
+  let qty = 0
+    for(let p of saleProducts){
+      for(let i of p.ingr){
+        if(i.ing._id === ing_id){
+          qty += (i.qty * p.quantity)
+        }
+      }
+    }
+
+    return round(qty)
  }
 
 
