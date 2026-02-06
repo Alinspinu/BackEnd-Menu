@@ -316,8 +316,6 @@ const   filter = {
 async function getSalesFromInvoices(ing_id, invoices, date){
   let qty = 0
   for(let invoice of invoices){
-    console.log('data factura', invoice.issueDate)
-    console.log('data inventar', date)
     const invoiceDate = new Date(invoice.issueDate).getTime()
     const inventaryDate = new Date(date).getTime()
     if(invoiceDate >= inventaryDate){
