@@ -268,7 +268,7 @@ const   filter = {
 
     for( let ing of inventary.ingredients){
       const qty = await getSaleQty(ing.ing, products)
-      const inQty = await getNirQty(ing_ing, nirs)
+      const inQty = await getNirQty(ing.ing, nirs)
       // console.log(ing.name, ' Cantitate vanduta ', qty)
       console.log(ing.name, ' Cantitate intrata ', inQty)
     }
