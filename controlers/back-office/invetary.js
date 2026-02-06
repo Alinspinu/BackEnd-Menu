@@ -204,6 +204,7 @@ module.exports.updateInventary = async (req, res) => {
 
 
 const {getBillProducts} = require('../../utils/reports')
+const Nir = require('../../models/office/nir')
 
 const   filter = {
   inreg: true,
@@ -219,6 +220,7 @@ const   filter = {
 
     const inventary = await Inventary.findById(id)
     const inventaryDate = new Date(inventary.date)
+    const nirs = await Nir.find({documenmtDate: {$gte: inventaryDate},  locatie: inventary.locatie, salePoint: inventary.salePoint}).lean()
     const orders = await Order.find({paymentDate: {$gte: inventaryDate}, locatie: inventary.locatie, salePoint: inventary.salePoint, status: 'done'})
                           .populate({
                             path: 'products.ings.ing',
@@ -261,11 +263,14 @@ const   filter = {
     const products = data.allProd
     console.log('comenzi', orders.length)
     console.log('produse', products.length)
+    console.log('nirs', nirs.length)
     
 
     for( let ing of inventary.ingredients){
       const qty = await getSaleQty(ing.ing, products)
-      console.log(ing.name, ' Cantitate vanduta ', qty)
+      const inQty = await getNirQty(ing_ing, nirs)
+      // console.log(ing.name, ' Cantitate vanduta ', qty)
+      console.log(ing.name, ' Cantitate intrata ', inQty)
     }
 
   //   const promises = inventary.ingredients.map(async (i) => {
@@ -309,6 +314,19 @@ const   filter = {
      res.status(500).json(err)
    }
  }
+
+
+async function getNirQty(ing_id, nirs){
+  let qty = 0
+  for(let n of nirs){
+    for(let i of n.ingredients){
+      if(i.ing.toString() === ing_id.toString()){
+        qty += i.qty
+      }
+    }
+  }
+  return round(qty)
+}
 
 
 
