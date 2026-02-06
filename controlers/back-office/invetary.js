@@ -269,12 +269,6 @@ const   filter = {
     console.log('facturi', invoices.length)
     
 
-    // for( let ing of inventary.ingredients){
-    //   const invoiceQty = await getSalesFromInvoices(ing.ing, invoices, inventary.date)
-    //   // console.log(ing.name, ' Cantitate vanduta ', qty)
-    //   console.log(ing.name, ' Cantitate vanduata din facturi', invoiceQty)
-    // }
-
     const promises = inventary.ingredients.map(async (i) => {
         const dbIng = await Ingredient.findById(i.ing)
         if(dbIng){
