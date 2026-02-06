@@ -219,11 +219,47 @@ const   filter = {
 
     const inventary = await Inventary.findById(id)
     const inventaryDate = new Date(inventary.date)
-    const orders = await Order.find({paymentDate: {$gte: inventaryDate}, locatie: inventary.locatie, salePoint: inventary.salePoint})
+    const orders = await Order.find({paymentDate: {$gte: inventaryDate}, locatie: inventary.locatie, salePoint: inventary.salePoint, status: 'done'})
+                          .populate({
+                            path: 'products.ings.ing',
+                            select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog dept', 
+                            populate: {
+                                path: 'ings.ing', 
+                                select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog', 
+                                populate: { 
+                                    path:'ings.ing',
+                                    select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog"
+                                }
+                            }
+                        })
+                        .populate({
+                            path: 'products.productId', select: 'gestiune departament',
+                            populate: [
+                                {
+                                    path: 'departament', select: 'name'
+                                },
+                                {
+                                    path: 'gestiune', select: 'name'
+                                }
+                            ]
+                        })
+                        .populate({path : 'products.gestiune', select: 'name'})
+                        .populate({
+                            path: 'products.toppings.ing', 
+                            select: 'name price qty tva tvaPrice sellPrice um ings productIngredient uploadLog', 
+                            populate: {
+                                path: 'ings.ing',
+                                select: 'name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog',
+                                populate: {
+                                    path: 'ings.ing',
+                                    select: "name price qty tva tvaPrice sellPrice um productIngredient ings uploadLog", 
+                                    }
+                                }
+                            }).lean({virtuals: false})   
     
     const products = await getBillProducts(orders, filter)
     console.log(products[6].ingr)
-    
+
   //   const promises = inventary.ingredients.map(async (i) => {
   //       const dbIng = await Ingredient.findById(i.ing)
   //       if(dbIng){
