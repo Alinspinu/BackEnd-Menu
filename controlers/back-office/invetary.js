@@ -203,47 +203,63 @@ module.exports.updateInventary = async (req, res) => {
  }
 
 
+const {getBillProducts} = require('../../utils/reports')
+
+const   filter = {
+  inreg: true,
+  unreg: true,
+  goods: true,
+  prod: true
+}
+
+
  module.exports.updateGestiune = async (req, res) =>{
    try{
     const {id} = req.body
 
     const inventary = await Inventary.findById(id)
+    const inventaryDate = new Date(inventary.date)
+    const orders = await Order.find({paymentDate: {$gte: inventaryDate}, locatie: inventary.locatie, salePoint: inventary.salePoint})
+    
+    const products = await getBillProducts(orders, filter)
+    console.log(products[6].ingr)
+    
+  //   const promises = inventary.ingredients.map(async (i) => {
+  //       const dbIng = await Ingredient.findById(i.ing)
+  //       if(dbIng){
+  //           const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
+  //           if(ingGest){
+  //               // ingGest.qty = dbIng.qty + i.faptic
+  //               const diference = i.scriptic - ingGest.qty
+  //               ingGest.qty = round(i.faptic - diference)
+  //               if(ingGest.entries.length){
+  //                   const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
+  //                   ingGest.entries = entries
+  //               } else {
+  //                   const entry = {
+  //                       qty: ingGest.qty,
+  //                       date: inventary.date,
+  //                       priceNoVat: i.averagePrice,
+  //                       priceWithVat: round(i.averagePrice * (1 + dbIng.tva / 100)),
+  //                       inQty: i.faptic,
+  //                       suplierName: 'Intrare din inventar'
+  //                   }
+  //                   ingGest.entries.push(entry)
+  //               }
+  //           }
+  //           dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
+  //           // dbIng.qty = round(dbIng.qty + i.faptic)
+  //        return dbIng.save().then(i => {
+  //           console.log(`Ingredientul ${i.name} a fost actulizat cu succees!`)
+  //           console.log('Cantitate totala ', i.qty)
+  //        })
+  //       }
+  //   })
 
-    const promises = inventary.ingredients.map(async (i) => {
-        const dbIng = await Ingredient.findById(i.ing)
-        if(dbIng){
-            const ingGest = dbIng.invGestiune.find(g => g.gestiune.toString() === inventary.gestiune.toString())
-            if(ingGest){
-                // ingGest.qty = dbIng.qty + i.faptic
-                const diference = i.scriptic - ingGest.qty
-                ingGest.qty = round(i.faptic - diference)
-                if(ingGest.entries.length){
-                    const entries = allocateFromNewest(ingGest.entries, ingGest.qty).allocations
-                    ingGest.entries = entries
-                } else {
-                    const entry = {
-                        qty: ingGest.qty,
-                        date: inventary.date,
-                        priceNoVat: i.averagePrice,
-                        priceWithVat: round(i.averagePrice * (1 + dbIng.tva / 100)),
-                        inQty: i.faptic,
-                        suplierName: 'Intrare din inventar'
-                    }
-                    ingGest.entries.push(entry)
-                }
-            }
-            dbIng.qty = round((dbIng.invGestiune ?? []).reduce((sum, g) => sum + (Number(g.qty) || 0), 0))
-            // dbIng.qty = round(dbIng.qty + i.faptic)
-         return dbIng.save().then(i => {
-            console.log(`Ingredientul ${i.name} a fost actulizat cu succees!`)
-            console.log('Cantitate totala ', i.qty)
-         })
-        }
-    })
-
-    await Promise.all(promises)
-   const savedInv =  await Inventary.findByIdAndUpdate(id, {$set: {updated: true}})
-    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: savedInv})
+  //   await Promise.all(promises)
+  //  const savedInv =  await Inventary.findByIdAndUpdate(id, {$set: {updated: true}})
+  //   res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: savedInv})
+    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: inventary})
    } catch(err){
      console.log(err)
      res.status(500).json(err)
