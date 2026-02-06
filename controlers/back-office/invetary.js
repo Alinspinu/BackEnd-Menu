@@ -258,7 +258,7 @@ const   filter = {
                             }).lean({virtuals: false})   
     
     const products = await getBillProducts(orders, filter)
-    console.log(products[6].ingr)
+    console.log(products[6])
 
   //   const promises = inventary.ingredients.map(async (i) => {
   //       const dbIng = await Ingredient.findById(i.ing)
