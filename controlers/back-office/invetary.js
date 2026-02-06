@@ -310,7 +310,7 @@ const   filter = {
     await Promise.all(promises)
    const savedInv =  await Inventary.findByIdAndUpdate(id, {$set: {updated: true}})
     res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: savedInv})
-    res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: inventary})
+    // res.status(200).json({message: 'Gestiunea a fost modificată după inventar!', inv: inventary})
    } catch(err){
      console.log(err)
      res.status(500).json(err)
