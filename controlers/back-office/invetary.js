@@ -220,7 +220,7 @@ const   filter = {
 
     const inventary = await Inventary.findById(id)
     const inventaryDate = new Date(inventary.date)
-    const nirs = await Nir.find({documenmtDate: {$gte: inventaryDate},  locatie: inventary.locatie, salePoint: inventary.salePoint}).lean()
+    const nirs = await Nir.find({documentDate: {$gte: inventaryDate},  locatie: inventary.locatie, salePoint: inventary.salePoint}).lean()
     const orders = await Order.find({paymentDate: {$gte: inventaryDate}, locatie: inventary.locatie, salePoint: inventary.salePoint, status: 'done'})
                           .populate({
                             path: 'products.ings.ing',
