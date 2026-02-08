@@ -729,16 +729,15 @@ module.exports.updateOrderFromClient = async (req, res) => {
       let updatedOrder = order;
   
       // ✅ ONLY ONLINE PAYMENT → PRINT + UPDATE PRODUCTS
-      if (online === true || order.total === 0) {
+      if (online === true || order.total === 0 || order.paymentMethod === 'La final') {
   
         // 1️⃣ PRINT (snapshot)
         const mainServer = await PrintServer.findOne({
           locatie: order.locatie,
           salePoint: order.salePoint,
           online: true
-        }).populate({path: 'fiscalPrinter.section'}).populate({path: 'thermalPrinters.section'});
+        }).populate({path: 'fiscalPrinter.section'}).populate({path: 'thermalPrinters.section'}).lean();
         if (mainServer) {
-            console.log(mainServer.fiscalPrinter.section)
           socket.emit(
             'printOrder',
             JSON.stringify({
