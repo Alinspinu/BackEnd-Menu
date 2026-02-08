@@ -730,7 +730,10 @@ module.exports.updateOrderFromClient = async (req, res) => {
   
       // ✅ ONLY ONLINE PAYMENT → PRINT + UPDATE PRODUCTS
       if (online === true || order.total === 0 || order.paymentMethod === 'La final') {
-  
+      
+        let paymentMethod = 'online'
+        if(order.total === 0)  paymentMethod = 'Gratis'
+        if(order.paymentMethod === 'La final') paymentMethod = order.paymentMethod
         // 1️⃣ PRINT (snapshot)
         const mainServer = await PrintServer.findOne({
           locatie: order.locatie,
@@ -762,7 +765,7 @@ module.exports.updateOrderFromClient = async (req, res) => {
           {
             $set: {
               products: updatedProducts,
-              paymentMethod: 'online',
+              paymentMethod: paymentMethod,
               'payment.online': order.total
             }
           },
