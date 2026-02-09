@@ -49,6 +49,12 @@ const subProductSchema = new Schema({
             default: 0,
         }
     },
+    orderIdentifier: [
+        {
+          ingId: String,
+          qtyCorector: Number,
+        }
+      ],
     saleLog: [
         {
             date: {

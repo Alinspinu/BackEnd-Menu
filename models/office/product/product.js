@@ -65,6 +65,13 @@ const productTrueSchema = new Schema({
         type: Boolean,
         default: false
     },
+
+    orderIdentifier: [
+        {
+          ingId: String,
+          qtyCorector: Number,
+        }
+      ],
     stock: {
         active: {
             type: Boolean,

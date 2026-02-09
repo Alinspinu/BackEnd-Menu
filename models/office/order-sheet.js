@@ -71,6 +71,11 @@ const orderSheetSchema = new Schema({
                     type: Schema.Types.ObjectId,
                     ref: 'IngredientInv'
                 },
+                pName: String,
+                pPrice: Number,
+                pUm: String,
+                pQty: Number,
+                
             }
         ],
         comment: String,
