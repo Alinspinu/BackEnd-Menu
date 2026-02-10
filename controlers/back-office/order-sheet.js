@@ -62,7 +62,7 @@ module.exports.createSheetInvoice = async(req, res) => {
         sheet.customer.locatie = customerLoc
         const invoice = createSheetInvoice(sheet, indexes)
         const inv = new Invoice(invoice)
-        const savedInvoice = inv.save()
+        const savedInvoice = await inv.save()
         const populatedInv = await Invoice.findById(savedInvoice._id).populate({ path: 'products.ings.ing', populate: { path: 'ings.ing' } })
         const result = await OrderSheet.updateMany({_id: {$in: ids}}, {$set: {invoiced: true}})
         console.log(result)
