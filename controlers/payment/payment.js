@@ -361,8 +361,15 @@ module.exports.printBill = async (req, res, next) => {
             if(client){
                 client.orders.push(bill)
                 client.cashBack = round((client.cashBack - bill.cashBack) + (+bill.total * client.cashBackProcent / 100))
+                await client.save()
+            } else {
+               const general = await User.findOne({email: email})
+               if(general){
+                general.orders.push(bill)
+                general.cashBack = round((general.cashBack - bill.cashBack) + (+bill.total * general.cashBackProcent / 100))
+                await general.save()
+               }
             }
-            await client.save()
         }
         const update = {
             $set: {
