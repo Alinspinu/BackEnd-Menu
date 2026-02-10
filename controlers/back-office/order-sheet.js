@@ -80,7 +80,7 @@ module.exports.getSheet = async (req, res) => {
         if(loc && point){
             const query = customer === 'true' ? {'customer.locatie': loc, 'customer.salePoint': point} : {'suplier.locatie': loc, 'suplier.salePoint': point}
             const sheets = await OrderSheet.find(query)
-                    .sort({ index: -1 })
+                    .sort({ index: 1 })
                     .populate([
                         {path: 'customer.salePoint', select: 'name address'},
                         {path: 'customer.user', select: 'name'},
