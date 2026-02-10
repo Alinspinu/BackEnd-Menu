@@ -63,9 +63,10 @@ module.exports.createSheetInvoice = async(req, res) => {
         const invoice = createSheetInvoice(sheet, indexes)
         const inv = new Invoice(invoice)
         const savedInvoice = inv.save()
+        const populatedInv = await Invoice.findById(savedInvoice._id).populate({ path: 'products.ings.ing', populate: { path: 'ings.ing' } })
         const result = await OrderSheet.updateMany({_id: {$in: ids}}, {$set: {invoiced: true}})
         console.log(result)
-        res.status(200).json({message: 'Factura a fost efectuata cu suucess!', invoice: savedInvoice})
+        res.status(200).json({message: 'Factura a fost efectuata cu suucess!', invoice: populatedInv})
     } catch(error){
         console.log(error)
     }
