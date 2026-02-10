@@ -59,6 +59,7 @@ module.exports.createSheetInvoice = async(req, res) => {
         const customerLoc = await Locatie.findById(sheet.customer.locatie._id)
         sheet.suplier.locatie = suplierLoc
         sheet.customer.locatie = customerLoc
+        console.log(sheet.customer)
         const invoice = createSheetInvoice(sheet, indexes)
         const inv = new Invoice(invoice)
         const savedInvoice = inv.save()
