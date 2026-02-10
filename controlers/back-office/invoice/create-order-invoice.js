@@ -188,7 +188,7 @@ function createSheetInvoice(sheet, indexes){
     supplier: {
       name: sheet.suplier.locatie.bussinessName,
       vatNumber: sheet.suplier.locatie.vatNumber,
-      vat: supplier.VAT,
+      vat: sheet.suplier.locatie.VAT,
       registration: sheet.suplier.locatie.register,
       legalForm: 'Capital social 200 lei',
       contact: {
