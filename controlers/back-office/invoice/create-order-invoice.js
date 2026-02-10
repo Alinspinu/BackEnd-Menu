@@ -230,15 +230,15 @@ function createSheetInvoice(sheet, indexes){
     },
   
     products: sheet.products.map(p => {
-      const vatRate = 1 + (p.tva / 100);
+      const vatRate = 1 + (+p.tva / 100);
       let product = {
         name: p.pName,
         quantity: p.pQty,
         unitCode: 'H87',
         price: p.pPrice,
-        vatPrecent: p.tva,
-        total: round((p.pPrice * p.quantity) * vatRate), 
-        totalNoVat: round(p.pPrice * p.quantity),
+        vatPrecent: +p.tva,
+        total: round((p.pPrice * p.pQty) * vatRate), 
+        totalNoVat: round(p.pPrice * p.pQty),
         productId: p.pId,
         subProductId: p.subId,
         ings: p.productIngs,
