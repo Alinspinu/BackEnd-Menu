@@ -1,4 +1,7 @@
 const OrderSheet = require('../../models/office/order-sheet')
+const Invoice = require('../../models/office/invoice')
+
+const {createSheetInvoice} = require('./invoice/create-order-invoice')
 
 const io = require('socket.io-client');
 const socket = io('https://flowmanager.ro', {
@@ -44,6 +47,20 @@ module.exports.updateSheet = async (req, res) => {
     } catch(error){
         console.log(error)
         res.status(500).json(error)
+    }
+}
+
+module.exports.createSheetInvoice = async(req, res) => {
+    const {sheet, ids, indexes} = req.body
+    try{
+        const invoice = createSheetInvoice(sheet, indexes)
+        const inv = new Invoice(invoice)
+        const savedInvoice = inv.save()
+        const result = await OrderSheet.updateMany({_id: {$in: ids}}, {$set: {invoiced: true}})
+        console.log(result)
+        res.status(200).json({message: 'Factura a fost efectuata cu suucess!', invoice: savedInvoice})
+    } catch(error){
+        console.log(error)
     }
 }
 

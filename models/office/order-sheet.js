@@ -40,6 +40,11 @@ const orderSheetSchema = new Schema({
             recived: Boolean
         },
 
+        invoiced: {
+            type: Boolean,
+            default: false
+        },
+
         updates: [
             {
                 time: Date,
@@ -75,6 +80,24 @@ const orderSheetSchema = new Schema({
                 pPrice: Number,
                 pUm: String,
                 pQty: Number,
+                pId: String,
+                subId: String,
+                tva: Number,
+                productIngs: [
+                    {
+                    qty: {
+                        type: Number,
+                    },
+                    gestiune: {
+                        type: Schema.Types.ObjectId,
+                        ref: 'Gestiune'
+                    },
+                    ing: {
+                        type: Schema.Types.ObjectId,
+                        ref: "IngredientInv"
+                    }
+                    }
+                ]
                 
             }
         ],

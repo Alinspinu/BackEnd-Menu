@@ -174,4 +174,131 @@ function createOrderInvoice(order, customer, supplier, unload) {
 }
 
 
-module.exports = {createOrderInvoice}
+function createSheetInvoice(sheet, indexes){
+
+  let total = 0
+  const invoice = {
+    serie: 'T',
+    unload: true,
+    invoiceCode: '380',
+    note: `Factură fiscală după fisele de comandă ${indexes}` ,
+    issueDate: formatDateEFactura(sheet.createdAt),
+    dueDate: formatDateEFactura(sheet.createdAt),
+    currencyId: 'RON',
+    supplier: {
+      name: sheet.suplier.locatie.bussinessName,
+      vatNumber: sheet.suplier.locatie.vatNumber,
+      vat: supplier.VAT,
+      registration: sheet.suplier.locatie.register,
+      legalForm: 'Capital social 200 lei',
+      contact: {
+        name: sheet.suplier.locatier.contactName,
+        email: sheet.suplier.locatie.email,
+        telephone: sheet.suplier.locatie.telephone,
+      },
+      address: {
+        street: sheet.suplier.locatie.invoiceAddress.street,
+        city: sheet.suplier.locatie.invoiceAddress.city,
+        postalCode: sheet.suplier.locatie.invoiceAddress.postalCode,
+        coutrySubentity: sheet.suplier.locatie.invoiceAddress.coutrySubentity,
+        country: 'RO'
+      }
+    },
+    client: {
+      name: sheet.customer.locatie.bussinessName,
+      vatNumber: sheet.customer.locatie.vatNumber,
+      vat: sheet.customer.locatie.VAT,
+      registration: sheet.customer.locatie.register,
+      legalForm: 'Capital social',
+      contact: {
+        name: sheet.customer.locatie.contactName,
+        email: sheet.customer.locatie.email
+      },
+      address: {
+        street: sheet.customer.locatie.invoiceAddress.street,
+        city: sheet.customer.locatie.invoiceAddress.city,
+        postalCode: sheet.customer.locatie.invoiceAddress.postalCode,
+        coutrySubentity: sheet.customer.locatie.invoiceAddress.coutrySubentity,
+        country: 'RO'
+      },
+    },
+    paymentMeans: {
+      code: 42,
+      name: `CONT BANCA ${sheet.suplier.locatie.bank} IN LEI`,
+      iban: sheet.suplier.locatie.account,
+      swift: sheet.suplier.locatie.switf
+    },
+  
+    products: sheet.products.map(p => {
+      const vatRate = 1 + (p.tva / 100);
+      let product = {
+        name: p.pName,
+        quantity: p.pQty,
+        unitCode: 'H87',
+        price: p.pPrice,
+        vatPrecent: p.tva,
+        total: round((p.pPrice * p.quantity) * vatRate), 
+        totalNoVat: round(p.pPrice * p.quantity),
+        productId: p.pId,
+        subProductId: p.subId,
+        ings: p.productIngs,
+      };
+      total += product.total
+      return product
+    }),
+
+    vatAmount: 0,
+    vatGroups: [],
+    taxExclusiveAmount: 0,
+    taxInclusiveAmount: round(total),
+    payableAmount: round(total),
+    eFacturaId: '',
+    eFacturaStatus: 'NEÎNCĂRCATĂ',
+    eFacturaError: '',
+    customer: sheet.customer.locatie._id,
+    locatie: sheet.suplier.locatie._id,
+    salePoint:sheet.suplier.salePoint
+  }
+
+  invoice.taxExclusiveAmount = invoice.products.reduce((sum, p) => {
+
+    const existingRate = invoice.vatGroups.find(r => r.rate === p.vatPrecent)
+  
+    const taxable = p.totalNoVat
+    const tax = round(p.total - p.totalNoVat)
+  
+    if (existingRate) {
+      existingRate.taxable += taxable
+      existingRate.tax += tax
+    } else {
+      invoice.vatGroups.push({
+        rate: p.vatPrecent,
+        taxable,
+        tax
+      })
+    }
+
+  
+    return sum + taxable
+  }, 0)
+
+  invoice.taxExclusiveAmount = round(invoice.taxExclusiveAmount)
+
+
+  invoice.vatGroups.forEach(v => {
+    v.taxable = round(v.taxable)
+    v.tax = round(v.tax)
+  })
+
+
+
+
+  invoice.vatAmount = round(
+    invoice.vatGroups.reduce((sum, v) => sum + v.tax, 0)
+  )
+
+  return invoice
+}
+
+
+module.exports = {createOrderInvoice, createSheetInvoice}

@@ -10,5 +10,7 @@ router.route('/')
         .put(orderRoutes.updateSheet)
         .delete(orderRoutes.deleteSheet)
 
+router.route('/invoice').post(orderRoutes.createSheetInvoice)
+
 
 module.exports = router
