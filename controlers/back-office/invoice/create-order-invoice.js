@@ -246,7 +246,6 @@ function createSheetInvoice(sheet, indexes){
       total += product.total
       return product
     }),
-
     vatAmount: 0,
     vatGroups: [],
     taxExclusiveAmount: 0,
