@@ -1,5 +1,6 @@
 const OrderSheet = require('../../models/office/order-sheet')
 const Invoice = require('../../models/office/invoice')
+const Locatie = require('../../models/office/locatie')
 
 const {createSheetInvoice} = require('./invoice/create-order-invoice')
 
@@ -53,6 +54,11 @@ module.exports.updateSheet = async (req, res) => {
 module.exports.createSheetInvoice = async(req, res) => {
     const {sheet, ids, indexes} = req.body
     try{
+
+        const suplierLoc = await Locatie.findById(sheet.suplier.locatie._id)
+        const customerLoc = await Locatie.findById(sheet.customer.locatie._id)
+        sheet.suplier.locatie = suplierLoc
+        sheet.customer.locatie = customerLoc
         const invoice = createSheetInvoice(sheet, indexes)
         const inv = new Invoice(invoice)
         const savedInvoice = inv.save()
