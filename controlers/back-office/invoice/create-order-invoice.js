@@ -192,7 +192,7 @@ function createSheetInvoice(sheet, indexes){
       registration: sheet.suplier.locatie.register,
       legalForm: 'Capital social 200 lei',
       contact: {
-        name: sheet.suplier.locatier.contactName,
+        name: sheet.suplier.locatie.contactName,
         email: sheet.suplier.locatie.email,
         telephone: sheet.suplier.locatie.telephone,
       },
