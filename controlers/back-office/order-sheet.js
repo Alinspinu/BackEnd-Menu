@@ -55,9 +55,9 @@ module.exports.createSheetInvoice = async(req, res) => {
     const {sheet, ids, indexes} = req.body
     try{
 
-        console.log(sheet.customer)
+        // console.log(sheet.customer)
         const suplierLoc = await Locatie.findById(sheet.suplier.locatie._id)
-        const customerLoc = await Locatie.findById(sheet.customer.locatie._id)
+        const customerLoc = await Locatie.findById(sheet.customer.locatie)
         sheet.suplier.locatie = suplierLoc
         sheet.customer.locatie = customerLoc
         const invoice = createSheetInvoice(sheet, indexes)
