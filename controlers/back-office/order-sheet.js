@@ -112,7 +112,8 @@ module.exports.deleteSheet = async (req, res) => {
     const {id} = req.query
 
     try{
-        await OrderSheet.findOneAndDelete(id)
+        console.log(id)
+        await OrderSheet.findByIdAndDelete(id)
         res.status(200).json({message: 'Fișa a fost șteasă cu succes!'})
     } catch(error) {
         console.log(error)
