@@ -59,10 +59,7 @@ async function sendBillToCustomer(buffer, email, locatie, text, pdf) {
 
 
 async function sendVerificationEmail(newUser) {
-    let url = ''
-    if(newUser.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
-    if(newUser.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
-    if(newUser.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
+    let url = getLogoUrl(newUser.locatie.name)
     const templateSource = fs.readFileSync('views/layouts/mail.ejs', 'utf-8');
     const templateData = {
         otp: newUser.otp,
@@ -90,11 +87,10 @@ async function sendVerificationEmail(newUser) {
 };
 
 
+
+
 async function sendEmployeeEmail(newUser, baseUrlRedirect, message = 'Continuă înregistrarea') {
-    let url = ''
-    if(newUser.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
-    if(newUser.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
-    if(newUser.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
+    let url = getLogoUrl(newUser.locatie.name)
     const token = jwt.sign({ userId: newUser._id, name: newUser.name, telephone: newUser.telephone, email: newUser.email, locatie: newUser.locatie}, process.env.AUTH_SECRET, { expiresIn: '24h' });
     const templateSource = fs.readFileSync( 'views/layouts/employee.ejs', 'utf-8');
     const templateData = {
@@ -130,10 +126,7 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
 
     const templateSource = fs.readFileSync('views/layouts/resetPassword.ejs', 'utf-8');
 
-    let url = ''
-    if(newUser.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
-    if(newUser.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
-    if(newUser.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
+    let url = getLogoUrl(newUser.locatie.name)
     const templateData = {
         link: `${baseUrlRedirect}reset-password?token=${token}`,
         name: newUser.name,
@@ -163,10 +156,7 @@ async function sendResetEmail(newUser, baseUrlRedirect) {
 
 async function sendMailToCustomer(data, emails) {
     const templateSource = fs.readFileSync('views/layouts/new-mail.ejs', 'utf-8');
-        let url = ''
-            if(data.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
-            if(data.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
-            if(data.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'  
+        let url = getLogoUrl(data.salePoint.locatie.name)
         const renderedTemplate = ejs.render(templateSource,{data: data, url: url});
               
             const mailOptions = {
@@ -190,10 +180,7 @@ async function sendMailToCustomer(data, emails) {
 
 
 async function sendEmailSmtp(reservation, cancel){
-    let url = ''
-    if(reservation.locatie.name === 'T ZERO') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1758656623/t_tyszya.svg'
-    if(reservation.locatie.name === 'True Fine Coffee') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1745824224/logo-true/logo-true-group_hxwb9h.svg'
-    if(reservation.locatie.name === 'Dune') url = 'https://res.cloudinary.com/dhetxk68c/image/upload/v1762934542/dunelogo_zas9cn.png'
+    let url = getLogoUrl(reservation.locatie.name)
     const templateSource = fs.readFileSync('views/layouts/reservation.ejs', 'utf-8'); 
     const renderedTemplate = ejs.render(templateSource,{reservation: reservation, logoUrl: url, cancelUrl: cancel});
 
@@ -236,6 +223,14 @@ async function sendAdminMessage(data, adminEmail = 'office@truefinecoffee.ro') {
         };
 
 };
+
+
+function getLogoUrl(locatieName){
+    if (locatieName === 'T ZERO') return 'https://res.cloudinary.com/dg7eza79w/image/upload/v1769858310/t-zero_bnvfsk.png';
+    if (locatieName === 'True Fine Coffee') return 'https://res.cloudinary.com/dg7eza79w/image/upload/v1769858306/logo-true/logo-true-group_hxwb9h.svg';
+    if (locatieName === 'Dune') return 'https://res.cloudinary.com/dg7eza79w/image/upload/v1769858302/dunelogo_zas9cn.png';
+    return '';
+  }
 
 
 
