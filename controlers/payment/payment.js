@@ -439,6 +439,7 @@ module.exports.printUnreg = async (req, res, next) => {
         }
         res.status(200).json({message: 'Bonul a fost tipărit!'})
     } catch(err){
+        console.log(error)
         handleError(err, res)
     }
 }
