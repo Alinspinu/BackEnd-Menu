@@ -3,7 +3,7 @@
 // production.js
 const logger = require("./logger");
 const { round, multiplyIngredientQuantities } = require("./utils");
-const { resolveGestiune, findProductionGest } = require("./gestiune");
+const { findProductionGest } = require("./gestiune");
 
 /** ------------------------------------------
  * PROCESS TECHNICAL PRODUCT
@@ -21,9 +21,7 @@ async function processTechnicalProduct(ingredientInv, ing, qtyProdus, unloadFn, 
 async function processCompoundProduction(ingredientInv, ing, qtyProdus, unloadFn, gestiune) {
   logger.info("Processing COMPOUND product:", ingredientInv.name);
 
-  const gestiuneId = resolveGestiune(ingredientInv, gestiune);
-
-  if (findProductionGest(ingredientInv.invGestiune, gestiuneId)) {
+  if (findProductionGest(ingredientInv.invGestiune)) {
     logger.debug("Production gest found → no recursion required");
     return;
   }

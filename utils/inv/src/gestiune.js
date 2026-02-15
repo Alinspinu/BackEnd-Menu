@@ -19,8 +19,8 @@ function getGestiuneIndex(ingredientInv, gestiuneId) {
 }
 
 // Find production gest (original logic preserved)
-function findProductionGest(gests, id) {
-  return gests.some(g => !g.sale && g.gestiune.toString() === id?.toString());
+function findProductionGest(gests) {
+  return gests.some(g => !g.sale);
 }
 
 // Get gestiune id to use

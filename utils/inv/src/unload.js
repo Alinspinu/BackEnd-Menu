@@ -50,7 +50,7 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
         ingredientInv.production &&
         !ingredientInv.production.tehnic &&
         ingredientInv.productIngredient &&
-        !findProductionGest(ingredientInv.invGestiune, gestiuneId) &&
+        !findProductionGest(ingredientInv.invGestiune) &&
         !fix
       ) {
         if (ingredientInv.qty <= cantFinal) {
