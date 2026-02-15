@@ -89,8 +89,8 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
           ingredientInv.qty = round(ingredientInv.qty - cantFinal);
         }
       } else {
+        console.log('Hit seconf if', ingredientInv.name, 'cantitate inainte ',  ingredientInv.qty)  
         ingredientInv.qty = round(ingredientInv.qty - cantFinal);
-        // console.log('Hit seconf if', ingredientInv.name)
       }
 
       // ---------------------------------------
