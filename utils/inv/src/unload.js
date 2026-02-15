@@ -78,7 +78,7 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
           ingredientInv.uploadLog = uploadLog
 
           ingredientInv.qty = round(ingredientInv.production.qty - difference);
-
+          console.log('Hit insuficint sock for ingredient', ingredientInv.name)
           // Recursive unload for compound items
           await unloadIngs(
             ingredientInv.ings,
@@ -88,9 +88,11 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
           );
         } else {
           ingredientInv.qty = round(ingredientInv.qty - cantFinal);
+          console.log('Hit normal stock unloasd for ingredient', ingredientInv.name)
         }
       } else {
         ingredientInv.qty = round(ingredientInv.qty - cantFinal);
+        console.log('Hit seconf if', ingredientInv.name)
       }
 
       // ---------------------------------------
