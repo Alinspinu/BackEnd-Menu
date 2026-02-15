@@ -129,8 +129,8 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
 
       // Sync main qty with gestiune total
       if (qtyOfGestiune !== ingredientInv.qty) {
-        console.warn(`Syncing ingredient qty with gestiune total for ${ingredientInv.name}. Old qty: ${ingredientInv.qty}, New qty: ${qtyOfGestiune}`);
-        // ingredientInv.qty = round(qtyOfGestiune);
+        logger.warn(`Syncing ingredient qty with gestiune total for ${ingredientInv.name}. Old qty: ${ingredientInv.qty}, New qty: ${qtyOfGestiune}`);
+        ingredientInv.qty = round(qtyOfGestiune);
       }
 
       // ---------------------------------------
