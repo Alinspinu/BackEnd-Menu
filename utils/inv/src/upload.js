@@ -90,6 +90,17 @@ async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
         ingredientInv.invGestiune[gestIndex] = gest;
       }
 
+      let qtyOfGestiune = 0;
+      if (ingredientInv.invGestiune?.length) {
+        qtyOfGestiune = ingredientInv.invGestiune.reduce((sum, g) => sum + g.qty, 0);
+      }
+
+      // Sync main qty with gestiune total
+      if (qtyOfGestiune !== ingredientInv.qty) {
+        consoele.warn(`Syncing ingredient qty with gestiune total for ${ingredientInv.name}. Old qty: ${ingredientInv.qty}, New qty: ${qtyOfGestiune}`);
+        // ingredientInv.qty = round(qtyOfGestiune);
+      }
+
       // ---------------------------------------
       //   SAVE RESULT
       // ---------------------------------------

@@ -88,10 +88,10 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
         } else {
           ingredientInv.qty = round(ingredientInv.qty - cantFinal);
         }
-      } else {
-        console.log('Hit seconf if', ingredientInv.name, 'cantitate inainte ',  ingredientInv.qty)  
+      } else { 
         ingredientInv.qty = round(ingredientInv.qty - cantFinal);
       }
+
 
       // ---------------------------------------
       //   HANDLE STORE STOCK (invGestiune)
@@ -120,6 +120,17 @@ async function unloadIngs(ings, qtyProdus, gestiuneOverride, fix = false) {
         }
 
         ingredientInv.invGestiune[gestIndex] = gest;
+      }
+
+      let qtyOfGestiune = 0;
+      if (ingredientInv.invGestiune?.length) {
+        qtyOfGestiune = ingredientInv.invGestiune.reduce((sum, g) => sum + g.qty, 0);
+      }
+
+      // Sync main qty with gestiune total
+      if (qtyOfGestiune !== ingredientInv.qty) {
+        consoele.warn(`Syncing ingredient qty with gestiune total for ${ingredientInv.name}. Old qty: ${ingredientInv.qty}, New qty: ${qtyOfGestiune}`);
+        // ingredientInv.qty = round(qtyOfGestiune);
       }
 
       // ---------------------------------------
