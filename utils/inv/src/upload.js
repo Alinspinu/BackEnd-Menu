@@ -97,7 +97,7 @@ async function uploadIngs(ings, qtyProdus, gestiuneOverride) {
 
       // Sync main qty with gestiune total
       if (qtyOfGestiune !== ingredientInv.qty) {
-        consoele.warn(`Syncing ingredient qty with gestiune total for ${ingredientInv.name}. Old qty: ${ingredientInv.qty}, New qty: ${qtyOfGestiune}`);
+        console.warn(`Syncing ingredient qty with gestiune total for ${ingredientInv.name}. Old qty: ${ingredientInv.qty}, New qty: ${qtyOfGestiune}`);
         // ingredientInv.qty = round(qtyOfGestiune);
       }
 
