@@ -96,6 +96,7 @@ module.exports.addEntry = async (req, res, next) => {
             document: document,
             salePoint: salePoint
         })
+        console.log(newEntry)
         if(typeOf === 'Plata furnizor' && !asociat){
             const sup = await Suplier.findById(suplier).select('name sold')
             const record = {
@@ -140,14 +141,16 @@ module.exports.addEntry = async (req, res, next) => {
             }
            await User.findOneAndUpdate({_id: user[0]}, {$push: {'employee.payments': payment}})
         }
-        newEntry.save()
+       const saved = await newEntry.save()
+       console.log('saved', saved)
         entryDate.setUTCHours(0,0,0,0)
         const nextDay = new Date(entryDate);
         nextDay.setDate(entryDate.getDate() + 1);
         const day = await Day.findOne({ date: { $gte: entryDate, $lt: nextDay}, locatie: locatie, salePoint: salePoint }, null, {new: true}).populate({ path: 'entry' })
+        console.log('day', day)
         if (day) {
             const daySum = day.entry.reduce((total, doc) => total + doc.amount, 0)
-            day.entry.push(newEntry)
+            day.entry.push(saved._id)
             const dayTotal = daySum + newEntry.amount + day.cashIn
             day.cashOut = dayTotal
             await day.save()
