@@ -3,7 +3,8 @@ const Entry = require('../../models/office/cash-register/entry');
 const User = require('../../models/users/user')
 const exceljs = require('exceljs');
 const createCashRegisterDay = require('../../utils/createDay')
-const Suplier = require('../../models/office/suplier')
+const Suplier = require('../../models/office/suplier');
+const { isArray } = require('util');
 
 
 
@@ -130,8 +131,9 @@ module.exports.addEntry = async (req, res, next) => {
             await User.findOneAndUpdate({_id: id}, {$push: {'employee.payments': payment}})
             }
         }
-  
+        consoel.log('user', user)
         if(user && user.length && typeOf !== 'Bonus vanzari' && typeOf !== 'Plata furnizor'){
+            const userId = Array.isArray(user) ? user[0] : user
             const payment = {
                 amount: amount,
                 tip: typeOf,
@@ -139,7 +141,7 @@ module.exports.addEntry = async (req, res, next) => {
                 workMonth: month,
                 salePoint: salePoint
             }
-           await User.findOneAndUpdate({_id: user[0]}, {$push: {'employee.payments': payment}})
+           await User.findOneAndUpdate({_id: userId}, {$push: {'employee.payments': payment}})
         }
        const saved = await newEntry.save()
        console.log('saved', saved)
