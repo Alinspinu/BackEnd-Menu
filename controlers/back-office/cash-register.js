@@ -131,7 +131,7 @@ module.exports.addEntry = async (req, res, next) => {
             await User.findOneAndUpdate({_id: id}, {$push: {'employee.payments': payment}})
             }
         }
-        consoel.log('user', user)
+        console.log('user', user)
         if(user && user.length && typeOf !== 'Bonus vanzari' && typeOf !== 'Plata furnizor'){
             const userId = Array.isArray(user) ? user[0] : user
             const payment = {
