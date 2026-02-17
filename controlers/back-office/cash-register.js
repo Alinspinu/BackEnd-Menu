@@ -152,7 +152,7 @@ module.exports.addEntry = async (req, res, next) => {
         console.log('day', day)
         if (day) {
             const daySum = day.entry.reduce((total, doc) => total + doc.amount, 0)
-            day.entry.push(saved._id)
+            day.entry.push(saved)
             const dayTotal = daySum + newEntry.amount + day.cashIn
             day.cashOut = dayTotal
             await day.save()
