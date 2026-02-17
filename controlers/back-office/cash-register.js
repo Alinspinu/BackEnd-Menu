@@ -171,7 +171,9 @@ module.exports.deleteEntry = async (req, res, next) => {
     const { id } = req.query;
     try {
         const entry = await Entry.findById(id)
+        console.log('entry', entry)
         const day = await Day.findOne({locatie: entry.locatie, date: entry.date })
+        console.log('day', day)
         await entry.deleteOne();
         const newDay = await Day.findOneAndUpdate({ _id: day._id }, { $pull: { entry: entry._id } }, {new: true}).exec()
         if(!newDay.entry.length){
